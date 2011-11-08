@@ -8,8 +8,8 @@
     <ProjectGuid>{259E1EFF-FC9A-4674-A4C6-D93490C4AC99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BigDataSystems.Fallen8</RootNamespace>
-    <AssemblyName>BigDataSystems.Fallen8</AssemblyName>
+    <RootNamespace>BigDataSystems.Fallen8.API</RootNamespace>
+    <AssemblyName>BigDataSystems.Fallen8.API</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IFallen8.cs" />
+    <Compile Include="IFallen8Transaction.cs" />
+    <Compile Include="IFallen8Server.cs" />
+    <Compile Include="IFallen8Session.cs" />
+    <Compile Include="IFallen8Connector.cs" />
+    <Compile Include="Service\IFallen8ServiceFactory.cs" />
+    <Compile Include="Service\IFallen8ServiceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,11 @@ namespace BigDataSystems.Fallen8.Model
             get { throw new NotImplementedException(); }
         }
 
+        public long Id
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         #endregion
 
         #region IEquatable<IVertexModel> Members

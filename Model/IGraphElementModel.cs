@@ -12,6 +12,7 @@ namespace BigDataSystems.Fallen8.Model
         /// </summary>
         Int64 Id { get; }
 
+
         IDictionary<Int64, IComparable> Properties { get; }
         IDictionary<String, Object> SchemalessProperties { get; }
     }

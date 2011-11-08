@@ -44,6 +44,7 @@
     <Compile Include="IEdgeModel.cs" />
     <Compile Include="IEdgePropertyModel.cs" />
     <Compile Include="IGraphElementModel.cs" />
+    <Compile Include="IGraphModel.cs" />
     <Compile Include="IVertexModel.cs" />
     <Compile Include="VertexModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

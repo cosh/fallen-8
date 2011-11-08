@@ -7,7 +7,7 @@ namespace BigDataSystems.Fallen8.Model
 {
     public interface IGraphModel : IGraphElementModel
     {
-        IDictionary<Int64, IGraphElementModel> Graphelements;
+        IDictionary<Int64, IGraphElementModel> Graphelements { get; }
 
         IEnumerable<IVertexModel> GetVerticesByType(Int64 id);
         IEnumerable<IEdgeModel> GetEdgesByType(Int64 id);
