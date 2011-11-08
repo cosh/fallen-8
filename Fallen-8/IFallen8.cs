@@ -11,8 +11,12 @@ namespace BigDataSystems.Fallen8.API
     {
         IGraphModel Graph { get; }
 
-        IGraphModel Get(IOperator op);
+        IVertexModel GetVertex(Int64 id);
+        IEnumerable<IVertexModel> GetVertices(IEnumerable<Int64> ids);
 
+        IEdgeModel GetEdge(Int64 id);
+        IEnumerable<IEdgeModel> GetEdges(IEnumerable<Int64> ids);
 
+        IFallen8 Calculon(IOperator op);
     }
 }

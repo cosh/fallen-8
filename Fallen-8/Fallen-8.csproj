@@ -46,6 +46,11 @@
     <Compile Include="IFallen8Server.cs" />
     <Compile Include="IFallen8Session.cs" />
     <Compile Include="IFallen8Connector.cs" />
+    <Compile Include="Operator\OrOperator.cs" />
+    <Compile Include="Operator\ILogicalOperator.cs" />
+    <Compile Include="Operator\IBinaryOperator.cs" />
+    <Compile Include="Operator\IOperator.cs" />
+    <Compile Include="Operator\OperatorEnum.cs" />
     <Compile Include="Service\IFallen8ServiceFactory.cs" />
     <Compile Include="Service\IFallen8ServiceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

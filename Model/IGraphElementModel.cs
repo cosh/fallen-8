@@ -11,7 +11,8 @@ namespace BigDataSystems.Fallen8.Model
         /// System wide unique id
         /// </summary>
         Int64 Id { get; }
-
+        Int64 TypeID { get; }
+        String TypeName { get; }
 
         IDictionary<Int64, IComparable> Properties { get; }
         IDictionary<String, Object> SchemalessProperties { get; }
