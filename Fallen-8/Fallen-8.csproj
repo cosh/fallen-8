@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,9 +8,8 @@
     <ProjectGuid>{259E1EFF-FC9A-4674-A4C6-D93490C4AC99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BigDataSystems.Fallen8.API</RootNamespace>
+    <RootNamespace>Fallen8.API</RootNamespace>
     <AssemblyName>BigDataSystems.Fallen8.API</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -46,25 +45,9 @@
     <Compile Include="IFallen8Server.cs" />
     <Compile Include="IFallen8Session.cs" />
     <Compile Include="IFallen8Connector.cs" />
-    <Compile Include="Operator\ComperativeOperation.cs" />
-    <Compile Include="Operator\ComperativeOperator.cs" />
-    <Compile Include="Operator\LiteralOperator.cs" />
-    <Compile Include="Operator\PropertyOperator.cs" />
-    <Compile Include="Operator\IComperativeOperator.cs" />
-    <Compile Include="Operator\LogicalOperator.cs" />
-    <Compile Include="Operator\ILogicalOperator.cs" />
-    <Compile Include="Operator\IBinaryOperator.cs" />
-    <Compile Include="Operator\IOperator.cs" />
-    <Compile Include="Operator\LogicalOperation.cs" />
     <Compile Include="Service\IFallen8ServiceFactory.cs" />
     <Compile Include="Service\IFallen8ServiceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{E0145191-CC23-42ED-945E-B343D49CAA8E}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -74,4 +57,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{E0145191-CC23-42ED-945E-B343D49CAA8E}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
