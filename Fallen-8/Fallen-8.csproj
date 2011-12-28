@@ -33,9 +33,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Model\EdgeModel.cs" />
+    <Compile Include="Model\VertexModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Model\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{E0145191-CC23-42ED-945E-B343D49CAA8E}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IFallen-8\IFallen-8.csproj">
+      <Project>{259E1EFF-FC9A-4674-A4C6-D93490C4AC99}</Project>
+      <Name>IFallen-8</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
