@@ -30,11 +30,50 @@ using System.Text;
 
 namespace Fallen8.Model
 {
+	/// <summary>
+	/// Graph model interface.
+	/// </summary>
     public interface IGraphModel : IGraphElementModel
     {
+		/// <summary>
+		/// Gets the graph elements.
+		/// </summary>
+		/// <value>
+		/// The graph elements.
+		/// </value>
         IDictionary<Int64, IGraphElementModel> Graphelements { get; }
-
-        IEnumerable<IVertexModel> GetVerticesByType(Int64 id);
-        IEnumerable<IEdgeModel> GetEdgesByType(Int64 id);
+		
+		/// <summary>
+		/// Gets vertices by their vertex type identifier.
+		/// </summary>
+		/// <returns>
+		/// The vertices by type.
+		/// </returns>
+		/// <param name='vertexTypeId'>
+		/// Vertex type identifier.
+		/// </param>
+        IEnumerable<IVertexModel> GetVerticesByType(Int64 vertexTypeId);
+        
+		/// <summary>
+		/// Gets edged by their edge type identifier.
+		/// </summary>
+		/// <returns>
+		/// The edges by type.
+		/// </returns>
+		/// <param name='edgeTypeId'>
+		/// Edge type identifier.
+		/// </param>
+		IEnumerable<IEdgeModel> GetEdgesByType(Int64 edgeTypeId);
+        
+		/// <summary>
+		/// Gets graphs by their graph type identifier.
+		/// </summary>
+		/// <returns>
+		/// The graphs by type.
+		/// </returns>
+		/// <param name='graphTypeId'>
+		/// Graph type identifier.
+		/// </param>
+		IEnumerable<IGraphModel> GetGraphsByType(Int64 graphTypeId);
     }
 }

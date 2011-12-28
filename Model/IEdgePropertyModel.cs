@@ -30,8 +30,18 @@ using System.Text;
 
 namespace Fallen8.Model
 {
+	/// <summary>
+	/// Edge property model interface.
+	/// It contains the source vertex and serves as an enumerable of edge models
+	/// </summary>
     public interface IEdgePropertyModel : IEnumerable<IEdgeModel>
     {
+		/// <summary>
+		/// Gets the source vertex.
+		/// </summary>
+		/// <value>
+		/// The source vertex.
+		/// </value>
         IVertexModel SourceVertex { get; }
     }
 }

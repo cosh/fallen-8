@@ -30,9 +30,31 @@ using System.Text;
 
 namespace Fallen8.Model
 {
+	/// <summary>
+	/// Vertex model interface.
+	/// </summary>
     public interface IVertexModel : IGraphElementModel, IEquatable<IVertexModel>
     {
+		/// <summary>
+		/// Gets the edges.
+		/// </summary>
+		/// <value>
+		/// The edges.
+		/// </value>
         IDictionary<Int64, IEdgePropertyModel> Edges { get; }
-        IEnumerable<IEdgeModel> GetIncomingEdges(Int64 typeId, Int64 edgeId);
+        
+		/// <summary>
+		/// Gets the incoming edges.
+		/// </summary>
+		/// <returns>
+		/// The incoming edges.
+		/// </returns>
+		/// <param name='typeId'>
+		/// Type identifier.
+		/// </param>
+		/// <param name='edgeId'>
+		/// Edge property identifier.
+		/// </param>
+		IEnumerable<IEdgeModel> GetIncomingEdges(Int64 typeId, Int64 edgeId);
     }
 }

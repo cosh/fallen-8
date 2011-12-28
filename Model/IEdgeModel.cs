@@ -30,16 +30,26 @@ using System.Text;
 
 namespace Fallen8.Model
 {
+	/// <summary>
+	/// Edge model interface.
+	/// It contains the target vertex and the source edge.
+	/// </summary>
     public interface IEdgeModel : IGraphElementModel, IEquatable<IEdgeModel>
     {
         /// <summary>
-        /// The target vertex of the edge
+        /// Gets the target vertex.
         /// </summary>
+        /// <value>
+        /// The target vertex.
+        /// </value>
         IVertexModel TargetVertex { get; }
 
         /// <summary>
-        /// The edge property model that contains the edge
+        /// Gets the source edge property.
         /// </summary>
+        /// <value>
+        /// The source edge property.
+        /// </value>
         IEdgePropertyModel SourceEdgeProperty { get; }
     }
 }

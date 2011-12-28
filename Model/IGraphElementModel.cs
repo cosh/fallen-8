@@ -30,16 +30,49 @@ using System.Text;
 
 namespace Fallen8.Model
 {
+	/// <summary>
+	/// Graph element model interface.
+	/// </summary>
     public interface IGraphElementModel
     {
         /// <summary>
-        /// System wide unique id
+        /// Gets the system wide unique identifier.
         /// </summary>
+        /// <value>
+        /// The system wide unique identifier.
+        /// </value>
         Int64 Id { get; }
+		
+		/// <summary>
+		/// Gets the type identifier.
+		/// </summary>
+		/// <value>
+		/// The type identifier.
+		/// </value>
         Int64 TypeID { get; }
+		
+		/// <summary>
+		/// Gets the name of the type.
+		/// </summary>
+		/// <value>
+		/// The name of the type.
+		/// </value>
         String TypeName { get; }
-
+		
+		/// <summary>
+		/// Gets the properties.
+		/// </summary>
+		/// <value>
+		/// The properties.
+		/// </value>
         IDictionary<Int64, IComparable> Properties { get; }
-        IDictionary<String, Object> SchemalessProperties { get; }
+        
+		/// <summary>
+		/// Gets the schemaless properties.
+		/// </summary>
+		/// <value>
+		/// The schemaless properties.
+		/// </value>
+		IDictionary<String, Object> SchemalessProperties { get; }
     }
 }
