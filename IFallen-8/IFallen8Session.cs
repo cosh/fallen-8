@@ -33,12 +33,30 @@ using Fallen8.API.Service;
 
 namespace Fallen8.API
 {
+	/// <summary>
+	/// Fallen-8 session interface.
+	/// </summary>
     public interface IFallen8Session
     {
+		/// <summary>
+		/// Gets the fallen-8 server.
+		/// </summary>
+		/// <value>
+		/// The fallen-8 server.
+		/// </value>
         IFallen8Server Server { get; }
-            
+        
+		/// <summary>
+		/// Begin a transaction with the specified isolation level.
+		/// </summary>
+		/// <param name='level'>
+		/// Isolation level.
+		/// </param>
         IFallen8Transaction Begin(IsolationLevel level = IsolationLevel.Chaos);
-
+		
+		/// <summary>
+		/// Disconnect this session instance.
+		/// </summary>
         void Disconnect();
     }
 }

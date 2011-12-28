@@ -30,11 +30,41 @@ using System.Text;
 
 namespace Fallen8.API.Service
 {
+	/// <summary>
+	/// Fallen-8 service information interface.
+	/// </summary>
     public interface IFallen8ServiceInfo
     {
+		/// <summary>
+		/// Gets the start time.
+		/// </summary>
+		/// <value>
+		/// The start time.
+		/// </value>
         DateTime StartTime { get; }
-        Boolean IsRunning { get; }
-        IDictionary<String, String> Metadata { get; }
-        bool TryStop();
+        
+		/// <summary>
+		/// Gets a value indicating whether this instance is running.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is running; otherwise, <c>false</c>.
+		/// </value>
+		Boolean IsRunning { get; }
+        
+		/// <summary>
+		/// Gets the metadata.
+		/// </summary>
+		/// <value>
+		/// The metadata.
+		/// </value>
+		IDictionary<String, String> Metadata { get; }
+        
+		/// <summary>
+		/// Tries to stop this service.
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if this instance is stopped; otherwise, <c>false</c>.
+		/// </returns>
+		bool TryStop();
     }
 }

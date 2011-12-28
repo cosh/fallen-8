@@ -31,9 +31,22 @@ using Fallen8.API.Service;
 
 namespace Fallen8.API
 {
+	/// <summary>
+	/// Fallen-8 server interface.
+	/// </summary>
     public interface IFallen8Server
     {
+		/// <summary>
+		/// Shutdown this Fallen-8 server.
+		/// </summary>
         void Shutdown();
+		
+		/// <summary>
+		/// Gets the services.
+		/// </summary>
+		/// <value>
+		/// The services.
+		/// </value>
         IDictionary<String, IFallen8ServiceFactory> Services { get; }
     }
 }

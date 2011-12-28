@@ -31,12 +31,27 @@ using Fallen8.Model;
 
 namespace Fallen8.API
 {
+	/// <summary>
+	/// Fallen-8 transaction interface.
+	/// </summary>
     public interface IFallen8Transaction
     {
+		/// <summary>
+		/// Gets the fallen-8.
+		/// </summary>
+		/// <value>
+		/// The fallen-8.
+		/// </value>
         IFallen8 Fallen8 { get; }
-
+		
+		/// <summary>
+		/// Commit this transaction instance.
+		/// </summary>
         void Commit();
-
+		
+		/// <summary>
+		/// Rollback this transaction instance.
+		/// </summary>
         void Rollback();
     }
 }

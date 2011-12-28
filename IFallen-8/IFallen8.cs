@@ -31,14 +31,61 @@ using Fallen8.Model;
 
 namespace Fallen8.API
 {
+	/// <summary>
+	/// Fallen-8 interface.
+	/// </summary>
     public interface IFallen8
     {
+		/// <summary>
+		/// Gets the graph.
+		/// </summary>
+		/// <value>
+		/// The graph.
+		/// </value>
         IGraphModel Graph { get; }
-
+		
+		/// <summary>
+		/// Gets a vertex by its identifier.
+		/// </summary>
+		/// <returns>
+		/// The vertex.
+		/// </returns>
+		/// <param name='id'>
+		/// System wide unique identifier.
+		/// </param>
         IVertexModel GetVertex(Int64 id);
-        IEnumerable<IVertexModel> GetVertices(IEnumerable<Int64> ids);
-
+        
+		/// <summary>
+		/// Gets vertices by their identifier.
+		/// </summary>
+		/// <returns>
+		/// The vertices.
+		/// </returns>
+		/// <param name='ids'>
+		/// System wide unique identifiers.
+		/// </param>
+		IEnumerable<IVertexModel> GetVertices(IEnumerable<Int64> ids);
+		
+		/// <summary>
+		/// Gets an edge by its identifier.
+		/// </summary>
+		/// <returns>
+		/// The edge.
+		/// </returns>
+		/// <param name='id'>
+		/// System wide unique identifier.
+		/// </param>
         IEdgeModel GetEdge(Int64 id);
-        IEnumerable<IEdgeModel> GetEdges(IEnumerable<Int64> ids);
+        
+		/// <summary>
+		/// Gets edges by their identifier.
+		/// </summary>
+		/// <returns>
+		/// The edges.
+		/// </returns>
+		/// <param name='ids'>
+		/// System wide unique identifiers.
+		/// </param>
+		IEnumerable<IEdgeModel> GetEdges(IEnumerable<Int64> ids);
     }
 }

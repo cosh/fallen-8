@@ -31,8 +31,17 @@ using System.IdentityModel.Tokens;
 
 namespace Fallen8.API
 {
+	/// <summary>
+	/// Fallen-8 connector interface.
+	/// </summary>
     public interface IFallen8Connector
     {
+		/// <summary>
+		/// Connect the to a Fallen-8 server using the specified token.
+		/// </summary>
+		/// <param name='token'>
+		/// Security token.
+		/// </param>
         IFallen8Session Connect(SecurityToken token);
     }
 }

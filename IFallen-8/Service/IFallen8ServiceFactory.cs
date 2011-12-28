@@ -30,14 +30,55 @@ using System.Text;
 
 namespace Fallen8.API.Service
 {
+	/// <summary>
+	/// Fallen-8 service factory interface.
+	/// </summary>
     public interface IFallen8ServiceFactory
     {
+		/// <summary>
+		/// Gets the name.
+		/// </summary>
+		/// <value>
+		/// The name.
+		/// </value>
         String Name { get; }
-        String Description { get; }
-        String Manufacturer { get; }
-
+        
+		/// <summary>
+		/// Gets the description.
+		/// </summary>
+		/// <value>
+		/// The description.
+		/// </value>
+		String Description { get; }
+        
+		/// <summary>
+		/// Gets the manufacturer.
+		/// </summary>
+		/// <value>
+		/// The manufacturer.
+		/// </value>
+		String Manufacturer { get; }
+		
+		/// <summary>
+		/// Gets the running services.
+		/// </summary>
+		/// <value>
+		/// The running services.
+		/// </value>
         IEnumerable<IFallen8ServiceInfo> RunningServices { get; }
-
-        bool TryStart(out IFallen8ServiceInfo info);
+		
+		/// <summary>
+		/// Tries to start a service.
+		/// </summary>
+		/// <returns>
+		/// True for success.
+		/// </returns>
+		/// <param name='info'>
+		/// The information to the launched service.
+		/// </param>
+		/// <param name='parameter'>
+		/// The parameters of this service.
+		/// </param>
+        bool TryStart(out IFallen8ServiceInfo info, IDictionary<String, Object> parameter);
     }
 }
