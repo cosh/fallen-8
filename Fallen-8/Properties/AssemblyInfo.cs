@@ -1,4 +1,4 @@
-﻿// 
+// 
 // AssemblyInfo.cs
 //  
 // Author:
@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IFallen-8")]
+[assembly: AssemblyTitle("Fallen-8")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Henning Rauch")]
@@ -45,7 +45,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3a5c7376-4fd7-4aba-8e78-da3eaf33ff6d")]
+[assembly: Guid("3a5c7377-4fd7-5aba-8e78-db3eaf33ff6d")]
 
 // Version information for an assembly consists of the following four values:
 //
