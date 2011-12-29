@@ -27,9 +27,25 @@ using System;
 
 namespace Fallen8.API.Index
 {
+	/// <summary>
+	/// Rectangle.
+	/// </summary>
 	public sealed class Rectangle : IGeometry
 	{
-		public Point LowerLeft { get; private set;}
+		/// <summary>
+		/// Gets or sets the lower left corner.
+		/// </summary>
+		/// <value>
+		/// The lower left corner.
+		/// </value>
+		public Point LowerLeft { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the upper right corner.
+		/// </summary>
+		/// <value>
+		/// The upper right corner.
+		/// </value>
 		public Point UpperRight { get; private set; }
 		
 		#region IComparable implementation

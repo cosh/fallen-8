@@ -29,12 +29,33 @@ using System.Collections.Generic;
 
 namespace Fallen8.API.Index
 {
+	/// <summary>
+	/// Fulltext search result element.
+	/// </summary>
 	public class FulltextSearchResultElement
 	{
+		/// <summary>
+		/// Gets or sets the graph element.
+		/// </summary>
+		/// <value>
+		/// The graph element.
+		/// </value>
 		public IGraphElementModel GraphElement { get; private set; }
-
-		public IList<string> Highlights { get; private set;}
-
+		
+		/// <summary>
+		/// Gets or sets the highlights.
+		/// </summary>
+		/// <value>
+		/// The highlights.
+		/// </value>
+		public IList<string> Highlights { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the score.
+		/// </summary>
+		/// <value>
+		/// The score.
+		/// </value>
 		public Double Score { get; private set; }
 	}
 }

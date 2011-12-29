@@ -27,6 +27,9 @@ using System;
 
 namespace Fallen8.API.Index
 {
+	/// <summary>
+	/// Geometry interface.
+	/// </summary>
 	public interface IGeometry : IComparable
 	{
 	}

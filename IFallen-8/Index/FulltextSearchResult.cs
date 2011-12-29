@@ -28,10 +28,25 @@ using System.Collections.Generic;
 
 namespace Fallen8.API.Index
 {
+	/// <summary>
+	/// Fulltext search result.
+	/// </summary>
 	public class FulltextSearchResult
 	{
+		/// <summary>
+		/// Gets or sets the maximum score.
+		/// </summary>
+		/// <value>
+		/// The maximum score.
+		/// </value>
 		public Double MaximumScore { get; private set; }
 		
+		/// <summary>
+		/// Gets or sets the elements.
+		/// </summary>
+		/// <value>
+		/// The elements.
+		/// </value>
 		public IEnumerable<FulltextSearchResultElement> Elements { get; private set;}
 	}
 }

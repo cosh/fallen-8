@@ -27,18 +27,56 @@ using System;
 
 namespace Fallen8.API.Helper
 {
+	/// <summary>
+	/// Vertex model definition.
+	/// </summary>
 	public sealed class VertexModelDefinition
 	{
+		/// <summary>
+		/// Adds a property.
+		/// </summary>
+		/// <returns>
+		/// The vertex model definition.
+		/// </returns>
+		/// <param name='id'>
+		/// Identifier.
+		/// </param>
+		/// <param name='property'>
+		/// Property.
+		/// </param>
 		public VertexModelDefinition AddProperty (Int64 id, IComparable property)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		/// <summary>
+		/// Adds a string property.
+		/// </summary>
+		/// <returns>
+		/// The vertex model definition.
+		/// </returns>
+		/// <param name='name'>
+		/// Name.
+		/// </param>
+		/// <param name='property'>
+		/// Property.
+		/// </param>
 		public VertexModelDefinition AddStringProperty (String name, IComparable property)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		/// <summary>
+		/// Adds an edge.
+		/// </summary>
+		/// <returns>
+		/// The vertex model definition.
+		/// </returns>
+		/// <param name='id'>
+		/// Identifier.
+		/// </param>
+		/// <param name='edgeDefinition'>
+		/// Edge definition.
 		VertexModelDefinition AddEdge (Int64 id, EdgeModelDefinition edgeDefinition)
 		{
 			throw new NotImplementedException ();

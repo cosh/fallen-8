@@ -27,9 +27,25 @@ using System;
 
 namespace Fallen8.API.Index
 {
+	/// <summary>
+	/// Circle.
+	/// </summary>
 	public sealed class Circle : IGeometry
 	{
+		/// <summary>
+		/// Gets or sets the center.
+		/// </summary>
+		/// <value>
+		/// The center.
+		/// </value>
 		public Point Center { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the radius.
+		/// </summary>
+		/// <value>
+		/// The radius.
+		/// </value>
 		public Double Radius { get; private set; }
 		
 		#region IComparable implementation

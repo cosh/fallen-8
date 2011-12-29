@@ -27,6 +27,9 @@ using System;
 
 namespace Fallen8.API.Expression
 {
+	/// <summary>
+	/// Binary operator.
+	/// </summary>
 	public enum BinaryOperator
 	{
 		Equals,
@@ -34,7 +37,7 @@ namespace Fallen8.API.Expression
 		GreaterOrEquals,
 		Lower,
 		LowerOrEquals,
-		Not
+		NotEquals
 	}
 }
 

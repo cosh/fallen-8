@@ -27,9 +27,25 @@ using System;
 
 namespace Fallen8.API.Index
 {
+	/// <summary>
+	/// Point.
+	/// </summary>
 	public sealed class Point : IGeometry
 	{
-		public Double Longitude {get; private set;}
+		/// <summary>
+		/// Gets or sets the longitude.
+		/// </summary>
+		/// <value>
+		/// The longitude.
+		/// </value>
+		public Double Longitude { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the latitude.
+		/// </summary>
+		/// <value>
+		/// The latitude.
+		/// </value>
 		public Double Latitude {get; private set;}
 
 		#region IComparable implementation
