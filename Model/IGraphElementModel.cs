@@ -44,22 +44,6 @@ namespace Fallen8.Model
         Int64 Id { get; }
 		
 		/// <summary>
-		/// Gets the type identifier.
-		/// </summary>
-		/// <value>
-		/// The type identifier.
-		/// </value>
-        Int64 TypeID { get; }
-		
-		/// <summary>
-		/// Gets the name of the type.
-		/// </summary>
-		/// <value>
-		/// The name of the type.
-		/// </value>
-        String TypeName { get; }
-		
-		/// <summary>
 		/// Gets the creation date.
 		/// </summary>
 		/// <value>

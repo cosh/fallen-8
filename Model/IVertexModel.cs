@@ -49,12 +49,9 @@ namespace Fallen8.Model
 		/// <returns>
 		/// The incoming edges.
 		/// </returns>
-		/// <param name='typeId'>
-		/// Type identifier.
-		/// </param>
-		/// <param name='edgeId'>
+		/// <param name='edgePropertyId'>
 		/// Edge property identifier.
 		/// </param>
-		IEnumerable<IEdgeModel> GetIncomingEdges(Int64 typeId, Int64 edgeId);
+		IEnumerable<IEdgeModel> GetIncomingEdges(Int64 edgePropertyId);
     }
 }

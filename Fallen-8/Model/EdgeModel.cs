@@ -72,16 +72,6 @@ namespace Fallen8.Model
             get { throw new NotImplementedException(); }
         }
 
-        public long TypeID
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public string TypeName
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         #endregion
 
         #region IEquatable<IEdgeModel> Members

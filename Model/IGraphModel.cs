@@ -44,36 +44,27 @@ namespace Fallen8.Model
         IDictionary<Int64, IGraphElementModel> Graphelements { get; }
 		
 		/// <summary>
-		/// Gets vertices by their vertex type identifier.
+		/// Gets the vertices.
 		/// </summary>
 		/// <returns>
-		/// The vertices by type.
+		/// The vertices.
 		/// </returns>
-		/// <param name='vertexTypeId'>
-		/// Vertex type identifier.
-		/// </param>
-        IEnumerable<IVertexModel> GetVerticesByType(Int64 vertexTypeId);
+        IEnumerable<IVertexModel> GetVertices();
         
 		/// <summary>
-		/// Gets edged by their edge type identifier.
+		/// Gets the edges.
 		/// </summary>
 		/// <returns>
-		/// The edges by type.
+		/// The edges.
 		/// </returns>
-		/// <param name='edgeTypeId'>
-		/// Edge type identifier.
-		/// </param>
-		IEnumerable<IEdgeModel> GetEdgesByType(Int64 edgeTypeId);
+		IEnumerable<IEdgeModel> GetEdges();
         
 		/// <summary>
-		/// Gets graphs by their graph type identifier.
+		/// Gets the graphs.
 		/// </summary>
 		/// <returns>
-		/// The graphs by type.
+		/// The graphs.
 		/// </returns>
-		/// <param name='graphTypeId'>
-		/// Graph type identifier.
-		/// </param>
-		IEnumerable<IGraphModel> GetGraphsByType(Int64 graphTypeId);
+		IEnumerable<IGraphModel> GetGraphs();
     }
 }

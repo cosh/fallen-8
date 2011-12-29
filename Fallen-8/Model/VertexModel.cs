@@ -39,7 +39,7 @@ namespace Fallen8.Model
             get { throw new NotImplementedException(); }
         }
 
-        public IEnumerable<IEdgeModel> GetIncomingEdges(long typeId, long edgeId)
+        public IEnumerable<IEdgeModel> GetIncomingEdges(long edgePropertyId)
         {
             throw new NotImplementedException();
         }
@@ -69,16 +69,6 @@ namespace Fallen8.Model
         }
 
         public long Id
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public long TypeID
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public string TypeName
         {
             get { throw new NotImplementedException(); }
         }
