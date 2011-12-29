@@ -47,7 +47,17 @@ namespace Fallen8.Model
         #endregion
 
         #region IGraphElementModel Members
-
+		
+		public DateTime CreationDate 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		public DateTime ModificationDate 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
         public IDictionary<long, IComparable> Properties
         {
             get { throw new NotImplementedException(); }

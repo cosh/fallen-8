@@ -60,6 +60,22 @@ namespace Fallen8.Model
         String TypeName { get; }
 		
 		/// <summary>
+		/// Gets the creation date.
+		/// </summary>
+		/// <value>
+		/// The creation date.
+		/// </value>
+		DateTime CreationDate { get; }
+		
+		/// <summary>
+		/// Gets the modification date.
+		/// </summary>
+		/// <value>
+		/// The modification date.
+		/// </value>
+		DateTime ModificationDate { get; }
+		
+		/// <summary>
 		/// Gets the properties.
 		/// </summary>
 		/// <value>

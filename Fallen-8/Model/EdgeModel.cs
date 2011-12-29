@@ -34,11 +34,6 @@ namespace Fallen8.Model
     {
         #region IEdgeModel Members
 
-        public long Id
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public IVertexModel TargetVertex
         {
             get { throw new NotImplementedException(); }
@@ -52,8 +47,22 @@ namespace Fallen8.Model
         #endregion
 
         #region IGraphElementModel Members
-
-        public IDictionary<long, IComparable> Properties
+		
+		public long Id {
+			get { throw new NotImplementedException (); }
+		}
+		
+		public DateTime CreationDate 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+  		public DateTime ModificationDate 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		public IDictionary<long, IComparable> Properties
         {
             get { throw new NotImplementedException(); }
         }
