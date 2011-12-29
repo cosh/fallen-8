@@ -55,6 +55,8 @@
     <Compile Include="Index\Point.cs" />
     <Compile Include="Index\Circle.cs" />
     <Compile Include="Index\Rectangle.cs" />
+    <Compile Include="Helper\VertexModelDefinition.cs" />
+    <Compile Include="Helper\EdgeModelDefinition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -73,5 +75,6 @@
   <ItemGroup>
     <Folder Include="Expression\" />
     <Folder Include="Index\" />
+    <Folder Include="Helper\" />
   </ItemGroup>
 </Project>

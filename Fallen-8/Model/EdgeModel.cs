@@ -67,7 +67,7 @@ namespace Fallen8.Model
             get { throw new NotImplementedException(); }
         }
 
-        public IDictionary<string, IComparable> SchemalessProperties
+        public IDictionary<string, IComparable> StringProperties
         {
             get { throw new NotImplementedException(); }
         }

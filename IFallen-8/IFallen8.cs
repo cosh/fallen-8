@@ -30,6 +30,7 @@ using System.Text;
 using Fallen8.Model;
 using Fallen8.API.Expression;
 using Fallen8.API.Index;
+using Fallen8.API.Helper;
 
 namespace Fallen8.API
 {
@@ -48,9 +49,9 @@ namespace Fallen8.API
 		
 		#region create
 		
-		Int64 CreateVertex();
+		Int64 CreateVertex(VertexModelDefinition vertexDefinition);
 		
-		Int64 CreateEdge();
+		Int64 CreateEdge(Int64 sourceVertexId, Int64 edgePropertyId, EdgeModelDefinition edgeDefinition);
 		
 		#endregion
 		
@@ -58,11 +59,11 @@ namespace Fallen8.API
 		
 		Boolean TryAddProperty(Int64 graphElementId, Int64 propertyId, IComparable property);
 
-		Boolean TryAddSchemalessProperty(Int64 graphElementId, String propertyName, Object schemalessProperty);
+		Boolean TryAddStringProperty(Int64 graphElementId, String propertyName, Object schemalessProperty);
 		
 		Boolean TryRemoveProperty(Int64 graphElementId, Int64 propertyId);
 		
-		Boolean TryRemoveSchemalessProperty(Int64 graphElementId, String propertyName);
+		Boolean TryRemoveStringProperty(Int64 graphElementId, String propertyName);
 		
 		#endregion
 		
@@ -74,9 +75,9 @@ namespace Fallen8.API
 		
 		#region search
 		
-		IEnumerable<IGraphElementModel> Search(out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+		Boolean Search(out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
 		
-		IEnumerable<IGraphElementModel> SearchSchemaless(out IEnumerable<IGraphElementModel> result, String propertyName, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+		Boolean Search(out IEnumerable<IGraphElementModel> result, String propertyName, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
 	
 		Boolean SearchInRange(out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable leftLimit, IComparable rightLimit,Boolean includeLeft = true, Boolean includeRight = true);
 		

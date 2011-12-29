@@ -1,5 +1,5 @@
-﻿// 
-// IGraphElementModel.cs
+// 
+// EdgeModelDefinition.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,55 +24,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Helper
 {
-	/// <summary>
-	/// Graph element model interface.
-	/// </summary>
-    public interface IGraphElementModel
-    {
-        /// <summary>
-        /// Gets the system wide unique identifier.
-        /// </summary>
-        /// <value>
-        /// The system wide unique identifier.
-        /// </value>
-        Int64 Id { get; }
+	public sealed class EdgeModelDefinition
+	{
+		public EdgeModelDefinition AddProperty (Int64 id, IComparable property)
+		{
+			throw new NotImplementedException ();
+		}
 		
-		/// <summary>
-		/// Gets the creation date.
-		/// </summary>
-		/// <value>
-		/// The creation date.
-		/// </value>
-		DateTime CreationDate { get; }
+		public EdgeModelDefinition AddStringProperty (String name, IComparable property)
+		{
+			throw new NotImplementedException ();
+		}
 		
-		/// <summary>
-		/// Gets the modification date.
-		/// </summary>
-		/// <value>
-		/// The modification date.
-		/// </value>
-		DateTime ModificationDate { get; }
-		
-		/// <summary>
-		/// Gets the properties.
-		/// </summary>
-		/// <value>
-		/// The properties.
-		/// </value>
-        IDictionary<Int64, IComparable> Properties { get; }
-        
-		/// <summary>
-		/// Gets the string properties.
-		/// </summary>
-		/// <value>
-		/// The string properties.
-		/// </value>
-		IDictionary<String, IComparable> StringProperties { get; }
-    }
+		public EdgeModelDefinition SetTargetVertex (Int64 targetVertexId)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }
