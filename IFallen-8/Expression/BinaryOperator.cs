@@ -1,5 +1,5 @@
-﻿// 
-// IGraphElementModel.cs
+// 
+// BinaryOperator.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,55 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Expression
 {
-	/// <summary>
-	/// Graph element model interface.
-	/// </summary>
-    public interface IGraphElementModel
-    {
-        /// <summary>
-        /// Gets the system wide unique identifier.
-        /// </summary>
-        /// <value>
-        /// The system wide unique identifier.
-        /// </value>
-        Int64 Id { get; }
-		
-		/// <summary>
-		/// Gets the creation date.
-		/// </summary>
-		/// <value>
-		/// The creation date.
-		/// </value>
-		DateTime CreationDate { get; }
-		
-		/// <summary>
-		/// Gets the modification date.
-		/// </summary>
-		/// <value>
-		/// The modification date.
-		/// </value>
-		DateTime ModificationDate { get; }
-		
-		/// <summary>
-		/// Gets the properties.
-		/// </summary>
-		/// <value>
-		/// The properties.
-		/// </value>
-        IDictionary<Int64, IComparable> Properties { get; }
-        
-		/// <summary>
-		/// Gets the schemaless properties.
-		/// </summary>
-		/// <value>
-		/// The schemaless properties.
-		/// </value>
-		IDictionary<String, IComparable> SchemalessProperties { get; }
-    }
+	public enum BinaryOperator
+	{
+		Equals,
+		Greater,
+		GreaterOrEquals,
+		Lower,
+		LowerOrEquals,
+		Not
+	}
 }
+

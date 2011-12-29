@@ -43,28 +43,72 @@ namespace Fallen8.Model
 		/// </value>
         IDictionary<Int64, IGraphElementModel> Graphelements { get; }
 		
+		#region vertices
+		
+		/// <summary>
+		/// Gets a vertex by its identifier.
+		/// </summary>
+		/// <returns>
+		/// The vertex.
+		/// </returns>
+		/// <param name='id'>
+		/// System wide unique identifier.
+		/// </param>
+		IVertexModel GetVertex (Int64 id);
+        
+		/// <summary>
+		/// Gets vertices by their identifier.
+		/// </summary>
+		/// <returns>
+		/// The vertices.
+		/// </returns>
+		/// <param name='ids'>
+		/// System wide unique identifiers.
+		/// </param>
+		IEnumerable<IVertexModel> GetVertices (IEnumerable<Int64> ids);
+		
 		/// <summary>
 		/// Gets the vertices.
 		/// </summary>
 		/// <returns>
 		/// The vertices.
 		/// </returns>
-        IEnumerable<IVertexModel> GetVertices();
+		IEnumerable<IVertexModel> GetVertices ();
+		
+		#endregion
+		
+		#region edges
+		
+		/// <summary>
+		/// Gets an edge by its identifier.
+		/// </summary>
+		/// <returns>
+		/// The edge.
+		/// </returns>
+		/// <param name='id'>
+		/// System wide unique identifier.
+		/// </param>
+		IEdgeModel GetEdge (Int64 id);
         
+		/// <summary>
+		/// Gets edges by their identifier.
+		/// </summary>
+		/// <returns>
+		/// The edges.
+		/// </returns>
+		/// <param name='ids'>
+		/// System wide unique identifiers.
+		/// </param>
+		IEnumerable<IEdgeModel> GetEdges (IEnumerable<Int64> ids);
+		
 		/// <summary>
 		/// Gets the edges.
 		/// </summary>
 		/// <returns>
 		/// The edges.
 		/// </returns>
-		IEnumerable<IEdgeModel> GetEdges();
-        
-		/// <summary>
-		/// Gets the graphs.
-		/// </summary>
-		/// <returns>
-		/// The graphs.
-		/// </returns>
-		IEnumerable<IGraphModel> GetGraphs();
+		IEnumerable<IEdgeModel> GetEdges ();
+		
+		#endregion
     }
 }

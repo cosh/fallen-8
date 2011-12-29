@@ -28,6 +28,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Fallen8.Model;
+using Fallen8.API.Expression;
+using Fallen8.API.Index;
 
 namespace Fallen8.API
 {
@@ -44,48 +46,44 @@ namespace Fallen8.API
 		/// </value>
         IGraphModel Graph { get; }
 		
-		/// <summary>
-		/// Gets a vertex by its identifier.
-		/// </summary>
-		/// <returns>
-		/// The vertex.
-		/// </returns>
-		/// <param name='id'>
-		/// System wide unique identifier.
-		/// </param>
-        IVertexModel GetVertex(Int64 id);
-        
-		/// <summary>
-		/// Gets vertices by their identifier.
-		/// </summary>
-		/// <returns>
-		/// The vertices.
-		/// </returns>
-		/// <param name='ids'>
-		/// System wide unique identifiers.
-		/// </param>
-		IEnumerable<IVertexModel> GetVertices(IEnumerable<Int64> ids);
+		#region create
 		
-		/// <summary>
-		/// Gets an edge by its identifier.
-		/// </summary>
-		/// <returns>
-		/// The edge.
-		/// </returns>
-		/// <param name='id'>
-		/// System wide unique identifier.
-		/// </param>
-        IEdgeModel GetEdge(Int64 id);
-        
-		/// <summary>
-		/// Gets edges by their identifier.
-		/// </summary>
-		/// <returns>
-		/// The edges.
-		/// </returns>
-		/// <param name='ids'>
-		/// System wide unique identifiers.
-		/// </param>
-		IEnumerable<IEdgeModel> GetEdges(IEnumerable<Int64> ids);
+		Int64 CreateVertex();
+		
+		Int64 CreateEdge();
+		
+		#endregion
+		
+		#region update
+		
+		Boolean TryAddProperty(Int64 graphElementId, Int64 propertyId, IComparable property);
+
+		Boolean TryAddSchemalessProperty(Int64 graphElementId, String propertyName, Object schemalessProperty);
+		
+		Boolean TryRemoveProperty(Int64 graphElementId, Int64 propertyId);
+		
+		Boolean TryRemoveSchemalessProperty(Int64 graphElementId, String propertyName);
+		
+		#endregion
+		
+		#region delete
+		
+		Boolean TryRemoveGraphElement(Int64 graphElementId);
+		
+		#endregion
+		
+		#region search
+		
+		IEnumerable<IGraphElementModel> Search(out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+		
+		IEnumerable<IGraphElementModel> SearchSchemaless(out IEnumerable<IGraphElementModel> result, String propertyName, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+	
+		Boolean SearchInRange(out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable leftLimit, IComparable rightLimit,Boolean includeLeft = true, Boolean includeRight = true);
+		
+		Boolean SearchFulltext(out FulltextSearchResult result, Int64 indexId, String searchQuery);
+		
+		Boolean SearchGeo(out IEnumerable<IGraphElementModel> result, Int64 indexId, IGeometry geometry, Double? distance);
+		
+		#endregion
     }
 }
