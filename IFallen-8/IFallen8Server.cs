@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Fallen8.API.Service;
+using Fallen8.API.Plugin;
 
 namespace Fallen8.API
 {
@@ -48,5 +49,13 @@ namespace Fallen8.API
 		/// The services.
 		/// </value>
         IDictionary<String, IFallen8ServiceFactory> Services { get; }
+		
+		/// <summary>
+		/// Gets the available service plugins.
+		/// </summary>
+		/// <returns>
+		/// The available service plugins.
+		/// </returns>
+		IEnumerable<PluginDescription> GetAvailableServicePlugins ();
     }
 }

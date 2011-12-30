@@ -57,6 +57,11 @@
     <Compile Include="Index\Rectangle.cs" />
     <Compile Include="Helper\VertexModelDefinition.cs" />
     <Compile Include="Helper\EdgeModelDefinition.cs" />
+    <Compile Include="IFallen8Read.cs" />
+    <Compile Include="IFallen8Write.cs" />
+    <Compile Include="Index\IIndex.cs" />
+    <Compile Include="Index\IFallen8IndexFactory.cs" />
+    <Compile Include="Plugin\PluginDescription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -76,5 +81,6 @@
     <Folder Include="Expression\" />
     <Folder Include="Index\" />
     <Folder Include="Helper\" />
+    <Folder Include="Plugin\" />
   </ItemGroup>
 </Project>

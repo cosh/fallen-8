@@ -1,5 +1,5 @@
-﻿// 
-// IFallen8.cs
+// 
+// IIndex.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,35 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Fallen8.Model;
-using Fallen8.API.Expression;
-using Fallen8.API.Index;
-using Fallen8.API.Helper;
 
-namespace Fallen8.API
+namespace Fallen8.API.Index
 {
 	/// <summary>
-	/// Fallen-8 interface.
+	/// The Fallen8 index interface.
 	/// </summary>
-    public interface IFallen8 : IFallen8Read, IFallen8Write
-    {
-		/// <summary>
-		/// Gets the graph.
-		/// </summary>
-		/// <value>
-		/// The graph.
-		/// </value>
-        IGraphModel Graph { get; }
-		
-		/// <summary>
-		/// Gets the index provider.
-		/// </summary>
-		/// <value>
-		/// The index provider.
-		/// </value>
-		IFallen8IndexFactory IndexProvider { get; }
-    }
+	public interface IIndex
+	{
+	}
 }
+

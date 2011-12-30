@@ -1,5 +1,5 @@
-﻿// 
-// IFallen8ServiceFactory.cs
+// 
+// IFallen8IndexFactory.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -25,45 +25,73 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Fallen8.API.Helper;
 using Fallen8.API.Plugin;
 
-namespace Fallen8.API.Service
+namespace Fallen8.API.Index
 {
 	/// <summary>
-	/// Fallen-8 service factory interface.
+	/// Index factory.
 	/// </summary>
-    public interface IFallen8ServiceFactory
-    {
+	public interface IFallen8IndexFactory
+	{
 		/// <summary>
-		/// Gets the description.
+		/// Gets the indices.
 		/// </summary>
 		/// <value>
-		/// The description.
+		/// The indices.
 		/// </value>
-		PluginDescription Description { get; }
+		IDictionary<Int64, IIndex> Indices { get; }
 		
 		/// <summary>
-		/// Gets the running services.
-		/// </summary>
-		/// <value>
-		/// The running services.
-		/// </value>
-        IEnumerable<IFallen8ServiceInfo> RunningServices { get; }
-		
-		/// <summary>
-		/// Tries to start a service.
+		/// Gets the available index plugins.
 		/// </summary>
 		/// <returns>
-		/// True for success.
+		/// The available index plugins.
 		/// </returns>
-		/// <param name='info'>
-		/// The information to the launched service.
+		IEnumerable<PluginDescription> GetAvailableIndexPlugins();
+		
+		/// <summary>
+		/// Tries to create an index.
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if the index was created; otherwise, <c>false</c>.
+		/// </returns>
+		/// <param name='index'>
+		/// The created index.
+		/// </param>
+		/// <param name='indexType'>
+		/// Index type.
 		/// </param>
 		/// <param name='parameter'>
-		/// The parameters of this service.
+		/// Parameter for the index.
 		/// </param>
-        bool TryStart(out IFallen8ServiceInfo info, IDictionary<String, Object> parameter);
-    }
+		Boolean TryCreateIndex(out IIndex index, String indexType, IDictionary<String, Object> parameter);
+		
+		/// <summary>
+		/// Tries to delete the index.
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if the index was deleted; otherwise, <c>false</c>.
+		/// </returns>
+		/// <param name='indexId'>
+		/// Index identifier.
+		/// </param>
+		Boolean TryDeleteIndex(Int64 indexId);
+		
+		/// <summary>
+		/// Tries the index of the get.
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if the index was found; otherwise, <c>false</c>.
+		/// </returns>
+		/// <param name='index'>
+		/// Index.
+		/// </param>
+		/// <param name='indexId'>
+		/// Index identifier.
+		/// </param>
+		Boolean TryGetIndex(out IIndex index, Int64 indexId);
+	}
 }
+

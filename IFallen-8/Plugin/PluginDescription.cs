@@ -1,5 +1,5 @@
-﻿// 
-// IFallen8.cs
+// 
+// PluginDescription.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,35 +24,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Fallen8.Model;
-using Fallen8.API.Expression;
-using Fallen8.API.Index;
-using Fallen8.API.Helper;
 
-namespace Fallen8.API
+namespace Fallen8.API.Plugin
 {
 	/// <summary>
-	/// Fallen-8 interface.
+	/// Plugin description.
 	/// </summary>
-    public interface IFallen8 : IFallen8Read, IFallen8Write
-    {
+	public class PluginDescription
+	{
 		/// <summary>
-		/// Gets the graph.
+		/// Gets the name.
 		/// </summary>
 		/// <value>
-		/// The graph.
+		/// The name.
 		/// </value>
-        IGraphModel Graph { get; }
+		public String Name { get; private set; }
+        
+		/// <summary>
+		/// Gets the description.
+		/// </summary>
+		/// <value>
+		/// The description.
+		/// </value>
+		public String Description { get; private set; }
+        
+		/// <summary>
+		/// Gets the manufacturer.
+		/// </summary>
+		/// <value>
+		/// The manufacturer.
+		/// </value>
+		public String Manufacturer { get; private set; }
 		
-		/// <summary>
-		/// Gets the index provider.
-		/// </summary>
-		/// <value>
-		/// The index provider.
-		/// </value>
-		IFallen8IndexFactory IndexProvider { get; }
-    }
+	}
 }
+
