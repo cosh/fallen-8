@@ -49,12 +49,6 @@
     <Compile Include="Service\IFallen8ServiceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Expression\BinaryOperator.cs" />
-    <Compile Include="Index\FulltextSearchResultElement.cs" />
-    <Compile Include="Index\FulltextSearchResult.cs" />
-    <Compile Include="Index\IGeometry.cs" />
-    <Compile Include="Index\Point.cs" />
-    <Compile Include="Index\Circle.cs" />
-    <Compile Include="Index\Rectangle.cs" />
     <Compile Include="Helper\VertexModelDefinition.cs" />
     <Compile Include="Helper\EdgeModelDefinition.cs" />
     <Compile Include="IFallen8Read.cs" />
@@ -63,9 +57,15 @@
     <Compile Include="Index\IFallen8IndexFactory.cs" />
     <Compile Include="Plugin\PluginDescription.cs" />
     <Compile Include="Plugin\IFallen8Plugin.cs" />
-    <Compile Include="Index\ISpatialIndex.cs" />
-    <Compile Include="Index\IFulltextIndex.cs" />
-    <Compile Include="Index\IRangeIndex.cs" />
+    <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
+    <Compile Include="Index\Fulltext\FulltextSearchResultElement.cs" />
+    <Compile Include="Index\Fulltext\IFulltextIndex.cs" />
+    <Compile Include="Index\Range\IRangeIndex.cs" />
+    <Compile Include="Index\Spatial\Circle.cs" />
+    <Compile Include="Index\Spatial\IGeometry.cs" />
+    <Compile Include="Index\Spatial\ISpatialIndex.cs" />
+    <Compile Include="Index\Spatial\Point.cs" />
+    <Compile Include="Index\Spatial\Rectangle.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -86,5 +86,8 @@
     <Folder Include="Index\" />
     <Folder Include="Helper\" />
     <Folder Include="Plugin\" />
+    <Folder Include="Index\Spatial\" />
+    <Folder Include="Index\Range\" />
+    <Folder Include="Index\Fulltext\" />
   </ItemGroup>
 </Project>
