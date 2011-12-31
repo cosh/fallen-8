@@ -87,8 +87,8 @@ namespace Fallen8.API
 		/// <param name='result'>
 		/// The resulting graph elements.
 		/// </param>
-		/// <param name='propertyId'>
-		/// Property identifier.
+		/// <param name='indexId'>
+		/// Index identifier.
 		/// </param>
 		/// <param name='leftLimit'>
 		/// Left limit.
@@ -102,7 +102,7 @@ namespace Fallen8.API
 		/// <param name='includeRight'>
 		/// Include right.
 		/// </param>
-		Boolean SearchInRange (out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable leftLimit, IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
+		Boolean SearchInRange (out IEnumerable<IGraphElementModel> result, Int64 indexId, IComparable leftLimit, IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
 		
 		/// <summary>
 		/// Fulltext search for graph elements by a specified query string using an index.
@@ -136,10 +136,7 @@ namespace Fallen8.API
 		/// <param name='geometry'>
 		/// Geometry.
 		/// </param>
-		/// <param name='distance'>
-		/// Distance.
-		/// </param>
-		Boolean SearchSpatial (out IEnumerable<IGraphElementModel> result, Int64 indexId, IGeometry geometry, Double? distance);
+		Boolean SearchSpatial (out IEnumerable<IGraphElementModel> result, Int64 indexId, IGeometry geometry);
 		
 		#endregion
 	}

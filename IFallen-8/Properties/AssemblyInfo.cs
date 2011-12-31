@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IFallen-8")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("High performance in memory graph database interface")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Henning Rauch")]
 [assembly: AssemblyProduct("Fallen-8")]

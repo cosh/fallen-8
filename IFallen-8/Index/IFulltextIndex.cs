@@ -1,5 +1,5 @@
 // 
-// PluginDescription.cs
+// IFulltextIndex.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -25,53 +25,26 @@
 // THE SOFTWARE.
 using System;
 
-namespace Fallen8.API.Plugin
+namespace Fallen8.API.Index
 {
 	/// <summary>
-	/// Plugin description.
+	/// Fallen8 fulltext index interface.
 	/// </summary>
-	public class PluginDescription
+	public interface IFulltextIndex
 	{
 		/// <summary>
-		/// Gets the name.
+		/// Tries to query the fulltext index.
 		/// </summary>
-		/// <value>
-		/// The name.
-		/// </value>
-		public String PluginName { get; private set; }
-		
-		/// <summary>
-		/// Gets or sets the type of the plugin.
-		/// </summary>
-		/// <value>
-		/// The type of the plugin.
-		/// </value>
-		public Type PluginType { get; private set; }
-        
-		/// <summary>
-		/// Gets or sets the plugin category.
-		/// </summary>
-		/// <value>
-		/// The plugin category.
-		/// </value>
-		public Type PluginCategory { get; private set; }
-		
-		/// <summary>
-		/// Gets the description.
-		/// </summary>
-		/// <value>
-		/// The description.
-		/// </value>
-		public String Description { get; private set; }
-        
-		/// <summary>
-		/// Gets the manufacturer.
-		/// </summary>
-		/// <value>
-		/// The manufacturer.
-		/// </value>
-		public String Manufacturer { get; private set; }
-		
+		/// <returns>
+		/// <c>true</c> if something was found; otherwise, <c>false</c>.
+		/// </returns>
+		/// <param name='result'>
+		/// Result.
+		/// </param>
+		/// <param name='query'>
+		/// Query.
+		/// </param>
+		Boolean TryQuery (out FulltextSearchResult result, string query);
 	}
 }
 

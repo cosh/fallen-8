@@ -37,20 +37,12 @@ namespace Fallen8.API.Service
     public interface IFallen8ServiceFactory
     {
 		/// <summary>
-		/// Gets the description.
-		/// </summary>
-		/// <value>
-		/// The description.
-		/// </value>
-		PluginDescription Description { get; }
-		
-		/// <summary>
 		/// Gets the running services.
 		/// </summary>
 		/// <value>
 		/// The running services.
 		/// </value>
-        IEnumerable<IFallen8ServiceInfo> RunningServices { get; }
+        IEnumerable<IFallen8Service> RunningServices { get; }
 		
 		/// <summary>
 		/// Tries to start a service.
@@ -58,12 +50,12 @@ namespace Fallen8.API.Service
 		/// <returns>
 		/// True for success.
 		/// </returns>
-		/// <param name='info'>
-		/// The information to the launched service.
+		/// <param name='service'>
+		/// The launched service.
 		/// </param>
 		/// <param name='parameter'>
 		/// The parameters of this service.
 		/// </param>
-        bool TryStart(out IFallen8ServiceInfo info, IDictionary<String, Object> parameter);
+        bool TryStart(out IFallen8Service service, IDictionary<String, Object> parameter);
     }
 }

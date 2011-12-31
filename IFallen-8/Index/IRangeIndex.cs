@@ -1,5 +1,5 @@
 // 
-// IIndex.cs
+// IRangeIndex.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,73 +24,72 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using Fallen8.API.Plugin;
 using Fallen8.Model;
 using System.Collections.Generic;
 
 namespace Fallen8.API.Index
 {
 	/// <summary>
-	/// The Fallen8 index interface.
+	/// Fallen8 range index.
 	/// </summary>
-	public interface IIndex : IFallen8Plugin, IDictionary<IComparable, HashSet<IGraphElementModel>>
+	public interface IRangeIndex
 	{
 		/// <summary>
-		/// Count of the keys.
+		/// Searches for graph elements lower than the the key.
 		/// </summary>
 		/// <returns>
-		/// The key count.
+		/// <c>true</c> if something was found; otherwise, <c>false</c>.
 		/// </returns>
-		Int64 CountOfKeys ();
-		
-		/// <summary>
-		/// Count of the values.
-		/// </summary>
-		/// <returns>
-		/// The value count.
-		/// </returns>
-		Int64 CountOfValues ();
-		
-		/// <summary>
-		/// Clears this instance.
-		/// </summary>
-		void Wipe();
-		
-		/// <summary>
-		/// Tries to add or update.
-		/// </summary>
-		// <returns>
-		/// <c>true</c> if something was added; otherwise, <c>false</c>.
-		/// </returns>
+		/// <param name='result'>
+		/// Result.
+		/// </param>
 		/// <param name='key'>
 		/// Key.
 		/// </param>
-		/// <param name='graphElement'>
-		/// Graph element.
+		/// <param name='includeKey'>
+		/// Include the key.
 		/// </param>
-		Boolean TryAddOrUpdate (IComparable key, IGraphElementModel graphElement);
+		Boolean LowerThan (out IEnumerable<IGraphElementModel> result, IComparable key, bool includeKey = true);
 		
 		/// <summary>
-		/// Tries to remove a key.
+		/// Searches for graph elements greater than the the key.
 		/// </summary>
-		// <returns>
-		/// <c>true</c> if something was removed; otherwise, <c>false</c>.
+		/// <returns>
+		/// <c>true</c> if something was found; otherwise, <c>false</c>.
 		/// </returns>
+		/// <param name='result'>
+		/// Result.
+		/// </param>
 		/// <param name='key'>
 		/// Key.
 		/// </param>
-		Boolean TryRemoveKey (IComparable key);
+		/// <param name='includeKey'>
+		/// Include the key.
+		/// </param>
+		Boolean GreaterThan (out IEnumerable<IGraphElementModel> result, IComparable key, bool includeKey = true);
 		
 		/// <summary>
-		/// Tries to remove a value.
+		/// Searches for graph elements between a specified range
 		/// </summary>
-		// <returns>
-		/// <c>true</c> if something was removed; otherwise, <c>false</c>.
+		/// <returns>
+		/// <c>true</c> if something was found; otherwise, <c>false</c>.
 		/// </returns>
-		/// <param name='graphElement'>
-		/// Graph element.
+		/// <param name='result'>
+		/// Result.
 		/// </param>
-		Boolean TryRemoveValue (IComparable graphElement);
+		/// <param name='leftLimit'>
+		/// Left limit.
+		/// </param>
+		/// <param name='rightLimit'>
+		/// Right limit.
+		/// </param>
+		/// <param name='includeleftLimit'>
+		/// Include the left limit.
+		/// </param>
+		/// <param name='includerightLimit'>
+		/// Include the right limit.
+		/// </param>
+		Boolean Between (out IEnumerable<IGraphElementModel> result, IComparable leftLimit, IComparable rightLimit, bool includeleftLimit = true, bool includerightLimit = true);
 	}
 }
 

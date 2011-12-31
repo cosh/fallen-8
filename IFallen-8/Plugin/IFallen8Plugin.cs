@@ -1,5 +1,5 @@
 // 
-// PluginDescription.cs
+// IFallen8Plugin.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,54 +24,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Plugin
 {
-	/// <summary>
-	/// Plugin description.
-	/// </summary>
-	public class PluginDescription
+	public interface IFallen8Plugin
 	{
-		/// <summary>
-		/// Gets the name.
-		/// </summary>
-		/// <value>
-		/// The name.
-		/// </value>
-		public String PluginName { get; private set; }
-		
-		/// <summary>
-		/// Gets or sets the type of the plugin.
-		/// </summary>
-		/// <value>
-		/// The type of the plugin.
-		/// </value>
-		public Type PluginType { get; private set; }
-        
-		/// <summary>
-		/// Gets or sets the plugin category.
-		/// </summary>
-		/// <value>
-		/// The plugin category.
-		/// </value>
-		public Type PluginCategory { get; private set; }
-		
 		/// <summary>
 		/// Gets the description.
 		/// </summary>
 		/// <value>
 		/// The description.
 		/// </value>
-		public String Description { get; private set; }
-        
-		/// <summary>
-		/// Gets the manufacturer.
-		/// </summary>
-		/// <value>
-		/// The manufacturer.
-		/// </value>
-		public String Manufacturer { get; private set; }
+		PluginDescription Description { get; }
 		
+		/// <summary>
+		/// Tries to inititialize the plugin.
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if the plugin was initialize; otherwise, <c>false</c>.
+		/// </returns>
+		/// <param name='plugin'>
+		/// Plugin.
+		/// </param>
+		/// <param name='parameter'>
+		/// Parameter.
+		/// </param>
+		Boolean TryInit(out IFallen8Plugin plugin, IDictionary<String, Object> parameter);
 	}
 }
 

@@ -27,13 +27,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Fallen8.API.Plugin;
 
 namespace Fallen8.API.Service
 {
 	/// <summary>
-	/// Fallen-8 service information interface.
+	/// Fallen-8 service interface.
 	/// </summary>
-    public interface IFallen8ServiceInfo
+    public interface IFallen8Service : IFallen8Plugin
     {
 		/// <summary>
 		/// Gets the start time.
