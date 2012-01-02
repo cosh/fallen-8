@@ -30,62 +30,8 @@ using System.Text;
 
 namespace Fallen8.Model
 {
-    public sealed class EdgeModel : IEdgeModel
+    public sealed class EdgeModel
     {
-        #region IEdgeModel Members
-
-        public IVertexModel TargetVertex
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public IEdgePropertyModel SourceEdgeProperty
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        #endregion
-
-        #region IGraphElementModel Members
-		
-		public long Id {
-			get { throw new NotImplementedException (); }
-		}
-		
-		public DateTime CreationDate 
-		{
-			get { throw new NotImplementedException (); }
-		}
-		
-  		public DateTime ModificationDate 
-		{
-			get { throw new NotImplementedException (); }
-		}
-		
-		public IDictionary<long, IComparable> Properties
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public IDictionary<string, IComparable> StringProperties
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        #endregion
-
-        #region IEquatable<IEdgeModel> Members
-
-        public bool Equals(IEdgeModel other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int GetHashCode()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
+     
     }
 }
