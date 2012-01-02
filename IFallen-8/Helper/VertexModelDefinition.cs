@@ -77,9 +77,24 @@ namespace Fallen8.API.Helper
 		/// </param>
 		/// <param name='edgeDefinition'>
 		/// Edge definition.
-		VertexModelDefinition AddEdge (Int64 id, EdgeModelDefinition edgeDefinition)
+        /// </param>
+		public VertexModelDefinition AddEdge (Int64 id, EdgeModelDefinition edgeDefinition)
 		{
 			throw new NotImplementedException ();
 		}
+
+        /// <summary>
+        /// Sets the creation date.
+        /// </summary>
+        /// <returns>
+        /// The vertex model definition.
+        /// </returns>
+        /// <param name='name'>
+        /// Creation date.
+        /// </param>
+        public VertexModelDefinition SetCreationDate(DateTime creationDate)
+        {
+            throw new NotImplementedException();
+        }
 	}
 }

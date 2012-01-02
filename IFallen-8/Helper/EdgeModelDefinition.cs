@@ -32,6 +32,15 @@ namespace Fallen8.API.Helper
 	/// </summary>
 	public sealed class EdgeModelDefinition
 	{
+        /// <summary>
+        /// Creates anew edge model definition
+        /// </summary>
+        /// <param name="targetVertex">The target vertex</param>
+        public EdgeModelDefinition(Int64 targetVertex)
+        {
+            throw new NotImplementedException();
+        }
+
 		/// <summary>
 		/// Adds a property.
 		/// </summary>

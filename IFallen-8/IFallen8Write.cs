@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using Fallen8.API.Helper;
+using Fallen8.Model;
 
 namespace Fallen8.API
 {
@@ -40,18 +41,18 @@ namespace Fallen8.API
 		/// Creates a vertex.
 		/// </summary>
 		/// <returns>
-		/// The vertex identifier.
+		/// The vertex model.
 		/// </returns>
 		/// <param name='vertexDefinition'>
 		/// Vertex definition.
 		/// </param>
-		Int64 CreateVertex (VertexModelDefinition vertexDefinition);
+		IVertexModel CreateVertex (VertexModelDefinition vertexDefinition);
 		
 		/// <summary>
 		/// Creates an edge.
 		/// </summary>
 		/// <returns>
-		/// The edge identifier.
+		/// The edge model.
 		/// </returns>
 		/// <param name='sourceVertexId'>
 		/// Source vertex identifier.
@@ -62,7 +63,7 @@ namespace Fallen8.API
 		/// <param name='edgeDefinition'>
 		/// Edge definition.
 		/// </param>
-		Int64 CreateEdge (Int64 sourceVertexId, Int64 edgePropertyId, EdgeModelDefinition edgeDefinition);
+		IEdgeModel CreateEdge (Int64 sourceVertexId, Int64 edgePropertyId, EdgeModelDefinition edgeDefinition);
 		
 		#endregion
 		
