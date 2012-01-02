@@ -67,9 +67,15 @@ namespace Fallen8.API
         /// <param name='service'>
         /// The launched service.
         /// </param>
+        /// <param name='servicePluginName'>
+        /// The name of this service.
+        /// </param>
+        /// <param name='connector'>
+        /// The the connection to fallen-8.
+        /// </param>
         /// <param name='parameter'>
         /// The parameters of this service.
         /// </param>
-        bool TryStartService(out IFallen8Service service, IFallen8Connector connector, IDictionary<String, Object> parameter);
+        bool TryStartService(out IFallen8Service service, String servicePluginName, IFallen8Connector connector, IDictionary<String, Object> parameter);
     }
 }
