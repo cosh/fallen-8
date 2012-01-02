@@ -48,7 +48,7 @@ namespace Fallen8.API
 		/// <value>
 		/// The services.
 		/// </value>
-        IDictionary<String, IFallen8ServiceFactory> Services { get; }
+        IEnumerable<IFallen8Service> Services { get; }
 		
 		/// <summary>
 		/// Gets the available service plugins.
@@ -57,5 +57,19 @@ namespace Fallen8.API
 		/// The available service plugins.
 		/// </returns>
 		IEnumerable<PluginDescription> GetAvailableServicePlugins ();
+
+        /// <summary>
+        /// Tries to start a service.
+        /// </summary>
+        /// <returns>
+        /// True for success.
+        /// </returns>
+        /// <param name='service'>
+        /// The launched service.
+        /// </param>
+        /// <param name='parameter'>
+        /// The parameters of this service.
+        /// </param>
+        bool TryStartService(out IFallen8Service service, IFallen8Connector connector, IDictionary<String, Object> parameter);
     }
 }
