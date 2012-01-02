@@ -41,16 +41,19 @@ namespace Fallen8.API.Plugin
 		/// <summary>
 		/// Tries to inititialize the plugin.
 		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the plugin was initialize; otherwise, <c>false</c>.
-		/// </returns>
 		/// <param name='plugin'>
 		/// Plugin.
 		/// </param>
+        /// <param name='fallen8Session'>
+        /// A fallen-8 session.
+        /// </param>
 		/// <param name='parameter'>
 		/// Parameter.
 		/// </param>
-		Boolean TryInit(out IFallen8Plugin plugin, IDictionary<String, Object> parameter);
+        /// <returns>
+        /// The initialized plugin
+        /// </returns>
+        IFallen8Plugin Initialize(IFallen8Session fallen8Session, IDictionary<String, Object> parameter);
 	}
 }
 

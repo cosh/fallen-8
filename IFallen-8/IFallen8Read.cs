@@ -59,26 +59,6 @@ namespace Fallen8.API
 		Boolean Search (out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
 		
 		/// <summary>
-		/// Search for graph elements by a specified propertyName, literal and binary operation.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if something was found; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='result'>
-		/// The resulting graph elements.
-		/// </param>
-		/// <param name='propertyName'>
-		/// Property name.
-		/// </param>
-		/// <param name='literal'>
-		/// Literal.
-		/// </param>
-		/// <param name='binOp'>
-		/// Binary operator.
-		/// </param>
-		Boolean Search (out IEnumerable<IGraphElementModel> result, String propertyName, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
-		
-		/// <summary>
 		/// Search for graph elements by a specified index identifiert, a literal and a binary operation
 		/// </summary>
 		/// <returns>

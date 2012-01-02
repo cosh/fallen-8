@@ -36,22 +36,19 @@ namespace Fallen8.Model
     public interface IVertexModel : IGraphElementModel, IEquatable<IVertexModel>
     {
 		/// <summary>
-		/// Gets the edges.
+		/// Gets the outgoing edges.
 		/// </summary>
 		/// <value>
-		/// The edges.
+		/// The outgoing edges.
 		/// </value>
-        IDictionary<Int64, IEdgePropertyModel> Edges { get; }
-        
-		/// <summary>
-		/// Gets the incoming edges.
-		/// </summary>
-		/// <returns>
-		/// The incoming edges.
-		/// </returns>
-		/// <param name='edgePropertyId'>
-		/// Edge property identifier.
-		/// </param>
-		IEnumerable<IEdgeModel> GetIncomingEdges(Int64 edgePropertyId);
+        IDictionary<Int64, IEdgePropertyModel> OutgoingEdges { get; }
+
+        /// <summary>
+        /// Gets the incoming edges.
+        /// </summary>
+        /// <value>
+        /// The incoming edges.
+        /// </value>
+        IDictionary<Int64, IEnumerable<IEdgeModel>> IncomingEdges { get; }
     }
 }

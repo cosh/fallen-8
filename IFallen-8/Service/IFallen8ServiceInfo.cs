@@ -1,5 +1,5 @@
 ﻿// 
-// IFallen8ServiceInfo.cs
+// IFallen8Service.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>

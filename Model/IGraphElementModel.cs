@@ -65,14 +65,6 @@ namespace Fallen8.Model
 		/// <value>
 		/// The properties.
 		/// </value>
-        IDictionary<Int64, IComparable> Properties { get; }
-        
-		/// <summary>
-		/// Gets the string properties.
-		/// </summary>
-		/// <value>
-		/// The string properties.
-		/// </value>
-		IDictionary<String, IComparable> StringProperties { get; }
+        IDictionary<Int64, Object> Properties { get; }
     }
 }

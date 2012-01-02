@@ -1,5 +1,5 @@
 ﻿// 
-// IFallen8Connector.cs
+// IFallen8Client.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -34,7 +34,7 @@ namespace Fallen8.API
 	/// <summary>
 	/// Fallen-8 connector interface.
 	/// </summary>
-    public interface IFallen8Connector
+    public interface IFallen8Client
     {
 		/// <summary>
 		/// Connect the to a Fallen-8 server using the specified token.
