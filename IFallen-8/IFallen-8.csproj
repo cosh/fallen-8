@@ -76,12 +76,6 @@
   </Target>
   -->
   <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{E0145191-CC23-42ED-945E-B343D49CAA8E}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Expression\" />
     <Folder Include="Index\" />
     <Folder Include="Helper\" />
@@ -89,5 +83,11 @@
     <Folder Include="Index\Spatial\" />
     <Folder Include="Index\Range\" />
     <Folder Include="Index\Fulltext\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{E0145191-CC23-42ED-945E-B343D49CAA8E}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
