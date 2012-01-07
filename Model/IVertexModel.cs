@@ -33,7 +33,7 @@ namespace Fallen8.Model
 	/// <summary>
 	/// Vertex model interface.
 	/// </summary>
-    public interface IVertexModel : IGraphElementModel, IEquatable<IVertexModel>
+    public interface IVertexModel : IGraphElementModel
     {
 		/// <summary>
 		/// Gets the outgoing edges.

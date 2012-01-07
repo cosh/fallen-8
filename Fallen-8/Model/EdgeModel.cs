@@ -26,12 +26,112 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Fallen8.Model
 {
-    public sealed class EdgeModel
+    public sealed class EdgeModel : AGraphElement, IEdgeModel
     {
+        #region Data
+        
+        private readonly IVertexModel _targetVertex;
+        private readonly IEdgePropertyModel _edgePropertyModel;
+        
+        #endregion
+        
+        #region IEdgeModel implementation
+        public IVertexModel TargetVertex {
+            get {
+                return _targetVertex;
+            }
+        }
+
+        public IEdgePropertyModel SourceEdgeProperty {
+            get {
+                return _edgePropertyModel;
+            }
+        }
+        #endregion
+
+        #region Equals Overrides
+
+        public override Boolean Equals (Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null) {
+                return false;
+            }
+
+            // If parameter cannot be cast to IEdgeModel return false.
+            var p = obj as EdgeModel;
+
+            return p != null && Equals (p);
+        }
+
+        public Boolean Equals (EdgeModel p)
+        {
+            // If parameter is null return false:
+            if ((object)p == null) {
+                return false;
+            }
+
+            return _targetVertex.Id == p.TargetVertex.Id
+                   && (_edgePropertyModel.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id)
+                   && (base.GraphElementEquals(base._properties, p.Properties));
+        }
+
+        public static Boolean operator == (EdgeModel a, EdgeModel b)
+        {
+            // If both are null, or both are same instance, return true.
+            if (ReferenceEquals (a, b)) {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (((object)a == null) || ((object)b == null)) {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return a.Equals (b);
+        }
+
+        public static Boolean operator != (EdgeModel a, EdgeModel b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode ()
+        {
+            return _targetVertex.GetHashCode () ^ _edgePropertyModel.SourceVertex.GetHashCode ();
+        }
+
+        #endregion
+
+        #region IGraphElementModel implementation
+        public long Id {
+            get {
+                return base._id;
+            }
+        }
+
+        public DateTime CreationDate {
+            get {
+                return base._creationDate;
+            }
+        }
+
+        public DateTime ModificationDate {
+            get {
+                return base._modificationDate;
+            }
+        }
+
+        public IDictionary<long, object> Properties {
+            get {
+                return base._properties;
+            }
+        }
+        #endregion
      
     }
 }

@@ -57,17 +57,6 @@ namespace Fallen8.Model
 		IVertexModel GetVertex (Int64 id);
         
 		/// <summary>
-		/// Gets vertices by their identifier.
-		/// </summary>
-		/// <returns>
-		/// The vertices.
-		/// </returns>
-		/// <param name='ids'>
-		/// System wide unique identifiers.
-		/// </param>
-		IEnumerable<IVertexModel> GetVertices (IEnumerable<Int64> ids);
-		
-		/// <summary>
 		/// Gets the vertices.
 		/// </summary>
 		/// <returns>
@@ -90,17 +79,6 @@ namespace Fallen8.Model
 		/// </param>
 		IEdgeModel GetEdge (Int64 id);
         
-		/// <summary>
-		/// Gets edges by their identifier.
-		/// </summary>
-		/// <returns>
-		/// The edges.
-		/// </returns>
-		/// <param name='ids'>
-		/// System wide unique identifiers.
-		/// </param>
-		IEnumerable<IEdgeModel> GetEdges (IEnumerable<Int64> ids);
-		
 		/// <summary>
 		/// Gets the edges.
 		/// </summary>

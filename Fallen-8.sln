@@ -49,6 +49,10 @@ Global
 		$6.MessageStyle = $7
 		$7.LineAlign = 0
 		$6.inheritsSet = Mono
+		$0.TextStylePolicy = $8
+		$8.inheritsSet = VisualStudio
+		$8.inheritsScope = text/plain
+		$8.scope = text/plain
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

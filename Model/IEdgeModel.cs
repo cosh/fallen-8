@@ -34,7 +34,7 @@ namespace Fallen8.Model
 	/// Edge model interface.
 	/// It contains the target vertex and the source edge.
 	/// </summary>
-    public interface IEdgeModel : IGraphElementModel, IEquatable<IEdgeModel>
+    public interface IEdgeModel : IGraphElementModel
     {
         /// <summary>
         /// Gets the target vertex.
