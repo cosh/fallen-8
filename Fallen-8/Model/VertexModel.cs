@@ -30,8 +30,107 @@ using System.Text;
 
 namespace Fallen8.Model
 {
-    public sealed class VertexModel
+    public sealed class VertexModel : AGraphElement, IVertexModel
     {
+        #region Data
+        
+        private IDictionary<long, IEdgePropertyModel> _outEdges;
+        private IDictionary<long, IEnumerable<IEdgeModel>> _inEdges;
+        
+        #endregion
+        
+        #region IVertexModel implementation
+        public IDictionary<long, IEdgePropertyModel> OutgoingEdges {
+            get {
+                return _outEdges;
+            }
+        }
+
+        public IDictionary<long, IEnumerable<IEdgeModel>> IncomingEdges {
+            get {
+                return _inEdges;
+            }
+        }
+        #endregion
+  
+        #region Equals Overrides
+
+        public override Boolean Equals (Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null) {
+                return false;
+            }
+
+            // If parameter cannot be cast to VertexModel return false.
+            var p = obj as VertexModel;
+
+            return p != null && Equals (p);
+        }
+
+        public Boolean Equals (VertexModel p)
+        {
+            // If parameter is null return false:
+            if ((object)p == null) {
+                return false;
+            }
+
+            return base._id == p.Id;
+        }
+
+        public static Boolean operator == (VertexModel a, VertexModel b)
+        {
+            // If both are null, or both are same instance, return true.
+            if (ReferenceEquals (a, b)) {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (((object)a == null) || ((object)b == null)) {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return a.Equals (b);
+        }
+
+        public static Boolean operator != (VertexModel a, VertexModel b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode ()
+        {
+            return base._id.GetHashCode ();
+        }
+        
+        #endregion
+        
+        #region IGraphElementModel implementation
+        public long Id {
+            get {
+                return base._id;
+            }
+        }
+
+        public DateTime CreationDate {
+            get {
+                return base._creationDate;
+            }
+        }
+
+        public DateTime ModificationDate {
+            get {
+                return base._modificationDate;
+            }
+        }
+
+        public IDictionary<long, object> Properties {
+            get {
+                return base._properties;
+            }
+        }
+        #endregion
         
     }
 }

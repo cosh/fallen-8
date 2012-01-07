@@ -38,6 +38,7 @@
     <Compile Include="Fallen8.cs" />
     <Compile Include="Model\GraphModel.cs" />
     <Compile Include="Model\AGraphElement.cs" />
+    <Compile Include="Model\EdgePropertyModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

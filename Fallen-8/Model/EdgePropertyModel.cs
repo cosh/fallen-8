@@ -1,10 +1,10 @@
-﻿// 
-// IEdgePropertyModel.cs
+// 
+// EdgePropertyModel.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2012 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace Fallen8.Model
 {
-	/// <summary>
-	/// Edge property model interface.
-	/// It contains the source vertex and serves as an enumerable of edge models
-	/// </summary>
-    public interface IEdgePropertyModel : IEnumerable<IEdgeModel>
+    public sealed class EdgePropertyModel : IEdgePropertyModel
     {
-		/// <summary>
-		/// Gets the source vertex.
-		/// </summary>
-		/// <value>
-		/// The source vertex.
-		/// </value>
-        IVertexModel SourceVertex { get; }
+        #region Data
         
-        /// <summary>
-        /// Trims the edges and makes them distinct.
-        /// </summary>
-        void TrimEdges();
+        private readonly IVertexModel _sourceVertex;
+        private List<IEdgeModel> _edges;
+        
+        #endregion
+        
+        #region IEdgePropertyModel implementation
+        public IVertexModel SourceVertex {
+            get {
+                return _sourceVertex;
+            }
+        }
+        
+        public void TrimEdges ()
+        {
+            _edges = _edges.Distinct ().ToList();    
+        }
+        
+        #endregion
+
+        #region IEnumerable[Fallen8.Model.IEdgeModel] implementation
+        public IEnumerator<IEdgeModel> GetEnumerator ()
+        {
+            return _edges.GetEnumerator();
+        }
+        #endregion
+
+        #region IEnumerable implementation
+        IEnumerator IEnumerable.GetEnumerator ()
+        {
+            return _edges.GetEnumerator();
+        }
+        #endregion
     }
 }
+
