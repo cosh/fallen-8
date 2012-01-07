@@ -39,11 +39,15 @@
     <Compile Include="Model\GraphModel.cs" />
     <Compile Include="Model\AGraphElement.cs" />
     <Compile Include="Model\EdgePropertyModel.cs" />
+    <Compile Include="Index\Fallen8IndexFactory.cs" />
+    <Compile Include="Plugin\Fallen8PluginFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="Model\" />
+    <Folder Include="Index\" />
+    <Folder Include="Plugin\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj">

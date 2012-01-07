@@ -41,7 +41,7 @@ namespace Fallen8.API.Index
 		/// <value>
 		/// The indices.
 		/// </value>
-		IDictionary<Int64, IIndex> Indices { get; }
+		IDictionary<String, IIndex> Indices { get; }
 		
 		/// <summary>
 		/// Gets the available index plugins.
@@ -60,13 +60,16 @@ namespace Fallen8.API.Index
 		/// <param name='index'>
 		/// The created index.
 		/// </param>
-		/// <param name='indexType'>
+        /// <param name='indexName'>
+        /// Index name.
+        /// </param> 
+		/// <param name='indexTypeName'>
 		/// Index type.
 		/// </param>
 		/// <param name='parameter'>
 		/// Parameter for the index.
 		/// </param>
-		Boolean TryCreateIndex(out IIndex index, String indexType, IDictionary<String, Object> parameter);
+		Boolean TryCreateIndex(out IIndex index, String indexName, String indexTypeName, IDictionary<String, Object> parameter);
 		
 		/// <summary>
 		/// Tries to delete the index.
@@ -74,10 +77,10 @@ namespace Fallen8.API.Index
 		/// <returns>
 		/// <c>true</c> if the index was deleted; otherwise, <c>false</c>.
 		/// </returns>
-		/// <param name='indexId'>
-		/// Index identifier.
+		/// <param name='indexName'>
+		/// Index name.
 		/// </param>
-		Boolean TryDeleteIndex(Int64 indexId);
+		Boolean TryDeleteIndex(String indexName);
 		
 		/// <summary>
 		/// Tries the index of the get.
@@ -88,10 +91,10 @@ namespace Fallen8.API.Index
 		/// <param name='index'>
 		/// Index.
 		/// </param>
-		/// <param name='indexId'>
-		/// Index identifier.
+		/// <param name='indexName'>
+		/// Index name.
 		/// </param>
-		Boolean TryGetIndex(out IIndex index, Int64 indexId);
+		Boolean TryGetIndex(out IIndex index, String indexName);
 	}
 }
 
