@@ -30,11 +30,21 @@ using System.Collections;
 
 namespace Fallen8.Model
 {
+    /// <summary>
+    /// Edge property model.
+    /// </summary>
     public sealed class EdgePropertyModel : IEdgePropertyModel
     {
         #region Data
         
+        /// <summary>
+        /// The source vertex.
+        /// </summary>
         private readonly IVertexModel _sourceVertex;
+        
+        /// <summary>
+        /// The edges.
+        /// </summary>
         private List<IEdgeModel> _edges;
         
         #endregion

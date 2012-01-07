@@ -30,11 +30,21 @@ using System.Text;
 
 namespace Fallen8.Model
 {
+    /// <summary>
+    /// Vertex model.
+    /// </summary>
     public sealed class VertexModel : AGraphElement, IVertexModel
     {
         #region Data
         
+        /// <summary>
+        /// The out edges.
+        /// </summary>
         private IDictionary<long, IEdgePropertyModel> _outEdges;
+        
+        /// <summary>
+        /// The in edges.
+        /// </summary>
         private IDictionary<long, IEnumerable<IEdgeModel>> _inEdges;
         
         #endregion

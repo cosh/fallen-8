@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace Fallen8.Model
 {
@@ -41,7 +42,7 @@ namespace Fallen8.Model
 		/// <value>
 		/// The graph elements.
 		/// </value>
-        IDictionary<Int64, IGraphElementModel> Graphelements { get; }
+        ConcurrentDictionary<Int64, IGraphElementModel> Graphelements { get; }
 		
 		#region vertices
 		

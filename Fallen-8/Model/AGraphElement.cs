@@ -28,14 +28,48 @@ using System.Collections.Generic;
 
 namespace Fallen8.Model
 {
+    /// <summary>
+    /// A graph element.
+    /// </summary>
     public abstract class AGraphElement
     {
+        #region
+        
+        /// <summary>
+        /// The identifier of this graph element.
+        /// </summary>
         protected readonly Int64 _id;
+        
+        /// <summary>
+        /// The creation date.
+        /// </summary>
         protected readonly DateTime _creationDate;
+        
+        /// <summary>
+        /// The modification date.
+        /// </summary>
         protected DateTime _modificationDate;
+        
+        /// <summary>
+        /// The properties.
+        /// </summary>
         protected IDictionary<long, object> _properties;
-
-        public Boolean GraphElementEquals (IDictionary<long, object> propertiesA, IDictionary<long, object> propertiesB)
+  
+        #endregion
+        
+        /// <summary>
+        /// Compares the properties of a graph element
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the properties are equal; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='propertiesA'>
+        /// Properties a.
+        /// </param>
+        /// <param name='propertiesB'>
+        /// Properties b.
+        /// </param>
+        public Boolean PropertiesEqual (IDictionary<long, object> propertiesA, IDictionary<long, object> propertiesB)
         {
             if (propertiesA == null && propertiesB == null) {
                 return true;

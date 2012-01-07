@@ -26,14 +26,21 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Fallen8.Model
 {
+    /// <summary>
+    /// Graph model.
+    /// </summary>
     public sealed class GraphModel : AGraphElement, IGraphModel
     {
         #region Data
         
-        private readonly IDictionary<long, IGraphElementModel> _graphElements;
+        /// <summary>
+        /// The graph elements.
+        /// </summary>
+        private readonly ConcurrentDictionary<long, IGraphElementModel> _graphElements;
         
         #endregion
         
@@ -59,7 +66,7 @@ namespace Fallen8.Model
             return _graphElements.Where (aGraphElementKV => aGraphElementKV.Value is IEdgeModel).Select (aEdgeKV => (IEdgeModel)aEdgeKV.Value);
         }
 
-        public IDictionary<long, IGraphElementModel> Graphelements {
+        public ConcurrentDictionary<long, IGraphElementModel> Graphelements {
             get {
                 return _graphElements;
             }
@@ -94,6 +101,15 @@ namespace Fallen8.Model
   
         #region private methods
         
+        /// <summary>
+        /// Gets an element.
+        /// </summary>
+        /// <returns>
+        /// The element or null if there is no such element.
+        /// </returns>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
         private IGraphElementModel GetElement (long id)
         {
             IGraphElementModel result;

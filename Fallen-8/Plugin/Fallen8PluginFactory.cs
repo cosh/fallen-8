@@ -94,6 +94,17 @@ namespace Fallen8.API.Plugin
             return descriptions.Count () > 0;
         }
         
+        #region private helper
+        
+        /// <summary>
+        /// Gets all types.
+        /// </summary>
+        /// <returns>
+        /// The all types.
+        /// </returns>
+        /// <typeparam name='T'>
+        /// The type of the plugin.
+        /// </typeparam>
         private static List<Type> GetAllTypes<T> ()
         {
             Assembly assembly;
@@ -139,24 +150,44 @@ namespace Fallen8.API.Plugin
             
         }
         
+        /// <summary>
+        /// Determines whether a type is interface of the specified type.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if this instance is interface of the specified type; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='type'>
+        /// Type.
+        /// </param>
+        /// <typeparam name='T'>
+        /// The interface type.
+        /// </typeparam>
         private static Boolean IsInterfaceOf<T> (Type type)
         {
             return typeof(T).IsAssignableFrom (type);
         }
         
-        private static IFallen8Plugin Activate (Type myCurrentPluginType)
+        /// <summary>
+        /// Activate the specified currentPluginType.
+        /// </summary>
+        /// <param name='currentPluginType'>
+        /// Current plugin type.
+        /// </param>
+        private static IFallen8Plugin Activate (Type currentPluginType)
         {
             Object instance;
                         
             try {
-                instance = Activator.CreateInstance (myCurrentPluginType);
+                instance = Activator.CreateInstance (currentPluginType);
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 return null;                   
             }
             
             return instance as IFallen8Plugin;
         }
+        
+        #endregion
     }
 }
 

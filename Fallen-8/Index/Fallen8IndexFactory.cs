@@ -31,9 +31,19 @@ using System.Threading;
 
 namespace Fallen8.API.Index
 {
+    /// <summary>
+    /// Fallen8 index factory.
+    /// </summary>
     public sealed class Fallen8IndexFactory : IFallen8IndexFactory
     {
+        #region Data
+        
+        /// <summary>
+        /// The created indices.
+        /// </summary>
         private readonly IDictionary<String, IIndex> _indices;
+        
+        #endregion
         
         #region IFallen8IndexFactory implementation
         public IEnumerable<PluginDescription> GetAvailableIndexPlugins ()

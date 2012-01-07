@@ -29,11 +29,21 @@ using System.Linq;
 
 namespace Fallen8.Model
 {
+    /// <summary>
+    /// Edge model.
+    /// </summary>
     public sealed class EdgeModel : AGraphElement, IEdgeModel
     {
         #region Data
         
+        /// <summary>
+        /// The target vertex.
+        /// </summary>
         private readonly IVertexModel _targetVertex;
+        
+        /// <summary>
+        /// The edge property model.
+        /// </summary>
         private readonly IEdgePropertyModel _edgePropertyModel;
         
         #endregion
@@ -76,7 +86,7 @@ namespace Fallen8.Model
 
             return _targetVertex.Id == p.TargetVertex.Id
                    && (_edgePropertyModel.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id)
-                   && (base.GraphElementEquals(base._properties, p.Properties));
+                   && (base.PropertiesEqual(base._properties, p.Properties));
         }
 
         public static Boolean operator == (EdgeModel a, EdgeModel b)

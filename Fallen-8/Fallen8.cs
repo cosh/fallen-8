@@ -32,10 +32,16 @@ using System.Collections.Generic;
 
 namespace Fallen8.API
 {
+    /// <summary>
+    /// Fallen8.
+    /// </summary>
 	public sealed class Fallen8 : IFallen8
 	{
         #region Data
         
+        /// <summary>
+        /// The model.
+        /// </summary>
         private readonly IGraphModel _model;
         
         #endregion
