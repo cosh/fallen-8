@@ -33,7 +33,7 @@ namespace Fallen8.API.Index
 	/// <summary>
 	/// The Fallen8 index interface.
 	/// </summary>
-	public interface IIndex : IFallen8Plugin, IDictionary<IComparable, HashSet<IGraphElementModel>>
+	public interface IIndex : IFallen8Plugin
 	{
 		/// <summary>
 		/// Count of the keys.
@@ -52,28 +52,20 @@ namespace Fallen8.API.Index
 		Int64 CountOfValues ();
 		
 		/// <summary>
-		/// Clears this instance.
-		/// </summary>
-		void Wipe();
-		
-		/// <summary>
 		/// Tries to add or update.
 		/// </summary>
-		// <returns>
-		/// <c>true</c> if something was added; otherwise, <c>false</c>.
-		/// </returns>
 		/// <param name='key'>
 		/// Key.
 		/// </param>
 		/// <param name='graphElement'>
 		/// Graph element.
 		/// </param>
-		Boolean TryAddOrUpdate (IComparable key, IGraphElementModel graphElement);
+		void AddOrUpdate (IComparable key, IGraphElementModel graphElement);
 		
 		/// <summary>
 		/// Tries to remove a key.
 		/// </summary>
-		// <returns>
+		/// <returns>
 		/// <c>true</c> if something was removed; otherwise, <c>false</c>.
 		/// </returns>
 		/// <param name='key'>
@@ -82,15 +74,47 @@ namespace Fallen8.API.Index
 		Boolean TryRemoveKey (IComparable key);
 		
 		/// <summary>
-		/// Tries to remove a value.
+		/// Remove a value.
 		/// </summary>
-		// <returns>
-		/// <c>true</c> if something was removed; otherwise, <c>false</c>.
-		/// </returns>
 		/// <param name='graphElement'>
 		/// Graph element.
 		/// </param>
-		Boolean TryRemoveValue (IComparable graphElement);
+		void RemoveValue (IGraphElementModel graphElement);
+        
+        /// <summary>
+        /// Wipe this instance.
+        /// </summary>
+        void Wipe();
+        
+        /// <summary>
+        /// Gets the keys.
+        /// </summary>
+        /// <returns>
+        /// The keys.
+        /// </returns>
+        IEnumerable<IComparable> GetKeys();
+        
+        /// <summary>
+        /// Gets the key values.
+        /// </summary>
+        /// <returns>
+        /// The key values.
+        /// </returns>
+        IEnumerable<KeyValuePair<IComparable, IEnumerable<IGraphElementModel>>> GetKeyValues();
+        
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// Result.
+        /// </param>
+        /// <param name='key'>
+        /// Key.
+        /// </param>
+        Boolean GetValue(out IEnumerable<IGraphElementModel> result, IComparable key);
 	}
 }
 

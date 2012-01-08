@@ -30,8 +30,39 @@ namespace Fallen8.API.Plugin
 	/// <summary>
 	/// Plugin description.
 	/// </summary>
-	public class PluginDescription
+	public sealed class PluginDescription
 	{
+        #region constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.API.Plugin.PluginDescription"/> class.
+        /// </summary>
+        /// <param name='name'>
+        /// Name.
+        /// </param>
+        /// <param name='type'>
+        /// Type.
+        /// </param>
+        /// <param name='category'>
+        /// Category.
+        /// </param>
+        /// <param name='description'>
+        /// Description.
+        /// </param>
+        /// <param name='manufacturer'>
+        /// Manufacturer.
+        /// </param>
+        public PluginDescription (String name, Type type, Type category, String description, String manufacturer)
+        {
+            PluginName = name;
+            PluginType = type;
+            PluginCategory = category;
+            Description = description;
+            Manufacturer = manufacturer;
+        }
+        
+        #endregion
+        
 		/// <summary>
 		/// Gets the name.
 		/// </summary>

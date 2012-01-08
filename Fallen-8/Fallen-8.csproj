@@ -41,6 +41,7 @@
     <Compile Include="Model\EdgePropertyModel.cs" />
     <Compile Include="Index\Fallen8IndexFactory.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
+    <Compile Include="Index\DictionaryIndex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
