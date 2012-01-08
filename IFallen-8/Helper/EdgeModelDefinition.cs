@@ -30,16 +30,45 @@ namespace Fallen8.API.Helper
 	/// <summary>
 	/// Edge model definition.
 	/// </summary>
-	public sealed class EdgeModelDefinition
+	public sealed class EdgeModelDefinition : AGraphElementDefinition
 	{
+        #region Data
+        
+        /// <summary>
+        /// Gets or sets the target vertex identifier.
+        /// </summary>
+        /// <value>
+        /// The target vertex identifier.
+        /// </value>
+        public Int64 TargetVertexId { get; private set; }
+        
+        #endregion
+        
+        #region constructor
+        
         /// <summary>
         /// Creates anew edge model definition
         /// </summary>
         /// <param name="targetVertex">The target vertex</param>
-        public EdgeModelDefinition(Int64 targetVertex)
+        public EdgeModelDefinition (Int64 targetVertex) : this(targetVertex, DateTime.Now)
         {
-            throw new NotImplementedException();
         }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.API.Helper.EdgeModelDefinition"/> class.
+        /// </summary>
+        /// <param name='targetVertex'>
+        /// Target vertex.
+        /// </param>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        public EdgeModelDefinition (Int64 targetVertex, DateTime creationDate) : base(creationDate)
+        {
+            TargetVertexId = targetVertex;    
+        }
+        
+        #endregion
 
 		/// <summary>
 		/// Adds a property.
@@ -53,27 +82,12 @@ namespace Fallen8.API.Helper
 		/// <param name='property'>
 		/// Property.
 		/// </param>
-		public EdgeModelDefinition AddProperty (Int64 id, IComparable property)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		/// <summary>
-		/// Adds a string property.
-		/// </summary>
-		/// <returns>
-		/// The edge model definition.
-		/// </returns>
-		/// <param name='name'>
-		/// Name.
-		/// </param>
-		/// <param name='property'>
-		/// Property.
-		/// </param>
-		public EdgeModelDefinition AddStringProperty (String name, IComparable property)
-		{
-			throw new NotImplementedException ();
-		}
+		public EdgeModelDefinition AddProperty (Int64 id, Object property)
+        {
+            base.AddPropertyInternal (id, property);
+            
+            return this;
+        }
 		
 		/// <summary>
 		/// Sets the target vertex.
@@ -85,8 +99,10 @@ namespace Fallen8.API.Helper
 		/// Target vertex identifier.
 		/// </param>
 		public EdgeModelDefinition SetTargetVertex (Int64 targetVertexId)
-		{
-			throw new NotImplementedException ();
-		}
+        {
+            TargetVertexId = targetVertexId;
+            
+            return this;
+        }
 	}
 }

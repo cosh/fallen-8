@@ -24,14 +24,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Helper
 {
 	/// <summary>
 	/// Vertex model definition.
 	/// </summary>
-	public sealed class VertexModelDefinition
+	public sealed class VertexModelDefinition : AGraphElementDefinition
 	{
+        #region Data
+        
+        /// <summary>
+        /// Gets or sets the edges.
+        /// </summary>
+        /// <value>
+        /// The edges.
+        /// </value>
+        public Dictionary<Int64, List<EdgeModelDefinition>> Edges { get; private set; }
+        
+        #endregion
+        
+        #region Constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.API.Helper.VertexModelDefinition"/> class.
+        /// </summary>
+        public VertexModelDefinition () : this (DateTime.Now)
+        {
+        }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.API.Helper.VertexModelDefinition"/> class.
+        /// </summary>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        public VertexModelDefinition (DateTime creationDate) : base(creationDate)
+        {
+        }
+        
+        #endregion
+        
 		/// <summary>
 		/// Adds a property.
 		/// </summary>
@@ -44,27 +78,12 @@ namespace Fallen8.API.Helper
 		/// <param name='property'>
 		/// Property.
 		/// </param>
-		public VertexModelDefinition AddProperty (Int64 id, IComparable property)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		/// <summary>
-		/// Adds a string property.
-		/// </summary>
-		/// <returns>
-		/// The vertex model definition.
-		/// </returns>
-		/// <param name='name'>
-		/// Name.
-		/// </param>
-		/// <param name='property'>
-		/// Property.
-		/// </param>
-		public VertexModelDefinition AddStringProperty (String name, IComparable property)
-		{
-			throw new NotImplementedException ();
-		}
+		public VertexModelDefinition AddProperty (Int64 id, Object property)
+        {
+            base.AddPropertyInternal (id, property);
+            
+            return this;
+        }
 		
 		/// <summary>
 		/// Adds an edge.
@@ -79,10 +98,21 @@ namespace Fallen8.API.Helper
 		/// Edge definition.
         /// </param>
 		public VertexModelDefinition AddEdge (Int64 id, EdgeModelDefinition edgeDefinition)
-		{
-			throw new NotImplementedException ();
-		}
-
+        {
+            if (Edges == null) {
+                Edges = new Dictionary<long, List<EdgeModelDefinition>> ();
+            }
+            
+            List<EdgeModelDefinition> edges;
+            if (Edges.TryGetValue (id, out edges)) {
+                edges.Add (edgeDefinition);
+            } else {
+                Edges.Add (id, new List<EdgeModelDefinition> { edgeDefinition });
+            }
+            
+            return this;
+        }
+        
         /// <summary>
         /// Sets the creation date.
         /// </summary>
@@ -92,9 +122,11 @@ namespace Fallen8.API.Helper
         /// <param name='name'>
         /// Creation date.
         /// </param>
-        public VertexModelDefinition SetCreationDate(DateTime creationDate)
+        public VertexModelDefinition SetCreationDate (DateTime creationDate)
         {
-            throw new NotImplementedException();
+            CreationDate = creationDate;
+            
+            return this;
         }
 	}
 }

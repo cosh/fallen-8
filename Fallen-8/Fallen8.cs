@@ -29,6 +29,7 @@ using Fallen8.API.Index;
 using Fallen8.API.Helper;
 using Fallen8.API.Expression;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Fallen8.API
 {
@@ -42,7 +43,17 @@ namespace Fallen8.API
         /// <summary>
         /// The model.
         /// </summary>
-        private readonly IGraphModel _model;
+        private readonly GraphModel _model;
+        
+        /// <summary>
+        /// The index factory.
+        /// </summary>
+        private readonly Fallen8IndexFactory _indexFactory;
+        
+        /// <summary>
+        /// The current identifier.
+        /// </summary>
+        private Int64 _currentId;
         
         #endregion
         
@@ -55,7 +66,7 @@ namespace Fallen8.API
 
         public IFallen8IndexFactory IndexProvider {
             get {
-                throw new NotImplementedException ();
+                return _indexFactory;
             }
         }
         #endregion
@@ -63,7 +74,11 @@ namespace Fallen8.API
         #region IFallen8Write implementation
         public IVertexModel CreateVertex (VertexModelDefinition vertexDefinition)
         {
-            throw new NotImplementedException ();
+            VertexModel newVertex = null;
+            
+            _model.Graphelements.GetOrAdd (Interlocked.Increment (ref _currentId), newVertex);
+            
+            return newVertex;
         }
 
         public IEdgeModel CreateEdge (long sourceVertexId, long edgePropertyId, EdgeModelDefinition edgeDefinition)
