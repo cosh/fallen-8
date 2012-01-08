@@ -74,9 +74,9 @@ namespace Fallen8.API
         #region IFallen8Write implementation
         public IVertexModel CreateVertex (VertexModelDefinition vertexDefinition)
         {
-            VertexModel newVertex = null;
+            VertexModel newVertex = new VertexModel (Interlocked.Increment (ref _currentId), vertexDefinition.CreationDate);
             
-            _model.Graphelements.GetOrAdd (Interlocked.Increment (ref _currentId), newVertex);
+            _model.Graphelements.GetOrAdd (newVertex.Id, newVertex);
             
             return newVertex;
         }

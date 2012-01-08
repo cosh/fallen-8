@@ -49,6 +49,23 @@ namespace Fallen8.Model
         
         #endregion
         
+        #region Constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.Model.VertexModel"/> class.
+        /// </summary>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        public VertexModel (Int64 id, DateTime creationDate) : base (id, creationDate)
+        {
+        }
+        
+        #endregion
+        
         #region IVertexModel implementation
         public IDictionary<long, IEdgePropertyModel> OutgoingEdges {
             get {
@@ -141,6 +158,5 @@ namespace Fallen8.Model
             }
         }
         #endregion
-        
     }
 }

@@ -28,6 +28,9 @@ using System.Collections.Generic;
 
 namespace Fallen8.API.Helper
 {
+    /// <summary>
+    /// An abstract graph element definition.
+    /// </summary>
     public abstract class AGraphElementDefinition
     {
         #region Data

@@ -39,12 +39,37 @@ namespace Fallen8.Model
         /// <summary>
         /// The target vertex.
         /// </summary>
-        private readonly IVertexModel _targetVertex;
+        private readonly VertexModel _targetVertex;
         
         /// <summary>
         /// The edge property model.
         /// </summary>
-        private readonly IEdgePropertyModel _edgePropertyModel;
+        private readonly EdgePropertyModel _edgePropertyModel;
+        
+        #endregion
+        
+        #region Constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.Model.EdgeModel"/> class.
+        /// </summary>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        /// <param name='targetVertex'>
+        /// Target vertex.
+        /// </param>
+        /// <param name='sourceEdgeProperty'>
+        /// Source edge property.
+        /// </param>
+        public EdgeModel (Int64 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty) : base (id, creationDate)
+        {
+            _targetVertex = targetVertex;
+            _edgePropertyModel = sourceEdgeProperty;
+        }
         
         #endregion
         

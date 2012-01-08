@@ -44,6 +44,24 @@ namespace Fallen8.Model
         
         #endregion
         
+        #region Constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.Model.GraphModel"/> class.
+        /// </summary>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        public GraphModel (Int64 id, DateTime creationDate) : base(id, creationDate)
+        {
+            _graphElements = new ConcurrentDictionary<long, IGraphElementModel> ();   
+        }
+        
+        #endregion
+        
         #region IGraphModel implementation
         
         public IVertexModel GetVertex (long id)

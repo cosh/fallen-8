@@ -33,7 +33,7 @@ namespace Fallen8.Model
     /// </summary>
     public abstract class AGraphElement
     {
-        #region
+        #region Data
         
         /// <summary>
         /// The identifier of this graph element.
@@ -57,6 +57,29 @@ namespace Fallen8.Model
   
         #endregion
         
+        #region constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.Model.AGraphElement"/> class.
+        /// </summary>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        protected AGraphElement (Int64 id, DateTime creationDate)
+        {
+            _id = id;
+            _creationDate = creationDate;
+            _modificationDate = creationDate;
+        }
+        
+        #endregion
+        
+        
+        #region protected helpers
+        
         /// <summary>
         /// Compares the properties of a graph element
         /// </summary>
@@ -69,7 +92,7 @@ namespace Fallen8.Model
         /// <param name='propertiesB'>
         /// Properties b.
         /// </param>
-        public Boolean PropertiesEqual (IDictionary<long, object> propertiesA, IDictionary<long, object> propertiesB)
+        protected Boolean PropertiesEqual (IDictionary<long, object> propertiesA, IDictionary<long, object> propertiesB)
         {
             if (propertiesA == null && propertiesB == null) {
                 return true;
@@ -100,6 +123,8 @@ namespace Fallen8.Model
             
             return true;
         }
+        
+        #endregion
     }
 }
 
