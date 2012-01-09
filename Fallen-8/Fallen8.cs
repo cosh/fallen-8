@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Linq;
 using Fallen8.Model;
 using Fallen8.API.Index;
 using Fallen8.API.Helper;
@@ -54,6 +55,11 @@ namespace Fallen8.API
         /// The current identifier.
         /// </summary>
         private Int64 _currentId;
+        
+        /// <summary>
+        /// Binary operator delegate.
+        /// </summary>
+        private delegate Boolean BinaryOperatorDelegate(IComparable property, IComparable literal);
         
         #endregion
         
@@ -139,9 +145,45 @@ namespace Fallen8.API
         #endregion
 
         #region IFallen8Read implementation
-        public bool Search (out IEnumerable<IGraphElementModel> result, long propertyId, Object literal, BinaryOperator binOp)
+        public bool Search (out IEnumerable<IGraphElementModel> result, long propertyId, IComparable literal, BinaryOperator binOp)
         {
-            throw new NotImplementedException ();
+            List<IGraphElementModel> graphElements = null;
+            
+            #region binary operation
+            
+            switch (binOp) {
+            case BinaryOperator.Equals:
+                graphElements = new List<IGraphElementModel> (FindElements (BinaryEqualsMethod, literal, propertyId));
+                break;
+                
+            case BinaryOperator.Greater:
+                graphElements = new List<IGraphElementModel> (FindElements (BinaryGreaterMethod, literal, propertyId));
+                break;
+                
+            case BinaryOperator.GreaterOrEquals:
+                graphElements = new List<IGraphElementModel> (FindElements (BinaryGreaterOrEqualMethod, literal, propertyId));
+                break;
+            
+            case BinaryOperator.LowerOrEquals:
+                graphElements = new List<IGraphElementModel> (FindElements (BinaryLowerOrEqualMethod, literal, propertyId));
+                break;
+                
+            case BinaryOperator.Lower:
+                graphElements = new List<IGraphElementModel> (FindElements (BinaryLowerMethod, literal, propertyId));
+                break;
+            
+            case BinaryOperator.NotEquals:
+                graphElements = new List<IGraphElementModel> (FindElements (BinaryNotEqualsMethod, literal, propertyId));
+                break;
+                
+            default:
+                break;
+            }
+            
+            #endregion
+            
+            result = graphElements;
+            return graphElements.Count > 0;
         }
 
         public bool SearchInIndex (out IEnumerable<IGraphElementModel> result, long indexId, IComparable literal, BinaryOperator binOp)
@@ -166,6 +208,138 @@ namespace Fallen8.API
         #endregion
   
         #region private helper methods
+        
+        /// <summary>
+        /// Finds the elements.
+        /// </summary>
+        /// <returns>
+        /// The elements.
+        /// </returns>
+        /// <param name='finder'>
+        /// Finder.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        /// <param name='propertyId'>
+        /// Property identifier.
+        /// </param>
+        private IEnumerable<IGraphElementModel> FindElements (BinaryOperatorDelegate finder, IComparable literal, Int64 propertyId)
+        {
+            return _model.Graphelements.AsParallel().Where (aGraphElement => 
+            {
+                Object property; 
+                if (aGraphElement.Value.TryGetProperty (out property, propertyId)) {
+                        
+                    return finder (property as IComparable, literal);
+                }
+                    
+                return false;
+            }).Select (_ => _.Value);
+                
+        }
+        
+        /// <summary>
+        /// Method for binary comparism
+        /// </summary>
+        /// <c>true</c> for equality; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// <param name='property'>
+        /// Property.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        private static Boolean BinaryEqualsMethod (IComparable property, IComparable literal)
+        {
+            return property.Equals (literal);
+        }
+        
+        /// <summary>
+        /// Method for binary comparism
+        /// </summary>
+        /// <c>true</c> for inequality; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// <param name='property'>
+        /// Property.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        private static Boolean BinaryNotEqualsMethod (IComparable property, IComparable literal)
+        {
+            return !property.Equals (literal);
+        }
+        
+        /// <summary>
+        /// Method for binary comparism
+        /// </summary>
+        /// <c>true</c> for greater property; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// <param name='property'>
+        /// Property.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        private static Boolean BinaryGreaterMethod (IComparable property, IComparable literal)
+        {
+            return property.CompareTo (literal) > 0;
+        }
+        
+        /// <summary>
+        /// Method for binary comparism
+        /// </summary>
+        /// <c>true</c> for lower property; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// <param name='property'>
+        /// Property.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        private static Boolean BinaryLowerMethod (IComparable property, IComparable literal)
+        {
+            return property.CompareTo (literal) < 0;
+        }
+        
+        /// <summary>
+        /// Method for binary comparism
+        /// </summary>
+        /// <c>true</c> for lower or equal property; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// <param name='property'>
+        /// Property.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        private static Boolean BinaryLowerOrEqualMethod (IComparable property, IComparable literal)
+        {
+            return property.CompareTo (literal) <= 0;
+        }
+        
+        /// <summary>
+        /// Method for binary comparism
+        /// </summary>
+        /// <c>true</c> for greater or equal property; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// <param name='property'>
+        /// Property.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        private static Boolean BinaryGreaterOrEqualMethod (IComparable property, IComparable literal)
+        {
+            return property.CompareTo (literal) >= 0;
+        }
         
         /// <summary>
         /// Creates the edge property.
