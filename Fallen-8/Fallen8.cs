@@ -186,22 +186,65 @@ namespace Fallen8.API
             return graphElements.Count > 0;
         }
 
-        public bool SearchInIndex (out IEnumerable<IGraphElementModel> result, long indexId, IComparable literal, BinaryOperator binOp)
+        public bool SearchInIndex (out IEnumerable<IGraphElementModel> result, String indexId, IComparable literal, BinaryOperator binOp)
+        {
+            IIndex index;
+            if (!IndexProvider.TryGetIndex (out index, indexId)) {
+                
+                result = null;
+                return false;
+            }
+            
+            List<IGraphElementModel> graphElements = null;
+            
+            #region binary operation
+            
+            switch (binOp) {
+            case BinaryOperator.Equals:
+                
+                return index.GetValue (out result, literal);
+                
+            case BinaryOperator.Greater:
+                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryGreaterMethod, literal, index));
+                break;
+                
+            case BinaryOperator.GreaterOrEquals:
+                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryGreaterOrEqualMethod, literal, index));
+                break;
+            
+            case BinaryOperator.LowerOrEquals:
+                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryLowerOrEqualMethod, literal, index));
+                break;
+                
+            case BinaryOperator.Lower:
+                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryLowerMethod, literal, index));
+                break;
+            
+            case BinaryOperator.NotEquals:
+                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryNotEqualsMethod, literal, index));
+                break;
+                
+            default:
+                break;
+            }
+            
+            #endregion
+            
+            result = graphElements;
+            return graphElements.Count > 0;
+        }
+
+        public bool SearchInRange (out IEnumerable<IGraphElementModel> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
         {
             throw new NotImplementedException ();
         }
 
-        public bool SearchInRange (out IEnumerable<IGraphElementModel> result, long indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
+        public bool SearchFulltext (out FulltextSearchResult result, String indexId, string searchQuery)
         {
             throw new NotImplementedException ();
         }
 
-        public bool SearchFulltext (out FulltextSearchResult result, long indexId, string searchQuery)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public bool SearchSpatial (out IEnumerable<IGraphElementModel> result, long indexId, IGeometry geometry)
+        public bool SearchSpatial (out IEnumerable<IGraphElementModel> result, String indexId, IGeometry geometry)
         {
             throw new NotImplementedException ();
         }
@@ -226,7 +269,7 @@ namespace Fallen8.API
         /// </param>
         private IEnumerable<IGraphElementModel> FindElements (BinaryOperatorDelegate finder, IComparable literal, Int64 propertyId)
         {
-            return _model.Graphelements.AsParallel().Where (aGraphElement => 
+            return _model.Graphelements.AsParallel ().Where (aGraphElement => 
             {
                 Object property; 
                 if (aGraphElement.Value.TryGetProperty (out property, propertyId)) {
@@ -237,6 +280,29 @@ namespace Fallen8.API
                 return false;
             }).Select (_ => _.Value);
                 
+        }
+        
+        /// <summary>
+        /// Finds elements via an index.
+        /// </summary>
+        /// <returns>
+        /// The elements.
+        /// </returns>
+        /// <param name='finder'>
+        /// Finder delegate.
+        /// </param>
+        /// <param name='literal'>
+        /// Literal.
+        /// </param>
+        /// <param name='index'>
+        /// Index.
+        /// </param>
+        private IEnumerable<IGraphElementModel> FindElementsIndex (BinaryOperatorDelegate finder, IComparable literal, IIndex index)
+        {
+            return index.GetKeyValues ().AsParallel ().Where (aIndexElement => 
+            {
+                return finder (aIndexElement.Key, literal);
+            }).Select (_ => _.Value).SelectMany(__ => __).Distinct();       
         }
         
         /// <summary>
