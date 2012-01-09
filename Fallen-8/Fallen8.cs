@@ -77,7 +77,7 @@ namespace Fallen8.API
             //create the new vertex
             VertexModel newVertex = new VertexModel (Interlocked.Increment (ref _currentId), vertexDefinition.CreationDate, vertexDefinition.Properties);
             
-            _model.Graphelements.GetOrAdd (newVertex.Id, newVertex);
+            _model.Graphelements.TryAdd(newVertex.Id, newVertex);
             
             if (vertexDefinition.Edges != null && vertexDefinition.Edges.Count > 0) {
                 
@@ -95,7 +95,20 @@ namespace Fallen8.API
 
         public IEdgeModel CreateEdge (long sourceVertexId, long edgePropertyId, EdgeModelDefinition edgeDefinition)
         {
-            throw new NotImplementedException ();
+            //get the related vertices
+            var sourceVertex = (VertexModel)_model.Graphelements [sourceVertexId];
+            var targetVertex = (VertexModel)_model.Graphelements [edgeDefinition.TargetVertexId];
+            
+            //build the necessary edge contruct
+            var edgeProperty = new EdgePropertyModel (sourceVertex, null);
+            var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), edgeDefinition.CreationDate, targetVertex, edgeProperty, edgeDefinition.Properties);
+            edgeProperty.AddEdge (outgoingEdge);
+            
+            //link the vertices
+            sourceVertex.AddOutEdge (edgePropertyId, outgoingEdge);
+            targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
+            
+            return outgoingEdge;
         }
 
         public bool TryAddProperty (long graphElementId, long propertyId, IComparable property)
@@ -103,17 +116,7 @@ namespace Fallen8.API
             throw new NotImplementedException ();
         }
 
-        public bool TryAddStringProperty (long graphElementId, string propertyName, object schemalessProperty)
-        {
-            throw new NotImplementedException ();
-        }
-
         public bool TryRemoveProperty (long graphElementId, long propertyId)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public bool TryRemoveStringProperty (long graphElementId, string propertyName)
         {
             throw new NotImplementedException ();
         }
@@ -165,22 +168,24 @@ namespace Fallen8.API
         /// <param name='edgeDefinitions'>
         /// Edge definitions.
         /// </param>
-        /// <param name='newVertex'>
+        /// <param name='sourceVertex'>
         /// New vertex.
         /// </param>
-        private EdgePropertyModel CreateEdgeProperty (Int64 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel newVertex)
+        private EdgePropertyModel CreateEdgeProperty (Int64 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
         {
             List<IEdgeModel> edges = new List<IEdgeModel> ();
             
-            EdgePropertyModel result = new EdgePropertyModel (newVertex, edges);
+            EdgePropertyModel result = new EdgePropertyModel (sourceVertex, edges);
             
             foreach (var aEdgeDefinition in edgeDefinitions) {
+                
                 var targetVertex = (VertexModel)_model.Graphelements [aEdgeDefinition.TargetVertexId];
                 
                 var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, result, aEdgeDefinition.Properties);
-                edges.Add (outgoingEdge);
                 
                 targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
+                
+                edges.Add (outgoingEdge);
             }
             
             return result;

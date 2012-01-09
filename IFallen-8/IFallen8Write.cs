@@ -87,23 +87,6 @@ namespace Fallen8.API
 		Boolean TryAddProperty (Int64 graphElementId, Int64 propertyId, IComparable property);
 		
 		/// <summary>
-		/// Tries to add a string property.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the property was added; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='graphElementId'>
-		/// Graph element identifier.
-		/// </param>
-		/// <param name='propertyName'>
-		/// Property name.
-		/// </param>
-		/// <param name='schemalessProperty'>
-		/// The to be added schemaless property.
-		/// </param>
-		Boolean TryAddStringProperty (Int64 graphElementId, String propertyName, Object schemalessProperty);
-		
-		/// <summary>
 		/// Tries to remove a property.
 		/// </summary>
 		/// <returns>
@@ -116,20 +99,6 @@ namespace Fallen8.API
 		/// Property identifier.
 		/// </param>
 		Boolean TryRemoveProperty (Int64 graphElementId, Int64 propertyId);
-		
-		/// <summary>
-		/// Tries to remove a string property.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the property was removed; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='graphElementId'>
-		/// Graph element identifier.
-		/// </param>
-		/// <param name='propertyName'>
-		/// Property name.
-		/// </param>
-		Boolean TryRemoveStringProperty (Int64 graphElementId, String propertyName);
 		
 		#endregion
 		

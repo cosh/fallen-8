@@ -105,6 +105,35 @@ namespace Fallen8.Model
         #endregion
   
         #region public methods
+  
+        /// <summary>
+        /// Adds an edge.
+        /// </summary>
+        /// <param name='outEdge'>
+        /// Out edge.
+        /// </param>
+        /// <exception cref='CollisionException'>
+        /// Is thrown when the collision exception.
+        /// </exception>
+        public void AddEdge (EdgeModel outEdge)
+        {
+            if (outEdge != null) {
+             
+                if (WriteResource ()) {
+                
+                    if (_edges == null) {
+                        _edges = new List<IEdgeModel> {outEdge};
+                    } else {
+                        _edges.Add (outEdge);
+                    }
+                
+                    FinishWriteResource ();
+                }
+            
+                throw new CollisionException ();
+            }   
+            
+        }
         
         /// <summary>
         /// Adds the edges.

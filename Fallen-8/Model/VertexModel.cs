@@ -72,6 +72,40 @@ namespace Fallen8.Model
         #endregion
         
         #region public methods
+  
+        /// <summary>
+        /// Adds the out edge.
+        /// </summary>
+        /// <param name='edgePropertyId'>
+        /// Edge property identifier.
+        /// </param>
+        /// <param name='outEdge'>
+        /// Out edge.
+        /// </param>
+        /// <exception cref='CollisionException'>
+        /// Is thrown when the collision exception.
+        /// </exception>
+        public void AddOutEdge (long edgePropertyId, EdgeModel outEdge)
+        {
+            if (WriteResource ()) {
+                
+                if (_outEdges == null) {
+                    _outEdges = new Dictionary<long, EdgePropertyModel> ();
+                }
+                    
+                EdgePropertyModel edgeProperty;
+                if (_outEdges.TryGetValue (edgePropertyId, out edgeProperty)) {
+                    edgeProperty.AddEdge (outEdge);
+                } else {
+                    _outEdges.Add (edgePropertyId, new EdgePropertyModel (this, new List<IEdgeModel> {outEdge}));
+                }
+                       
+            }
+            
+            FinishWriteResource ();
+            
+            throw new CollisionException ();
+        }
         
         /// <summary>
         /// Adds the out edges.
