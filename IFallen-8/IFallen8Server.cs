@@ -37,6 +37,14 @@ namespace Fallen8.API
 	/// </summary>
     public interface IFallen8Server
     {
+        /// <summary>
+        /// Gets the fallen8.
+        /// </summary>
+        /// <value>
+        /// The fallen8.
+        /// </value>
+        IFallen8 Fallen8 {get;}
+        
 		/// <summary>
 		/// Shutdown this Fallen-8 server.
 		/// </summary>
@@ -76,6 +84,6 @@ namespace Fallen8.API
         /// <param name='parameter'>
         /// The parameters of this service.
         /// </param>
-        bool TryStartService(out IFallen8Service service, String servicePluginName, IFallen8Client connector, IDictionary<String, Object> parameter);
+        bool TryStartService(out IFallen8Service service, String servicePluginName, IDictionary<String, Object> parameter);
     }
 }

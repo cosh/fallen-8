@@ -63,6 +63,19 @@ namespace Fallen8.API
         
         #endregion
         
+        #region Constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.API.Fallen8"/> class.
+        /// </summary>
+        public Fallen8 ()
+        {
+            _indexFactory = new Fallen8IndexFactory ();
+            _model = new GraphModel (Interlocked.Increment (ref _currentId), DateTime.Now, null);
+        }
+        
+        #endregion
+        
         #region IFallen8 implementation
         public IGraphModel Graph {
             get {

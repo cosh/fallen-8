@@ -1,5 +1,5 @@
 // 
-// Fallen8IndexFactory.cs
+// Fallen8Server.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,57 +24,74 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Linq;
 using System.Collections.Generic;
-using Fallen8.API.Helper;
 using Fallen8.API.Plugin;
-using System.Threading;
+using Fallen8.API.Service;
 
-namespace Fallen8.API.Index
+namespace Fallen8.API
 {
     /// <summary>
-    /// Fallen8 index factory.
+    /// Fallen8 server.
     /// </summary>
-    public sealed class Fallen8IndexFactory : IFallen8IndexFactory
+    public sealed class Fallen8Server : IFallen8Server
     {
         #region Data
         
         /// <summary>
-        /// The created indices.
+        /// The services.
         /// </summary>
-        private readonly IDictionary<String, IIndex> _indices;
+        private List<IFallen8Service> _services; 
+        
+        /// <summary>
+        /// The fallen8.
+        /// </summary>
+        private Fallen8 _fallen8;
         
         #endregion
         
-        #region constructor
+        #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Index.Fallen8IndexFactory"/> class.
+        /// Initializes a new instance of the <see cref="Fallen8.API.Fallen8Server"/> class.
         /// </summary>
-        public Fallen8IndexFactory ()
+        public Fallen8Server ()
         {
-            _indices = new Dictionary<String, IIndex> ();
+            _services = new List<IFallen8Service> ();
+            _fallen8 = new Fallen8 ();
         }
         
         #endregion
         
-        #region IFallen8IndexFactory implementation
-        public IEnumerable<PluginDescription> GetAvailableIndexPlugins ()
+        #region IFallen8Server implementation
+        
+        public IFallen8 Fallen8 {
+            get { return _fallen8;}}
+        
+        public void Shutdown ()
+        {
+            foreach (var aService in _services) {
+                aService.TryStop ();
+            }
+        }
+
+        public IEnumerable<PluginDescription> GetAvailableServicePlugins ()
         {
             IEnumerable<PluginDescription> result;
             
-            Fallen8PluginFactory.TryGetAvailablePlugins<IIndex> (out result);
+            Fallen8PluginFactory.TryGetAvailablePlugins<IFallen8Service> (out result);
             
             return result;
         }
 
-        public bool TryCreateIndex (out IIndex index, string indexName, string indexTypeName, IDictionary<string, object> parameter)
+        public bool TryStartService (out IFallen8Service service, string servicePluginName, IDictionary<string, object> parameter)
         {
-            if (Fallen8PluginFactory.TryFindPlugin<IIndex> (out index, indexTypeName)) {
+            if (Fallen8PluginFactory.TryFindPlugin<IFallen8Service> (out service, servicePluginName)) {
              
                 try {
-                    index.Initialize (null, parameter);
+                    service.Initialize (_fallen8, parameter);
                     
-                    _indices.Add (indexName, index);
+                    _services.Add (service);
                     
                     return true;
                 } catch (Exception) {
@@ -84,22 +101,12 @@ namespace Fallen8.API.Index
             return false;   
         }
 
-        public bool TryDeleteIndex (string indexName)
-        {
-            return _indices.Remove (indexName);
-        }
-
-        public bool TryGetIndex (out IIndex index, string indexName)
-        {
-            return _indices.TryGetValue (indexName, out index);
-        }
-
-        public IDictionary<string, IIndex> Indices {
+        public IEnumerable<IFallen8Service> Services {
             get {
-                return _indices;
+                return _services;
             }
         }
-        #endregion   
+        #endregion
     }
 }
 

@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="IFallen8.cs" />
     <Compile Include="IFallen8Server.cs" />
-    <Compile Include="IFallen8Connector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Expression\BinaryOperator.cs" />
     <Compile Include="Helper\VertexModelDefinition.cs" />

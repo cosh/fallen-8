@@ -44,6 +44,7 @@
     <Compile Include="Index\DictionaryIndex.cs" />
     <Compile Include="Error\CollisionException.cs" />
     <Compile Include="Helper\AThreadSafeElement.cs" />
+    <Compile Include="Fallen8Server.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
