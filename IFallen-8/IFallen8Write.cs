@@ -84,7 +84,7 @@ namespace Fallen8.API
 		/// <param name='property'>
 		/// The to be added property.
 		/// </param>
-		Boolean TryAddProperty (Int64 graphElementId, Int64 propertyId, IComparable property);
+		Boolean TryAddProperty (Int64 graphElementId, Int64 propertyId, Object property);
 		
 		/// <summary>
 		/// Tries to remove a property.

@@ -111,24 +111,35 @@ namespace Fallen8.API
             return outgoingEdge;
         }
 
-        public bool TryAddProperty (long graphElementId, long propertyId, IComparable property)
+        public bool TryAddProperty (long graphElementId, long propertyId, Object property)
         {
-            throw new NotImplementedException ();
+            IGraphElementModel graphElement;
+            if (_model.Graphelements.TryGetValue (graphElementId, out graphElement)) {
+                return ((AGraphElement)graphElement).TryAddProperty (propertyId, property);   
+            } else {
+                return false;
+            }
         }
 
         public bool TryRemoveProperty (long graphElementId, long propertyId)
         {
-            throw new NotImplementedException ();
+            IGraphElementModel graphElement;
+            if (_model.Graphelements.TryGetValue (graphElementId, out graphElement)) {
+                return ((AGraphElement)graphElement).TryRemoveProperty (propertyId);   
+            } else {
+                return false;
+            }
         }
 
         public bool TryRemoveGraphElement (long graphElementId)
         {
-            throw new NotImplementedException ();
+            IGraphElementModel graphElement;
+            return _model.Graphelements.TryRemove (graphElementId, out graphElement);
         }
         #endregion
 
         #region IFallen8Read implementation
-        public bool Search (out IEnumerable<IGraphElementModel> result, long propertyId, IComparable literal, BinaryOperator binOp)
+        public bool Search (out IEnumerable<IGraphElementModel> result, long propertyId, Object literal, BinaryOperator binOp)
         {
             throw new NotImplementedException ();
         }
