@@ -74,17 +74,20 @@ namespace Fallen8.API
         #region IFallen8Write implementation
         public IVertexModel CreateVertex (VertexModelDefinition vertexDefinition)
         {
+            //create the new vertex
             VertexModel newVertex = new VertexModel (Interlocked.Increment (ref _currentId), vertexDefinition.CreationDate, vertexDefinition.Properties);
             
             _model.Graphelements.GetOrAdd (newVertex.Id, newVertex);
             
             if (vertexDefinition.Edges != null && vertexDefinition.Edges.Count > 0) {
                 
-                Dictionary<long, IEdgePropertyModel> outEdges = new Dictionary<long, IEdgePropertyModel> ();
+                Dictionary<long, EdgePropertyModel> outEdges = new Dictionary<long, EdgePropertyModel> ();
                 
                 foreach (var aEdge in vertexDefinition.Edges) {
                     outEdges.Add (aEdge.Key, CreateEdgeProperty (aEdge.Key, aEdge.Value, newVertex));
                 }
+                
+                newVertex.AddOutEdges (outEdges);
             }
             
             return newVertex;
@@ -165,7 +168,7 @@ namespace Fallen8.API
         /// <param name='newVertex'>
         /// New vertex.
         /// </param>
-        private IEdgePropertyModel CreateEdgeProperty (Int64 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel newVertex)
+        private EdgePropertyModel CreateEdgeProperty (Int64 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel newVertex)
         {
             List<IEdgeModel> edges = new List<IEdgeModel> ();
             

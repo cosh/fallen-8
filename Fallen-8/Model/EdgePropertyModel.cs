@@ -103,6 +103,35 @@ namespace Fallen8.Model
             return _edges.GetEnumerator();
         }
         #endregion
+  
+        #region public methods
+        
+        /// <summary>
+        /// Adds the edges.
+        /// </summary>
+        /// <param name='edges'>
+        /// Edges.
+        /// </param>
+        public void AddEdges (IEnumerable<IEdgeModel> edges)
+        {
+            if (edges != null) {
+             
+                if (WriteResource ()) {
+                
+                    if (_edges == null) {
+                        _edges = new List<IEdgeModel> (edges);
+                    } else {
+                        _edges.AddRange (edges);
+                    }
+                
+                    FinishWriteResource ();
+                }
+            
+                throw new CollisionException ();
+            }   
+        }
+        
+        #endregion
     }
 }
 

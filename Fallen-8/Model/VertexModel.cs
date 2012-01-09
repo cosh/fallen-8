@@ -42,7 +42,7 @@ namespace Fallen8.Model
         /// <summary>
         /// The out edges.
         /// </summary>
-        private Dictionary<long, IEdgePropertyModel> _outEdges;
+        private Dictionary<long, EdgePropertyModel> _outEdges;
         
         /// <summary>
         /// The in edges.
@@ -72,6 +72,41 @@ namespace Fallen8.Model
         #endregion
         
         #region public methods
+        
+        /// <summary>
+        /// Adds the out edges.
+        /// </summary>
+        /// <param name='outEdges'>
+        /// Out edges.
+        /// </param>
+        /// <exception cref='CollisionException'>
+        /// Is thrown when the collision exception.
+        /// </exception>
+        public void AddOutEdges (Dictionary<long, EdgePropertyModel> outEdges)
+        {
+            if (WriteResource ()) {
+                
+                if (_outEdges == null) {
+                    _outEdges = outEdges;
+                } else {
+                    if (outEdges != null && outEdges.Count > 0) {
+                        foreach (var aOutEdge in outEdges) {
+                            
+                            EdgePropertyModel edgeProperty;
+                            if (_outEdges.TryGetValue (aOutEdge.Key, out edgeProperty)) {
+                                edgeProperty.AddEdges (aOutEdge.Value);
+                            } else {
+                                _outEdges.Add (aOutEdge.Key, aOutEdge.Value);
+                            }
+                        }
+                    }
+                }
+            
+                FinishWriteResource ();
+            }
+            
+            throw new CollisionException ();
+        }
         
         /// <summary>
         /// Adds the incoming edge.
@@ -287,7 +322,9 @@ namespace Fallen8.Model
                 
                 if (_outEdges != null && _outEdges.Count > 0) {
                     
-                    foundSth = _outEdges.TryGetValue (edgePropertyId, out result);
+                    EdgePropertyModel edgeProperty;
+                    foundSth = _outEdges.TryGetValue (edgePropertyId, out edgeProperty);
+                    result = edgeProperty;
                 } else {
                     result = null;
                 }
