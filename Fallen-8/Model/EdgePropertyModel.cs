@@ -49,6 +49,25 @@ namespace Fallen8.Model
         
         #endregion
         
+        #region Constructer
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.Model.EdgePropertyModel"/> class.
+        /// </summary>
+        /// <param name='sourceVertex'>
+        /// Source vertex.
+        /// </param>
+        /// <param name='edges'>
+        /// Edges.
+        /// </param>
+        public EdgePropertyModel (VertexModel sourceVertex, List<IEdgeModel> edges)
+        {
+            _sourceVertex = sourceVertex;
+            _edges = edges;   
+        }
+    
+        #endregion
+        
         #region IEdgePropertyModel implementation
         public IVertexModel SourceVertex {
             get {

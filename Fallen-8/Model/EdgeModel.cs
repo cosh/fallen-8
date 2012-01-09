@@ -65,7 +65,10 @@ namespace Fallen8.Model
         /// <param name='sourceEdgeProperty'>
         /// Source edge property.
         /// </param>
-        public EdgeModel (Int64 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty) : base (id, creationDate)
+        /// <param name='properties'>
+        /// Properties.
+        /// </param>
+        public EdgeModel (Int64 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty, Dictionary<Int64, Object> properties) : base (id, creationDate, properties)
         {
             _targetVertex = targetVertex;
             _edgePropertyModel = sourceEdgeProperty;

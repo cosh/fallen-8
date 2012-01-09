@@ -35,20 +35,56 @@ namespace Fallen8.Model
 	/// </summary>
     public interface IVertexModel : IGraphElementModel
     {
-		/// <summary>
-		/// Gets the outgoing edges.
-		/// </summary>
-		/// <value>
-		/// The outgoing edges.
-		/// </value>
-        IDictionary<Int64, IEdgePropertyModel> OutgoingEdges { get; }
-
         /// <summary>
-        /// Gets the incoming edges.
+        /// Gets all neighbors.
         /// </summary>
-        /// <value>
-        /// The incoming edges.
-        /// </value>
-        IDictionary<Int64, IEnumerable<IEdgeModel>> IncomingEdges { get; }
+        /// <returns>
+        /// The neighbors.
+        /// </returns>
+        IEnumerable<IVertexModel> GetAllNeighbors ();
+        
+        /// <summary>
+        /// Gets the incoming edge identifiers.
+        /// </summary>
+        /// <returns>
+        /// The incoming edge identifiers.
+        /// </returns>
+        IEnumerable<Int64> GetIncomingEdgeIds();
+        
+        /// <summary>
+        /// Gets the outgoing edge identifiers.
+        /// </summary>
+        /// <returns>
+        /// The outgoing edge identifiers.
+        /// </returns>
+        IEnumerable<Int64> GetOutgoingEdgeIds();
+        
+        /// <summary>
+        /// Tries to get an out edge.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// Result.
+        /// </param>
+        /// <param name='edgePropertyId'>
+        /// Edge property identifier.
+        /// </param>
+        Boolean TryGetOutEdge (out IEdgePropertyModel result, Int64 edgePropertyId);
+        
+        /// <summary>
+        /// Tries to get in edges.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// Result.
+        /// </param>
+        /// <param name='edgePropertyId'>
+        /// Edge property identifier.
+        /// </param>
+        Boolean TryGetInEdges (out IEnumerable<IEdgeModel> result, Int64 edgePropertyId);
     }
 }

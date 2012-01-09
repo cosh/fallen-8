@@ -42,6 +42,7 @@
     <Compile Include="Index\Fallen8IndexFactory.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
+    <Compile Include="Error\CollisionException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -49,6 +50,7 @@
     <Folder Include="Model\" />
     <Folder Include="Index\" />
     <Folder Include="Plugin\" />
+    <Folder Include="Error\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj">

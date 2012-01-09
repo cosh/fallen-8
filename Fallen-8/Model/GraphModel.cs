@@ -55,7 +55,10 @@ namespace Fallen8.Model
         /// <param name='creationDate'>
         /// Creation date.
         /// </param>
-        public GraphModel (Int64 id, DateTime creationDate) : base(id, creationDate)
+        /// <param name='properties'>
+        /// Properties.
+        /// </param>
+        public GraphModel (Int64 id, DateTime creationDate, Dictionary<Int64, Object> properties) : base(id, creationDate, properties)
         {
             _graphElements = new ConcurrentDictionary<long, IGraphElementModel> ();   
         }

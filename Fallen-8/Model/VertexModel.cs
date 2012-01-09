@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Concurrent;
+using Fallen8.API.Error;
 
 namespace Fallen8.Model
 {
@@ -40,12 +42,12 @@ namespace Fallen8.Model
         /// <summary>
         /// The out edges.
         /// </summary>
-        private IDictionary<long, IEdgePropertyModel> _outEdges;
+        private Dictionary<long, IEdgePropertyModel> _outEdges;
         
         /// <summary>
         /// The in edges.
         /// </summary>
-        private IDictionary<long, IEnumerable<IEdgeModel>> _inEdges;
+        private Dictionary<long, List<IEdgeModel>> _inEdges;
         
         #endregion
         
@@ -60,26 +62,41 @@ namespace Fallen8.Model
         /// <param name='creationDate'>
         /// Creation date.
         /// </param>
-        public VertexModel (Int64 id, DateTime creationDate) : base (id, creationDate)
+        /// <param name='properties'>
+        /// Properties.
+        /// </param>
+        public VertexModel (Int64 id, DateTime creationDate, Dictionary<Int64, Object> properties) : base (id, creationDate, properties)
         {
         }
         
         #endregion
         
-        #region IVertexModel implementation
-        public IDictionary<long, IEdgePropertyModel> OutgoingEdges {
-            get {
-                return _outEdges;
+        #region public methods
+        
+        public void AddIncomingEdge (Int64 edgePropertyId, EdgeModel incomingEdge)
+        {
+            if (WriteResource ()) {
+                
+                if (_inEdges == null) {
+                    _inEdges = new Dictionary<long, List<IEdgeModel>> ();
+                }
+            
+                List<IEdgeModel> inEdges;
+                if (_inEdges.TryGetValue (edgePropertyId, out inEdges)) {
+                
+                    inEdges.Add (incomingEdge);
+                } else {
+                    _inEdges.Add (edgePropertyId, new List<IEdgeModel> {incomingEdge});
+                }
+                
+                FinishWriteResource ();
             }
+            
+            throw new CollisionException ();
         }
-
-        public IDictionary<long, IEnumerable<IEdgeModel>> IncomingEdges {
-            get {
-                return _inEdges;
-            }
-        }
+        
         #endregion
-  
+        
         #region Equals Overrides
 
         public override Boolean Equals (Object obj)
@@ -157,6 +174,114 @@ namespace Fallen8.Model
                 return base._properties;
             }
         }
+        #endregion
+        
+        #region IVertexModel implementation
+        
+        public IEnumerable<IVertexModel> GetAllNeighbors ()
+        {
+            if (ReadResource ()) {
+                List<IVertexModel> neighbors = new List<IVertexModel> ();
+                
+                if (_outEdges != null && _outEdges.Count > 0) {
+                    foreach (var aOutEdge in _outEdges) {
+                        neighbors.AddRange (aOutEdge.Value.Select (_ => _.TargetVertex));
+                    }
+                }
+                
+                if (_inEdges != null && _inEdges.Count > 0) {
+                    foreach (var aInEdge in _inEdges) {
+                        neighbors.AddRange (aInEdge.Value.Select (_ => _.SourceEdgeProperty.SourceVertex));
+                    }
+                    
+                }
+                
+                FinishReadResource ();
+                
+                return neighbors;
+            }
+            
+            throw new CollisionException ();
+        }
+        
+        public IEnumerable<Int64> GetIncomingEdgeIds ()
+        {
+            if (ReadResource ()) {
+                List<Int64> inEdges = new List<Int64> ();
+                
+                if (_inEdges != null && _inEdges.Count > 0) {
+                    inEdges.AddRange (_inEdges.Select (_ => _.Key));
+                }
+                
+                FinishReadResource ();
+                
+                return inEdges;
+            }
+            
+            throw new CollisionException ();
+        }
+        
+        public IEnumerable<Int64> GetOutgoingEdgeIds ()
+        {
+            if (ReadResource ()) {
+                List<Int64> outEdges = new List<Int64> ();
+                
+                if (_outEdges != null && _outEdges.Count > 0) {
+                    outEdges.AddRange (_outEdges.Select (_ => _.Key));
+                }
+                
+                FinishReadResource ();
+                
+                return outEdges;
+            }
+            
+            throw new CollisionException ();
+        }
+        
+        public Boolean TryGetOutEdge (out IEdgePropertyModel result, Int64 edgePropertyId)
+        {
+            if (ReadResource ()) {
+                
+                Boolean foundSth = false;
+                
+                if (_outEdges != null && _outEdges.Count > 0) {
+                    
+                    foundSth = _outEdges.TryGetValue (edgePropertyId, out result);
+                } else {
+                    result = null;
+                }
+                
+                FinishReadResource ();
+                
+                return foundSth;
+            }
+            
+            throw new CollisionException ();
+        }
+        
+        public Boolean TryGetInEdges (out IEnumerable<IEdgeModel> result, Int64 edgePropertyId)
+        {
+            if (ReadResource ()) {
+                
+                Boolean foundSth = false;
+                
+                if (_inEdges != null && _inEdges.Count > 0) {
+                    
+                    List<IEdgeModel> inEdges;
+                    foundSth = _inEdges.TryGetValue (edgePropertyId, out inEdges);
+                    result = inEdges;
+                } else {
+                    result = null;
+                }
+                
+                FinishReadResource ();
+                
+                return foundSth;
+            }
+            
+            throw new CollisionException ();
+        }
+        
         #endregion
     }
 }

@@ -74,9 +74,18 @@ namespace Fallen8.API
         #region IFallen8Write implementation
         public IVertexModel CreateVertex (VertexModelDefinition vertexDefinition)
         {
-            VertexModel newVertex = new VertexModel (Interlocked.Increment (ref _currentId), vertexDefinition.CreationDate);
+            VertexModel newVertex = new VertexModel (Interlocked.Increment (ref _currentId), vertexDefinition.CreationDate, vertexDefinition.Properties);
             
             _model.Graphelements.GetOrAdd (newVertex.Id, newVertex);
+            
+            if (vertexDefinition.Edges != null && vertexDefinition.Edges.Count > 0) {
+                
+                Dictionary<long, IEdgePropertyModel> outEdges = new Dictionary<long, IEdgePropertyModel> ();
+                
+                foreach (var aEdge in vertexDefinition.Edges) {
+                    outEdges.Add (aEdge.Key, CreateEdgeProperty (aEdge.Key, aEdge.Value, newVertex));
+                }
+            }
             
             return newVertex;
         }
@@ -137,6 +146,43 @@ namespace Fallen8.API
         {
             throw new NotImplementedException ();
         }
+        #endregion
+  
+        #region private helper methods
+        
+        /// <summary>
+        /// Creates the edge property.
+        /// </summary>
+        /// <returns>
+        /// The edge property.
+        /// </returns>
+        /// <param name='edgePropertyId'>
+        /// Edge property identifier.
+        /// </param>
+        /// <param name='edgeDefinitions'>
+        /// Edge definitions.
+        /// </param>
+        /// <param name='newVertex'>
+        /// New vertex.
+        /// </param>
+        private IEdgePropertyModel CreateEdgeProperty (Int64 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel newVertex)
+        {
+            List<IEdgeModel> edges = new List<IEdgeModel> ();
+            
+            EdgePropertyModel result = new EdgePropertyModel (newVertex, edges);
+            
+            foreach (var aEdgeDefinition in edgeDefinitions) {
+                var targetVertex = (VertexModel)_model.Graphelements [aEdgeDefinition.TargetVertexId];
+                
+                var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, result, aEdgeDefinition.Properties);
+                edges.Add (outgoingEdge);
+                
+                targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
+            }
+            
+            return result;
+        }
+        
         #endregion
 	}
 }
