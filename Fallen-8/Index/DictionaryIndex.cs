@@ -29,13 +29,15 @@ using System.Collections.Generic;
 using Fallen8.Model;
 using Fallen8.API.Plugin;
 using System.Collections.Concurrent;
+using Fallen8.API.Helper;
+using Fallen8.API.Error;
 
 namespace Fallen8.API.Index
 {
     /// <summary>
     /// Dictionary index.
     /// </summary>
-    public sealed class DictionaryIndex : IIndex
+    public sealed class DictionaryIndex : AThreadSafeElement, IIndex
     {
         #region Data
         
@@ -43,11 +45,6 @@ namespace Fallen8.API.Index
         /// The description.
         /// </summary>
         private PluginDescription _description;
-        
-        /// <summary>
-        /// The lock object.
-        /// </summary>
-        private readonly Object _lockObject;
         
         /// <summary>
         /// The index dictionary.
@@ -63,7 +60,6 @@ namespace Fallen8.API.Index
         /// </summary>
         public DictionaryIndex ()
         {
-            _lockObject = new object ();
             _description = new PluginDescription (
                 "DictionaryIndex",
                 typeof(DictionaryIndex),
@@ -77,25 +73,35 @@ namespace Fallen8.API.Index
         #region IIndex implementation
         public long CountOfKeys ()
         {
-            long result;
-            lock (_lockObject) {
-                result = _idx.Keys.Count;
+            if (ReadResource ()) {
+                
+                var result = _idx.Keys.Count;
+                
+                FinishReadResource ();
+                
+                return result;
             }
-            return result;
+            
+            throw new CollisionException ();
         }
 
         public long CountOfValues ()
         {
-            long result;
-            lock (_lockObject) {
-                result = _idx.Values.SelectMany (_ => _).Count ();
+            if (ReadResource ()) {
+                
+                var result = _idx.Values.SelectMany (_ => _).Count ();
+                
+                FinishReadResource ();
+                
+                return result;
             }
-            return result;
+            
+            throw new CollisionException ();
         }
 
         public void AddOrUpdate (IComparable key, IGraphElementModel graphElement)
         {
-            lock (_lockObject) {
+            if (WriteResource ()) {
                 
                 HashSet<IGraphElementModel> values;
                 if (_idx.TryGetValue (key, out values)) {
@@ -108,74 +114,103 @@ namespace Fallen8.API.Index
                     values.Add (graphElement);
                     _idx.Add (key, values);
                 }
+                
+                FinishWriteResource ();
             }
+            
+            
+            throw new CollisionException ();
         }
 
         public bool TryRemoveKey (IComparable key)
         {
-            Boolean removedSomething;
-            
-            lock (_lockObject) {
-                removedSomething = _idx.Remove (key);
+            if (WriteResource ()) {
+                var removedSomething = _idx.Remove (key);
+                
+                FinishWriteResource ();
+                
+                return removedSomething;
             }
-            return removedSomething;
+            
+            throw new CollisionException ();
         }
 
         public void RemoveValue (IGraphElementModel graphElement)
         {
-            lock (_lockObject) {
+            if (WriteResource ()) {
+                
                 foreach (var aKV in _idx) {
                     aKV.Value.Remove (graphElement);
                 }
+                
+                FinishWriteResource ();
             }
+            
+            throw new CollisionException ();
         }
         
         public void Wipe ()
         {
-            lock (_lockObject) {
+            if (WriteResource ()) {
+                
                 _idx.Clear ();
+                
+                FinishWriteResource ();
             }
+            
+            throw new CollisionException ();
         }
 
         public IEnumerable<IComparable> GetKeys ()
         {
-            List<IComparable> result;
-            
-            lock (_lockObject) {
-                result = new List<IComparable> (_idx.Keys);
+            if (ReadResource ()) {
+                
+                var result = new List<IComparable> (_idx.Keys);
+                
+                FinishReadResource ();
+                
+                return result;
             }
             
-            return result;
+            throw new CollisionException ();
         }
 
 
         public IEnumerable<KeyValuePair<IComparable, IEnumerable<IGraphElementModel>>> GetKeyValues ()
         {
-            lock (_lockObject) {
+            if (ReadResource ()) {
+                
                 foreach (var aKV in _idx) 
                     yield return new KeyValuePair<IComparable, IEnumerable<IGraphElementModel>>(aKV.Key, new List<IGraphElementModel>(aKV.Value));
+                
+                FinishReadResource ();
+                
+                yield break;
             }
             
-            yield break;
+            throw new CollisionException ();
         }
 
         public bool GetValue (out IEnumerable<IGraphElementModel> result, IComparable key)
         {
-            Boolean foundSth;
-            
-            lock (_lockObject) {
+            if (ReadResource ()) {
+                
                 HashSet<IGraphElementModel> graphElements;
                 
-                foundSth = _idx.TryGetValue (key, out graphElements);
+                var foundSth = _idx.TryGetValue (key, out graphElements);
                 
                 if (foundSth) {
-                    result = new List<IGraphElementModel>(graphElements);
+                    result = graphElements;
                 } else {
                     result = null;
                 }
+                
+                FinishReadResource ();
+                
+                return foundSth;
             }
             
-            return foundSth;
+            throw new CollisionException ();
         }
         #endregion
 
