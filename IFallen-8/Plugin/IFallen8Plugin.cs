@@ -44,7 +44,7 @@ namespace Fallen8.API.Plugin
 		/// <param name='plugin'>
 		/// Plugin.
 		/// </param>
-        /// <param name='fallen8Session'>
+        /// <param name='fallen8'>
         /// A fallen-8 session.
         /// </param>
 		/// <param name='parameter'>
@@ -53,7 +53,7 @@ namespace Fallen8.API.Plugin
         /// <returns>
         /// The initialized plugin
         /// </returns>
-        IFallen8Plugin Initialize(IFallen8Session fallen8Session, IDictionary<String, Object> parameter);
+        IFallen8Plugin Initialize(IFallen8 fallen8, IDictionary<String, Object> parameter);
 	}
 }
 

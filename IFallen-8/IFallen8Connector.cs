@@ -37,11 +37,11 @@ namespace Fallen8.API
     public interface IFallen8Client
     {
 		/// <summary>
-		/// Connect the to a Fallen-8 server using the specified token.
+		/// Connect the to a Fallen-8 using the specified token.
 		/// </summary>
 		/// <param name='token'>
 		/// Security token.
 		/// </param>
-        IFallen8Session Connect(SecurityToken token);
+        IFallen8 Connect(SecurityToken token);
     }
 }

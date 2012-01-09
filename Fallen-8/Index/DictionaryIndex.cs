@@ -215,7 +215,7 @@ namespace Fallen8.API.Index
         #endregion
 
         #region IFallen8Plugin implementation
-        public IFallen8Plugin Initialize (IFallen8Session fallen8Session, IDictionary<string, object> parameter)
+        public IFallen8Plugin Initialize (IFallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, HashSet<IGraphElementModel>> ();
             
