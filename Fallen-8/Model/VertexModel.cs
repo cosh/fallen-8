@@ -73,6 +73,18 @@ namespace Fallen8.Model
         
         #region public methods
         
+        /// <summary>
+        /// Adds the incoming edge.
+        /// </summary>
+        /// <param name='edgePropertyId'>
+        /// Edge property identifier.
+        /// </param>
+        /// <param name='incomingEdge'>
+        /// Incoming edge.
+        /// </param>
+        /// <exception cref='CollisionException'>
+        /// Is thrown when the collision exception.
+        /// </exception>
         public void AddIncomingEdge (Int64 edgePropertyId, EdgeModel incomingEdge)
         {
             if (WriteResource ()) {
@@ -168,12 +180,41 @@ namespace Fallen8.Model
                 return base._modificationDate;
             }
         }
-
-        public IDictionary<long, object> Properties {
-            get {
-                return base._properties;
+        
+        public IEnumerable<PropertyContainer> GetAllProperties ()
+        {
+            if (ReadResource ()) {
+                
+                List<PropertyContainer> result = new List <PropertyContainer> ();
+                
+                if (base._properties != null && base._properties.Count > 0) {
+                    result.AddRange (base._properties.Select (_ => new PropertyContainer (_.Key, _.Value)));
+                }
+                FinishReadResource ();
+                
+                return result;
             }
+            
+            throw new CollisionException ();
         }
+        
+        public Boolean TryGetProperty (out Object result, Int64 propertyId)
+        {
+            if (ReadResource ()) {
+                
+                Boolean foundsth = false;
+                
+                if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue (propertyId, out result)) {
+                    foundsth = true;    
+                }
+                FinishReadResource ();
+                
+                return foundsth;
+            }
+            
+            throw new CollisionException ();
+        }
+
         #endregion
         
         #region IVertexModel implementation

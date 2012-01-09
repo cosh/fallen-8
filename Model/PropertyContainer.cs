@@ -1,5 +1,5 @@
 // 
-// CollisionException.cs
+// PropertyContainer.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -25,19 +25,51 @@
 // THE SOFTWARE.
 using System;
 
-namespace Fallen8.API.Error
+namespace Fallen8.Model
 {
     /// <summary>
-    /// Collision exception.
+    /// Property container.
     /// </summary>
-    public sealed class CollisionException : Exception
+    public sealed class PropertyContainer
     {
+        #region Data
+        
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Error.CollisionException"/> class.
+        /// Gets or sets the property identifier.
         /// </summary>
-        public CollisionException ()
+        /// <value>
+        /// The property identifier.
+        /// </value>
+        public Int64 PropertyId { get; private set; }
+        
+        /// <summary>
+        /// Gets or sets the value.
+        /// </summary>
+        /// <value>
+        /// The value.
+        /// </value>
+        public Object Value { get; private set; }
+        
+        #endregion
+        
+        #region constructor
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fallen8.Model.PropertyContainer"/> class.
+        /// </summary>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
+        /// <param name='value'>
+        /// Value.
+        /// </param>
+        public PropertyContainer (Int64 id, Object value)
         {
+            PropertyId = id;
+            Value = value;
         }
+        
+        #endregion
     }
 }
 

@@ -58,13 +58,27 @@ namespace Fallen8.Model
 		/// The modification date.
 		/// </value>
 		DateTime ModificationDate { get; }
-		
-		/// <summary>
-		/// Gets the properties.
-		/// </summary>
-		/// <value>
-		/// The properties.
-		/// </value>
-        IDictionary<Int64, Object> Properties { get; }
+        
+        /// <summary>
+        /// Gets all properties.
+        /// </summary>
+        /// <returns>
+        /// All properties.
+        /// </returns>
+        IEnumerable<PropertyContainer> GetAllProperties();
+        
+        /// <summary>
+        /// Tries the get property.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// Result.
+        /// </param>
+        /// <param name='propertyId'>
+        /// Property identifier.
+        /// </param>
+        Boolean TryGetProperty(out Object result, Int64 propertyId);
     }
 }

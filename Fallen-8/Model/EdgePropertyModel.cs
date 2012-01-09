@@ -27,13 +27,15 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using Fallen8.API.Helper;
+using Fallen8.API.Error;
 
 namespace Fallen8.Model
 {
     /// <summary>
     /// Edge property model.
     /// </summary>
-    public sealed class EdgePropertyModel : IEdgePropertyModel
+    public sealed class EdgePropertyModel : AThreadSafeElement, IEdgePropertyModel
     {
         #region Data
         
@@ -77,7 +79,13 @@ namespace Fallen8.Model
         
         public void TrimEdges ()
         {
-            _edges = _edges.Distinct ().ToList();    
+            if (WriteResource ()) {
+                _edges = _edges.Distinct ().ToList ();
+                
+                FinishWriteResource ();
+            }
+            
+            throw new CollisionException ();
         }
         
         #endregion

@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fallen8.API.Error;
 
 namespace Fallen8.Model
 {
@@ -114,7 +115,7 @@ namespace Fallen8.Model
 
             return _targetVertex.Id == p.TargetVertex.Id
                    && (_edgePropertyModel.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id)
-                   && (base.PropertiesEqual(base._properties, p.Properties));
+                   && (base.PropertiesEqual(base._properties, p._properties));
         }
 
         public static Boolean operator == (EdgeModel a, EdgeModel b)
@@ -163,12 +164,41 @@ namespace Fallen8.Model
                 return base._modificationDate;
             }
         }
-
-        public IDictionary<long, object> Properties {
-            get {
-                return base._properties;
+        
+        public IEnumerable<PropertyContainer> GetAllProperties ()
+        {
+            if (ReadResource ()) {
+                
+                List<PropertyContainer> result = new List <PropertyContainer> ();
+                
+                if (base._properties != null && base._properties.Count > 0) {
+                    result.AddRange (base._properties.Select (_ => new PropertyContainer (_.Key, _.Value)));
+                }
+                FinishReadResource ();
+                
+                return result;
             }
+            
+            throw new CollisionException ();
         }
+        
+        public Boolean TryGetProperty (out Object result, Int64 propertyId)
+        {
+            if (ReadResource ()) {
+                
+                Boolean foundsth = false;
+                
+                if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue(propertyId, out result)) {
+                    foundsth = true;    
+                }
+                FinishReadResource ();
+                
+                return foundsth;
+            }
+            
+            throw new CollisionException ();
+        }
+
         #endregion
      
     }

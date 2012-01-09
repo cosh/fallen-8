@@ -26,21 +26,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Fallen8.API.Helper;
 
 namespace Fallen8.Model
 {
     /// <summary>
     /// A graph element.
     /// </summary>
-    public abstract class AGraphElement
+    public abstract class AGraphElement : AThreadSafeElement
     {
         #region Data
-        
-        /// <summary>
-        /// The using resource.
-        /// 0 for false, 1 for true.
-        /// </summary>
-        private int _usingResource = 0;
         
         /// <summary>
         /// The identifier of this graph element.
@@ -88,7 +83,6 @@ namespace Fallen8.Model
         
         #endregion
         
-        
         #region protected helpers
         
         /// <summary>
@@ -133,87 +127,6 @@ namespace Fallen8.Model
             }
             
             return true;
-        }
-        
-        /// <summary>
-        /// Reads the resource.
-        /// Blocks if reading is currently not allowed
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if reading is allowed; otherwise, <c>false</c>.
-        /// </returns>
-        protected bool ReadResource ()
-        {
-            //>=0 indicates that the method is not in use.
-            if (0 > Interlocked.Increment (ref _usingResource)) {
-                //Code to access a resource that is not thread safe would go here.
-                return true;
-            } else {
-                
-                //usingResource was incremented in the if clause, so lets decrement it again
-                Interlocked.Decrement (ref _usingResource);
-                
-                //another thread writes something, so lets wait
-                
-                int counter = 0;
-                
-                do {
-                    
-                    if (counter++ > 100) {
-                        return false;
-                    }
-                    
-                } while (0 != Interlocked.CompareExchange(ref _usingResource, 1, 0));
-                
-                return true;
-            }
-        }
-        
-        /// <summary>
-        /// Reading this resource is finished.
-        /// </summary>
-        protected void FinishReadResource ()
-        {
-            //Release the lock
-            Interlocked.Decrement (ref _usingResource);
-        }
-        
-        /// <summary>
-        /// Writes the resource.
-        /// Blocks if another thread reads or writes this resource
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if writing is allowed; otherwise, <c>false</c>.
-        /// </returns>
-        protected bool WriteResource ()
-        {
-            if (0 == Interlocked.CompareExchange (ref _usingResource, -100, 0)) {
-                return true;
-            } else {
-                
-                //another thread writes something, so lets wait
-                
-                int counter = 0;
-                
-                do {
-                    
-                    if (counter++ > 100) {
-                        return false;
-                    }
-                    
-                } while (0 != Interlocked.CompareExchange(ref _usingResource, -100, 0));
-                
-                return true;
-            }
-        }
-  
-        /// <summary>
-        /// Writing this resource is finished
-        /// </summary>
-        protected void FinishWriteResource ()
-        {
-            //Release the lock
-            Interlocked.Exchange(ref _usingResource, 0);
         }
         
         #endregion
