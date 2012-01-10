@@ -86,18 +86,22 @@ namespace Fallen8.API
 
         public bool TryStartService (out IFallen8Service service, string servicePluginName, IDictionary<string, object> parameter)
         {
-            if (Fallen8PluginFactory.TryFindPlugin<IFallen8Service> (out service, servicePluginName)) {
+            IFallen8Service serviceSchema;
+            if (Fallen8PluginFactory.TryFindPlugin<IFallen8Service> (out serviceSchema, servicePluginName)) {
              
                 try {
-                    service.Initialize (_fallen8, parameter);
+                    service = (IFallen8Service)serviceSchema.Initialize(_fallen8, parameter);
                     
                     _services.Add (service);
                     
                     return true;
                 } catch (Exception) {
+                    service = null;
                     return false;
                 }
             }
+
+            service = null;
             return false;   
         }
 
