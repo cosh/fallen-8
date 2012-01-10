@@ -31,6 +31,7 @@ using Fallen8.API.Helper;
 using Fallen8.API.Expression;
 using System.Collections.Generic;
 using System.Threading;
+using Fallen8.API.Error;
 
 namespace Fallen8.API
 {
@@ -91,24 +92,28 @@ namespace Fallen8.API
         #endregion
 
         #region IFallen8Write implementation
-        public IVertexModel CreateVertex (VertexModelDefinition vertexDefinition)
+        public IVertexModel CreateVertex(VertexModelDefinition vertexDefinition)
         {
             //create the new vertex
-            VertexModel newVertex = new VertexModel (Interlocked.Increment (ref _currentId), vertexDefinition.CreationDate, vertexDefinition.Properties);
-            
-            _model.Graphelements.TryAdd(newVertex.Id, newVertex);
-            
-            if (vertexDefinition.Edges != null && vertexDefinition.Edges.Count > 0) {
-                
-                Dictionary<long, EdgePropertyModel> outEdges = new Dictionary<long, EdgePropertyModel> ();
-                
-                foreach (var aEdge in vertexDefinition.Edges) {
-                    outEdges.Add (aEdge.Key, CreateEdgeProperty (aEdge.Key, aEdge.Value, newVertex));
+            VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), vertexDefinition.CreationDate, vertexDefinition.Properties);
+
+            _model.Graphelements[newVertex.Id] = newVertex;
+
+            if (vertexDefinition.Edges != null && vertexDefinition.Edges.Count > 0)
+            {
+
+                Dictionary<long, EdgePropertyModel> outEdges = new Dictionary<long, EdgePropertyModel>();
+
+                foreach (var aEdge in vertexDefinition.Edges)
+                {
+                    outEdges.Add(aEdge.Key, CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
                 }
-                
-                newVertex.AddOutEdges (outEdges);
+
+                newVertex.AddOutEdges(outEdges);
             }
-            
+
+            vertexDefinition = null;
+
             return newVertex;
         }
 
@@ -126,7 +131,9 @@ namespace Fallen8.API
             //link the vertices
             sourceVertex.AddOutEdge (edgePropertyId, outgoingEdge);
             targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
-            
+
+            edgeDefinition = null;
+
             return outgoingEdge;
         }
 
@@ -152,8 +159,8 @@ namespace Fallen8.API
 
         public bool TryRemoveGraphElement (long graphElementId)
         {
-            IGraphElementModel graphElement;
-            return _model.Graphelements.TryRemove (graphElementId, out graphElement);
+            IGraphElementModel gelement;
+            return _model.Graphelements.TryRemove (graphElementId, out gelement);
         }
         #endregion
 

@@ -37,7 +37,7 @@ namespace Fallen8.API.Helper
         /// The using resource.
         /// 0 for false, 1 for true.
         /// </summary>
-        private int _usingResource = 0;
+        private Int32 _usingResource = 0;
         
         protected AThreadSafeElement ()
         {
@@ -50,31 +50,31 @@ namespace Fallen8.API.Helper
         /// <returns>
         /// <c>true</c> if reading is allowed; otherwise, <c>false</c>.
         /// </returns>
-        protected bool ReadResource ()
+        protected bool ReadResource()
         {
             //>=0 indicates that the method is not in use.
-            if (0 > Interlocked.Increment (ref _usingResource)) {
+            if (0 > Interlocked.Increment(ref _usingResource))
+            {
                 //Code to access a resource that is not thread safe would go here.
                 return true;
-            } else {
-                
-                //usingResource was incremented in the if clause, so lets decrement it again
-                Interlocked.Decrement (ref _usingResource);
-                
-                //another thread writes something, so lets wait
-                
-                int counter = 0;
-                
-                do {
-                    
-                    if (counter++ > 100) {
-                        return false;
-                    }
-                    
-                } while (0 != Interlocked.CompareExchange(ref _usingResource, 1, 0));
-                
-                return true;
             }
+
+            //another thread writes something, so lets wait
+
+            for (int i = 0; i < 1000; i++)
+            {
+                //usingResource was incremented in the if clause, so lets decrement it again
+                Interlocked.Decrement(ref _usingResource);
+
+                Thread.Sleep(1);
+
+                if (0 > Interlocked.Increment(ref _usingResource))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
         
         /// <summary>
@@ -93,26 +93,24 @@ namespace Fallen8.API.Helper
         /// <returns>
         /// <c>true</c> if writing is allowed; otherwise, <c>false</c>.
         /// </returns>
-        protected bool WriteResource ()
+        protected bool WriteResource()
         {
-            if (0 == Interlocked.CompareExchange (ref _usingResource, -100, 0)) {
-                return true;
-            } else {
-                
-                //another thread writes something, so lets wait
-                
-                int counter = 0;
-                
-                do {
-                    
-                    if (counter++ > 100) {
-                        return false;
-                    }
-                    
-                } while (0 != Interlocked.CompareExchange(ref _usingResource, -100, 0));
-                
+            if (0 == Interlocked.CompareExchange(ref _usingResource, -1000, 0))
+            {
                 return true;
             }
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Thread.Sleep(1);
+
+                if (0 == Interlocked.CompareExchange(ref _usingResource, -1000, 0))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
   
         /// <summary>
@@ -121,7 +119,7 @@ namespace Fallen8.API.Helper
         protected void FinishWriteResource ()
         {
             //Release the lock
-            Interlocked.Exchange (ref _usingResource, 0);
+            Interlocked.Exchange(ref _usingResource, 0);
         }
     }
 }

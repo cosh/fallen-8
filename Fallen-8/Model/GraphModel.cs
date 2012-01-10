@@ -61,7 +61,7 @@ namespace Fallen8.Model
         /// </param>
         public GraphModel (Int64 id, DateTime creationDate, Dictionary<Int64, Object> properties) : base(id, creationDate, properties)
         {
-            _graphElements = new ConcurrentDictionary<long, IGraphElementModel> ();   
+            _graphElements = new ConcurrentDictionary<long, IGraphElementModel>();   
         }
         
         #endregion
@@ -88,7 +88,8 @@ namespace Fallen8.Model
             return _graphElements.Where (aGraphElementKV => aGraphElementKV.Value is IEdgeModel).Select (aEdgeKV => (IEdgeModel)aEdgeKV.Value);
         }
 
-        public ConcurrentDictionary<long, IGraphElementModel> Graphelements {
+        public ConcurrentDictionary<long, IGraphElementModel> Graphelements
+        {
             get {
                 return _graphElements;
             }
