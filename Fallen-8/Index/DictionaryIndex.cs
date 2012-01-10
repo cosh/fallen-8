@@ -237,10 +237,6 @@ namespace Fallen8.API.Index
             {
                 return _description;
             }
-            set
-            {
-                _description = value;
-            }
         }
 
         public string Manufacturer

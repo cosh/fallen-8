@@ -60,7 +60,7 @@ namespace Fallen8.API.Plugin
         /// <value>
         /// The description.
         /// </value>
-        String Description { get; set; }
+        String Description { get; }
 
         /// <summary>
         /// Gets the manufacturer.
