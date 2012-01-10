@@ -30,13 +30,45 @@ namespace Fallen8.API.Plugin
 {
 	public interface IFallen8Plugin
 	{
-		/// <summary>
-		/// Gets the description.
-		/// </summary>
-		/// <value>
-		/// The description.
-		/// </value>
-		PluginDescription Description { get; }
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
+        String PluginName { get; }
+
+        /// <summary>
+        /// Gets or sets the type of the plugin.
+        /// </summary>
+        /// <value>
+        /// The type of the plugin.
+        /// </value>
+        Type PluginType { get; }
+
+        /// <summary>
+        /// Gets or sets the plugin category.
+        /// </summary>
+        /// <value>
+        /// The plugin category.
+        /// </value>
+        Type PluginCategory { get; }
+
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
+        String Description { get; set; }
+
+        /// <summary>
+        /// Gets the manufacturer.
+        /// </summary>
+        /// <value>
+        /// The manufacturer.
+        /// </value>
+        String Manufacturer { get; }
 		
 		/// <summary>
 		/// Tries to inititialize the plugin.

@@ -42,14 +42,14 @@ namespace Fallen8.API.Index
         #region Data
         
         /// <summary>
-        /// The description.
-        /// </summary>
-        private PluginDescription _description;
-        
-        /// <summary>
         /// The index dictionary.
         /// </summary>
         private Dictionary<IComparable, HashSet<IGraphElementModel>> _idx;
+
+        /// <summary>
+        /// The description of the plugin
+        /// </summary>
+        private String _description = "A very conservative directory index";
         
         #endregion
   
@@ -60,12 +60,6 @@ namespace Fallen8.API.Index
         /// </summary>
         public DictionaryIndex ()
         {
-            _description = new PluginDescription (
-                "DictionaryIndex",
-                typeof(DictionaryIndex),
-                typeof(IIndex),
-                "A very conservative directory index",
-                "Henning Rauch");
         }
         
         #endregion
@@ -222,11 +216,38 @@ namespace Fallen8.API.Index
             return this;
         }
 
-        public PluginDescription Description {
-            get {
+        public string PluginName
+        {
+            get { return "DictionaryIndex"; }
+        }
+
+        public Type PluginType
+        {
+            get { return typeof(DictionaryIndex); }
+        }
+
+        public Type PluginCategory
+        {
+            get { return typeof(IIndex); }
+        }
+
+        public string Description
+        {
+            get
+            {
                 return _description;
             }
+            set
+            {
+                _description = value;
+            }
         }
+
+        public string Manufacturer
+        {
+            get { return "Henning Rauch"; }
+        }
+
         #endregion
     }
 }

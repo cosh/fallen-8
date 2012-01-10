@@ -64,7 +64,7 @@ namespace Fallen8.API
 		/// <returns>
 		/// The available service plugins.
 		/// </returns>
-		IEnumerable<PluginDescription> GetAvailableServicePlugins ();
+		IEnumerable<String> GetAvailableServicePlugins ();
 
         /// <summary>
         /// Tries to start a service.

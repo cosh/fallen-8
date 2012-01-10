@@ -49,7 +49,7 @@ namespace Fallen8.API.Index
 		/// <returns>
 		/// The available index plugins.
 		/// </returns>
-		IEnumerable<PluginDescription> GetAvailableIndexPlugins();
+		IEnumerable<String> GetAvailableIndexPlugins();
 		
 		/// <summary>
 		/// Tries to create an index.

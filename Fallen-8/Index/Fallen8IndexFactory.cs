@@ -58,9 +58,9 @@ namespace Fallen8.API.Index
         #endregion
         
         #region IFallen8IndexFactory implementation
-        public IEnumerable<PluginDescription> GetAvailableIndexPlugins ()
+        public IEnumerable<String> GetAvailableIndexPlugins ()
         {
-            IEnumerable<PluginDescription> result;
+            IEnumerable<String> result;
             
             Fallen8PluginFactory.TryGetAvailablePlugins<IIndex> (out result);
             

@@ -75,9 +75,9 @@ namespace Fallen8.API
             }
         }
 
-        public IEnumerable<PluginDescription> GetAvailableServicePlugins ()
+        public IEnumerable<String> GetAvailableServicePlugins ()
         {
-            IEnumerable<PluginDescription> result;
+            IEnumerable<String> result;
             
             Fallen8PluginFactory.TryGetAvailablePlugins<IFallen8Service> (out result);
             

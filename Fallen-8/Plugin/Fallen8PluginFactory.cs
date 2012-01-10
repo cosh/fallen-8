@@ -56,7 +56,7 @@ namespace Fallen8.API.Plugin
             foreach (var aPluginTypeOfT in GetAllTypes<T>()) {
                 var aPluginInstance = Activate (aPluginTypeOfT);
                 if (aPluginInstance != null) {
-                    if (aPluginInstance.Description.PluginName == name) {
+                    if (aPluginInstance.PluginName == name) {
                         result = (T)aPluginInstance;
                         return true;
                     }
@@ -78,9 +78,9 @@ namespace Fallen8.API.Plugin
         /// <typeparam name='T'>
         /// The interface type of the plugin.
         /// </typeparam>
-        public static Boolean TryGetAvailablePlugins<T> (out IEnumerable<PluginDescription> result)
+        public static Boolean TryGetAvailablePlugins<T> (out IEnumerable<String> result)
         {
-            var descriptions = new List<PluginDescription> ();
+            var descriptions = new List<String>();
             
             foreach (var aPluginTypeOfT in GetAllTypes<T>()) {
                 var aPluginInstance = Activate (aPluginTypeOfT);
