@@ -191,6 +191,10 @@ namespace Fallen8.Model
                 if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue(propertyId, out result)) {
                     foundsth = true;    
                 }
+                else
+                {
+                    result = null;
+                }
                 FinishReadResource ();
                 
                 return foundsth;
