@@ -160,7 +160,10 @@ namespace Fallen8.Model
                 } else {
                     _properties.Add (propertyId, property);
                 }
-                
+
+                //set the modificationdate
+                _modificationDate = DateTime.Now;
+
                 FinishWriteResource ();
                 return foundProperty;
             }
@@ -185,7 +188,13 @@ namespace Fallen8.Model
             if (WriteResource ()) {
                 
                 Boolean removedSomething = _properties.Remove (propertyId);
-                
+
+                if (removedSomething)
+                {
+                    //set the modificationdate
+                    _modificationDate = DateTime.Now;
+                }
+
                 FinishWriteResource ();
                 return removedSomething;
             }
