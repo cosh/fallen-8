@@ -55,7 +55,7 @@ namespace Fallen8.API
         /// <summary>
         /// The current identifier.
         /// </summary>
-        private Int64 _currentId = 0;
+        private Int64 _currentId = Int64.MinValue;
         
         /// <summary>
         /// Binary operator delegate.
@@ -127,7 +127,10 @@ namespace Fallen8.API
             var edgeProperty = new EdgePropertyModel (sourceVertex, null);
             var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), edgeDefinition.CreationDate, targetVertex, edgeProperty, edgeDefinition.Properties);
             edgeProperty.AddEdge (outgoingEdge);
-            
+
+            //add the edge to the graph elements
+            _model.Graphelements[outgoingEdge.Id] = outgoingEdge;
+
             //link the vertices
             sourceVertex.AddOutEdge (edgePropertyId, outgoingEdge);
             targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
@@ -453,7 +456,8 @@ namespace Fallen8.API
                 var targetVertex = (VertexModel)_model.Graphelements [aEdgeDefinition.TargetVertexId];
                 
                 var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, result, aEdgeDefinition.Properties);
-                
+                _model.Graphelements[outgoingEdge.Id] = outgoingEdge;
+
                 targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
                 
                 edges.Add (outgoingEdge);
