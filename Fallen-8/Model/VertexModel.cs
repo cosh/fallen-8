@@ -87,7 +87,8 @@ namespace Fallen8.Model
         /// </exception>
         public void AddOutEdge (long edgePropertyId, EdgeModel outEdge)
         {
-            if (WriteResource ()) {
+            if (WriteResource ()) 
+            {
                 
                 if (_outEdges == null) {
                     _outEdges = new Dictionary<long, EdgePropertyModel> ();
@@ -99,10 +100,12 @@ namespace Fallen8.Model
                 } else {
                     _outEdges.Add (edgePropertyId, new EdgePropertyModel (this, new List<IEdgeModel> {outEdge}));
                 }
-                       
+
+                FinishWriteResource();
+
+                return;
             }
             
-            FinishWriteResource ();
             
             throw new CollisionException ();
         }
@@ -137,6 +140,8 @@ namespace Fallen8.Model
                 }
             
                 FinishWriteResource ();
+
+                return;
             }
             
             throw new CollisionException ();
@@ -171,6 +176,8 @@ namespace Fallen8.Model
                 }
                 
                 FinishWriteResource ();
+
+                return;
             }
             
             throw new CollisionException ();

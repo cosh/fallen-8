@@ -65,11 +65,13 @@ namespace Fallen8.API.Index
         /// </param> 
 		/// <param name='indexTypeName'>
 		/// Index type.
+        /// Default is DictionaryIndex
 		/// </param>
 		/// <param name='parameter'>
 		/// Parameter for the index.
+        /// Default is Null
 		/// </param>
-		Boolean TryCreateIndex(out IIndex index, String indexName, String indexTypeName, IDictionary<String, Object> parameter);
+        Boolean TryCreateIndex(out IIndex index, String indexName, String indexTypeName = "DictionaryIndex", IDictionary<String, Object> parameter = null);
 		
 		/// <summary>
 		/// Tries to delete the index.

@@ -115,6 +115,6 @@ namespace Fallen8.API.Index
         /// Key.
         /// </param>
         Boolean GetValue(out IEnumerable<IGraphElementModel> result, IComparable key);
-	}
+    }
 }
 

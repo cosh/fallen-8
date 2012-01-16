@@ -53,7 +53,7 @@ namespace Fallen8.API.Helper
         protected bool ReadResource()
         {
             //>=0 indicates that the method is not in use.
-            if (0 > Interlocked.Increment(ref _usingResource))
+            if (Interlocked.Increment(ref _usingResource) >= 0)
             {
                 //Code to access a resource that is not thread safe would go here.
                 return true;
@@ -68,7 +68,7 @@ namespace Fallen8.API.Helper
 
                 Thread.Sleep(1);
 
-                if (0 > Interlocked.Increment(ref _usingResource))
+                if (Interlocked.Increment(ref _usingResource) >= 0)
                 {
                     return true;
                 }

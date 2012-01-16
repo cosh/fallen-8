@@ -110,6 +110,8 @@ namespace Fallen8.API.Index
                 }
                 
                 FinishWriteResource ();
+
+                return;
             }
             
             
@@ -132,10 +134,19 @@ namespace Fallen8.API.Index
         public void RemoveValue (IGraphElementModel graphElement)
         {
             if (WriteResource ()) {
-                
-                foreach (var aKV in _idx) {
+
+                List<IComparable> toBeRemovedKeys = new List<IComparable>();
+
+                foreach (var aKV in _idx) 
+                {
                     aKV.Value.Remove (graphElement);
+                    if (aKV.Value.Count == 0)
+                    {
+                        toBeRemovedKeys.Add(aKV.Key);
+                    }
                 }
+
+                toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
                 
                 FinishWriteResource ();
             }

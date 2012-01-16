@@ -55,7 +55,7 @@ namespace Fallen8.API
         /// <summary>
         /// The current identifier.
         /// </summary>
-        private Int64 _currentId = Int64.MinValue;
+        private Int64 _currentId = 0;
         
         /// <summary>
         /// Binary operator delegate.

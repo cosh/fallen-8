@@ -119,7 +119,8 @@ namespace Fallen8.Model
         {
             if (outEdge != null) {
              
-                if (WriteResource ()) {
+                if (WriteResource ()) 
+                {
                 
                     if (_edges == null) {
                         _edges = new List<IEdgeModel> {outEdge};
@@ -128,6 +129,8 @@ namespace Fallen8.Model
                     }
                 
                     FinishWriteResource ();
+
+                    return;
                 }
             
                 throw new CollisionException ();
@@ -145,7 +148,8 @@ namespace Fallen8.Model
         {
             if (edges != null) {
              
-                if (WriteResource ()) {
+                if (WriteResource ()) 
+                {
                 
                     if (_edges == null) {
                         _edges = new List<IEdgeModel> (edges);
@@ -154,6 +158,7 @@ namespace Fallen8.Model
                     }
                 
                     FinishWriteResource ();
+                    return;
                 }
             
                 throw new CollisionException ();
