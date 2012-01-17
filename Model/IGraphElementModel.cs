@@ -70,19 +70,6 @@ namespace Fallen8.Model
         /// <summary>
         /// Tries the get property.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <param name='propertyId'>
-        /// Property identifier.
-        /// </param>
-
-        /// <summary>
-        /// Tries the get property.
-        /// </summary>
         /// <typeparam name="TProperty">Type of the property</typeparam>
         /// <param name="result">Result.</param>
         /// <param name="propertyId">Property identifier.</param>
