@@ -131,19 +131,21 @@ namespace Fallen8.Model
             
             throw new CollisionException ();
         }
-        
-        public Boolean TryGetProperty (out Object result, Int64 propertyId)
+
+        public Boolean TryGetProperty<TResult>(out TResult result, Int64 propertyId)
         {
             if (ReadResource ()) {
                 
                 Boolean foundsth = false;
-                
-                if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue (propertyId, out result)) {
-                    foundsth = true;    
+                Object rawResult;
+                if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue(propertyId, out rawResult))
+                {
+                    result = (TResult)rawResult;
+                    foundsth = true;
                 }
                 else
                 {
-                    result = null;
+                    result = default(TResult);
                 }
                 FinishReadResource ();
                 

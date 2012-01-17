@@ -66,7 +66,7 @@ namespace Fallen8.Model
         /// All properties.
         /// </returns>
         IEnumerable<PropertyContainer> GetAllProperties();
-        
+
         /// <summary>
         /// Tries the get property.
         /// </summary>
@@ -79,6 +79,14 @@ namespace Fallen8.Model
         /// <param name='propertyId'>
         /// Property identifier.
         /// </param>
-        Boolean TryGetProperty(out Object result, Int64 propertyId);
+
+        /// <summary>
+        /// Tries the get property.
+        /// </summary>
+        /// <typeparam name="TProperty">Type of the property</typeparam>
+        /// <param name="result">Result.</param>
+        /// <param name="propertyId">Property identifier.</param>
+        /// <returns><c>true</c> if something was found; otherwise, <c>false</c>.</returns>
+        Boolean TryGetProperty<TProperty>(out TProperty result, Int64 propertyId);
     }
 }
