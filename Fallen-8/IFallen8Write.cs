@@ -46,7 +46,7 @@ namespace Fallen8.API
 		/// <param name='vertexDefinition'>
 		/// Vertex definition.
 		/// </param>
-		IVertexModel CreateVertex (VertexModelDefinition vertexDefinition);
+		VertexModel CreateVertex (VertexModelDefinition vertexDefinition);
 		
 		/// <summary>
 		/// Creates an edge.
@@ -63,7 +63,7 @@ namespace Fallen8.API
 		/// <param name='edgeDefinition'>
 		/// Edge definition.
 		/// </param>
-		IEdgeModel CreateEdge (Int64 sourceVertexId, Int64 edgePropertyId, EdgeModelDefinition edgeDefinition);
+		EdgeModel CreateEdge (Int64 sourceVertexId, Int64 edgePropertyId, EdgeModelDefinition edgeDefinition);
 		
 		#endregion
 		

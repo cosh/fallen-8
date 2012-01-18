@@ -44,7 +44,7 @@ namespace Fallen8.API.Index
         /// <summary>
         /// The index dictionary.
         /// </summary>
-        private Dictionary<IComparable, HashSet<IGraphElementModel>> _idx;
+        private Dictionary<IComparable, HashSet<AGraphElement>> _idx;
 
         /// <summary>
         /// The description of the plugin
@@ -93,18 +93,18 @@ namespace Fallen8.API.Index
             throw new CollisionException ();
         }
 
-        public void AddOrUpdate (IComparable key, IGraphElementModel graphElement)
+        public void AddOrUpdate(IComparable key, AGraphElement graphElement)
         {
             if (WriteResource ()) {
-                
-                HashSet<IGraphElementModel> values;
+
+                HashSet<AGraphElement> values;
                 if (_idx.TryGetValue (key, out values)) {
                 
                     values.Add (graphElement);
                 
                 } else {
-                    
-                    values = new HashSet<IGraphElementModel> ();
+
+                    values = new HashSet<AGraphElement>();
                     values.Add (graphElement);
                     _idx.Add (key, values);
                 }
@@ -131,7 +131,7 @@ namespace Fallen8.API.Index
             throw new CollisionException ();
         }
 
-        public void RemoveValue (IGraphElementModel graphElement)
+        public void RemoveValue(AGraphElement graphElement)
         {
             if (WriteResource ()) {
 
@@ -149,6 +149,8 @@ namespace Fallen8.API.Index
                 toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
                 
                 FinishWriteResource ();
+
+                return;
             }
             
             throw new CollisionException ();
@@ -161,6 +163,8 @@ namespace Fallen8.API.Index
                 _idx.Clear ();
                 
                 FinishWriteResource ();
+
+                return;
             }
             
             throw new CollisionException ();
@@ -181,12 +185,12 @@ namespace Fallen8.API.Index
         }
 
 
-        public IEnumerable<KeyValuePair<IComparable, IEnumerable<IGraphElementModel>>> GetKeyValues ()
+        public IEnumerable<KeyValuePair<IComparable, IEnumerable<AGraphElement>>> GetKeyValues()
         {
             if (ReadResource ()) {
                 
-                foreach (var aKV in _idx) 
-                    yield return new KeyValuePair<IComparable, IEnumerable<IGraphElementModel>>(aKV.Key, new List<IGraphElementModel>(aKV.Value));
+                foreach (var aKV in _idx)
+                    yield return new KeyValuePair<IComparable, IEnumerable<AGraphElement>>(aKV.Key, new List<AGraphElement>(aKV.Value));
                 
                 FinishReadResource ();
                 
@@ -196,11 +200,11 @@ namespace Fallen8.API.Index
             throw new CollisionException ();
         }
 
-        public bool GetValue (out IEnumerable<IGraphElementModel> result, IComparable key)
+        public bool GetValue(out IEnumerable<AGraphElement> result, IComparable key)
         {
             if (ReadResource ()) {
-                
-                HashSet<IGraphElementModel> graphElements;
+
+                HashSet<AGraphElement> graphElements;
                 
                 var foundSth = _idx.TryGetValue (key, out graphElements);
                 
@@ -222,7 +226,7 @@ namespace Fallen8.API.Index
         #region IFallen8Plugin implementation
         public IFallen8Plugin Initialize (IFallen8 fallen8, IDictionary<string, object> parameter)
         {
-            _idx = new Dictionary<IComparable, HashSet<IGraphElementModel>> ();
+            _idx = new Dictionary<IComparable, HashSet<AGraphElement>>();
             
             return this;
         }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -32,6 +32,27 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expression\BinaryOperator.cs" />
+    <Compile Include="Helper\AGraphElementDefinition.cs" />
+    <Compile Include="Helper\EdgeModelDefinition.cs" />
+    <Compile Include="Helper\VertexModelDefinition.cs" />
+    <Compile Include="IFallen8.cs" />
+    <Compile Include="IFallen8Read.cs" />
+    <Compile Include="IFallen8Server.cs" />
+    <Compile Include="IFallen8Write.cs" />
+    <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
+    <Compile Include="Index\Fulltext\FulltextSearchResultElement.cs" />
+    <Compile Include="Index\Fulltext\IFulltextIndex.cs" />
+    <Compile Include="Index\IFallen8IndexFactory.cs" />
+    <Compile Include="Index\IIndex.cs" />
+    <Compile Include="Index\Range\IRangeIndex.cs" />
+    <Compile Include="Index\Spatial\Circle.cs" />
+    <Compile Include="Index\Spatial\IGeometry.cs" />
+    <Compile Include="Index\Spatial\ISpatialIndex.cs" />
+    <Compile Include="Index\Spatial\Point.cs" />
+    <Compile Include="Index\Spatial\Rectangle.cs" />
+    <Compile Include="Model\PropertyContainer.cs" />
+    <Compile Include="Plugin\IFallen8Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\EdgeModel.cs" />
     <Compile Include="Model\VertexModel.cs" />
@@ -45,24 +66,8 @@
     <Compile Include="Error\CollisionException.cs" />
     <Compile Include="Helper\AThreadSafeElement.cs" />
     <Compile Include="Fallen8Server.cs" />
+    <Compile Include="Service\IFallen8Service.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Properties\" />
-    <Folder Include="Model\" />
-    <Folder Include="Index\" />
-    <Folder Include="Plugin\" />
-    <Folder Include="Error\" />
-    <Folder Include="Helper\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{E0145191-CC23-42ED-945E-B343D49CAA8E}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IFallen-8\IFallen-8.csproj">
-      <Project>{259E1EFF-FC9A-4674-A4C6-D93490C4AC99}</Project>
-      <Name>IFallen-8</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
 </Project>

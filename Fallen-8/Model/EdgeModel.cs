@@ -33,22 +33,8 @@ namespace Fallen8.Model
     /// <summary>
     /// Edge model.
     /// </summary>
-    public sealed class EdgeModel : AGraphElement, IEdgeModel
+    public sealed class EdgeModel : AGraphElement
     {
-        #region Data
-        
-        /// <summary>
-        /// The target vertex.
-        /// </summary>
-        private readonly VertexModel _targetVertex;
-        
-        /// <summary>
-        /// The edge property model.
-        /// </summary>
-        private readonly EdgePropertyModel _edgePropertyModel;
-        
-        #endregion
-        
         #region Constructor
         
         /// <summary>
@@ -71,24 +57,24 @@ namespace Fallen8.Model
         /// </param>
         public EdgeModel (Int64 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty, Dictionary<Int64, Object> properties) : base (id, creationDate, properties)
         {
-            _targetVertex = targetVertex;
-            _edgePropertyModel = sourceEdgeProperty;
+            TargetVertex = targetVertex;
+            SourceEdgeProperty = sourceEdgeProperty;
         }
         
         #endregion
         
         #region IEdgeModel implementation
-        public IVertexModel TargetVertex {
-            get {
-                return _targetVertex;
-            }
-        }
 
-        public IEdgePropertyModel SourceEdgeProperty {
-            get {
-                return _edgePropertyModel;
-            }
-        }
+        /// <summary>
+        /// The target vertex.
+        /// </summary>
+        public readonly VertexModel TargetVertex;
+
+        /// <summary>
+        /// The source edge property.
+        /// </summary>
+        public readonly EdgePropertyModel SourceEdgeProperty;
+        
         #endregion
 
         #region Equals Overrides
@@ -113,8 +99,8 @@ namespace Fallen8.Model
                 return false;
             }
 
-            return _targetVertex.Id == p.TargetVertex.Id
-                   && (_edgePropertyModel.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id)
+            return TargetVertex.Id == p.TargetVertex.Id
+                   && (SourceEdgeProperty.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id)
                    && (base.PropertiesEqual(base._properties, p._properties));
         }
 
@@ -141,72 +127,9 @@ namespace Fallen8.Model
 
         public override int GetHashCode ()
         {
-            return _targetVertex.GetHashCode () ^ _edgePropertyModel.SourceVertex.GetHashCode ();
+            return TargetVertex.GetHashCode () ^ SourceEdgeProperty.SourceVertex.GetHashCode ();
         }
 
         #endregion
-
-        #region IGraphElementModel implementation
-        public long Id {
-            get {
-                return base._id;
-            }
-        }
-
-        public DateTime CreationDate {
-            get {
-                return base._creationDate;
-            }
-        }
-
-        public DateTime ModificationDate {
-            get {
-                return base._modificationDate;
-            }
-        }
-        
-        public IEnumerable<PropertyContainer> GetAllProperties ()
-        {
-            if (ReadResource ()) {
-                
-                List<PropertyContainer> result = new List <PropertyContainer> ();
-                
-                if (base._properties != null && base._properties.Count > 0) {
-                    result.AddRange (base._properties.Select (_ => new PropertyContainer (_.Key, _.Value)));
-                }
-                FinishReadResource ();
-                
-                return result;
-            }
-            
-            throw new CollisionException ();
-        }
-
-        public Boolean TryGetProperty<TResult>(out TResult result, Int64 propertyId)
-        {
-            if (ReadResource())
-            {
-
-                Boolean foundsth = false;
-                Object rawResult;
-                if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue(propertyId, out rawResult))
-                {
-                    result = (TResult)rawResult;
-                    foundsth = true;
-                }
-                else
-                {
-                    result = default(TResult);
-                }
-                FinishReadResource();
-
-                return foundsth;
-            }
-
-            throw new CollisionException();
-        }
-
-        #endregion
-     
     }
 }

@@ -56,7 +56,7 @@ namespace Fallen8.API
 		/// <param name='binOp'>
 		/// Binary operator.
 		/// </param>
-		Boolean Search (out IEnumerable<IGraphElementModel> result, Int64 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+        Boolean Search(out IEnumerable<AGraphElement> result, Int64 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
 		
 		/// <summary>
 		/// Search for graph elements by a specified index identifiert, a literal and a binary operation
@@ -76,7 +76,7 @@ namespace Fallen8.API
 		/// <param name='binOp'>
 		/// Binary operator.
 		/// </param>
-		Boolean SearchInIndex (out IEnumerable<IGraphElementModel> result, String indexId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+        Boolean SearchInIndex(out IEnumerable<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
 		
 		/// <summary>
 		/// Search for graph elements by a specified property range.
@@ -102,7 +102,7 @@ namespace Fallen8.API
 		/// <param name='includeRight'>
 		/// Include right.
 		/// </param>
-		Boolean SearchInRange (out IEnumerable<IGraphElementModel> result, String indexId, IComparable leftLimit, IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
+        Boolean SearchInRange(out IEnumerable<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
 		
 		/// <summary>
 		/// Fulltext search for graph elements by a specified query string using an index.
@@ -136,7 +136,7 @@ namespace Fallen8.API
 		/// <param name='geometry'>
 		/// Geometry.
 		/// </param>
-		Boolean SearchSpatial (out IEnumerable<IGraphElementModel> result, String indexId, IGeometry geometry);
+        Boolean SearchSpatial(out IEnumerable<AGraphElement> result, String indexId, IGeometry geometry);
 		
 		#endregion
 	}

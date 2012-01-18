@@ -35,19 +35,19 @@ namespace Fallen8.Model
     /// <summary>
     /// Edge property model.
     /// </summary>
-    public sealed class EdgePropertyModel : AThreadSafeElement, IEdgePropertyModel
+    public sealed class EdgePropertyModel : AThreadSafeElement, IEnumerable<EdgeModel>
     {
         #region Data
         
         /// <summary>
         /// The source vertex.
         /// </summary>
-        private readonly IVertexModel _sourceVertex;
+        public readonly VertexModel SourceVertex;
         
         /// <summary>
         /// The edges.
         /// </summary>
-        private List<IEdgeModel> _edges;
+        private List<EdgeModel> _edges;
         
         #endregion
         
@@ -62,36 +62,16 @@ namespace Fallen8.Model
         /// <param name='edges'>
         /// Edges.
         /// </param>
-        public EdgePropertyModel (VertexModel sourceVertex, List<IEdgeModel> edges)
+        public EdgePropertyModel (VertexModel sourceVertex, List<EdgeModel> edges)
         {
-            _sourceVertex = sourceVertex;
+            SourceVertex = sourceVertex;
             _edges = edges;   
         }
     
         #endregion
-        
-        #region IEdgePropertyModel implementation
-        public IVertexModel SourceVertex {
-            get {
-                return _sourceVertex;
-            }
-        }
-        
-        public void TrimEdges ()
-        {
-            if (WriteResource ()) {
-                _edges = _edges.Distinct ().ToList ();
-                
-                FinishWriteResource ();
-            }
-            
-            throw new CollisionException ();
-        }
-        
-        #endregion
-
+       
         #region IEnumerable[Fallen8.Model.IEdgeModel] implementation
-        public IEnumerator<IEdgeModel> GetEnumerator ()
+        public IEnumerator<EdgeModel> GetEnumerator ()
         {
             return _edges.GetEnumerator();
         }
@@ -105,7 +85,24 @@ namespace Fallen8.Model
         #endregion
   
         #region public methods
-  
+
+        /// <summary>
+        /// Trims the edges and makes them distinct.
+        /// </summary>
+        public void TrimEdges()
+        {
+            if (WriteResource())
+            {
+                _edges = _edges.Distinct().ToList();
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
+        }
+
         /// <summary>
         /// Adds an edge.
         /// </summary>
@@ -123,7 +120,7 @@ namespace Fallen8.Model
                 {
                 
                     if (_edges == null) {
-                        _edges = new List<IEdgeModel> {outEdge};
+                        _edges = new List<EdgeModel> {outEdge};
                     } else {
                         _edges.Add (outEdge);
                     }
@@ -144,7 +141,7 @@ namespace Fallen8.Model
         /// <param name='edges'>
         /// Edges.
         /// </param>
-        public void AddEdges (IEnumerable<IEdgeModel> edges)
+        public void AddEdges (IEnumerable<EdgeModel> edges)
         {
             if (edges != null) {
              
@@ -152,7 +149,7 @@ namespace Fallen8.Model
                 {
                 
                     if (_edges == null) {
-                        _edges = new List<IEdgeModel> (edges);
+                        _edges = new List<EdgeModel> (edges);
                     } else {
                         _edges.AddRange (edges);
                     }

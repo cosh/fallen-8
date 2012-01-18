@@ -35,7 +35,7 @@ namespace Fallen8.Model
     /// <summary>
     /// Vertex model.
     /// </summary>
-    public sealed class VertexModel : AGraphElement, IVertexModel
+    public sealed class VertexModel : AGraphElement
     {
         #region Data
         
@@ -47,7 +47,7 @@ namespace Fallen8.Model
         /// <summary>
         /// The in edges.
         /// </summary>
-        private Dictionary<long, List<IEdgeModel>> _inEdges;
+        private Dictionary<long, List<EdgeModel>> _inEdges;
         
         #endregion
         
@@ -98,7 +98,7 @@ namespace Fallen8.Model
                 if (_outEdges.TryGetValue (edgePropertyId, out edgeProperty)) {
                     edgeProperty.AddEdge (outEdge);
                 } else {
-                    _outEdges.Add (edgePropertyId, new EdgePropertyModel (this, new List<IEdgeModel> {outEdge}));
+                    _outEdges.Add (edgePropertyId, new EdgePropertyModel (this, new List<EdgeModel> {outEdge}));
                 }
 
                 FinishWriteResource();
@@ -164,15 +164,15 @@ namespace Fallen8.Model
             if (WriteResource ()) {
                 
                 if (_inEdges == null) {
-                    _inEdges = new Dictionary<long, List<IEdgeModel>> ();
+                    _inEdges = new Dictionary<long, List<EdgeModel>> ();
                 }
             
-                List<IEdgeModel> inEdges;
+                List<EdgeModel> inEdges;
                 if (_inEdges.TryGetValue (edgePropertyId, out inEdges)) {
                 
                     inEdges.Add (incomingEdge);
                 } else {
-                    _inEdges.Add (edgePropertyId, new List<IEdgeModel> {incomingEdge});
+                    _inEdges.Add (edgePropertyId, new List<EdgeModel> {incomingEdge});
                 }
                 
                 FinishWriteResource ();
@@ -207,7 +207,7 @@ namespace Fallen8.Model
                 return false;
             }
 
-            return base._id == p.Id;
+            return base.Id == p.Id;
         }
 
         public static Boolean operator == (VertexModel a, VertexModel b)
@@ -233,79 +233,23 @@ namespace Fallen8.Model
 
         public override int GetHashCode ()
         {
-            return base._id.GetHashCode ();
+            return base.Id.GetHashCode ();
         }
         
-        #endregion
-        
-        #region IGraphElementModel implementation
-        public long Id {
-            get {
-                return base._id;
-            }
-        }
-
-        public DateTime CreationDate {
-            get {
-                return base._creationDate;
-            }
-        }
-
-        public DateTime ModificationDate {
-            get {
-                return base._modificationDate;
-            }
-        }
-        
-        public IEnumerable<PropertyContainer> GetAllProperties ()
-        {
-            if (ReadResource ()) {
-                
-                List<PropertyContainer> result = new List <PropertyContainer> ();
-                
-                if (base._properties != null && base._properties.Count > 0) {
-                    result.AddRange (base._properties.Select (_ => new PropertyContainer (_.Key, _.Value)));
-                }
-                FinishReadResource ();
-                
-                return result;
-            }
-            
-            throw new CollisionException ();
-        }
-
-        public Boolean TryGetProperty<TResult>(out TResult result, Int64 propertyId)
-        {
-            if (ReadResource())
-            {
-
-                Boolean foundsth = false;
-                Object rawResult;
-                if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue(propertyId, out rawResult))
-                {
-                    result = (TResult)rawResult;
-                    foundsth = true;
-                }
-                else
-                {
-                    result = default(TResult);
-                }
-                FinishReadResource();
-
-                return foundsth;
-            }
-
-            throw new CollisionException();
-        }
-
         #endregion
         
         #region IVertexModel implementation
-        
-        public IEnumerable<IVertexModel> GetAllNeighbors ()
+
+        /// <summary>
+        /// Gets all neighbors.
+        /// </summary>
+        /// <returns>
+        /// The neighbors.
+        /// </returns>
+        public IEnumerable<VertexModel> GetAllNeighbors ()
         {
             if (ReadResource ()) {
-                List<IVertexModel> neighbors = new List<IVertexModel> ();
+                List<VertexModel> neighbors = new List<VertexModel> ();
                 
                 if (_outEdges != null && _outEdges.Count > 0) {
                     foreach (var aOutEdge in _outEdges) {
@@ -327,7 +271,13 @@ namespace Fallen8.Model
             
             throw new CollisionException ();
         }
-        
+
+        /// <summary>
+        /// Gets the incoming edge identifiers.
+        /// </summary>
+        /// <returns>
+        /// The incoming edge identifiers.
+        /// </returns>
         public IEnumerable<Int64> GetIncomingEdgeIds ()
         {
             if (ReadResource ()) {
@@ -344,7 +294,13 @@ namespace Fallen8.Model
             
             throw new CollisionException ();
         }
-        
+
+        /// <summary>
+        /// Gets the outgoing edge identifiers.
+        /// </summary>
+        /// <returns>
+        /// The outgoing edge identifiers.
+        /// </returns>
         public IEnumerable<Int64> GetOutgoingEdgeIds ()
         {
             if (ReadResource ()) {
@@ -361,8 +317,20 @@ namespace Fallen8.Model
             
             throw new CollisionException ();
         }
-        
-        public Boolean TryGetOutEdge (out IEdgePropertyModel result, Int64 edgePropertyId)
+
+        /// <summary>
+        /// Tries to get an out edge.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// Result.
+        /// </param>
+        /// <param name='edgePropertyId'>
+        /// Edge property identifier.
+        /// </param>
+        public Boolean TryGetOutEdge (out EdgePropertyModel result, Int64 edgePropertyId)
         {
             if (ReadResource ()) {
                 
@@ -370,9 +338,7 @@ namespace Fallen8.Model
                 
                 if (_outEdges != null && _outEdges.Count > 0) {
                     
-                    EdgePropertyModel edgeProperty;
-                    foundSth = _outEdges.TryGetValue (edgePropertyId, out edgeProperty);
-                    result = edgeProperty;
+                    foundSth = _outEdges.TryGetValue (edgePropertyId, out result);
                 } else {
                     result = null;
                 }
@@ -384,8 +350,20 @@ namespace Fallen8.Model
             
             throw new CollisionException ();
         }
-        
-        public Boolean TryGetInEdges (out IEnumerable<IEdgeModel> result, Int64 edgePropertyId)
+
+        /// <summary>
+        /// Tries to get in edges.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// Result.
+        /// </param>
+        /// <param name='edgePropertyId'>
+        /// Edge property identifier.
+        /// </param>
+        public Boolean TryGetInEdges (out IEnumerable<EdgeModel> result, Int64 edgePropertyId)
         {
             if (ReadResource ()) {
                 
@@ -393,7 +371,7 @@ namespace Fallen8.Model
                 
                 if (_inEdges != null && _inEdges.Count > 0) {
                     
-                    List<IEdgeModel> inEdges;
+                    List<EdgeModel> inEdges;
                     foundSth = _inEdges.TryGetValue (edgePropertyId, out inEdges);
                     result = inEdges;
                 } else {

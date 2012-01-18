@@ -1,5 +1,5 @@
-// 
-// FulltextSearchResultElement.cs
+﻿// 
+// IFallen8.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,39 +24,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using Fallen8.Model;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Fallen8.Model;
+using Fallen8.API.Expression;
+using Fallen8.API.Index;
+using Fallen8.API.Helper;
 
-namespace Fallen8.API.Index
+namespace Fallen8.API
 {
 	/// <summary>
-	/// Fulltext search result element.
+	/// Fallen-8 interface.
 	/// </summary>
-	public class FulltextSearchResultElement
-	{
+    public interface IFallen8 : IFallen8Read, IFallen8Write
+    {
 		/// <summary>
-		/// Gets or sets the graph element.
+		/// Gets the graph.
 		/// </summary>
 		/// <value>
-		/// The graph element.
+		/// The graph.
 		/// </value>
-		public IGraphElementModel GraphElement { get; private set; }
+        GraphModel Graph { get; }
 		
 		/// <summary>
-		/// Gets or sets the highlights.
+		/// Gets the index provider.
 		/// </summary>
 		/// <value>
-		/// The highlights.
+		/// The index provider.
 		/// </value>
-		public IList<string> Highlights { get; private set; }
-		
-		/// <summary>
-		/// Gets or sets the score.
-		/// </summary>
-		/// <value>
-		/// The score.
-		/// </value>
-		public Double Score { get; private set; }
-	}
+		IFallen8IndexFactory IndexProvider { get; }
+    }
 }
-

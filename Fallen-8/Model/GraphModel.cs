@@ -34,14 +34,14 @@ namespace Fallen8.Model
     /// <summary>
     /// Graph model.
     /// </summary>
-    public sealed class GraphModel : AGraphElement, IGraphModel
+    public sealed class GraphModel : AGraphElement
     {
         #region Data
         
         /// <summary>
         /// The graph elements.
         /// </summary>
-        private readonly ConcurrentDictionary<long, IGraphElementModel> _graphElements;
+        public readonly ConcurrentDictionary<long, AGraphElement> GraphElements;
         
         #endregion
         
@@ -61,102 +61,65 @@ namespace Fallen8.Model
         /// </param>
         public GraphModel (Int64 id, DateTime creationDate, Dictionary<Int64, Object> properties) : base(id, creationDate, properties)
         {
-            _graphElements = new ConcurrentDictionary<long, IGraphElementModel>();   
+            GraphElements = new ConcurrentDictionary<long, AGraphElement>();   
         }
         
         #endregion
         
         #region IGraphModel implementation
-        
-        public IVertexModel GetVertex (long id)
+
+        /// <summary>
+        /// Gets a vertex by its identifier.
+        /// </summary>
+        /// <returns>
+        /// The vertex.
+        /// </returns>
+        /// <param name='id'>
+        /// System wide unique identifier.
+        /// </param>
+        public VertexModel GetVertex (long id)
         {
-            return GetElement (id) as IVertexModel;
+            return GetElement (id) as VertexModel;
         }
 
-        public IEnumerable<IVertexModel> GetVertices ()
+        /// <summary>
+        /// Gets the vertices.
+        /// </summary>
+        /// <returns>
+        /// The vertices.
+        /// </returns>
+        public IEnumerable<VertexModel> GetVertices ()
         {
-            return _graphElements.Where (aGraphElementKV => aGraphElementKV.Value is IVertexModel).Select (aVertexKV => (IVertexModel)aVertexKV.Value);
+            return GraphElements.Where (aGraphElementKV => aGraphElementKV.Value is VertexModel).Select (aVertexKV => (VertexModel)aVertexKV.Value);
         }
 
-        public IEdgeModel GetEdge (long id)
+        /// <summary>
+        /// Gets an edge by its identifier.
+        /// </summary>
+        /// <returns>
+        /// The edge.
+        /// </returns>
+        /// <param name='id'>
+        /// System wide unique identifier.
+        /// </param>
+        public EdgeModel GetEdge (long id)
         {
-            return GetElement (id) as IEdgeModel;
+            return GetElement (id) as EdgeModel;
         }
 
-        public IEnumerable<IEdgeModel> GetEdges ()
+        /// <summary>
+        /// Gets the edges.
+        /// </summary>
+        /// <returns>
+        /// The edges.
+        /// </returns>
+        public IEnumerable<EdgeModel> GetEdges ()
         {
-            return _graphElements.Where (aGraphElementKV => aGraphElementKV.Value is IEdgeModel).Select (aEdgeKV => (IEdgeModel)aEdgeKV.Value);
+            return GraphElements.Where (aGraphElementKV => aGraphElementKV.Value is EdgeModel).Select (aEdgeKV => (EdgeModel)aEdgeKV.Value);
         }
 
-        public ConcurrentDictionary<long, IGraphElementModel> Graphelements
-        {
-            get {
-                return _graphElements;
-            }
-        }
         #endregion
 
-        #region IGraphElementModel implementation
-        public long Id {
-            get {
-                return base._id;
-            }
-        }
-
-        public DateTime CreationDate {
-            get {
-                return base._creationDate;
-            }
-        }
-
-        public DateTime ModificationDate {
-            get {
-                return base._modificationDate;
-            }
-        }
-        
-        public IEnumerable<PropertyContainer> GetAllProperties ()
-        {
-            if (ReadResource ()) {
-                
-                List<PropertyContainer> result = new List <PropertyContainer> ();
-                
-                if (base._properties != null && base._properties.Count > 0) {
-                    result.AddRange (base._properties.Select (_ => new PropertyContainer (_.Key, _.Value)));
-                }
-                FinishReadResource ();
-                
-                return result;
-            }
-            
-            throw new CollisionException ();
-        }
-
-        public Boolean TryGetProperty<TResult>(out TResult result, Int64 propertyId)
-        {
-            if (ReadResource ()) {
-                
-                Boolean foundsth = false;
-                Object rawResult;
-                if (base._properties != null && base._properties.Count > 0 && base._properties.TryGetValue(propertyId, out rawResult))
-                {
-                    result = (TResult)rawResult;
-                    foundsth = true;
-                }
-                else
-                {
-                    result = default(TResult);
-                }
-                FinishReadResource ();
-                
-                return foundsth;
-            }
-            
-            throw new CollisionException ();
-        }
-        
-        #endregion
-  
         #region private methods
         
         /// <summary>
@@ -168,11 +131,11 @@ namespace Fallen8.Model
         /// <param name='id'>
         /// Identifier.
         /// </param>
-        private IGraphElementModel GetElement (long id)
+        private AGraphElement GetElement (long id)
         {
-            IGraphElementModel result;
+            AGraphElement result;
             
-            _graphElements.TryGetValue (id, out result);
+            GraphElements.TryGetValue (id, out result);
             
             return result;
         }

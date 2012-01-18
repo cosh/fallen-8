@@ -1,5 +1,5 @@
-﻿// 
-// IEdgeModel.cs
+// 
+// FulltextSearchResultElement.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,32 +24,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using Fallen8.Model;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Index
 {
 	/// <summary>
-	/// Edge model interface.
-	/// It contains the target vertex and the source edge.
+	/// Fulltext search result element.
 	/// </summary>
-    public interface IEdgeModel : IGraphElementModel
-    {
-        /// <summary>
-        /// Gets the target vertex.
-        /// </summary>
-        /// <value>
-        /// The target vertex.
-        /// </value>
-        IVertexModel TargetVertex { get; }
-
-        /// <summary>
-        /// Gets the source edge property.
-        /// </summary>
-        /// <value>
-        /// The source edge property.
-        /// </value>
-        IEdgePropertyModel SourceEdgeProperty { get; }
-    }
+	public class FulltextSearchResultElement
+	{
+		/// <summary>
+		/// Gets or sets the graph element.
+		/// </summary>
+		/// <value>
+		/// The graph element.
+		/// </value>
+        public AGraphElement GraphElement { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the highlights.
+		/// </summary>
+		/// <value>
+		/// The highlights.
+		/// </value>
+		public IList<string> Highlights { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the score.
+		/// </summary>
+		/// <value>
+		/// The score.
+		/// </value>
+		public Double Score { get; private set; }
+	}
 }
+

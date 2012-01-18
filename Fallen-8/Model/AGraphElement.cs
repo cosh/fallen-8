@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using Fallen8.API.Helper;
@@ -41,17 +42,17 @@ namespace Fallen8.Model
         /// <summary>
         /// The identifier of this graph element.
         /// </summary>
-        protected readonly Int64 _id;
+        public readonly Int64 Id;
         
         /// <summary>
         /// The creation date.
         /// </summary>
-        protected readonly DateTime _creationDate;
+        public readonly DateTime CreationDate;
         
         /// <summary>
         /// The modification date.
         /// </summary>
-        protected DateTime _modificationDate;
+        public DateTime ModificationDate;
         
         /// <summary>
         /// The properties.
@@ -76,9 +77,9 @@ namespace Fallen8.Model
         /// </param>
         protected AGraphElement (Int64 id, DateTime creationDate, Dictionary<Int64, Object> properties)
         {
-            _id = id;
-            _creationDate = creationDate;
-            _modificationDate = creationDate;
+            Id = id;
+            CreationDate = creationDate;
+            ModificationDate = creationDate;
             _properties = properties;
         }
         
@@ -133,7 +134,63 @@ namespace Fallen8.Model
         #endregion
   
         #region public methods
-        
+
+        /// <summary>
+        /// Gets all properties.
+        /// </summary>
+        /// <returns>
+        /// All properties.
+        /// </returns>
+        public IEnumerable<PropertyContainer> GetAllProperties()
+        {
+            if (ReadResource())
+            {
+
+                List<PropertyContainer> result = new List<PropertyContainer>();
+
+                if (_properties != null && _properties.Count > 0)
+                {
+                    result.AddRange(_properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
+                }
+                FinishReadResource();
+
+                return result;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
+        /// Tries the get property.
+        /// </summary>
+        /// <typeparam name="TProperty">Type of the property</typeparam>
+        /// <param name="result">Result.</param>
+        /// <param name="propertyId">Property identifier.</param>
+        /// <returns><c>true</c> if something was found; otherwise, <c>false</c>.</returns>
+        public Boolean TryGetProperty<TProperty>(out TProperty result, Int64 propertyId)
+        {
+            if (ReadResource())
+            {
+
+                Boolean foundsth = false;
+                Object rawResult;
+                if (_properties != null && _properties.Count > 0 && _properties.TryGetValue(propertyId, out rawResult))
+                {
+                    result = (TProperty)rawResult;
+                    foundsth = true;
+                }
+                else
+                {
+                    result = default(TProperty);
+                }
+                FinishReadResource();
+
+                return foundsth;
+            }
+
+            throw new CollisionException();
+        }
+
         /// <summary>
         /// Tries to add a property.
         /// </summary>
@@ -162,7 +219,7 @@ namespace Fallen8.Model
                 }
 
                 //set the modificationdate
-                _modificationDate = DateTime.Now;
+                ModificationDate = DateTime.Now;
 
                 FinishWriteResource ();
                 return foundProperty;
@@ -192,7 +249,7 @@ namespace Fallen8.Model
                 if (removedSomething)
                 {
                     //set the modificationdate
-                    _modificationDate = DateTime.Now;
+                    ModificationDate = DateTime.Now;
                 }
 
                 FinishWriteResource ();
@@ -202,6 +259,7 @@ namespace Fallen8.Model
             throw new CollisionException ();
             
         }
+        
         #endregion
     }
 }

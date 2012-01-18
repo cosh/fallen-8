@@ -46,7 +46,7 @@ namespace Fallen8.API.Index
 		/// <param name='geometry'>
 		/// Geometry.
 		/// </param>
-		Boolean TryGetValues(out IEnumerable<IGraphElementModel> result, IGeometry geometry);
+        Boolean TryGetValues(out IEnumerable<AGraphElement> result, IGeometry geometry);
 	}
 }
 

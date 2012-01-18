@@ -78,7 +78,7 @@ namespace Fallen8.API
         #endregion
         
         #region IFallen8 implementation
-        public IGraphModel Graph {
+        public GraphModel Graph {
             get {
                 return _model;
             }
@@ -92,12 +92,12 @@ namespace Fallen8.API
         #endregion
 
         #region IFallen8Write implementation
-        public IVertexModel CreateVertex(VertexModelDefinition vertexDefinition)
+        public VertexModel CreateVertex(VertexModelDefinition vertexDefinition)
         {
             //create the new vertex
             VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), vertexDefinition.CreationDate, vertexDefinition.Properties);
 
-            _model.Graphelements[newVertex.Id] = newVertex;
+            _model.GraphElements[newVertex.Id] = newVertex;
 
             if (vertexDefinition.Edges != null && vertexDefinition.Edges.Count > 0)
             {
@@ -117,11 +117,11 @@ namespace Fallen8.API
             return newVertex;
         }
 
-        public IEdgeModel CreateEdge (long sourceVertexId, long edgePropertyId, EdgeModelDefinition edgeDefinition)
+        public EdgeModel CreateEdge (long sourceVertexId, long edgePropertyId, EdgeModelDefinition edgeDefinition)
         {
             //get the related vertices
-            var sourceVertex = (VertexModel)_model.Graphelements [sourceVertexId];
-            var targetVertex = (VertexModel)_model.Graphelements [edgeDefinition.TargetVertexId];
+            var sourceVertex = (VertexModel)_model.GraphElements [sourceVertexId];
+            var targetVertex = (VertexModel)_model.GraphElements[edgeDefinition.TargetVertexId];
             
             //build the necessary edge contruct
             var edgeProperty = new EdgePropertyModel (sourceVertex, null);
@@ -129,7 +129,7 @@ namespace Fallen8.API
             edgeProperty.AddEdge (outgoingEdge);
 
             //add the edge to the graph elements
-            _model.Graphelements[outgoingEdge.Id] = outgoingEdge;
+            _model.GraphElements[outgoingEdge.Id] = outgoingEdge;
 
             //link the vertices
             sourceVertex.AddOutEdge (edgePropertyId, outgoingEdge);
@@ -142,8 +142,9 @@ namespace Fallen8.API
 
         public bool TryAddProperty (long graphElementId, long propertyId, Object property)
         {
-            IGraphElementModel graphElement;
-            if (_model.Graphelements.TryGetValue (graphElementId, out graphElement)) {
+            AGraphElement graphElement;
+            if (_model.GraphElements.TryGetValue(graphElementId, out graphElement))
+            {
                 return ((AGraphElement)graphElement).TryAddProperty (propertyId, property);   
             } else {
                 return false;
@@ -152,8 +153,9 @@ namespace Fallen8.API
 
         public bool TryRemoveProperty (long graphElementId, long propertyId)
         {
-            IGraphElementModel graphElement;
-            if (_model.Graphelements.TryGetValue (graphElementId, out graphElement)) {
+            AGraphElement graphElement;
+            if (_model.GraphElements.TryGetValue(graphElementId, out graphElement))
+            {
                 return ((AGraphElement)graphElement).TryRemoveProperty (propertyId);   
             } else {
                 return false;
@@ -162,41 +164,41 @@ namespace Fallen8.API
 
         public bool TryRemoveGraphElement (long graphElementId)
         {
-            IGraphElementModel gelement;
-            return _model.Graphelements.TryRemove (graphElementId, out gelement);
+            AGraphElement gelement;
+            return _model.GraphElements.TryRemove(graphElementId, out gelement);
         }
         #endregion
 
         #region IFallen8Read implementation
-        public bool Search (out IEnumerable<IGraphElementModel> result, long propertyId, IComparable literal, BinaryOperator binOp)
+        public bool Search (out IEnumerable<AGraphElement> result, long propertyId, IComparable literal, BinaryOperator binOp)
         {
-            List<IGraphElementModel> graphElements = null;
+            List<AGraphElement> graphElements = null;
             
             #region binary operation
             
             switch (binOp) {
             case BinaryOperator.Equals:
-                graphElements = new List<IGraphElementModel> (FindElements (BinaryEqualsMethod, literal, propertyId));
+                    graphElements = new List<AGraphElement>(FindElements(BinaryEqualsMethod, literal, propertyId));
                 break;
                 
             case BinaryOperator.Greater:
-                graphElements = new List<IGraphElementModel> (FindElements (BinaryGreaterMethod, literal, propertyId));
+                graphElements = new List<AGraphElement>(FindElements(BinaryGreaterMethod, literal, propertyId));
                 break;
                 
             case BinaryOperator.GreaterOrEquals:
-                graphElements = new List<IGraphElementModel> (FindElements (BinaryGreaterOrEqualMethod, literal, propertyId));
+                graphElements = new List<AGraphElement>(FindElements(BinaryGreaterOrEqualMethod, literal, propertyId));
                 break;
             
             case BinaryOperator.LowerOrEquals:
-                graphElements = new List<IGraphElementModel> (FindElements (BinaryLowerOrEqualMethod, literal, propertyId));
+                graphElements = new List<AGraphElement>(FindElements(BinaryLowerOrEqualMethod, literal, propertyId));
                 break;
                 
             case BinaryOperator.Lower:
-                graphElements = new List<IGraphElementModel> (FindElements (BinaryLowerMethod, literal, propertyId));
+                graphElements = new List<AGraphElement>(FindElements(BinaryLowerMethod, literal, propertyId));
                 break;
             
             case BinaryOperator.NotEquals:
-                graphElements = new List<IGraphElementModel> (FindElements (BinaryNotEqualsMethod, literal, propertyId));
+                graphElements = new List<AGraphElement>(FindElements(BinaryNotEqualsMethod, literal, propertyId));
                 break;
                 
             default:
@@ -209,7 +211,7 @@ namespace Fallen8.API
             return graphElements.Count > 0;
         }
 
-        public bool SearchInIndex (out IEnumerable<IGraphElementModel> result, String indexId, IComparable literal, BinaryOperator binOp)
+        public bool SearchInIndex(out IEnumerable<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
         {
             IIndex index;
             if (!IndexProvider.TryGetIndex (out index, indexId)) {
@@ -217,8 +219,8 @@ namespace Fallen8.API
                 result = null;
                 return false;
             }
-            
-            List<IGraphElementModel> graphElements = null;
+
+            List<AGraphElement> graphElements = null;
             
             #region binary operation
             
@@ -228,23 +230,23 @@ namespace Fallen8.API
                 return index.GetValue (out result, literal);
                 
             case BinaryOperator.Greater:
-                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryGreaterMethod, literal, index));
+                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryGreaterMethod, literal, index));
                 break;
                 
             case BinaryOperator.GreaterOrEquals:
-                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryGreaterOrEqualMethod, literal, index));
+                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryGreaterOrEqualMethod, literal, index));
                 break;
             
             case BinaryOperator.LowerOrEquals:
-                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryLowerOrEqualMethod, literal, index));
+                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryLowerOrEqualMethod, literal, index));
                 break;
                 
             case BinaryOperator.Lower:
-                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryLowerMethod, literal, index));
+                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryLowerMethod, literal, index));
                 break;
             
             case BinaryOperator.NotEquals:
-                graphElements = new List<IGraphElementModel> (FindElementsIndex (BinaryNotEqualsMethod, literal, index));
+                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryNotEqualsMethod, literal, index));
                 break;
                 
             default:
@@ -257,7 +259,7 @@ namespace Fallen8.API
             return graphElements.Count > 0;
         }
 
-        public bool SearchInRange (out IEnumerable<IGraphElementModel> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
+        public bool SearchInRange(out IEnumerable<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
         {
             throw new NotImplementedException ();
         }
@@ -267,7 +269,7 @@ namespace Fallen8.API
             throw new NotImplementedException ();
         }
 
-        public bool SearchSpatial (out IEnumerable<IGraphElementModel> result, String indexId, IGeometry geometry)
+        public bool SearchSpatial(out IEnumerable<AGraphElement> result, String indexId, IGeometry geometry)
         {
             throw new NotImplementedException ();
         }
@@ -290,9 +292,9 @@ namespace Fallen8.API
         /// <param name='propertyId'>
         /// Property identifier.
         /// </param>
-        private IEnumerable<IGraphElementModel> FindElements (BinaryOperatorDelegate finder, IComparable literal, Int64 propertyId)
+        private IEnumerable<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, Int64 propertyId)
         {
-            return _model.Graphelements.AsParallel ().Where (aGraphElement => 
+            return _model.GraphElements.AsParallel ().Where (aGraphElement => 
             {
                 Object property; 
                 if (aGraphElement.Value.TryGetProperty (out property, propertyId)) {
@@ -320,7 +322,7 @@ namespace Fallen8.API
         /// <param name='index'>
         /// Index.
         /// </param>
-        private IEnumerable<IGraphElementModel> FindElementsIndex (BinaryOperatorDelegate finder, IComparable literal, IIndex index)
+        private IEnumerable<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
         {
             return index.GetKeyValues ().AsParallel ().Where (aIndexElement => 
             {
@@ -447,16 +449,16 @@ namespace Fallen8.API
         /// </param>
         private EdgePropertyModel CreateEdgeProperty (Int64 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
         {
-            List<IEdgeModel> edges = new List<IEdgeModel> ();
+            List<EdgeModel> edges = new List<EdgeModel> ();
             
             EdgePropertyModel result = new EdgePropertyModel (sourceVertex, edges);
             
             foreach (var aEdgeDefinition in edgeDefinitions) {
                 
-                var targetVertex = (VertexModel)_model.Graphelements [aEdgeDefinition.TargetVertexId];
+                var targetVertex = (VertexModel)_model.GraphElements [aEdgeDefinition.TargetVertexId];
                 
                 var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, result, aEdgeDefinition.Properties);
-                _model.Graphelements[outgoingEdge.Id] = outgoingEdge;
+                _model.GraphElements[outgoingEdge.Id] = outgoingEdge;
 
                 targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
                 

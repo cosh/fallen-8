@@ -1,5 +1,5 @@
-﻿// 
-// IVertexModel.cs
+// 
+// IIndex.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,43 +24,86 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using Fallen8.API.Plugin;
+using Fallen8.Model;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Index
 {
 	/// <summary>
-	/// Vertex model interface.
+	/// The Fallen8 index interface.
 	/// </summary>
-    public interface IVertexModel : IGraphElementModel
-    {
-        /// <summary>
-        /// Gets all neighbors.
-        /// </summary>
-        /// <returns>
-        /// The neighbors.
-        /// </returns>
-        IEnumerable<IVertexModel> GetAllNeighbors ();
+	public interface IIndex : IFallen8Plugin
+	{
+		/// <summary>
+		/// Count of the keys.
+		/// </summary>
+		/// <returns>
+		/// The key count.
+		/// </returns>
+		Int64 CountOfKeys ();
+		
+		/// <summary>
+		/// Count of the values.
+		/// </summary>
+		/// <returns>
+		/// The value count.
+		/// </returns>
+		Int64 CountOfValues ();
+		
+		/// <summary>
+		/// Tries to add or update.
+		/// </summary>
+		/// <param name='key'>
+		/// Key.
+		/// </param>
+		/// <param name='graphElement'>
+		/// Graph element.
+		/// </param>
+        void AddOrUpdate(IComparable key, AGraphElement graphElement);
+		
+		/// <summary>
+		/// Tries to remove a key.
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if something was removed; otherwise, <c>false</c>.
+		/// </returns>
+		/// <param name='key'>
+		/// Key.
+		/// </param>
+		Boolean TryRemoveKey (IComparable key);
+		
+		/// <summary>
+		/// Remove a value.
+		/// </summary>
+		/// <param name='graphElement'>
+		/// Graph element.
+		/// </param>
+        void RemoveValue(AGraphElement graphElement);
         
         /// <summary>
-        /// Gets the incoming edge identifiers.
+        /// Wipe this instance.
         /// </summary>
-        /// <returns>
-        /// The incoming edge identifiers.
-        /// </returns>
-        IEnumerable<Int64> GetIncomingEdgeIds();
+        void Wipe();
         
         /// <summary>
-        /// Gets the outgoing edge identifiers.
+        /// Gets the keys.
         /// </summary>
         /// <returns>
-        /// The outgoing edge identifiers.
+        /// The keys.
         /// </returns>
-        IEnumerable<Int64> GetOutgoingEdgeIds();
+        IEnumerable<IComparable> GetKeys();
         
         /// <summary>
-        /// Tries to get an out edge.
+        /// Gets the key values.
+        /// </summary>
+        /// <returns>
+        /// The key values.
+        /// </returns>
+        IEnumerable<KeyValuePair<IComparable, IEnumerable<AGraphElement>>> GetKeyValues();
+        
+        /// <summary>
+        /// Gets the value.
         /// </summary>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
@@ -68,23 +111,10 @@ namespace Fallen8.Model
         /// <param name='result'>
         /// Result.
         /// </param>
-        /// <param name='edgePropertyId'>
-        /// Edge property identifier.
+        /// <param name='key'>
+        /// Key.
         /// </param>
-        Boolean TryGetOutEdge (out IEdgePropertyModel result, Int64 edgePropertyId);
-        
-        /// <summary>
-        /// Tries to get in edges.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <param name='edgePropertyId'>
-        /// Edge property identifier.
-        /// </param>
-        Boolean TryGetInEdges (out IEnumerable<IEdgeModel> result, Int64 edgePropertyId);
+        Boolean GetValue(out IEnumerable<AGraphElement> result, IComparable key);
     }
 }
+
