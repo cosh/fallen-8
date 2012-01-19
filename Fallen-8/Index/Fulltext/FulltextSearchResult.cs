@@ -47,7 +47,7 @@ namespace Fallen8.API.Index
 		/// <value>
 		/// The elements.
 		/// </value>
-		public IEnumerable<FulltextSearchResultElement> Elements { get; private set;}
+		public List<FulltextSearchResultElement> Elements { get; private set;}
 	}
 }
 

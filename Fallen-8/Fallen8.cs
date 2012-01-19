@@ -193,96 +193,100 @@ namespace Fallen8.API
         #endregion
 
         #region IFallen8Read implementation
-        public bool Search(out IEnumerable<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp)
+        public bool Search(out List<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp)
         {
-            List<AGraphElement> graphElements = null;
-            
             #region binary operation
-            
-            switch (binOp) {
-            case BinaryOperator.Equals:
-                    graphElements = new List<AGraphElement>(FindElements(BinaryEqualsMethod, literal, propertyId));
-                break;
-                
-            case BinaryOperator.Greater:
-                graphElements = new List<AGraphElement>(FindElements(BinaryGreaterMethod, literal, propertyId));
-                break;
-                
-            case BinaryOperator.GreaterOrEquals:
-                graphElements = new List<AGraphElement>(FindElements(BinaryGreaterOrEqualMethod, literal, propertyId));
-                break;
-            
-            case BinaryOperator.LowerOrEquals:
-                graphElements = new List<AGraphElement>(FindElements(BinaryLowerOrEqualMethod, literal, propertyId));
-                break;
-                
-            case BinaryOperator.Lower:
-                graphElements = new List<AGraphElement>(FindElements(BinaryLowerMethod, literal, propertyId));
-                break;
-            
-            case BinaryOperator.NotEquals:
-                graphElements = new List<AGraphElement>(FindElements(BinaryNotEqualsMethod, literal, propertyId));
-                break;
-                
-            default:
-                break;
+
+            switch (binOp)
+            {
+                case BinaryOperator.Equals:
+                    result = FindElements(BinaryEqualsMethod, literal, propertyId);
+                    break;
+
+                case BinaryOperator.Greater:
+                    result = FindElements(BinaryGreaterMethod, literal, propertyId);
+                    break;
+
+                case BinaryOperator.GreaterOrEquals:
+                    result = FindElements(BinaryGreaterOrEqualMethod, literal, propertyId);
+                    break;
+
+                case BinaryOperator.LowerOrEquals:
+                    result = FindElements(BinaryLowerOrEqualMethod, literal, propertyId);
+                    break;
+
+                case BinaryOperator.Lower:
+                    result = FindElements(BinaryLowerMethod, literal, propertyId);
+                    break;
+
+                case BinaryOperator.NotEquals:
+                    result = FindElements(BinaryNotEqualsMethod, literal, propertyId);
+                    break;
+
+                default:
+                    result = new List<AGraphElement>();
+
+                    break;
             }
-            
+
             #endregion
-            
-            result = graphElements;
-            return graphElements.Count > 0;
+
+            return result.Count > 0;
         }
 
-        public bool SearchInIndex(out IEnumerable<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
+        public bool SearchInIndex(out List<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
         {
             IIndex index;
-            if (!IndexFactory.TryGetIndex (out index, indexId)) {
-                
+            if (!IndexFactory.TryGetIndex(out index, indexId))
+            {
+
                 result = null;
                 return false;
             }
 
-            List<AGraphElement> graphElements = null;
-            
             #region binary operation
-            
-            switch (binOp) {
-            case BinaryOperator.Equals:
-                
-                return index.GetValue (out result, literal);
-                
-            case BinaryOperator.Greater:
-                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryGreaterMethod, literal, index));
-                break;
-                
-            case BinaryOperator.GreaterOrEquals:
-                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryGreaterOrEqualMethod, literal, index));
-                break;
-            
-            case BinaryOperator.LowerOrEquals:
-                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryLowerOrEqualMethod, literal, index));
-                break;
-                
-            case BinaryOperator.Lower:
-                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryLowerMethod, literal, index));
-                break;
-            
-            case BinaryOperator.NotEquals:
-                graphElements = new List<AGraphElement>(FindElementsIndex(BinaryNotEqualsMethod, literal, index));
-                break;
-                
-            default:
-                break;
+
+            switch (binOp)
+            {
+                case BinaryOperator.Equals:
+
+                    IEnumerable<AGraphElement> equalsResult;
+                    index.GetValue(out equalsResult, literal);
+                    result = new List<AGraphElement>(equalsResult);
+                    break;
+
+                case BinaryOperator.Greater:
+                    result = FindElementsIndex(BinaryGreaterMethod, literal, index);
+                    break;
+
+                case BinaryOperator.GreaterOrEquals:
+                    result = FindElementsIndex(BinaryGreaterOrEqualMethod, literal, index);
+                    break;
+
+                case BinaryOperator.LowerOrEquals:
+                    result = FindElementsIndex(BinaryLowerOrEqualMethod, literal, index);
+                    break;
+
+                case BinaryOperator.Lower:
+                    result = FindElementsIndex(BinaryLowerMethod, literal, index);
+                    break;
+
+                case BinaryOperator.NotEquals:
+                    result = FindElementsIndex(BinaryNotEqualsMethod, literal, index);
+                    break;
+
+                default:
+                    result = new List<AGraphElement>();
+
+                    break;
             }
-            
+
             #endregion
-            
-            result = graphElements;
-            return graphElements.Count > 0;
+
+            return result.Count > 0;
         }
 
-        public bool SearchInRange(out IEnumerable<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
+        public bool SearchInRange(out List<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
         {
             throw new NotImplementedException ();
         }
@@ -292,7 +296,7 @@ namespace Fallen8.API
             throw new NotImplementedException ();
         }
 
-        public bool SearchSpatial(out IEnumerable<AGraphElement> result, String indexId, IGeometry geometry)
+        public bool SearchSpatial(out List<AGraphElement> result, String indexId, IGeometry geometry)
         {
             throw new NotImplementedException ();
         }
@@ -311,7 +315,17 @@ namespace Fallen8.API
         /// </param>
         public VertexModel GetVertex(Int32 id)
         {
-            return _graphElements[id] as VertexModel;
+            if (ReadResource())
+            {
+                var vertex = _graphElements[id] as VertexModel;
+
+                FinishReadResource();
+
+                return vertex;
+            }
+
+            throw new CollisionException();
+
         }
 
         /// <summary>
@@ -320,9 +334,18 @@ namespace Fallen8.API
         /// <returns>
         /// The vertices.
         /// </returns>
-        public IEnumerable<VertexModel> GetVertices()
+        public List<VertexModel> GetVertices()
         {
-            return _graphElements.Where(aGraphElementKV => aGraphElementKV is VertexModel).Select(aVertexKV => (VertexModel)aVertexKV);
+            if (ReadResource())
+            {
+                var vertices = _graphElements.Where(aGraphElementKV => aGraphElementKV is VertexModel).Select(aVertexKV => (VertexModel)aVertexKV).ToList(); ;
+
+                FinishReadResource();
+
+                return vertices;
+            }
+
+            throw new CollisionException();
         }
 
         /// <summary>
@@ -336,7 +359,16 @@ namespace Fallen8.API
         /// </param>
         public EdgeModel GetEdge(Int32 id)
         {
-            return _graphElements[id] as EdgeModel;
+            if (ReadResource())
+            {
+                var edge = _graphElements[id] as EdgeModel;
+
+                FinishReadResource();
+
+                return edge;
+            }
+
+            throw new CollisionException();
         }
 
         /// <summary>
@@ -345,9 +377,18 @@ namespace Fallen8.API
         /// <returns>
         /// The edges.
         /// </returns>
-        public IEnumerable<EdgeModel> GetEdges()
+        public List<EdgeModel> GetEdges()
         {
-            return _graphElements.Where(aGraphElementKV => aGraphElementKV is EdgeModel).Select(aEdgeKV => (EdgeModel)aEdgeKV);
+            if (ReadResource())
+            {
+                var edges = _graphElements.Where(aGraphElementKV => aGraphElementKV is EdgeModel).Select(aEdgeKV => (EdgeModel)aEdgeKV).ToList();
+
+                FinishReadResource();
+
+                return edges;
+            }
+
+            throw new CollisionException();
         }
 
         #endregion
@@ -369,18 +410,30 @@ namespace Fallen8.API
         /// <param name='propertyId'>
         /// Property identifier.
         /// </param>
-        private IEnumerable<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, Int32 propertyId)
+        private List<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, Int32 propertyId)
         {
-            return _graphElements.AsParallel ().Where (aGraphElement => 
+            if (ReadResource())
             {
-                Object property; 
-                if (aGraphElement.TryGetProperty (out property, propertyId)) {
-                        
-                    return finder (property as IComparable, literal);
-                }
-                    
-                return false;
-            });
+                var result = _graphElements.AsParallel().Where(aGraphElement =>
+                {
+                    Object property;
+                    if (aGraphElement.TryGetProperty(out property, propertyId))
+                    {
+
+                        return finder(property as IComparable, literal);
+                    }
+
+                    return false;
+                }).ToList();
+
+                FinishReadResource();
+
+                return result;
+            }
+
+            throw new CollisionException();
+
+            
                 
         }
         
@@ -399,12 +452,12 @@ namespace Fallen8.API
         /// <param name='index'>
         /// Index.
         /// </param>
-        private IEnumerable<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
+        private List<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
         {
             return index.GetKeyValues ().AsParallel ().Where (aIndexElement => 
             {
                 return finder (aIndexElement.Key, literal);
-            }).Select (_ => _.Value).SelectMany(__ => __).Distinct();       
+            }).Select (_ => _.Value).SelectMany(__ => __).Distinct().ToList();       
         }
         
         /// <summary>
