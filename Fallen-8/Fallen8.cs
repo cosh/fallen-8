@@ -149,26 +149,40 @@ namespace Fallen8.API
 
         public bool TryAddProperty(Int32 graphElementId, Int32 propertyId, Object property)
         {
-            AGraphElement graphElement = _graphElements[graphElementId];
-
-            if (graphElement != null)
+            if (ReadResource())
             {
-                return graphElement.TryAddProperty(propertyId, property);
+                AGraphElement graphElement = _graphElements[graphElementId];
+
+                FinishReadResource();
+
+                if (graphElement != null)
+                {
+                    return graphElement.TryAddProperty(propertyId, property);
+                }
+
+                return false;
             }
 
-            return false;
+            throw new CollisionException();
         }
 
         public bool TryRemoveProperty(Int32 graphElementId, Int32 propertyId)
         {
-            AGraphElement graphElement = _graphElements[graphElementId];
-
-            if (graphElement != null)
+            if (ReadResource())
             {
-                return graphElement.TryRemoveProperty(propertyId);
+                AGraphElement graphElement = _graphElements[graphElementId];
+
+                FinishReadResource();
+
+                if (graphElement != null)
+                {
+                    return graphElement.TryRemoveProperty(propertyId);
+                }
+
+                return false;
             }
 
-            return false;
+            throw new CollisionException();
         }
 
         public bool TryRemoveGraphElement(Int32 graphElementId)
