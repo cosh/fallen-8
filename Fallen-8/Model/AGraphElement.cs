@@ -42,7 +42,7 @@ namespace Fallen8.Model
         /// <summary>
         /// The identifier of this graph element.
         /// </summary>
-        public readonly Int64 Id;
+        public readonly Int32 Id;
         
         /// <summary>
         /// The creation date.
@@ -57,7 +57,7 @@ namespace Fallen8.Model
         /// <summary>
         /// The properties.
         /// </summary>
-        protected IDictionary<long, object> _properties;
+        protected IDictionary<Int32, object> _properties;
   
         #endregion
         
@@ -75,7 +75,7 @@ namespace Fallen8.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        protected AGraphElement (Int64 id, DateTime creationDate, Dictionary<Int64, Object> properties)
+        protected AGraphElement(Int32 id, DateTime creationDate, Dictionary<Int32, Object> properties)
         {
             Id = id;
             CreationDate = creationDate;
@@ -99,7 +99,7 @@ namespace Fallen8.Model
         /// <param name='propertiesB'>
         /// Properties b.
         /// </param>
-        protected Boolean PropertiesEqual (IDictionary<long, object> propertiesA, IDictionary<long, object> propertiesB)
+        protected Boolean PropertiesEqual(IDictionary<Int32, object> propertiesA, IDictionary<Int32, object> propertiesB)
         {
             if (propertiesA == null && propertiesB == null) {
                 return true;
@@ -167,7 +167,7 @@ namespace Fallen8.Model
         /// <param name="result">Result.</param>
         /// <param name="propertyId">Property identifier.</param>
         /// <returns><c>true</c> if something was found; otherwise, <c>false</c>.</returns>
-        public Boolean TryGetProperty<TProperty>(out TProperty result, Int64 propertyId)
+        public Boolean TryGetProperty<TProperty>(out TProperty result, Int32 propertyId)
         {
             if (ReadResource())
             {
@@ -206,7 +206,7 @@ namespace Fallen8.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public bool TryAddProperty (long propertyId, object property)
+        public bool TryAddProperty(Int32 propertyId, object property)
         {
             if (WriteResource ()) {
                 
@@ -240,7 +240,7 @@ namespace Fallen8.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public bool TryRemoveProperty (long propertyId)
+        public bool TryRemoveProperty(Int32 propertyId)
         {
             if (WriteResource ()) {
                 

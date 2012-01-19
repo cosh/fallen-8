@@ -24,35 +24,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Helper
 {
 	/// <summary>
 	/// Edge model definition.
 	/// </summary>
-	public sealed class EdgeModelDefinition : AGraphElementDefinition
+	public struct EdgeModelDefinition
 	{
         #region Data
-        
+
+        /// <summary>
+        /// Gets or sets the creation date.
+        /// </summary>
+        /// <value>
+        /// The creation date.
+        /// </value>
+        public DateTime CreationDate;
+
+        /// <summary>
+        /// Gets or sets the properties.
+        /// </summary>
+        /// <value>
+        /// The properties.
+        /// </value>
+        public Dictionary<Int32, Object> Properties;
+
         /// <summary>
         /// Gets or sets the target vertex identifier.
         /// </summary>
         /// <value>
         /// The target vertex identifier.
         /// </value>
-        public Int64 TargetVertexId { get; private set; }
+        public Int32 TargetVertexId;
         
         #endregion
         
         #region constructor
-        
-        /// <summary>
-        /// Creates anew edge model definition
-        /// </summary>
-        /// <param name="targetVertex">The target vertex</param>
-        public EdgeModelDefinition (Int64 targetVertex) : this(targetVertex, DateTime.Now)
-        {
-        }
         
         /// <summary>
         /// Initializes a new instance of the <see cref="Fallen8.API.Helper.EdgeModelDefinition"/> class.
@@ -63,46 +72,13 @@ namespace Fallen8.API.Helper
         /// <param name='creationDate'>
         /// Creation date.
         /// </param>
-        public EdgeModelDefinition (Int64 targetVertex, DateTime creationDate) : base(creationDate)
+        public EdgeModelDefinition(Int32 targetVertex, DateTime creationDate, Dictionary<Int32, Object> properties = null)
         {
-            TargetVertexId = targetVertex;    
+            TargetVertexId = targetVertex;
+            CreationDate = creationDate;
+            Properties = properties;
         }
         
         #endregion
-
-		/// <summary>
-		/// Adds a property.
-		/// </summary>
-		/// <returns>
-		/// The edge model definition.
-		/// </returns>
-		/// <param name='id'>
-		/// Identifier.
-		/// </param>
-		/// <param name='property'>
-		/// Property.
-		/// </param>
-		public EdgeModelDefinition AddProperty (Int64 id, Object property)
-        {
-            base.AddPropertyInternal (id, property);
-            
-            return this;
-        }
-		
-		/// <summary>
-		/// Sets the target vertex.
-		/// </summary>
-		/// <returns>
-		/// The edge model definition
-		/// </returns>
-		/// <param name='targetVertexId'>
-		/// Target vertex identifier.
-		/// </param>
-		public EdgeModelDefinition SetTargetVertex (Int64 targetVertexId)
-        {
-            TargetVertexId = targetVertexId;
-            
-            return this;
-        }
 	}
 }

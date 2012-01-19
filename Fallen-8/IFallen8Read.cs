@@ -56,7 +56,7 @@ namespace Fallen8.API
 		/// <param name='binOp'>
 		/// Binary operator.
 		/// </param>
-        Boolean Search(out IEnumerable<AGraphElement> result, Int64 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+        Boolean Search(out IEnumerable<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
 		
 		/// <summary>
 		/// Search for graph elements by a specified index identifiert, a literal and a binary operation

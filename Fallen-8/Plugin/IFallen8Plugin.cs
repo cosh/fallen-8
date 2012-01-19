@@ -85,7 +85,7 @@ namespace Fallen8.API.Plugin
         /// <returns>
         /// The initialized plugin
         /// </returns>
-        IFallen8Plugin Initialize(IFallen8 fallen8, IDictionary<String, Object> parameter);
+        IFallen8Plugin Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
 	}
 }
 

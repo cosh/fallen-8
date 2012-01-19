@@ -38,29 +38,30 @@ namespace Fallen8.API
     /// <summary>
     /// Fallen8.
     /// </summary>
-	public sealed class Fallen8 : IFallen8
+    public sealed class Fallen8 : AThreadSafeElement, IFallen8Read, IFallen8Write
 	{
         #region Data
         
         /// <summary>
-        /// The model.
+        /// The graph elements
         /// </summary>
-        private readonly GraphModel _model;
-        
+        private readonly AGraphElement[] _graphElements;
+
         /// <summary>
         /// The index factory.
         /// </summary>
-        private readonly Fallen8IndexFactory _indexFactory;
+        public readonly IFallen8IndexFactory IndexFactory;
         
         /// <summary>
         /// The current identifier.
         /// </summary>
-        private Int64 _currentId = Int64.MinValue;
+        private Int32 _currentId = -1;
         
         /// <summary>
         /// Binary operator delegate.
         /// </summary>
         private delegate Boolean BinaryOperatorDelegate(IComparable property, IComparable literal);
+
         
         #endregion
         
@@ -71,40 +72,26 @@ namespace Fallen8.API
         /// </summary>
         public Fallen8 ()
         {
-            _indexFactory = new Fallen8IndexFactory ();
-            _model = new GraphModel (Interlocked.Increment (ref _currentId), DateTime.Now, null);
+            IndexFactory = new Fallen8IndexFactory();
+            _graphElements = new AGraphElement[250000000];
         }
         
         #endregion
         
-        #region IFallen8 implementation
-        public GraphModel Graph {
-            get {
-                return _model;
-            }
-        }
-
-        public IFallen8IndexFactory IndexProvider {
-            get {
-                return _indexFactory;
-            }
-        }
-        #endregion
-
         #region IFallen8Write implementation
-        public VertexModel CreateVertex(VertexModelDefinition vertexDefinition)
+        public VertexModel CreateVertex(DateTime creationDate, Dictionary<Int32, Object> properties = null, Dictionary<Int32, List<EdgeModelDefinition>> edges = null)
         {
             //create the new vertex
-            VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), vertexDefinition.CreationDate, vertexDefinition.Properties);
+            VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
-            _model.GraphElements[newVertex.Id] = newVertex;
+            _graphElements[newVertex.Id] = newVertex;
 
-            if (vertexDefinition.Edges != null && vertexDefinition.Edges.Count > 0)
+
+            if (edges != null && edges.Count > 0)
             {
+                Dictionary<Int32, EdgePropertyModel> outEdges = new Dictionary<Int32, EdgePropertyModel>();
 
-                Dictionary<long, EdgePropertyModel> outEdges = new Dictionary<long, EdgePropertyModel>();
-
-                foreach (var aEdge in vertexDefinition.Edges)
+                foreach (var aEdge in edges)
                 {
                     outEdges.Add(aEdge.Key, CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
                 }
@@ -112,65 +99,63 @@ namespace Fallen8.API
                 newVertex.AddOutEdges(outEdges);
             }
 
-            vertexDefinition = null;
-
             return newVertex;
         }
 
-        public EdgeModel CreateEdge (long sourceVertexId, long edgePropertyId, EdgeModelDefinition edgeDefinition)
+        public EdgeModel CreateEdge(Int32 sourceVertexId, Int32 edgePropertyId, EdgeModelDefinition edgeDefinition)
         {
             //get the related vertices
-            var sourceVertex = (VertexModel)_model.GraphElements [sourceVertexId];
-            var targetVertex = (VertexModel)_model.GraphElements[edgeDefinition.TargetVertexId];
+            var sourceVertex = (VertexModel)_graphElements[sourceVertexId];
+            var targetVertex = (VertexModel)_graphElements[edgeDefinition.TargetVertexId];
             
             //build the necessary edge contruct
             var edgeProperty = new EdgePropertyModel (sourceVertex, null);
-            var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), edgeDefinition.CreationDate, targetVertex, edgeProperty, edgeDefinition.Properties);
+            var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, edgeProperty, edgeDefinition.Properties);
             edgeProperty.AddEdge (outgoingEdge);
 
             //add the edge to the graph elements
-            _model.GraphElements[outgoingEdge.Id] = outgoingEdge;
+            _graphElements[outgoingEdge.Id] = outgoingEdge;
 
             //link the vertices
             sourceVertex.AddOutEdge (edgePropertyId, outgoingEdge);
             targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
 
-            edgeDefinition = null;
-
             return outgoingEdge;
         }
 
-        public bool TryAddProperty (long graphElementId, long propertyId, Object property)
+        public bool TryAddProperty(Int32 graphElementId, Int32 propertyId, Object property)
         {
-            AGraphElement graphElement;
-            if (_model.GraphElements.TryGetValue(graphElementId, out graphElement))
+            AGraphElement graphElement = _graphElements[graphElementId];
+
+            if (graphElement != null)
             {
-                return ((AGraphElement)graphElement).TryAddProperty (propertyId, property);   
-            } else {
-                return false;
+                return graphElement.TryAddProperty(propertyId, property);
             }
+
+            return false;
         }
 
-        public bool TryRemoveProperty (long graphElementId, long propertyId)
+        public bool TryRemoveProperty(Int32 graphElementId, Int32 propertyId)
         {
-            AGraphElement graphElement;
-            if (_model.GraphElements.TryGetValue(graphElementId, out graphElement))
+            AGraphElement graphElement = _graphElements[graphElementId];
+
+            if (graphElement != null)
             {
-                return ((AGraphElement)graphElement).TryRemoveProperty (propertyId);   
-            } else {
-                return false;
+                return graphElement.TryRemoveProperty(propertyId);
             }
+
+            return false;
         }
 
-        public bool TryRemoveGraphElement (long graphElementId)
+        public bool TryRemoveGraphElement(Int32 graphElementId)
         {
-            AGraphElement gelement;
-            return _model.GraphElements.TryRemove(graphElementId, out gelement);
+            //different actions for vertices, and edges
+            throw new NotImplementedException();
         }
         #endregion
 
         #region IFallen8Read implementation
-        public bool Search (out IEnumerable<AGraphElement> result, long propertyId, IComparable literal, BinaryOperator binOp)
+        public bool Search(out IEnumerable<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp)
         {
             List<AGraphElement> graphElements = null;
             
@@ -214,7 +199,7 @@ namespace Fallen8.API
         public bool SearchInIndex(out IEnumerable<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
         {
             IIndex index;
-            if (!IndexProvider.TryGetIndex (out index, indexId)) {
+            if (!IndexFactory.TryGetIndex (out index, indexId)) {
                 
                 result = null;
                 return false;
@@ -274,9 +259,63 @@ namespace Fallen8.API
             throw new NotImplementedException ();
         }
         #endregion
-  
+
+        #region public methods
+
+        /// <summary>
+        /// Gets a vertex by its identifier.
+        /// </summary>
+        /// <returns>
+        /// The vertex.
+        /// </returns>
+        /// <param name='id'>
+        /// System wide unique identifier.
+        /// </param>
+        public VertexModel GetVertex(long id)
+        {
+            return _graphElements[id] as VertexModel;
+        }
+
+        /// <summary>
+        /// Gets the vertices.
+        /// </summary>
+        /// <returns>
+        /// The vertices.
+        /// </returns>
+        public IEnumerable<VertexModel> GetVertices()
+        {
+            return _graphElements.Where(aGraphElementKV => aGraphElementKV is VertexModel).Select(aVertexKV => (VertexModel)aVertexKV);
+        }
+
+        /// <summary>
+        /// Gets an edge by its identifier.
+        /// </summary>
+        /// <returns>
+        /// The edge.
+        /// </returns>
+        /// <param name='id'>
+        /// System wide unique identifier.
+        /// </param>
+        public EdgeModel GetEdge(Int32 id)
+        {
+            return _graphElements[id] as EdgeModel;
+        }
+
+        /// <summary>
+        /// Gets the edges.
+        /// </summary>
+        /// <returns>
+        /// The edges.
+        /// </returns>
+        public IEnumerable<EdgeModel> GetEdges()
+        {
+            return _graphElements.Where(aGraphElementKV => aGraphElementKV is EdgeModel).Select(aEdgeKV => (EdgeModel)aEdgeKV);
+        }
+
+        #endregion
+
         #region private helper methods
-        
+
         /// <summary>
         /// Finds the elements.
         /// </summary>
@@ -292,18 +331,18 @@ namespace Fallen8.API
         /// <param name='propertyId'>
         /// Property identifier.
         /// </param>
-        private IEnumerable<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, Int64 propertyId)
+        private IEnumerable<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, Int32 propertyId)
         {
-            return _model.GraphElements.AsParallel ().Where (aGraphElement => 
+            return _graphElements.AsParallel ().Where (aGraphElement => 
             {
                 Object property; 
-                if (aGraphElement.Value.TryGetProperty (out property, propertyId)) {
+                if (aGraphElement.TryGetProperty (out property, propertyId)) {
                         
                     return finder (property as IComparable, literal);
                 }
                     
                 return false;
-            }).Select (_ => _.Value);
+            });
                 
         }
         
@@ -447,7 +486,7 @@ namespace Fallen8.API
         /// <param name='sourceVertex'>
         /// New vertex.
         /// </param>
-        private EdgePropertyModel CreateEdgeProperty (Int64 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
+        private EdgePropertyModel CreateEdgeProperty(Int32 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
         {
             List<EdgeModel> edges = new List<EdgeModel> ();
             
@@ -455,10 +494,10 @@ namespace Fallen8.API
             
             foreach (var aEdgeDefinition in edgeDefinitions) {
                 
-                var targetVertex = (VertexModel)_model.GraphElements [aEdgeDefinition.TargetVertexId];
+                var targetVertex = (VertexModel)_graphElements [aEdgeDefinition.TargetVertexId];
                 
                 var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, result, aEdgeDefinition.Properties);
-                _model.GraphElements[outgoingEdge.Id] = outgoingEdge;
+                _graphElements[outgoingEdge.Id] = outgoingEdge;
 
                 targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
                 

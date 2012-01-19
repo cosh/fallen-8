@@ -44,7 +44,7 @@ namespace Fallen8.API.Index
         /// <summary>
         /// The index dictionary.
         /// </summary>
-        private Dictionary<IComparable, HashSet<AGraphElement>> _idx;
+        private Dictionary<IComparable, List<AGraphElement>> _idx;
 
         /// <summary>
         /// The description of the plugin
@@ -97,14 +97,14 @@ namespace Fallen8.API.Index
         {
             if (WriteResource ()) {
 
-                HashSet<AGraphElement> values;
+                List<AGraphElement> values;
                 if (_idx.TryGetValue (key, out values)) {
                 
                     values.Add (graphElement);
                 
                 } else {
 
-                    values = new HashSet<AGraphElement>();
+                    values = new List<AGraphElement>();
                     values.Add (graphElement);
                     _idx.Add (key, values);
                 }
@@ -204,7 +204,7 @@ namespace Fallen8.API.Index
         {
             if (ReadResource ()) {
 
-                HashSet<AGraphElement> graphElements;
+                List<AGraphElement> graphElements;
                 
                 var foundSth = _idx.TryGetValue (key, out graphElements);
                 
@@ -224,9 +224,9 @@ namespace Fallen8.API.Index
         #endregion
 
         #region IFallen8Plugin implementation
-        public IFallen8Plugin Initialize (IFallen8 fallen8, IDictionary<string, object> parameter)
+        public IFallen8Plugin Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
-            _idx = new Dictionary<IComparable, HashSet<AGraphElement>>();
+            _idx = new Dictionary<IComparable, List<AGraphElement>>();
             
             return this;
         }

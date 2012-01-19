@@ -42,12 +42,12 @@ namespace Fallen8.Model
         /// <summary>
         /// The out edges.
         /// </summary>
-        private Dictionary<long, EdgePropertyModel> _outEdges;
+        private Dictionary<Int32, EdgePropertyModel> _outEdges;
         
         /// <summary>
         /// The in edges.
         /// </summary>
-        private Dictionary<long, List<EdgeModel>> _inEdges;
+        private Dictionary<Int32, List<EdgeModel>> _inEdges;
         
         #endregion
         
@@ -65,7 +65,8 @@ namespace Fallen8.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public VertexModel (Int64 id, DateTime creationDate, Dictionary<Int64, Object> properties) : base (id, creationDate, properties)
+        public VertexModel(Int32 id, DateTime creationDate, Dictionary<Int32, Object> properties)
+            : base(id, creationDate, properties)
         {
         }
         
@@ -85,13 +86,13 @@ namespace Fallen8.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void AddOutEdge (long edgePropertyId, EdgeModel outEdge)
+        public void AddOutEdge(Int32 edgePropertyId, EdgeModel outEdge)
         {
             if (WriteResource ()) 
             {
                 
                 if (_outEdges == null) {
-                    _outEdges = new Dictionary<long, EdgePropertyModel> ();
+                    _outEdges = new Dictionary<Int32, EdgePropertyModel>();
                 }
                     
                 EdgePropertyModel edgeProperty;
@@ -119,7 +120,7 @@ namespace Fallen8.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void AddOutEdges (Dictionary<long, EdgePropertyModel> outEdges)
+        public void AddOutEdges(Dictionary<Int32, EdgePropertyModel> outEdges)
         {
             if (WriteResource ()) {
                 
@@ -159,12 +160,12 @@ namespace Fallen8.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void AddIncomingEdge (Int64 edgePropertyId, EdgeModel incomingEdge)
+        public void AddIncomingEdge(Int32 edgePropertyId, EdgeModel incomingEdge)
         {
             if (WriteResource ()) {
                 
                 if (_inEdges == null) {
-                    _inEdges = new Dictionary<long, List<EdgeModel>> ();
+                    _inEdges = new Dictionary<Int32, List<EdgeModel>>();
                 }
             
                 List<EdgeModel> inEdges;
@@ -278,10 +279,10 @@ namespace Fallen8.Model
         /// <returns>
         /// The incoming edge identifiers.
         /// </returns>
-        public IEnumerable<Int64> GetIncomingEdgeIds ()
+        public IEnumerable<Int32> GetIncomingEdgeIds()
         {
             if (ReadResource ()) {
-                List<Int64> inEdges = new List<Int64> ();
+                List<Int32> inEdges = new List<Int32>();
                 
                 if (_inEdges != null && _inEdges.Count > 0) {
                     inEdges.AddRange (_inEdges.Select (_ => _.Key));
@@ -301,10 +302,10 @@ namespace Fallen8.Model
         /// <returns>
         /// The outgoing edge identifiers.
         /// </returns>
-        public IEnumerable<Int64> GetOutgoingEdgeIds ()
+        public IEnumerable<Int32> GetOutgoingEdgeIds()
         {
             if (ReadResource ()) {
-                List<Int64> outEdges = new List<Int64> ();
+                List<Int32> outEdges = new List<Int32>();
                 
                 if (_outEdges != null && _outEdges.Count > 0) {
                     outEdges.AddRange (_outEdges.Select (_ => _.Key));
@@ -330,7 +331,7 @@ namespace Fallen8.Model
         /// <param name='edgePropertyId'>
         /// Edge property identifier.
         /// </param>
-        public Boolean TryGetOutEdge (out EdgePropertyModel result, Int64 edgePropertyId)
+        public Boolean TryGetOutEdge(out EdgePropertyModel result, Int32 edgePropertyId)
         {
             if (ReadResource ()) {
                 
@@ -363,7 +364,7 @@ namespace Fallen8.Model
         /// <param name='edgePropertyId'>
         /// Edge property identifier.
         /// </param>
-        public Boolean TryGetInEdges (out IEnumerable<EdgeModel> result, Int64 edgePropertyId)
+        public Boolean TryGetInEdges(out IEnumerable<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource ()) {
                 

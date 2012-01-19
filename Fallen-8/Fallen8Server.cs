@@ -34,19 +34,19 @@ namespace Fallen8.API
     /// <summary>
     /// Fallen8 server.
     /// </summary>
-    public sealed class Fallen8Server : IFallen8Server
+    public sealed class Fallen8Server
     {
         #region Data
         
         /// <summary>
         /// The services.
         /// </summary>
-        private List<IFallen8Service> _services; 
+        public readonly List<IFallen8Service> Services; 
         
         /// <summary>
-        /// The fallen8.
+        /// The Fallen-8.
         /// </summary>
-        private Fallen8 _fallen8;
+        public readonly Fallen8 Fallen8;
         
         #endregion
         
@@ -57,24 +57,31 @@ namespace Fallen8.API
         /// </summary>
         public Fallen8Server ()
         {
-            _services = new List<IFallen8Service> ();
-            _fallen8 = new Fallen8 ();
+            Services = new List<IFallen8Service>();
+            Fallen8 = new Fallen8();
         }
         
         #endregion
         
-        #region IFallen8Server implementation
-        
-        public IFallen8 Fallen8 {
-            get { return _fallen8;}}
-        
+        #region public methods
+
+        /// <summary>
+        /// Shutdown this Fallen-8 server.
+        /// </summary>
         public void Shutdown ()
         {
-            foreach (var aService in _services) {
+            foreach (var aService in Services)
+            {
                 aService.TryStop ();
             }
         }
 
+        /// <summary>
+        /// Gets the available service plugins.
+        /// </summary>
+        /// <returns>
+        /// The available service plugins.
+        /// </returns>
         public IEnumerable<String> GetAvailableServicePlugins ()
         {
             IEnumerable<String> result;
@@ -84,32 +91,48 @@ namespace Fallen8.API
             return result;
         }
 
-        public bool TryStartService (out IFallen8Service service, string servicePluginName, IDictionary<string, object> parameter)
+        /// <summary>
+        /// Tries to start a service.
+        /// </summary>
+        /// <returns>
+        /// True for success.
+        /// </returns>
+        /// <param name='service'>
+        /// The launched service.
+        /// </param>
+        /// <param name='servicePluginName'>
+        /// The name of this service.
+        /// </param>
+        /// <param name='connector'>
+        /// The the connection to fallen-8.
+        /// </param>
+        /// <param name='parameter'>
+        /// The parameters of this service.
+        /// </param>
+        public bool TryStartService(out IFallen8Service service, string servicePluginName, IDictionary<string, object> parameter)
         {
             IFallen8Service serviceSchema;
-            if (Fallen8PluginFactory.TryFindPlugin<IFallen8Service> (out serviceSchema, servicePluginName)) {
-             
-                try {
-                    service = (IFallen8Service)serviceSchema.Initialize(_fallen8, parameter);
-                    
-                    _services.Add (service);
-                    
+            if (Fallen8PluginFactory.TryFindPlugin<IFallen8Service>(out serviceSchema, servicePluginName))
+            {
+                try
+                {
+                    service = (IFallen8Service)serviceSchema.Initialize(Fallen8, parameter);
+
+                    Services.Add(service);
+
                     return true;
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     service = null;
                     return false;
                 }
             }
 
             service = null;
-            return false;   
+            return false;
         }
 
-        public IEnumerable<IFallen8Service> Services {
-            get {
-                return _services;
-            }
-        }
         #endregion
     }
 }

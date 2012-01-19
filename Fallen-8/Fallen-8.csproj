@@ -19,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -33,12 +34,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Expression\BinaryOperator.cs" />
-    <Compile Include="Helper\AGraphElementDefinition.cs" />
     <Compile Include="Helper\EdgeModelDefinition.cs" />
-    <Compile Include="Helper\VertexModelDefinition.cs" />
-    <Compile Include="IFallen8.cs" />
     <Compile Include="IFallen8Read.cs" />
-    <Compile Include="IFallen8Server.cs" />
     <Compile Include="IFallen8Write.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResultElement.cs" />
@@ -57,7 +54,6 @@
     <Compile Include="Model\EdgeModel.cs" />
     <Compile Include="Model\VertexModel.cs" />
     <Compile Include="Fallen8.cs" />
-    <Compile Include="Model\GraphModel.cs" />
     <Compile Include="Model\AGraphElement.cs" />
     <Compile Include="Model\EdgePropertyModel.cs" />
     <Compile Include="Index\Fallen8IndexFactory.cs" />

@@ -26,6 +26,7 @@
 using System;
 using Fallen8.API.Helper;
 using Fallen8.Model;
+using System.Collections.Generic;
 
 namespace Fallen8.API
 {
@@ -46,7 +47,7 @@ namespace Fallen8.API
 		/// <param name='vertexDefinition'>
 		/// Vertex definition.
 		/// </param>
-		VertexModel CreateVertex (VertexModelDefinition vertexDefinition);
+        VertexModel CreateVertex(DateTime creationDate, Dictionary<Int32, Object> properties = null, Dictionary<Int32, List<EdgeModelDefinition>> edges = null);
 		
 		/// <summary>
 		/// Creates an edge.
@@ -63,7 +64,7 @@ namespace Fallen8.API
 		/// <param name='edgeDefinition'>
 		/// Edge definition.
 		/// </param>
-		EdgeModel CreateEdge (Int64 sourceVertexId, Int64 edgePropertyId, EdgeModelDefinition edgeDefinition);
+        EdgeModel CreateEdge(Int32 sourceVertexId, Int32 edgePropertyId, EdgeModelDefinition edgeDefinition);
 		
 		#endregion
 		
@@ -84,7 +85,7 @@ namespace Fallen8.API
 		/// <param name='property'>
 		/// The to be added property.
 		/// </param>
-		Boolean TryAddProperty (Int64 graphElementId, Int64 propertyId, Object property);
+        Boolean TryAddProperty(Int32 graphElementId, Int32 propertyId, Object property);
 		
 		/// <summary>
 		/// Tries to remove a property.
@@ -98,7 +99,7 @@ namespace Fallen8.API
 		/// <param name='propertyId'>
 		/// Property identifier.
 		/// </param>
-		Boolean TryRemoveProperty (Int64 graphElementId, Int64 propertyId);
+        Boolean TryRemoveProperty(Int32 graphElementId, Int32 propertyId);
 		
 		#endregion
 		
@@ -113,7 +114,7 @@ namespace Fallen8.API
 		/// <param name='graphElementId'>
 		/// Graph element identifier.
 		/// </param>
-		Boolean TryRemoveGraphElement (Int64 graphElementId);
+        Boolean TryRemoveGraphElement(Int32 graphElementId);
 		
 		#endregion
 	}
