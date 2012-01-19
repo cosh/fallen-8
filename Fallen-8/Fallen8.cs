@@ -45,7 +45,7 @@ namespace Fallen8.API
         /// <summary>
         /// The graph elements
         /// </summary>
-        private readonly AGraphElement[] _graphElements;
+        private readonly List<AGraphElement> _graphElements;
 
         /// <summary>
         /// The index factory.
@@ -73,7 +73,7 @@ namespace Fallen8.API
         public Fallen8 ()
         {
             IndexFactory = new Fallen8IndexFactory();
-            _graphElements = new AGraphElement[250000000];
+            _graphElements = new List<AGraphElement>(5000000);
         }
         
         #endregion
@@ -84,7 +84,7 @@ namespace Fallen8.API
             //create the new vertex
             VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
-            _graphElements[newVertex.Id] = newVertex;
+            _graphElements.Add(newVertex);
 
 
             if (edges != null && edges.Count > 0)
@@ -114,7 +114,7 @@ namespace Fallen8.API
             edgeProperty.AddEdge (outgoingEdge);
 
             //add the edge to the graph elements
-            _graphElements[outgoingEdge.Id] = outgoingEdge;
+            _graphElements.Add(outgoingEdge);
 
             //link the vertices
             sourceVertex.AddOutEdge (edgePropertyId, outgoingEdge);
@@ -271,7 +271,7 @@ namespace Fallen8.API
         /// <param name='id'>
         /// System wide unique identifier.
         /// </param>
-        public VertexModel GetVertex(long id)
+        public VertexModel GetVertex(Int32 id)
         {
             return _graphElements[id] as VertexModel;
         }
@@ -497,7 +497,9 @@ namespace Fallen8.API
                 var targetVertex = (VertexModel)_graphElements [aEdgeDefinition.TargetVertexId];
                 
                 var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, result, aEdgeDefinition.Properties);
-                _graphElements[outgoingEdge.Id] = outgoingEdge;
+                
+                //add the new edge to the store
+                _graphElements.Add(outgoingEdge);
 
                 targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
                 
