@@ -99,7 +99,7 @@ namespace Fallen8.Model
                 if (_outEdges.TryGetValue (edgePropertyId, out edgeProperty)) {
                     edgeProperty.AddEdge (outEdge);
                 } else {
-                    _outEdges.Add (edgePropertyId, new EdgePropertyModel (this, new List<EdgeModel> {outEdge}));
+                    _outEdges.Add (edgePropertyId, outEdge.SourceEdgeProperty);
                 }
 
                 FinishWriteResource();
@@ -120,27 +120,14 @@ namespace Fallen8.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void AddOutEdges(Dictionary<Int32, EdgePropertyModel> outEdges)
+        public void SetOutEdges(Dictionary<Int32, EdgePropertyModel> outEdges)
         {
-            if (WriteResource ()) {
-                
-                if (_outEdges == null) {
-                    _outEdges = outEdges;
-                } else {
-                    if (outEdges != null && outEdges.Count > 0) {
-                        foreach (var aOutEdge in outEdges) {
-                            
-                            EdgePropertyModel edgeProperty;
-                            if (_outEdges.TryGetValue (aOutEdge.Key, out edgeProperty)) {
-                                edgeProperty.AddEdges (aOutEdge.Value);
-                            } else {
-                                _outEdges.Add (aOutEdge.Key, aOutEdge.Value);
-                            }
-                        }
-                    }
-                }
-            
-                FinishWriteResource ();
+            if (WriteResource())
+            {
+
+                _outEdges = outEdges;
+
+                FinishWriteResource();
 
                 return;
             }

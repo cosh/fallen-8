@@ -148,7 +148,7 @@ namespace Fallen8.Model
 
                 List<PropertyContainer> result = new List<PropertyContainer>();
 
-                if (_properties != null && _properties.Count > 0)
+                if (_properties != null)
                 {
                     result.AddRange(_properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
                 }
@@ -171,10 +171,9 @@ namespace Fallen8.Model
         {
             if (ReadResource())
             {
-
                 Boolean foundsth = false;
                 Object rawResult;
-                if (_properties != null && _properties.Count > 0 && _properties.TryGetValue(propertyId, out rawResult))
+                if (_properties != null && _properties.TryGetValue(propertyId, out rawResult))
                 {
                     result = (TProperty)rawResult;
                     foundsth = true;
@@ -208,24 +207,33 @@ namespace Fallen8.Model
         /// </exception>
         public bool TryAddProperty(Int32 propertyId, object property)
         {
-            if (WriteResource ()) {
-                
-                Boolean foundProperty = _properties.ContainsKey (propertyId);
-                
-                if (foundProperty) {
-                    _properties [propertyId] = property;
-                } else {
-                    _properties.Add (propertyId, property);
+            if (WriteResource())
+            {
+
+                Boolean foundProperty = false;
+
+                if (_properties != null)
+                {
+                    foundProperty = _properties.ContainsKey(propertyId);
+                    if (foundProperty)
+                    {
+                        _properties[propertyId] = property;
+                    }
+                    else
+                    {
+                        _properties.Add(propertyId, property);
+                    }
+
+                    //set the modificationdate
+                    ModificationDate = DateTime.Now;
+
                 }
 
-                //set the modificationdate
-                ModificationDate = DateTime.Now;
-
-                FinishWriteResource ();
+                FinishWriteResource();
                 return foundProperty;
             }
-            
-            throw new CollisionException ();
+
+            throw new CollisionException();
         }
         
         /// <summary>
@@ -243,13 +251,18 @@ namespace Fallen8.Model
         public bool TryRemoveProperty(Int32 propertyId)
         {
             if (WriteResource ()) {
-                
-                Boolean removedSomething = _properties.Remove (propertyId);
 
-                if (removedSomething)
+                Boolean removedSomething = false;
+
+                if (_properties != null)
                 {
-                    //set the modificationdate
-                    ModificationDate = DateTime.Now;
+                    removedSomething = _properties.Remove(propertyId);
+
+                    if (removedSomething)
+                    {
+                        //set the modificationdate
+                        ModificationDate = DateTime.Now;
+                    }
                 }
 
                 FinishWriteResource ();

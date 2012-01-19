@@ -96,7 +96,7 @@ namespace Fallen8.API
                     outEdges.Add(aEdge.Key, CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
                 }
 
-                newVertex.AddOutEdges(outEdges);
+                newVertex.SetOutEdges(outEdges);
             }
 
             return newVertex;

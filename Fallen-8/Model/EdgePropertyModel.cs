@@ -35,7 +35,7 @@ namespace Fallen8.Model
     /// <summary>
     /// Edge property model.
     /// </summary>
-    public sealed class EdgePropertyModel : AThreadSafeElement, IEnumerable<EdgeModel>
+    public sealed class EdgePropertyModel : IEnumerable<EdgeModel>
     {
         #region Data
         
@@ -91,16 +91,7 @@ namespace Fallen8.Model
         /// </summary>
         public void TrimEdges()
         {
-            if (WriteResource())
-            {
-                _edges = _edges.Distinct().ToList();
-
-                FinishWriteResource();
-
-                return;
-            }
-
-            throw new CollisionException();
+            _edges = _edges.Distinct().ToList();
         }
 
         /// <summary>
@@ -112,27 +103,22 @@ namespace Fallen8.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void AddEdge (EdgeModel outEdge)
+        public void AddEdge(EdgeModel outEdge)
         {
-            if (outEdge != null) {
-             
-                if (WriteResource ()) 
-                {
-                
-                    if (_edges == null) {
-                        _edges = new List<EdgeModel> {outEdge};
-                    } else {
-                        _edges.Add (outEdge);
-                    }
-                
-                    FinishWriteResource ();
+            if (outEdge != null)
+            {
 
-                    return;
+                if (_edges == null)
+                {
+                    _edges = new List<EdgeModel> { outEdge };
                 }
-            
-                throw new CollisionException ();
-            }   
-            
+                else
+                {
+                    _edges.Add(outEdge);
+                }
+
+            }
+
         }
         
         /// <summary>
@@ -141,25 +127,20 @@ namespace Fallen8.Model
         /// <param name='edges'>
         /// Edges.
         /// </param>
-        public void AddEdges (IEnumerable<EdgeModel> edges)
+        public void AddEdges(IEnumerable<EdgeModel> edges)
         {
-            if (edges != null) {
-             
-                if (WriteResource ()) 
+            if (edges != null)
+            {
+
+                if (_edges == null)
                 {
-                
-                    if (_edges == null) {
-                        _edges = new List<EdgeModel> (edges);
-                    } else {
-                        _edges.AddRange (edges);
-                    }
-                
-                    FinishWriteResource ();
-                    return;
+                    _edges = new List<EdgeModel>(edges);
                 }
-            
-                throw new CollisionException ();
-            }   
+                else
+                {
+                    _edges.AddRange(edges);
+                }
+            }
         }
         
         #endregion
