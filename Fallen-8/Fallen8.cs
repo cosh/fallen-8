@@ -81,46 +81,59 @@ namespace Fallen8.API
         #region IFallen8Write implementation
         public VertexModel CreateVertex(DateTime creationDate, Dictionary<Int32, Object> properties = null, Dictionary<Int32, List<EdgeModelDefinition>> edges = null)
         {
-            //create the new vertex
-            VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
-
-            _graphElements.Add(newVertex);
-
-
-            if (edges != null && edges.Count > 0)
+            if (WriteResource())
             {
-                Dictionary<Int32, EdgePropertyModel> outEdges = new Dictionary<Int32, EdgePropertyModel>();
+                //create the new vertex
+                VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
-                foreach (var aEdge in edges)
+                _graphElements.Add(newVertex);
+
+                if (edges != null && edges.Count > 0)
                 {
-                    outEdges.Add(aEdge.Key, CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
+                    Dictionary<Int32, EdgePropertyModel> outEdges = new Dictionary<Int32, EdgePropertyModel>();
+
+                    foreach (var aEdge in edges)
+                    {
+                        outEdges.Add(aEdge.Key, CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
+                    }
+
+                    newVertex.SetOutEdges(outEdges);
                 }
 
-                newVertex.SetOutEdges(outEdges);
+                FinishWriteResource();
+
+                return newVertex;
             }
 
-            return newVertex;
+            throw new CollisionException();
         }
 
         public EdgeModel CreateEdge(Int32 sourceVertexId, Int32 edgePropertyId, EdgeModelDefinition edgeDefinition)
         {
-            //get the related vertices
-            var sourceVertex = (VertexModel)_graphElements[sourceVertexId];
-            var targetVertex = (VertexModel)_graphElements[edgeDefinition.TargetVertexId];
-            
-            //build the necessary edge contruct
-            var edgeProperty = new EdgePropertyModel (sourceVertex, null);
-            var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, edgeProperty, edgeDefinition.Properties);
-            edgeProperty.AddEdge (outgoingEdge);
+            if (WriteResource())
+            {
+                //get the related vertices
+                var sourceVertex = (VertexModel)_graphElements[sourceVertexId];
+                var targetVertex = (VertexModel)_graphElements[edgeDefinition.TargetVertexId];
 
-            //add the edge to the graph elements
-            _graphElements.Add(outgoingEdge);
+                //build the necessary edge contruct
+                var edgeProperty = new EdgePropertyModel(sourceVertex, null);
+                var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, edgeProperty, edgeDefinition.Properties);
+                edgeProperty.AddEdge(outgoingEdge);
 
-            //link the vertices
-            sourceVertex.AddOutEdge (edgePropertyId, outgoingEdge);
-            targetVertex.AddIncomingEdge (edgePropertyId, outgoingEdge);
+                //add the edge to the graph elements
+                _graphElements.Add(outgoingEdge);
 
-            return outgoingEdge;
+                //link the vertices
+                sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+                targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
+
+                FinishWriteResource();
+
+                return outgoingEdge;
+            }
+
+            throw new CollisionException();
         }
 
         public bool TryAddProperty(Int32 graphElementId, Int32 propertyId, Object property)
