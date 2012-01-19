@@ -116,16 +116,27 @@ namespace Fallen8.API
                 var sourceVertex = (VertexModel)_graphElements[sourceVertexId];
                 var targetVertex = (VertexModel)_graphElements[edgeDefinition.TargetVertexId];
 
-                //build the necessary edge contruct
-                var edgeProperty = new EdgePropertyModel(sourceVertex, null);
-                var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, edgeProperty, edgeDefinition.Properties);
-                edgeProperty.AddEdge(outgoingEdge);
+                EdgeModel outgoingEdge;
+                EdgePropertyModel epm;
+                if (sourceVertex.TryGetOutEdge( out epm, edgePropertyId))
+                {
+                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
+                    epm.AddEdge(outgoingEdge);
+                }
+                else
+                {
+                    //build the necessary edge contruct
+                    epm = new EdgePropertyModel(sourceVertex, null);
+                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
+                    epm.AddEdge(outgoingEdge);
+
+                    sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+                }
 
                 //add the edge to the graph elements
                 _graphElements.Add(outgoingEdge);
 
                 //link the vertices
-                sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
                 targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
 
                 FinishWriteResource();
