@@ -114,6 +114,16 @@ namespace Fallen8.API
         Boolean TryRemoveGraphElement(Int32 graphElementId);
 		
 		#endregion
-	}
+
+        #region Tabula rasa
+
+        /// <summary>
+        /// Put the database in its initial state.
+        /// </summary>
+        void TabulaRasa();
+
+        #endregion
+
+    }
 }
 

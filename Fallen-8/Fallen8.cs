@@ -48,7 +48,7 @@ namespace Fallen8.API
         /// <summary>
         /// The graph elements
         /// </summary>
-        private readonly List<AGraphElement> _graphElements;
+        private List<AGraphElement> _graphElements;
 
         /// <summary>
         /// The index factory.
@@ -77,11 +77,24 @@ namespace Fallen8.API
         {
             IndexFactory = new Fallen8IndexFactory();
             _graphElements = new List<AGraphElement>(5000000);
+            IndexFactory.Indices.Clear();
         }
         
         #endregion
         
         #region IFallen8Write implementation
+
+        public void TabulaRasa()
+        {
+            if (WriteResource())
+            {
+                _currentId = -1;
+                _graphElements = new List<AGraphElement>(5000000);
+            }
+
+            throw new CollisionException();
+        }
+
         public VertexModel CreateVertex(DateTime creationDate, IDictionary<Int32, Object> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null)
         {
             if (WriteResource())
@@ -586,6 +599,6 @@ namespace Fallen8.API
         }
         
         #endregion
-	}
+    }
 }
 
