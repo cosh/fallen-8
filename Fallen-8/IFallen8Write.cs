@@ -44,7 +44,7 @@ namespace Fallen8.API
 		/// <returns>
 		/// The vertex model.
 		/// </returns>
-        VertexModel CreateVertex(DateTime creationDate, Dictionary<Int32, Object> properties = null, Dictionary<Int32, List<EdgeModelDefinition>> edges = null);
+        VertexModel CreateVertex(DateTime creationDate, IDictionary<Int32, Object> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null);
 		
 		/// <summary>
 		/// Creates an edge.

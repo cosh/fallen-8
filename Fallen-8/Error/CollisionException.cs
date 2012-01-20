@@ -30,6 +30,7 @@ namespace Fallen8.API.Error
     /// <summary>
     /// Collision exception.
     /// </summary>
+    [Serializable]
     public sealed class CollisionException : Exception
     {
         /// <summary>

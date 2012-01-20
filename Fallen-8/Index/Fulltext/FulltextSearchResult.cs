@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Fallen8.API.Index.Fulltext
 {
@@ -48,7 +49,7 @@ namespace Fallen8.API.Index.Fulltext
 		/// <value>
 		/// The elements.
 		/// </value>
-		public List<FulltextSearchResultElement> Elements { get; private set;}
+		public ReadOnlyCollection<FulltextSearchResultElement> Elements { get; private set;}
 	}
 }
 

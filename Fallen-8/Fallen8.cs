@@ -34,6 +34,7 @@ using Fallen8.API.Expression;
 using System.Collections.Generic;
 using System.Threading;
 using Fallen8.API.Error;
+using System.Collections.ObjectModel;
 
 namespace Fallen8.API
 {
@@ -81,7 +82,7 @@ namespace Fallen8.API
         #endregion
         
         #region IFallen8Write implementation
-        public VertexModel CreateVertex(DateTime creationDate, Dictionary<Int32, Object> properties = null, Dictionary<Int32, List<EdgeModelDefinition>> edges = null)
+        public VertexModel CreateVertex(DateTime creationDate, IDictionary<Int32, Object> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null)
         {
             if (WriteResource())
             {
@@ -321,11 +322,11 @@ namespace Fallen8.API
         /// <returns>
         /// The vertices.
         /// </returns>
-        public List<VertexModel> GetVertices()
+        public ReadOnlyCollection<VertexModel> GetVertices()
         {
             if (ReadResource())
             {
-                var vertices = _graphElements.OfType<VertexModel>().ToList();
+                var vertices = new ReadOnlyCollection<VertexModel>(_graphElements.OfType<VertexModel>().ToList());
 
                 FinishReadResource();
 
@@ -364,11 +365,11 @@ namespace Fallen8.API
         /// <returns>
         /// The edges.
         /// </returns>
-        public List<EdgeModel> GetEdges()
+        public ReadOnlyCollection<EdgeModel> GetEdges()
         {
             if (ReadResource())
             {
-                var edges = _graphElements.OfType<EdgeModel>().ToList();
+                var edges = new ReadOnlyCollection<EdgeModel>(_graphElements.OfType<EdgeModel>().ToList());
 
                 FinishReadResource();
 

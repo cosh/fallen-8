@@ -179,7 +179,7 @@ namespace Fallen8.API.Plugin
             try {
                 instance = Activator.CreateInstance (currentPluginType);
 
-            } catch (Exception) {
+            } catch (TypeLoadException) {
                 return null;                   
             }
             
