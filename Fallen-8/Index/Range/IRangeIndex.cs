@@ -23,11 +23,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using Fallen8.Model;
+using Fallen8.API.Model;
 using System.Collections.Generic;
 
-namespace Fallen8.API.Index
+namespace Fallen8.API.Index.Range
 {
 	/// <summary>
 	/// Fallen8 range index.

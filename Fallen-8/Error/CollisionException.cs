@@ -33,7 +33,7 @@ namespace Fallen8.API.Error
     public sealed class CollisionException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Error.CollisionException"/> class.
+        /// Initializes a new instance of the CollisionException class.
         /// </summary>
         public CollisionException ()
         {

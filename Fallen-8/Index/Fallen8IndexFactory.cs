@@ -25,9 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Helper;
 using Fallen8.API.Plugin;
-using System.Threading;
 
 namespace Fallen8.API.Index
 {
@@ -48,7 +46,7 @@ namespace Fallen8.API.Index
         #region constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Index.Fallen8IndexFactory"/> class.
+        /// Initializes a new instance of the Fallen8IndexFactory class.
         /// </summary>
         public Fallen8IndexFactory ()
         {

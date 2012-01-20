@@ -23,9 +23,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 
-namespace Fallen8.API.Index
+namespace Fallen8.API.Index.Spatial
 {
 	/// <summary>
 	/// Point.
@@ -52,7 +53,7 @@ namespace Fallen8.API.Index
 		
 		public int CompareTo (object obj)
 		{
-			throw new System.NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 		
 		#endregion

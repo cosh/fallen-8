@@ -26,9 +26,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Fallen8.Model;
+using Fallen8.API.Model;
 using Fallen8.API.Plugin;
-using System.Collections.Concurrent;
 using Fallen8.API.Helper;
 using Fallen8.API.Error;
 
@@ -56,7 +55,7 @@ namespace Fallen8.API.Index
         #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Index.DictionaryIndex"/> class.
+        /// Initializes a new instance of the DictionaryIndex class.
         /// </summary>
         public DictionaryIndex ()
         {
@@ -104,8 +103,7 @@ namespace Fallen8.API.Index
                 
                 } else {
 
-                    values = new List<AGraphElement>();
-                    values.Add (graphElement);
+                    values = new List<AGraphElement> {graphElement};
                     _idx.Add (key, values);
                 }
                 
@@ -135,14 +133,14 @@ namespace Fallen8.API.Index
         {
             if (WriteResource ()) {
 
-                List<IComparable> toBeRemovedKeys = new List<IComparable>();
+                var toBeRemovedKeys = new List<IComparable>();
 
-                foreach (var aKV in _idx) 
+                foreach (var aKv in _idx) 
                 {
-                    aKV.Value.Remove (graphElement);
-                    if (aKV.Value.Count == 0)
+                    aKv.Value.Remove (graphElement);
+                    if (aKv.Value.Count == 0)
                     {
-                        toBeRemovedKeys.Add(aKV.Key);
+                        toBeRemovedKeys.Add(aKv.Key);
                     }
                 }
 
@@ -189,8 +187,8 @@ namespace Fallen8.API.Index
         {
             if (ReadResource ()) {
                 
-                foreach (var aKV in _idx)
-                    yield return new KeyValuePair<IComparable, IEnumerable<AGraphElement>>(aKV.Key, new List<AGraphElement>(aKV.Value));
+                foreach (var aKv in _idx)
+                    yield return new KeyValuePair<IComparable, IEnumerable<AGraphElement>>(aKv.Key, new List<AGraphElement>(aKv.Value));
                 
                 FinishReadResource ();
                 
@@ -208,11 +206,7 @@ namespace Fallen8.API.Index
                 
                 var foundSth = _idx.TryGetValue (key, out graphElements);
                 
-                if (foundSth) {
-                    result = graphElements;
-                } else {
-                    result = null;
-                }
+                result = foundSth ? graphElements : null;
                 
                 FinishReadResource ();
                 

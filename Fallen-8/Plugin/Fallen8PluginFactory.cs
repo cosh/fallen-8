@@ -75,23 +75,19 @@ namespace Fallen8.API.Plugin
         /// </returns>
         /// <param name='result'>
         /// Result.
+        /// </param>
         /// <typeparam name='T'>
         /// The interface type of the plugin.
         /// </typeparam>
         public static Boolean TryGetAvailablePlugins<T> (out IEnumerable<String> result)
         {
-            var descriptions = new List<String>();
-            
-            foreach (var aPluginTypeOfT in GetAllTypes<T>()) {
-                var aPluginInstance = Activate (aPluginTypeOfT);
-                if (aPluginInstance != null) {
-                    descriptions.Add (aPluginInstance.Description);
-                }
-            }
-            
+            var descriptions = (from aPluginTypeOfT in GetAllTypes<T>() select Activate(aPluginTypeOfT) 
+                                    into aPluginInstance where aPluginInstance != null select aPluginInstance.Description)
+                                    .ToList();
+
             result = descriptions;
             
-            return descriptions.Count () > 0;
+            return descriptions.Any();
         }
         
         #region private helper
@@ -105,47 +101,50 @@ namespace Fallen8.API.Plugin
         /// <typeparam name='T'>
         /// The type of the plugin.
         /// </typeparam>
-        private static List<Type> GetAllTypes<T> ()
+        private static IEnumerable<Type> GetAllTypes<T> ()
         {
-            Assembly assembly;
-            List<Type> result = new List<Type> ();
+            var result = new List<Type> ();
             
-            IEnumerable<string> files = Directory.EnumerateFiles (Environment.CurrentDirectory, "*.dll")
+            var files = Directory.EnumerateFiles (Environment.CurrentDirectory, "*.dll")
                 .Union (Directory.EnumerateFiles (Environment.CurrentDirectory, "*.exe"));
-   
-            foreach (string file in files) {
-                assembly = Assembly.LoadFrom (file);
-                var types = assembly.GetTypes ();
-                
-                if (types != null && types.Count () > 0) {
-                    
-                    foreach (Type aType in types) {
 
-                        if (!aType.IsClass || aType.IsAbstract) {
-                            continue;
-                        }
+            foreach (var file in files)
+            {
+                var assembly = Assembly.LoadFrom(file);
+                var types = assembly.GetTypes();
 
-                        if (!aType.IsPublic) {
-                            continue;
-                        }
+                foreach (var aType in types)
+                {
 
-                        if (!IsInterfaceOf<IFallen8Plugin> (aType)) {
-                            continue;
-                        }
-                        
-                        if (!IsInterfaceOf<T> (aType)) {
-                            continue;
-                        }
-
-                        if (aType.GetConstructor (Type.EmptyTypes) == null) {
-                            continue;
-                        }
-
-                        result.Add (aType);
+                    if (!aType.IsClass || aType.IsAbstract)
+                    {
+                        continue;
                     }
+
+                    if (!aType.IsPublic)
+                    {
+                        continue;
+                    }
+
+                    if (!IsInterfaceOf<IFallen8Plugin>(aType))
+                    {
+                        continue;
+                    }
+
+                    if (!IsInterfaceOf<T>(aType))
+                    {
+                        continue;
+                    }
+
+                    if (aType.GetConstructor(Type.EmptyTypes) == null)
+                    {
+                        continue;
+                    }
+
+                    result.Add(aType);
                 }
             }
-         
+
             return result;
             
         }

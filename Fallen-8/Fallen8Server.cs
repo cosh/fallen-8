@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Fallen8.API.Plugin;
 using Fallen8.API.Service;
@@ -53,7 +52,7 @@ namespace Fallen8.API
         #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Fallen8Server"/> class.
+        /// Initializes a new instance of the Fallen8Server class.
         /// </summary>
         public Fallen8Server ()
         {
@@ -102,9 +101,6 @@ namespace Fallen8.API
         /// </param>
         /// <param name='servicePluginName'>
         /// The name of this service.
-        /// </param>
-        /// <param name='connector'>
-        /// The the connection to fallen-8.
         /// </param>
         /// <param name='parameter'>
         /// The parameters of this service.

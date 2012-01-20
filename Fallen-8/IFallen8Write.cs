@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 using Fallen8.API.Helper;
-using Fallen8.Model;
+using Fallen8.API.Model;
 using System.Collections.Generic;
 
 namespace Fallen8.API
@@ -44,9 +44,6 @@ namespace Fallen8.API
 		/// <returns>
 		/// The vertex model.
 		/// </returns>
-		/// <param name='vertexDefinition'>
-		/// Vertex definition.
-		/// </param>
         VertexModel CreateVertex(DateTime creationDate, Dictionary<Int32, Object> properties = null, Dictionary<Int32, List<EdgeModelDefinition>> edges = null);
 		
 		/// <summary>

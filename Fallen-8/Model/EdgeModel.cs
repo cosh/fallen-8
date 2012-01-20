@@ -23,12 +23,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Fallen8.API.Error;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Model
 {
     /// <summary>
     /// Edge model.
@@ -38,7 +37,7 @@ namespace Fallen8.Model
         #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.Model.EdgeModel"/> class.
+        /// Initializes a new instance of the <see cref="EdgeModel"/> class.
         /// </summary>
         /// <param name='id'>
         /// Identifier.
@@ -55,7 +54,7 @@ namespace Fallen8.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public EdgeModel(Int32 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty, Dictionary<Int32, Object> properties)
+        public EdgeModel(Int32 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty, IDictionary<Int32, Object> properties)
             : base(id, creationDate, properties)
         {
             TargetVertex = targetVertex;
@@ -102,7 +101,7 @@ namespace Fallen8.Model
 
             return TargetVertex.Id == p.TargetVertex.Id
                    && (SourceEdgeProperty.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id)
-                   && (base.PropertiesEqual(base._properties, p._properties));
+                   && (PropertiesEqual(Properties, p.Properties));
         }
 
         public static Boolean operator == (EdgeModel a, EdgeModel b)

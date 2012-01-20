@@ -73,9 +73,6 @@ namespace Fallen8.API.Plugin
 		/// <summary>
 		/// Tries to inititialize the plugin.
 		/// </summary>
-		/// <param name='plugin'>
-		/// Plugin.
-		/// </param>
         /// <param name='fallen8'>
         /// A fallen-8 session.
         /// </param>

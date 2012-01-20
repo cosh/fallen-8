@@ -37,13 +37,9 @@ namespace Fallen8.API.Helper
         /// The using resource.
         /// 0 for false, 1 for true.
         /// </summary>
-        private Int32 _usingResource = 0;
-        
-        protected AThreadSafeElement ()
-        {
-        }
-        
-         /// <summary>
+        private Int32 _usingResource;
+
+        /// <summary>
         /// Reads the resource.
         /// Blocks if reading is currently not allowed
         /// </summary>
@@ -61,7 +57,7 @@ namespace Fallen8.API.Helper
 
             //another thread writes something, so lets wait
 
-            for (int i = 0; i < 1000; i++)
+            for (var i = 0; i < 1000; i++)
             {
                 //usingResource was incremented in the if clause, so lets decrement it again
                 Interlocked.Decrement(ref _usingResource);
@@ -100,7 +96,7 @@ namespace Fallen8.API.Helper
                 return true;
             }
 
-            for (int i = 0; i < 1000; i++)
+            for (var i = 0; i < 1000; i++)
             {
                 Thread.Sleep(1);
 

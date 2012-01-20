@@ -23,14 +23,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Collections.Concurrent;
 using Fallen8.API.Error;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Model
 {
     /// <summary>
     /// Vertex model.
@@ -54,7 +53,7 @@ namespace Fallen8.Model
         #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.Model.VertexModel"/> class.
+        /// Initializes a new instance of the <see cref="VertexModel"/> class.
         /// </summary>
         /// <param name='id'>
         /// Identifier.
@@ -65,7 +64,7 @@ namespace Fallen8.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public VertexModel(Int32 id, DateTime creationDate, Dictionary<Int32, Object> properties)
+        public VertexModel(Int32 id, DateTime creationDate, IDictionary<Int32, Object> properties)
             : base(id, creationDate, properties)
         {
         }
@@ -195,7 +194,7 @@ namespace Fallen8.Model
                 return false;
             }
 
-            return base.Id == p.Id;
+            return Id == p.Id;
         }
 
         public static Boolean operator == (VertexModel a, VertexModel b)
@@ -221,7 +220,7 @@ namespace Fallen8.Model
 
         public override int GetHashCode ()
         {
-            return base.Id.GetHashCode ();
+            return Id.GetHashCode ();
         }
         
         #endregion
@@ -237,7 +236,7 @@ namespace Fallen8.Model
         public IEnumerable<VertexModel> GetAllNeighbors ()
         {
             if (ReadResource ()) {
-                List<VertexModel> neighbors = new List<VertexModel> ();
+                var neighbors = new List<VertexModel> ();
                 
                 if (_outEdges != null && _outEdges.Count > 0) {
                     foreach (var aOutEdge in _outEdges) {
@@ -269,7 +268,7 @@ namespace Fallen8.Model
         public IEnumerable<Int32> GetIncomingEdgeIds()
         {
             if (ReadResource ()) {
-                List<Int32> inEdges = new List<Int32>();
+                var inEdges = new List<Int32>();
                 
                 if (_inEdges != null && _inEdges.Count > 0) {
                     inEdges.AddRange (_inEdges.Select (_ => _.Key));
@@ -292,7 +291,7 @@ namespace Fallen8.Model
         public IEnumerable<Int32> GetOutgoingEdgeIds()
         {
             if (ReadResource ()) {
-                List<Int32> outEdges = new List<Int32>();
+                var outEdges = new List<Int32>();
                 
                 if (_outEdges != null && _outEdges.Count > 0) {
                     outEdges.AddRange (_outEdges.Select (_ => _.Key));
@@ -322,7 +321,7 @@ namespace Fallen8.Model
         {
             if (ReadResource ()) {
                 
-                Boolean foundSth = false;
+                var foundSth = false;
                 
                 if (_outEdges != null && _outEdges.Count > 0) {
                     
@@ -355,7 +354,7 @@ namespace Fallen8.Model
         {
             if (ReadResource ()) {
                 
-                Boolean foundSth = false;
+                var foundSth = false;
                 
                 if (_inEdges != null && _inEdges.Count > 0) {
                     

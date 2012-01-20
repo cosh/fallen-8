@@ -62,17 +62,18 @@ namespace Fallen8.API.Helper
         #endregion
         
         #region constructor
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Helper.EdgeModelDefinition"/> class.
-        /// </summary>
-        /// <param name='targetVertex'>
-        /// Target vertex.
-        /// </param>
-        /// <param name='creationDate'>
-        /// Creation date.
-        /// </param>
-        public EdgeModelDefinition(Int32 targetVertex, DateTime creationDate, Dictionary<Int32, Object> properties = null)
+
+	    /// <summary>
+	    /// Initializes a new instance of the EdgeModelDefinition class.
+	    /// </summary>
+	    /// <param name='targetVertex'>
+	    /// Target vertex.
+	    /// </param>
+	    /// <param name='creationDate'>
+	    /// Creation date.
+	    /// </param>
+	    /// <param name="properties">Properties</param>
+	    public EdgeModelDefinition(Int32 targetVertex, DateTime creationDate, Dictionary<Int32, Object> properties = null)
         {
             TargetVertexId = targetVertex;
             CreationDate = creationDate;

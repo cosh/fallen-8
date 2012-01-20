@@ -26,8 +26,9 @@
 using System;
 using System.Collections.Generic;
 using Fallen8.API.Expression;
-using Fallen8.Model;
-using Fallen8.API.Index;
+using Fallen8.API.Index.Fulltext;
+using Fallen8.API.Index.Spatial;
+using Fallen8.API.Model;
 
 namespace Fallen8.API
 {

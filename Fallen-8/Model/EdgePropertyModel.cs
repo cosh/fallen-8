@@ -23,14 +23,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
-using Fallen8.API.Helper;
 using Fallen8.API.Error;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Model
 {
     /// <summary>
     /// Edge property model.
@@ -54,7 +53,7 @@ namespace Fallen8.Model
         #region Constructer
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.Model.EdgePropertyModel"/> class.
+        /// Initializes a new instance of the <see cref="EdgePropertyModel"/> class.
         /// </summary>
         /// <param name='sourceVertex'>
         /// Source vertex.
@@ -105,22 +104,18 @@ namespace Fallen8.Model
         /// </exception>
         public void AddEdge(EdgeModel outEdge)
         {
-            if (outEdge != null)
+            if (outEdge == null) return;
+
+            if (_edges == null)
             {
-
-                if (_edges == null)
-                {
-                    _edges = new List<EdgeModel> { outEdge };
-                }
-                else
-                {
-                    _edges.Add(outEdge);
-                }
-
+                _edges = new List<EdgeModel> { outEdge };
             }
-
+            else
+            {
+                _edges.Add(outEdge);
+            }
         }
-        
+
         /// <summary>
         /// Adds the edges.
         /// </summary>
@@ -129,20 +124,18 @@ namespace Fallen8.Model
         /// </param>
         public void AddEdges(IEnumerable<EdgeModel> edges)
         {
-            if (edges != null)
-            {
+            if (edges == null) return;
 
-                if (_edges == null)
-                {
-                    _edges = new List<EdgeModel>(edges);
-                }
-                else
-                {
-                    _edges.AddRange(edges);
-                }
+            if (_edges == null)
+            {
+                _edges = new List<EdgeModel>(edges);
+            }
+            else
+            {
+                _edges.AddRange(edges);
             }
         }
-        
+
         #endregion
     }
 }

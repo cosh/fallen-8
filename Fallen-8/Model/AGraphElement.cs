@@ -23,14 +23,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using Fallen8.API.Helper;
 using Fallen8.API.Error;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Model
 {
     /// <summary>
     /// A graph element.
@@ -57,14 +57,14 @@ namespace Fallen8.Model
         /// <summary>
         /// The properties.
         /// </summary>
-        protected IDictionary<Int32, object> _properties;
+        protected IDictionary<Int32, object> Properties;
   
         #endregion
         
         #region constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.Model.AGraphElement"/> class.
+        /// Initializes a new instance of the <see cref="AGraphElement"/> class.
         /// </summary>
         /// <param name='id'>
         /// Identifier.
@@ -75,12 +75,12 @@ namespace Fallen8.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        protected AGraphElement(Int32 id, DateTime creationDate, Dictionary<Int32, Object> properties)
+        protected AGraphElement(Int32 id, DateTime creationDate, IDictionary<Int32, Object> properties)
         {
             Id = id;
             CreationDate = creationDate;
             ModificationDate = creationDate;
-            _properties = properties;
+            Properties = properties;
         }
         
         #endregion
@@ -101,36 +101,45 @@ namespace Fallen8.Model
         /// </param>
         protected Boolean PropertiesEqual(IDictionary<Int32, object> propertiesA, IDictionary<Int32, object> propertiesB)
         {
-            if (propertiesA == null && propertiesB == null) {
+            if (propertiesA == null && propertiesB == null)
+            {
                 return true;
             }
-            
-            if (propertiesA != null && propertiesB == null) {
+
+            if (propertiesA != null && propertiesB == null)
+            {
                 return false;
             }
-            
-            if (propertiesA == null && propertiesB != null) {
+
+            if (propertiesA == null)
+            {
                 return false;
             }
-            
-            if (propertiesA.Count != propertiesB.Count) {
+
+            if (propertiesA.Count != propertiesB.Count)
+            {
                 return false;
             }
-            
-            foreach (var aPropertyInA in propertiesA) {
+
+            foreach (var aPropertyInA in propertiesA)
+            {
                 Object valueOfB;
-                if (propertiesB.TryGetValue (aPropertyInA.Key, out valueOfB)) {
-                    if (!aPropertyInA.Value.Equals (valueOfB)) {
+                if (propertiesB.TryGetValue(aPropertyInA.Key, out valueOfB))
+                {
+                    if (!aPropertyInA.Value.Equals(valueOfB))
+                    {
                         return false;
                     }
-                } else {
+                }
+                else
+                {
                     return false;
                 }
             }
-            
+
             return true;
         }
-        
+
         #endregion
   
         #region public methods
@@ -146,11 +155,11 @@ namespace Fallen8.Model
             if (ReadResource())
             {
 
-                List<PropertyContainer> result = new List<PropertyContainer>();
+                var result = new List<PropertyContainer>();
 
-                if (_properties != null)
+                if (Properties != null)
                 {
-                    result.AddRange(_properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
+                    result.AddRange(Properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
                 }
                 FinishReadResource();
 
@@ -171,9 +180,9 @@ namespace Fallen8.Model
         {
             if (ReadResource())
             {
-                Boolean foundsth = false;
+                var foundsth = false;
                 Object rawResult;
-                if (_properties != null && _properties.TryGetValue(propertyId, out rawResult))
+                if (Properties != null && Properties.TryGetValue(propertyId, out rawResult))
                 {
                     result = (TProperty)rawResult;
                     foundsth = true;
@@ -210,18 +219,18 @@ namespace Fallen8.Model
             if (WriteResource())
             {
 
-                Boolean foundProperty = false;
+                var foundProperty = false;
 
-                if (_properties != null)
+                if (Properties != null)
                 {
-                    foundProperty = _properties.ContainsKey(propertyId);
+                    foundProperty = Properties.ContainsKey(propertyId);
                     if (foundProperty)
                     {
-                        _properties[propertyId] = property;
+                        Properties[propertyId] = property;
                     }
                     else
                     {
-                        _properties.Add(propertyId, property);
+                        Properties.Add(propertyId, property);
                     }
 
                     //set the modificationdate
@@ -252,11 +261,11 @@ namespace Fallen8.Model
         {
             if (WriteResource ()) {
 
-                Boolean removedSomething = false;
+                var removedSomething = false;
 
-                if (_properties != null)
+                if (Properties != null)
                 {
-                    removedSomething = _properties.Remove(propertyId);
+                    removedSomething = Properties.Remove(propertyId);
 
                     if (removedSomething)
                     {

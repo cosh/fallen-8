@@ -25,7 +25,9 @@
 // THE SOFTWARE.
 using System;
 using System.Linq;
-using Fallen8.Model;
+using Fallen8.API.Index.Fulltext;
+using Fallen8.API.Index.Spatial;
+using Fallen8.API.Model;
 using Fallen8.API.Index;
 using Fallen8.API.Helper;
 using Fallen8.API.Expression;
@@ -68,7 +70,7 @@ namespace Fallen8.API
         #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.API.Fallen8"/> class.
+        /// Initializes a new instance of the Fallen8 class.
         /// </summary>
         public Fallen8 ()
         {
@@ -84,18 +86,13 @@ namespace Fallen8.API
             if (WriteResource())
             {
                 //create the new vertex
-                VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
+                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
                 _graphElements.Add(newVertex);
 
                 if (edges != null && edges.Count > 0)
                 {
-                    Dictionary<Int32, EdgePropertyModel> outEdges = new Dictionary<Int32, EdgePropertyModel>();
-
-                    foreach (var aEdge in edges)
-                    {
-                        outEdges.Add(aEdge.Key, CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
-                    }
+                    var outEdges = edges.ToDictionary(aEdge => aEdge.Key, aEdge => CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
 
                     newVertex.SetOutEdges(outEdges);
                 }
@@ -151,16 +148,11 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                AGraphElement graphElement = _graphElements[graphElementId];
+                var graphElement = _graphElements[graphElementId];
 
                 FinishReadResource();
 
-                if (graphElement != null)
-                {
-                    return graphElement.TryAddProperty(propertyId, property);
-                }
-
-                return false;
+                return graphElement != null && graphElement.TryAddProperty(propertyId, property);
             }
 
             throw new CollisionException();
@@ -170,16 +162,11 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                AGraphElement graphElement = _graphElements[graphElementId];
+                var graphElement = _graphElements[graphElementId];
 
                 FinishReadResource();
 
-                if (graphElement != null)
-                {
-                    return graphElement.TryRemoveProperty(propertyId);
-                }
-
-                return false;
+                return graphElement != null && graphElement.TryRemoveProperty(propertyId);
             }
 
             throw new CollisionException();
@@ -338,7 +325,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var vertices = _graphElements.Where(aGraphElementKV => aGraphElementKV is VertexModel).Select(aVertexKV => (VertexModel)aVertexKV).ToList(); ;
+                var vertices = _graphElements.OfType<VertexModel>().ToList();
 
                 FinishReadResource();
 
@@ -381,7 +368,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var edges = _graphElements.Where(aGraphElementKV => aGraphElementKV is EdgeModel).Select(aEdgeKV => (EdgeModel)aEdgeKV).ToList();
+                var edges = _graphElements.OfType<EdgeModel>().ToList();
 
                 FinishReadResource();
 
@@ -417,13 +404,7 @@ namespace Fallen8.API
                 var result = _graphElements.AsParallel().Where(aGraphElement =>
                 {
                     Object property;
-                    if (aGraphElement.TryGetProperty(out property, propertyId))
-                    {
-
-                        return finder(property as IComparable, literal);
-                    }
-
-                    return false;
+                    return aGraphElement.TryGetProperty(out property, propertyId) && finder(property as IComparable, literal);
                 }).ToList();
 
                 FinishReadResource();
@@ -452,20 +433,23 @@ namespace Fallen8.API
         /// <param name='index'>
         /// Index.
         /// </param>
-        private List<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
+        private static List<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
         {
-            return index.GetKeyValues ().AsParallel ().Where (aIndexElement => 
-            {
-                return finder (aIndexElement.Key, literal);
-            }).Select (_ => _.Value).SelectMany(__ => __).Distinct().ToList();       
+            return index.GetKeyValues ()
+                .AsParallel ()
+                .Where (aIndexElement => finder (aIndexElement.Key, literal))
+                .Select (_ => _.Value)
+                .SelectMany(__ => __)
+                .Distinct()
+                .ToList();       
         }
         
         /// <summary>
         /// Method for binary comparism
         /// </summary>
+        /// <returns>
         /// <c>true</c> for equality; otherwise, <c>false</c>.
         /// </returns>
-        /// <param name='result'>
         /// <param name='property'>
         /// Property.
         /// </param>
@@ -480,9 +464,9 @@ namespace Fallen8.API
         /// <summary>
         /// Method for binary comparism
         /// </summary>
+        /// <returns>
         /// <c>true</c> for inequality; otherwise, <c>false</c>.
         /// </returns>
-        /// <param name='result'>
         /// <param name='property'>
         /// Property.
         /// </param>
@@ -497,9 +481,9 @@ namespace Fallen8.API
         /// <summary>
         /// Method for binary comparism
         /// </summary>
+        /// <returns>
         /// <c>true</c> for greater property; otherwise, <c>false</c>.
         /// </returns>
-        /// <param name='result'>
         /// <param name='property'>
         /// Property.
         /// </param>
@@ -514,9 +498,9 @@ namespace Fallen8.API
         /// <summary>
         /// Method for binary comparism
         /// </summary>
+        /// <returns>
         /// <c>true</c> for lower property; otherwise, <c>false</c>.
         /// </returns>
-        /// <param name='result'>
         /// <param name='property'>
         /// Property.
         /// </param>
@@ -531,9 +515,9 @@ namespace Fallen8.API
         /// <summary>
         /// Method for binary comparism
         /// </summary>
+        /// <returns>
         /// <c>true</c> for lower or equal property; otherwise, <c>false</c>.
         /// </returns>
-        /// <param name='result'>
         /// <param name='property'>
         /// Property.
         /// </param>
@@ -548,9 +532,9 @@ namespace Fallen8.API
         /// <summary>
         /// Method for binary comparism
         /// </summary>
+        /// <returns>
         /// <c>true</c> for greater or equal property; otherwise, <c>false</c>.
         /// </returns>
-        /// <param name='result'>
         /// <param name='property'>
         /// Property.
         /// </param>
@@ -577,11 +561,11 @@ namespace Fallen8.API
         /// <param name='sourceVertex'>
         /// New vertex.
         /// </param>
-        private EdgePropertyModel CreateEdgeProperty(Int32 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
+        private EdgePropertyModel CreateEdgeProperty(Int32 edgePropertyId, IEnumerable<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
         {
-            List<EdgeModel> edges = new List<EdgeModel> ();
+            var edges = new List<EdgeModel> ();
             
-            EdgePropertyModel result = new EdgePropertyModel (sourceVertex, edges);
+            var result = new EdgePropertyModel (sourceVertex, edges);
             
             foreach (var aEdgeDefinition in edgeDefinitions) {
                 

@@ -24,8 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using Fallen8.API.Model;
 using Fallen8.API.Plugin;
-using Fallen8.Model;
 using System.Collections.Generic;
 
 namespace Fallen8.API.Index

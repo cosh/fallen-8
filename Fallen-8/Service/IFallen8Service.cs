@@ -25,8 +25,6 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Fallen8.API.Plugin;
 
 namespace Fallen8.API.Service

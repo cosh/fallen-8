@@ -23,9 +23,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 
-namespace Fallen8.Model
+namespace Fallen8.API.Model
 {
     /// <summary>
     /// Property container.
@@ -55,7 +56,7 @@ namespace Fallen8.Model
         #region constructor
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fallen8.Model.PropertyContainer"/> class.
+        /// Initializes a new instance of the <see cref="PropertyContainer"/> class.
         /// </summary>
         /// <param name='id'>
         /// Identifier.
