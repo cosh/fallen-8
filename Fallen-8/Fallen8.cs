@@ -90,6 +90,10 @@ namespace Fallen8.API
             {
                 _currentId = -1;
                 _graphElements = new List<AGraphElement>(5000000);
+
+                FinishWriteResource();
+
+                return;
             }
 
             throw new CollisionException();
