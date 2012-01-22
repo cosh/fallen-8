@@ -28,6 +28,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.Text;
 
 namespace Fallen8.API.Plugin
 {
@@ -81,17 +82,34 @@ namespace Fallen8.API.Plugin
         /// </typeparam>
         public static Boolean TryGetAvailablePlugins<T> (out IEnumerable<String> result)
         {
-            var descriptions = (from aPluginTypeOfT in GetAllTypes<T>() select Activate(aPluginTypeOfT) 
-                                    into aPluginInstance where aPluginInstance != null select aPluginInstance.Description)
-                                    .ToList();
-
-            result = descriptions;
-            
-            return descriptions.Any();
+            result = (from aPluginTypeOfT in GetAllTypes<T>()
+                      select Activate(aPluginTypeOfT)
+                      into aPluginInstance
+                      where aPluginInstance != null
+                      select GenerateDescription(aPluginInstance));
+            return result.Any();
         }
-        
+
         #region private helper
-        
+
+        /// <summary>
+        /// Generates the description for a plugin
+        /// </summary>
+        /// <param name="aPluginInstance">A plugin instance</param>
+        /// <returns></returns>
+        private static string GenerateDescription(IFallen8Plugin aPluginInstance)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine(String.Format("NAME: {0}", aPluginInstance.PluginName));
+            sb.AppendLine(String.Format("  *DESCRIPTION: {0}", aPluginInstance.Description));
+            sb.AppendLine(String.Format("  *MANUFACTURER: {0}", aPluginInstance.Manufacturer));
+            sb.AppendLine(String.Format("  *TYPE: {0}", aPluginInstance.PluginType.FullName));
+            sb.AppendLine(String.Format("  *CATEGORY: {0}", aPluginInstance.PluginCategory.FullName));
+
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Gets all types.
         /// </summary>

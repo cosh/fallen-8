@@ -67,11 +67,11 @@ namespace Fallen8.API.Index
 
         public bool TryCreateIndex (out IIndex index, string indexName, string indexTypeName, IDictionary<string, object> parameter)
         {
-            IIndex indexSchema;
-            if (Fallen8PluginFactory.TryFindPlugin<IIndex> (out indexSchema, indexTypeName)) {
+            if (Fallen8PluginFactory.TryFindPlugin<IIndex>(out index, indexTypeName))
+            {
              
                 try {
-                    index = (IIndex)indexSchema.Initialize(null, parameter);
+                    index.Initialize(null, parameter);
                     
                     _indices.Add (indexName, index);
                     

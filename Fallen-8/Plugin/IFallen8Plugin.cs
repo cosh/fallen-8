@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace Fallen8.API.Plugin
 {
-	public interface IFallen8Plugin
+	public interface IFallen8Plugin : IDisposable
 	{
         /// <summary>
         /// Gets the name.
@@ -82,7 +82,7 @@ namespace Fallen8.API.Plugin
         /// <returns>
         /// The initialized plugin
         /// </returns>
-        IFallen8Plugin Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
+        void Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
 	}
 }
 

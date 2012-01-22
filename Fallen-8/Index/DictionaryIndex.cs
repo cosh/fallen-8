@@ -218,11 +218,9 @@ namespace Fallen8.API.Index
         #endregion
 
         #region IFallen8Plugin implementation
-        public IFallen8Plugin Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, List<AGraphElement>>();
-            
-            return this;
         }
 
         public string PluginName
@@ -251,6 +249,16 @@ namespace Fallen8.API.Index
         public string Manufacturer
         {
             get { return "Henning Rauch"; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            _idx.Clear();
+            _idx = null;
         }
 
         #endregion
