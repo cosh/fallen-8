@@ -1,5 +1,5 @@
 // 
-// DictionaryIndex.cs
+// SingleValueIndex.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -34,30 +34,30 @@ using Fallen8.API.Error;
 namespace Fallen8.API.Index
 {
     /// <summary>
-    /// Dictionary index.
+    /// Single value index.
     /// </summary>
-    public sealed class DictionaryIndex : AThreadSafeElement, IIndex
+    public sealed class SingleValueIndex : AThreadSafeElement, IIndex
     {
         #region Data
         
         /// <summary>
         /// The index dictionary.
         /// </summary>
-        private Dictionary<IComparable, List<AGraphElement>> _idx;
+        private Dictionary<IComparable, AGraphElement> _idx;
 
         /// <summary>
         /// The description of the plugin
         /// </summary>
-        private String _description = "A very conservative dictionary index";
+        private String _description = "A very simple single value index.";
         
         #endregion
   
         #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the DictionaryIndex class.
+        /// Initializes a new instance of the SingleValueIndex class.
         /// </summary>
-        public DictionaryIndex ()
+        public SingleValueIndex()
         {
         }
         
@@ -66,9 +66,10 @@ namespace Fallen8.API.Index
         #region IIndex implementation
         public long CountOfKeys ()
         {
-            if (ReadResource ()) {
-                
-                var result = _idx.Keys.Count;
+            if (ReadResource ())
+            {
+
+                var result = _idx.Count;
                 
                 FinishReadResource ();
                 
@@ -82,7 +83,7 @@ namespace Fallen8.API.Index
         {
             if (ReadResource ()) {
                 
-                var result = _idx.Values.SelectMany (_ => _).Count ();
+                var result = _idx.Count;
                 
                 FinishReadResource ();
                 
@@ -94,19 +95,11 @@ namespace Fallen8.API.Index
 
         public void AddOrUpdate(IComparable key, AGraphElement graphElement)
         {
-            if (WriteResource ()) {
+            if (WriteResource ())
+            {
 
-                List<AGraphElement> values;
-                if (_idx.TryGetValue (key, out values)) {
-                
-                    values.Add (graphElement);
-                
-                } else {
+                _idx[key] = graphElement;
 
-                    values = new List<AGraphElement> {graphElement};
-                    _idx.Add (key, values);
-                }
-                
                 FinishWriteResource ();
 
                 return;
@@ -137,8 +130,7 @@ namespace Fallen8.API.Index
 
                 foreach (var aKv in _idx) 
                 {
-                    aKv.Value.Remove (graphElement);
-                    if (aKv.Value.Count == 0)
+                    if (ReferenceEquals(aKv.Value, graphElement))
                     {
                         toBeRemovedKeys.Add(aKv.Key);
                     }
@@ -188,7 +180,7 @@ namespace Fallen8.API.Index
             if (ReadResource ()) {
                 
                 foreach (var aKv in _idx)
-                    yield return new KeyValuePair<IComparable, IEnumerable<AGraphElement>>(aKv.Key, new List<AGraphElement>(aKv.Value));
+                    yield return new KeyValuePair<IComparable, IEnumerable<AGraphElement>>(aKv.Key, new List<AGraphElement>{aKv.Value});
                 
                 FinishReadResource ();
                 
@@ -200,13 +192,13 @@ namespace Fallen8.API.Index
 
         public bool GetValue(out IEnumerable<AGraphElement> result, IComparable key)
         {
-            if (ReadResource ()) {
+            if (ReadResource ())
+            {
 
-                List<AGraphElement> graphElements;
-                
-                var foundSth = _idx.TryGetValue (key, out graphElements);
-                
-                result = foundSth ? graphElements : null;
+                AGraphElement element;
+                var foundSth = _idx.TryGetValue(key, out element);
+
+                result = foundSth ? new List<AGraphElement> {element} : null;
                 
                 FinishReadResource ();
                 
@@ -220,17 +212,17 @@ namespace Fallen8.API.Index
         #region IFallen8Plugin implementation
         public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
-            _idx = new Dictionary<IComparable, List<AGraphElement>>();
+            _idx = new Dictionary<IComparable, AGraphElement>();
         }
 
         public string PluginName
         {
-            get { return "DictionaryIndex"; }
+            get { return "SingleValueIndex"; }
         }
 
         public Type PluginType
         {
-            get { return typeof(DictionaryIndex); }
+            get { return typeof(SingleValueIndex); }
         }
 
         public Type PluginCategory
@@ -259,6 +251,32 @@ namespace Fallen8.API.Index
         {
             _idx.Clear();
             _idx = null;
+        }
+
+        #endregion
+
+        #region public methods
+
+        /// <summary>
+        /// Gets a value from the index
+        /// </summary>
+        /// <param name="result">Result</param>
+        /// <param name="key">Key</param>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        public bool GetValue(out AGraphElement result, IComparable key)
+        {
+            if (ReadResource())
+            {
+                var foundSth = _idx.TryGetValue(key, out result);
+
+                FinishReadResource();
+
+                return foundSth;
+            }
+
+            throw new CollisionException();
         }
 
         #endregion

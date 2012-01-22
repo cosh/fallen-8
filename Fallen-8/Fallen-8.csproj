@@ -46,6 +46,7 @@
     <Compile Include="Helper\EdgeModelDefinition.cs" />
     <Compile Include="IFallen8Read.cs" />
     <Compile Include="IFallen8Write.cs" />
+    <Compile Include="Index\SingleValueIndex.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResultElement.cs" />
     <Compile Include="Index\Fulltext\IFulltextIndex.cs" />
