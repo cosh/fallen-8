@@ -27,7 +27,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Fallen8.API.Model;
-using Fallen8.API.Plugin;
 using Fallen8.API.Helper;
 using Fallen8.API.Error;
 
@@ -66,15 +65,15 @@ namespace Fallen8.API.Index
         #region IIndex implementation
         public long CountOfKeys ()
         {
-            if (ReadResource ()) {
-                
+            if (ReadResource())
+            {
                 var result = _idx.Keys.Count;
-                
-                FinishReadResource ();
-                
+
+                FinishReadResource();
+
                 return result;
             }
-            
+
             throw new CollisionException ();
         }
 
@@ -198,7 +197,7 @@ namespace Fallen8.API.Index
             throw new CollisionException ();
         }
 
-        public bool GetValue(out IEnumerable<AGraphElement> result, IComparable key)
+        public bool TryGetValue(out IEnumerable<AGraphElement> result, IComparable key)
         {
             if (ReadResource ()) {
 

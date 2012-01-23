@@ -68,7 +68,6 @@ namespace Fallen8.API.Index
         {
             if (ReadResource ())
             {
-
                 var result = _idx.Count;
                 
                 FinishReadResource ();
@@ -79,33 +78,38 @@ namespace Fallen8.API.Index
             throw new CollisionException ();
         }
 
-        public long CountOfValues ()
+        public long CountOfValues()
         {
-            if (ReadResource ()) {
-                
+            if (ReadResource())
+            {
                 var result = _idx.Count;
-                
-                FinishReadResource ();
-                
+
+                FinishReadResource();
+
                 return result;
             }
-            
-            throw new CollisionException ();
+
+            throw new CollisionException();
         }
 
         public void AddOrUpdate(IComparable key, AGraphElement graphElement)
         {
-            if (WriteResource ())
+            if (WriteResource())
             {
 
-                _idx[key] = graphElement;
-
-                FinishWriteResource ();
+                try
+                {
+                    _idx[key] = graphElement;
+                }
+                finally
+                {
+                    FinishWriteResource();
+                }
 
                 return;
             }
-            
-            
+
+
             throw new CollisionException ();
         }
 
@@ -190,7 +194,7 @@ namespace Fallen8.API.Index
             throw new CollisionException ();
         }
 
-        public bool GetValue(out IEnumerable<AGraphElement> result, IComparable key)
+        public bool TryGetValue(out IEnumerable<AGraphElement> result, IComparable key)
         {
             if (ReadResource ())
             {
@@ -265,7 +269,7 @@ namespace Fallen8.API.Index
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        public bool GetValue(out AGraphElement result, IComparable key)
+        public bool TryGetValue(out AGraphElement result, IComparable key)
         {
             if (ReadResource())
             {

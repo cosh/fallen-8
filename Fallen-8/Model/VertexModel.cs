@@ -85,31 +85,33 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void AddOutEdge(Int32 edgePropertyId, EdgeModel outEdge)
+        internal void AddOutEdge(Int32 edgePropertyId, EdgeModel outEdge)
         {
-            if (WriteResource ()) 
+            if (WriteResource())
             {
-                
-                if (_outEdges == null) {
+                if (_outEdges == null)
+                {
                     _outEdges = new Dictionary<Int32, EdgePropertyModel>();
                 }
-                    
-                EdgePropertyModel edgeProperty;
-                if (_outEdges.TryGetValue (edgePropertyId, out edgeProperty)) {
-                    edgeProperty.AddEdge (outEdge);
-                } else {
-                    _outEdges.Add (edgePropertyId, outEdge.SourceEdgeProperty);
-                }
 
+                EdgePropertyModel edgeProperty;
+                if (_outEdges.TryGetValue(edgePropertyId, out edgeProperty))
+                {
+                    edgeProperty.AddEdge(outEdge);
+                }
+                else
+                {
+                    _outEdges.Add(edgePropertyId, outEdge.SourceEdgeProperty);
+                }
                 FinishWriteResource();
 
                 return;
             }
-            
-            
-            throw new CollisionException ();
+
+
+            throw new CollisionException();
         }
-        
+
         /// <summary>
         /// Adds the out edges.
         /// </summary>
@@ -119,18 +121,16 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void SetOutEdges(Dictionary<Int32, EdgePropertyModel> outEdges)
+        internal void SetOutEdges(Dictionary<Int32, EdgePropertyModel> outEdges)
         {
             if (WriteResource())
             {
-
                 _outEdges = outEdges;
-
                 FinishWriteResource();
 
                 return;
             }
-            
+
             throw new CollisionException ();
         }
         
@@ -146,30 +146,34 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public void AddIncomingEdge(Int32 edgePropertyId, EdgeModel incomingEdge)
+        internal void AddIncomingEdge(Int32 edgePropertyId, EdgeModel incomingEdge)
         {
-            if (WriteResource ()) {
-                
-                if (_inEdges == null) {
+            if (WriteResource())
+            {
+
+                if (_inEdges == null)
+                {
                     _inEdges = new Dictionary<Int32, List<EdgeModel>>();
                 }
-            
+
                 List<EdgeModel> inEdges;
-                if (_inEdges.TryGetValue (edgePropertyId, out inEdges)) {
-                
-                    inEdges.Add (incomingEdge);
-                } else {
-                    _inEdges.Add (edgePropertyId, new List<EdgeModel> {incomingEdge});
+                if (_inEdges.TryGetValue(edgePropertyId, out inEdges))
+                {
+
+                    inEdges.Add(incomingEdge);
                 }
-                
-                FinishWriteResource ();
+                else
+                {
+                    _inEdges.Add(edgePropertyId, new List<EdgeModel> {incomingEdge});
+                }
+                FinishWriteResource();
 
                 return;
             }
-            
-            throw new CollisionException ();
+
+            throw new CollisionException();
         }
-        
+
         #endregion
         
         #region Equals Overrides
@@ -233,30 +237,34 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The neighbors.
         /// </returns>
-        public IEnumerable<VertexModel> GetAllNeighbors ()
+        public IEnumerable<VertexModel> GetAllNeighbors()
         {
-            if (ReadResource ()) {
-                var neighbors = new List<VertexModel> ();
-                
-                if (_outEdges != null && _outEdges.Count > 0) {
-                    foreach (var aOutEdge in _outEdges) {
-                        neighbors.AddRange (aOutEdge.Value.Select (_ => _.TargetVertex));
+            if (ReadResource())
+            {
+                var neighbors = new List<VertexModel>();
+
+                if (_outEdges != null && _outEdges.Count > 0)
+                {
+                    foreach (var aOutEdge in _outEdges)
+                    {
+                        neighbors.AddRange(aOutEdge.Value.Select(_ => _.TargetVertex));
                     }
                 }
-                
-                if (_inEdges != null && _inEdges.Count > 0) {
-                    foreach (var aInEdge in _inEdges) {
-                        neighbors.AddRange (aInEdge.Value.Select (_ => _.SourceEdgeProperty.SourceVertex));
+
+                if (_inEdges != null && _inEdges.Count > 0)
+                {
+                    foreach (var aInEdge in _inEdges)
+                    {
+                        neighbors.AddRange(aInEdge.Value.Select(_ => _.SourceEdgeProperty.SourceVertex));
                     }
-                    
+
                 }
-                
-                FinishReadResource ();
-                
+                FinishReadResource();
+
                 return neighbors;
             }
-            
-            throw new CollisionException ();
+
+            throw new CollisionException();
         }
 
         /// <summary>
@@ -267,18 +275,19 @@ namespace Fallen8.API.Model
         /// </returns>
         public IEnumerable<Int32> GetIncomingEdgeIds()
         {
-            if (ReadResource ()) {
+            if (ReadResource())
+            {
                 var inEdges = new List<Int32>();
-                
-                if (_inEdges != null && _inEdges.Count > 0) {
-                    inEdges.AddRange (_inEdges.Select (_ => _.Key));
+
+                if (_inEdges != null)
+                {
+                    inEdges.AddRange(_inEdges.Select(_ => _.Key));
                 }
-                
-                FinishReadResource ();
-                
+                FinishReadResource();
+
                 return inEdges;
             }
-            
+
             throw new CollisionException ();
         }
 
@@ -290,19 +299,20 @@ namespace Fallen8.API.Model
         /// </returns>
         public IEnumerable<Int32> GetOutgoingEdgeIds()
         {
-            if (ReadResource ()) {
+            if (ReadResource())
+            {
                 var outEdges = new List<Int32>();
-                
-                if (_outEdges != null && _outEdges.Count > 0) {
-                    outEdges.AddRange (_outEdges.Select (_ => _.Key));
+
+                if (_outEdges != null)
+                {
+                    outEdges.AddRange(_outEdges.Select(_ => _.Key));
                 }
-                
-                FinishReadResource ();
-                
+                FinishReadResource();
+
                 return outEdges;
             }
-            
-            throw new CollisionException ();
+
+            throw new CollisionException();
         }
 
         /// <summary>
@@ -319,22 +329,27 @@ namespace Fallen8.API.Model
         /// </param>
         public Boolean TryGetOutEdge(out EdgePropertyModel result, Int32 edgePropertyId)
         {
-            if (ReadResource ()) {
-                
+            if (ReadResource())
+            {
+
                 var foundSth = false;
-                
-                if (_outEdges != null && _outEdges.Count > 0) {
-                    
-                    foundSth = _outEdges.TryGetValue (edgePropertyId, out result);
-                } else {
+
+
+                if (_outEdges != null && _outEdges.Count > 0)
+                {
+
+                    foundSth = _outEdges.TryGetValue(edgePropertyId, out result);
+                }
+                else
+                {
                     result = null;
                 }
-                
-                FinishReadResource ();
-                
+
+                FinishReadResource();
+
                 return foundSth;
             }
-            
+
             throw new CollisionException ();
         }
 
@@ -352,27 +367,30 @@ namespace Fallen8.API.Model
         /// </param>
         public Boolean TryGetInEdges(out IEnumerable<EdgeModel> result, Int32 edgePropertyId)
         {
-            if (ReadResource ()) {
-                
+            if (ReadResource())
+            {
+
                 var foundSth = false;
-                
-                if (_inEdges != null && _inEdges.Count > 0) {
-                    
+
+                if (_inEdges != null && _inEdges.Count > 0)
+                {
+
                     List<EdgeModel> inEdges;
-                    foundSth = _inEdges.TryGetValue (edgePropertyId, out inEdges);
+                    foundSth = _inEdges.TryGetValue(edgePropertyId, out inEdges);
                     result = inEdges;
-                } else {
+                }
+                else
+                {
                     result = null;
                 }
-                
-                FinishReadResource ();
-                
+                FinishReadResource();
+
                 return foundSth;
             }
-            
+
             throw new CollisionException ();
         }
-        
+
         #endregion
     }
 }

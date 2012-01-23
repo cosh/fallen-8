@@ -90,7 +90,6 @@ namespace Fallen8.API
             {
                 _currentId = -1;
                 _graphElements = new List<AGraphElement>(5000000);
-
                 FinishWriteResource();
 
                 return;
@@ -104,17 +103,17 @@ namespace Fallen8.API
             if (WriteResource())
             {
                 //create the new vertex
-                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
+                VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
                 _graphElements.Add(newVertex);
 
                 if (edges != null && edges.Count > 0)
                 {
-                    var outEdges = edges.ToDictionary(aEdge => aEdge.Key, aEdge => CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
+                    var outEdges = edges.ToDictionary(aEdge => aEdge.Key,
+                                                      aEdge => CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
 
                     newVertex.SetOutEdges(outEdges);
                 }
-
                 FinishWriteResource();
 
                 return newVertex;
@@ -127,34 +126,40 @@ namespace Fallen8.API
         {
             if (WriteResource())
             {
-                //get the related vertices
-                var sourceVertex = (VertexModel)_graphElements[sourceVertexId];
-                var targetVertex = (VertexModel)_graphElements[edgeDefinition.TargetVertexId];
-
                 EdgeModel outgoingEdge;
-                EdgePropertyModel epm;
-                if (sourceVertex.TryGetOutEdge( out epm, edgePropertyId))
+
+                try
                 {
-                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
-                    epm.AddEdge(outgoingEdge);
+                    //get the related vertices
+                    var sourceVertex = (VertexModel)_graphElements[sourceVertexId];
+                    var targetVertex = (VertexModel)_graphElements[edgeDefinition.TargetVertexId];
+
+                    EdgePropertyModel epm;
+                    if (sourceVertex.TryGetOutEdge(out epm, edgePropertyId))
+                    {
+                        outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
+                        epm.AddEdge(outgoingEdge);
+                    }
+                    else
+                    {
+                        //build the necessary edge contruct
+                        epm = new EdgePropertyModel(sourceVertex, null);
+                        outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
+                        epm.AddEdge(outgoingEdge);
+
+                        sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+                    }
+
+                    //add the edge to the graph elements
+                    _graphElements.Add(outgoingEdge);
+
+                    //link the vertices
+                    targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
                 }
-                else
+                finally
                 {
-                    //build the necessary edge contruct
-                    epm = new EdgePropertyModel(sourceVertex, null);
-                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
-                    epm.AddEdge(outgoingEdge);
-
-                    sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+                    FinishWriteResource();
                 }
-
-                //add the edge to the graph elements
-                _graphElements.Add(outgoingEdge);
-
-                //link the vertices
-                targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
-
-                FinishWriteResource();
 
                 return outgoingEdge;
             }
@@ -166,7 +171,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var graphElement = _graphElements[graphElementId];
+                var graphElement = _graphElements.ElementAtOrDefault(graphElementId);
 
                 FinishReadResource();
 
@@ -180,8 +185,8 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var graphElement = _graphElements[graphElementId];
-
+                var graphElement = _graphElements.ElementAtOrDefault(graphElementId);
+                    
                 FinishReadResource();
 
                 return graphElement != null && graphElement.TryRemoveProperty(propertyId);
@@ -256,7 +261,7 @@ namespace Fallen8.API
                 case BinaryOperator.Equals:
 
                     IEnumerable<AGraphElement> equalsResult;
-                    index.GetValue(out equalsResult, literal);
+                    index.TryGetValue(out equalsResult, literal);
                     result = new List<AGraphElement>(equalsResult);
                     break;
 
@@ -313,20 +318,31 @@ namespace Fallen8.API
         /// Gets a vertex by its identifier.
         /// </summary>
         /// <returns>
-        /// The vertex.
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
+        /// <param name='result'>
+        /// The vertex.
+        /// </param>
         /// <param name='id'>
         /// System wide unique identifier.
         /// </param>
-        public VertexModel GetVertex(Int32 id)
+        public Boolean TryGetVertex(out VertexModel result, Int32 id)
         {
             if (ReadResource())
             {
-                var vertex = _graphElements[id] as VertexModel;
+                var graphElement  = _graphElements.ElementAtOrDefault(id);
 
                 FinishReadResource();
 
-                return vertex;
+                if (graphElement != null)
+                {
+                    result = graphElement as VertexModel;
+
+                    return result != null;
+                }
+
+                result = null;
+                return false;
             }
 
             throw new CollisionException();
@@ -343,9 +359,16 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var vertices = new ReadOnlyCollection<VertexModel>(_graphElements.OfType<VertexModel>().ToList());
+                ReadOnlyCollection<VertexModel> vertices;
 
-                FinishReadResource();
+                try
+                {
+                    vertices = new ReadOnlyCollection<VertexModel>(_graphElements.OfType<VertexModel>().ToList());
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
                 return vertices;
             }
@@ -357,20 +380,36 @@ namespace Fallen8.API
         /// Gets an edge by its identifier.
         /// </summary>
         /// <returns>
-        /// The edge.
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
+        /// <param name='result'>
+        /// The edge.
+        /// </param>
         /// <param name='id'>
         /// System wide unique identifier.
         /// </param>
-        public EdgeModel GetEdge(Int32 id)
+        public Boolean TryGetEdge(out EdgeModel result, Int32 id)
         {
             if (ReadResource())
             {
-                var edge = _graphElements[id] as EdgeModel;
+                if (ReadResource())
+                {
+                    var graphElement = _graphElements.ElementAtOrDefault(id);
 
-                FinishReadResource();
+                    FinishReadResource();
 
-                return edge;
+                    if (graphElement != null)
+                    {
+                        result = graphElement as EdgeModel;
+
+                        return result != null;
+                    }
+
+                    result = null;
+                    return false;
+                }
+
+                throw new CollisionException();
             }
 
             throw new CollisionException();
@@ -386,9 +425,16 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var edges = new ReadOnlyCollection<EdgeModel>(_graphElements.OfType<EdgeModel>().ToList());
+                ReadOnlyCollection<EdgeModel> edges;
 
-                FinishReadResource();
+                try
+                {
+                    edges = new ReadOnlyCollection<EdgeModel>(_graphElements.OfType<EdgeModel>().ToList());
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
                 return edges;
             }
@@ -419,21 +465,23 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var result = _graphElements.AsParallel().Where(aGraphElement =>
-                {
-                    Object property;
-                    return aGraphElement.TryGetProperty(out property, propertyId) && finder(property as IComparable, literal);
-                }).ToList();
+                List<AGraphElement> result;
 
+                result = _graphElements.AsParallel().Where(aGraphElement =>
+                                                               {
+                                                                   Object property;
+                                                                   return
+                                                                       aGraphElement.TryGetProperty(out property,
+                                                                                                    propertyId) &&
+                                                                       finder(property as IComparable, literal);
+                                                               }).ToList();
                 FinishReadResource();
 
                 return result;
             }
 
             throw new CollisionException();
-
-            
-                
+   
         }
         
         /// <summary>

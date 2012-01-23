@@ -154,7 +154,6 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
-
                 var result = new List<PropertyContainer>();
 
                 if (Properties != null)
@@ -184,7 +183,7 @@ namespace Fallen8.API.Model
                 Object rawResult;
                 if (Properties != null && Properties.TryGetValue(propertyId, out rawResult))
                 {
-                    result = (TProperty)rawResult;
+                    result = (TProperty) rawResult;
                     foundsth = true;
                 }
                 else
@@ -237,14 +236,14 @@ namespace Fallen8.API.Model
                     ModificationDate = DateTime.Now;
 
                 }
-
                 FinishWriteResource();
+
                 return foundProperty;
             }
 
             throw new CollisionException();
         }
-        
+
         /// <summary>
         /// Tries to remove a property.
         /// </summary>
@@ -259,7 +258,8 @@ namespace Fallen8.API.Model
         /// </exception>
         public bool TryRemoveProperty(Int32 propertyId)
         {
-            if (WriteResource ()) {
+            if (WriteResource())
+            {
 
                 var removedSomething = false;
 
@@ -273,11 +273,11 @@ namespace Fallen8.API.Model
                         ModificationDate = DateTime.Now;
                     }
                 }
+                FinishWriteResource();
 
-                FinishWriteResource ();
                 return removedSomething;
             }
-            
+
             throw new CollisionException ();
             
         }
