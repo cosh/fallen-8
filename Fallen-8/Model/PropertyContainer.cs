@@ -41,7 +41,7 @@ namespace Fallen8.API.Model
         /// <value>
         /// The property identifier.
         /// </value>
-        public Int64 PropertyId { get; private set; }
+        public Int32 PropertyId { get; private set; }
         
         /// <summary>
         /// Gets or sets the value.
@@ -64,7 +64,7 @@ namespace Fallen8.API.Model
         /// <param name='value'>
         /// Value.
         /// </param>
-        public PropertyContainer (Int64 id, Object value)
+        public PropertyContainer (Int32 id, Object value)
         {
             PropertyId = id;
             Value = value;
