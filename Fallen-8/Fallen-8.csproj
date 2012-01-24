@@ -44,6 +44,7 @@
     <Compile Include="Expression\BinaryOperator.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper\EdgeModelDefinition.cs" />
+    <Compile Include="Helper\Statistics.cs" />
     <Compile Include="IFallen8Read.cs" />
     <Compile Include="IFallen8Write.cs" />
     <Compile Include="Index\SingleValueIndex.cs" />
