@@ -27,6 +27,7 @@ using System;
 using Fallen8.API.Helper;
 using Fallen8.API.Model;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Fallen8.API
 {
@@ -35,7 +36,6 @@ namespace Fallen8.API
 	/// </summary>
 	public interface IFallen8Write
 	{
-		
 		#region create
 		
 		/// <summary>
@@ -123,7 +123,21 @@ namespace Fallen8.API
         void TabulaRasa();
 
         #endregion
-
+  
+        #region Persistence
+        
+        /// <summary>
+        /// Tries to open Fallen-8 using a stream.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if open was successful; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='streamRepresentation'>
+        /// Stream representation of Fallen-8.
+        /// </param>
+        Boolean TryOpen(Stream streamRepresentation);
+        
+        #endregion
     }
 }
 

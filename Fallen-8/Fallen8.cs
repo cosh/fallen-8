@@ -36,6 +36,7 @@ using System.Threading;
 using Fallen8.API.Error;
 using System.Collections.ObjectModel;
 using Fallen8.API.Index.Range;
+using System.IO;
 
 namespace Fallen8.API
 {
@@ -66,7 +67,6 @@ namespace Fallen8.API
         /// </summary>
         private delegate Boolean BinaryOperatorDelegate(IComparable property, IComparable literal);
 
-        
         #endregion
         
         #region Constructor
@@ -84,7 +84,12 @@ namespace Fallen8.API
         #endregion
         
         #region IFallen8Write implementation
-
+  
+        public Boolean TryOpen (Stream streamRepresentation)
+        {
+            throw new NotImplementedException ();
+        }
+        
         public void TabulaRasa()
         {
             if (WriteResource())
@@ -357,7 +362,7 @@ namespace Fallen8.API
             if (spatialIndex != null) {
                 
                 IEnumerable<AGraphElement> graphElementResult;
-                if (spatialIndex.TryGetValues(out graphElementResult, geometry)) {
+                if (spatialIndex.TryGetValues (out graphElementResult, geometry)) {
                     
                     result = graphElementResult.ToList ();
                     
@@ -368,6 +373,12 @@ namespace Fallen8.API
             result = null;
             return false;
         }
+        
+        public bool TrySaveAs (out Stream savedFallen8)
+        {
+            throw new NotImplementedException ();
+        }
+
         #endregion
 
         #region public methods

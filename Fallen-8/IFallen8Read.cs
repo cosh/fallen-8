@@ -29,6 +29,7 @@ using Fallen8.API.Expression;
 using Fallen8.API.Index.Fulltext;
 using Fallen8.API.Index.Spatial;
 using Fallen8.API.Model;
+using System.IO;
 
 namespace Fallen8.API
 {
@@ -140,6 +141,21 @@ namespace Fallen8.API
         Boolean SearchSpatial(out List<AGraphElement> result, String indexId, IGeometry geometry);
 		
 		#endregion
+        
+        #region Persistence
+        
+        /// <summary>
+        /// Tries to save Fallen-8 into a Stream
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if save as was successful; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='savedFallen8'>
+        /// Saved Fallen-8.
+        /// </param>
+        Boolean TrySaveAs(out Stream savedFallen8);
+        
+        #endregion
 	}
 }
 
