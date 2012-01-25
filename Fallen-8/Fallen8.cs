@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Fallen8.API.Error;
 using System.Collections.ObjectModel;
+using Fallen8.API.Index.Range;
 
 namespace Fallen8.API
 {
@@ -296,19 +297,76 @@ namespace Fallen8.API
             return result.Count > 0;
         }
 
-        public bool SearchInRange(out List<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
+        public bool SearchInRange (out List<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
         {
-            throw new NotImplementedException ();
+            IIndex index;
+            if (!IndexFactory.TryGetIndex (out index, indexId)) {
+
+                result = null;
+                return false;
+            }
+            
+            IRangeIndex rangeIndex = index as IRangeIndex;
+            if (rangeIndex != null) {
+                
+                IEnumerable<AGraphElement> graphElementResult;
+                if (rangeIndex.Between (out graphElementResult, leftLimit, rightLimit, includeLeft, includeRight)) {
+                    
+                    result = graphElementResult.ToList ();
+                    
+                    return true;
+                }
+            }
+            
+            result = null;
+            return false;
         }
 
         public bool SearchFulltext (out FulltextSearchResult result, String indexId, string searchQuery)
         {
-            throw new NotImplementedException ();
+            IIndex index;
+            if (!IndexFactory.TryGetIndex (out index, indexId)) {
+
+                result = null;
+                return false;
+            }
+            
+            IFulltextIndex fulltextIndex = index as IFulltextIndex;
+            if (fulltextIndex != null) {
+                
+                if (fulltextIndex.TryQuery(out result, searchQuery)) {
+                    
+                    return true;
+                }
+            }
+            
+            result = null;
+            return false;
         }
 
-        public bool SearchSpatial(out List<AGraphElement> result, String indexId, IGeometry geometry)
+        public bool SearchSpatial (out List<AGraphElement> result, String indexId, IGeometry geometry)
         {
-            throw new NotImplementedException ();
+            IIndex index;
+            if (!IndexFactory.TryGetIndex (out index, indexId)) {
+
+                result = null;
+                return false;
+            }
+            
+            ISpatialIndex spatialIndex = index as ISpatialIndex;
+            if (spatialIndex != null) {
+                
+                IEnumerable<AGraphElement> graphElementResult;
+                if (spatialIndex.TryGetValues(out graphElementResult, geometry)) {
+                    
+                    result = graphElementResult.ToList ();
+                    
+                    return true;
+                }
+            }
+            
+            result = null;
+            return false;
         }
         #endregion
 
