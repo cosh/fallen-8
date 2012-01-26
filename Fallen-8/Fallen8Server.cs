@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using Fallen8.API.Log;
 using Fallen8.API.Plugin;
 using Fallen8.API.Service;
 
@@ -105,6 +106,7 @@ namespace Fallen8.API
         /// <param name='parameter'>
         /// The parameters of this service.
         /// </param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Fallen8.API.Log.Logger.LogError(System.String)")]
         public bool TryStartService(out IFallen8Service service, string servicePluginName, IDictionary<string, object> parameter)
         {
             if (Fallen8PluginFactory.TryFindPlugin<IFallen8Service>(out service, servicePluginName))
@@ -117,8 +119,9 @@ namespace Fallen8.API
 
                     return true;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Logger.LogError(String.Format("The Fallen-8 server was not able to start the {0} service plugin. Message: {1}", servicePluginName, e.Message));
                     service = null;
                     return false;
                 }
