@@ -91,7 +91,7 @@ namespace Fallen8.API.Helper
         /// </returns>
         protected bool WriteResource()
         {
-            if (0 == Interlocked.CompareExchange(ref _usingResource, -1000, 0))
+            if (0 == Interlocked.CompareExchange(ref _usingResource, Int32.MinValue, 0))
             {
                 return true;
             }
@@ -100,7 +100,7 @@ namespace Fallen8.API.Helper
             {
                 Thread.Sleep(1);
 
-                if (0 == Interlocked.CompareExchange(ref _usingResource, -1000, 0))
+                if (0 == Interlocked.CompareExchange(ref _usingResource, Int32.MinValue, 0))
                 {
                     return true;
                 }
