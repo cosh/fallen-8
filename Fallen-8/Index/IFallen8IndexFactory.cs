@@ -95,6 +95,11 @@ namespace Fallen8.API.Index
 		/// Index name.
 		/// </param>
 		Boolean TryGetIndex(out IIndex index, String indexName);
-	}
+
+        /// <summary>
+        /// Deletes all indices
+        /// </summary>
+        void DeleteAllIndices();
+    }
 }
 

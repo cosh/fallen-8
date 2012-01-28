@@ -24,8 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Fallen8.API.Plugin;
+using System.Threading;
 
 namespace Fallen8.API.Index
 {
@@ -39,7 +41,7 @@ namespace Fallen8.API.Index
         /// <summary>
         /// The created indices.
         /// </summary>
-        private readonly IDictionary<String, IIndex> _indices;
+        private IDictionary<String, IIndex> _indices;
         
         #endregion
         
@@ -65,29 +67,41 @@ namespace Fallen8.API.Index
             return result;
         }
 
-        public bool TryCreateIndex (out IIndex index, string indexName, string indexTypeName, IDictionary<string, object> parameter)
+        public bool TryCreateIndex(out IIndex index, string indexName, string indexTypeName, IDictionary<string, object> parameter)
         {
             if (Fallen8PluginFactory.TryFindPlugin<IIndex>(out index, indexTypeName))
             {
-             
-                try {
+
+                try
+                {
                     index.Initialize(null, parameter);
-                    
-                    _indices.Add (indexName, index);
-                    
+
+                    var newIndices = new Dictionary<string, IIndex>(_indices);
+                    newIndices.Add(indexName, index);
+
+                    Interlocked.Exchange(ref _indices, newIndices);
+
                     return true;
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     index = null;
                     return false;
                 }
             }
             index = null;
-            return false;   
+            return false;
         }
 
         public bool TryDeleteIndex (string indexName)
         {
-            return _indices.Remove (indexName);
+            var newIndices = new Dictionary<string, IIndex>(_indices);
+
+            var sthRemoved = newIndices.Remove(indexName);
+
+            Interlocked.Exchange(ref _indices, newIndices);
+
+            return sthRemoved;
         }
 
         public bool TryGetIndex (out IIndex index, string indexName)
@@ -99,6 +113,12 @@ namespace Fallen8.API.Index
             get {
                 return _indices;
             }
+        }
+
+        public void DeleteAllIndices()
+        {
+            var newIndices = new Dictionary<string, IIndex>();
+            Interlocked.Exchange(ref _indices, newIndices);
         }
         #endregion   
     }
