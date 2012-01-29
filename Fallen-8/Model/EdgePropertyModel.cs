@@ -27,13 +27,15 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using Fallen8.API.Helper;
+using Fallen8.API.Error;
 
 namespace Fallen8.API.Model
 {
     /// <summary>
     /// Edge property model.
     /// </summary>
-    public sealed class EdgePropertyModel : IEnumerable<EdgeModel>
+    public sealed class EdgePropertyModel : AThreadSafeElement, IEnumerable<EdgeModel>
     {
         #region Data
         
@@ -71,14 +73,32 @@ namespace Fallen8.API.Model
         #region IEnumerable[Fallen8.Model.IEdgeModel] implementation
         public IEnumerator<EdgeModel> GetEnumerator ()
         {
-            return new List<EdgeModel>(_edges).GetEnumerator();
+            if (ReadResource()) {
+                
+                var enumerator = new List<EdgeModel>(_edges).GetEnumerator();
+                
+                FinishReadResource();
+                
+                return enumerator;
+            }
+            
+            throw new CollisionException();
         }
         #endregion
 
         #region IEnumerable implementation
         IEnumerator IEnumerable.GetEnumerator ()
         {
-            return new List<EdgeModel>(_edges).GetEnumerator();
+            if (ReadResource()) {
+                
+                var enumerator = new List<EdgeModel>(_edges).GetEnumerator();
+                
+                FinishReadResource();
+                
+                return enumerator;
+            }
+            
+            throw new CollisionException();
         }
         #endregion
   
@@ -89,7 +109,16 @@ namespace Fallen8.API.Model
         /// </summary>
         internal void TrimEdges()
         {
-            _edges = _edges.Distinct().ToList();
+            if (WriteResource()) {
+                
+                _edges = _edges.Distinct().ToList();
+                
+                FinishWriteResource();
+                
+                return;
+            }
+            
+            throw new CollisionException();
         }
 
         /// <summary>
@@ -101,15 +130,25 @@ namespace Fallen8.API.Model
         internal void AddEdge(EdgeModel outEdge)
         {
             if (outEdge == null) return;
-
-            if (_edges == null)
-            {
-                _edges = new List<EdgeModel> { outEdge };
+   
+            if (WriteResource()) {
+                       
+                if (_edges == null)
+                {
+                    _edges = new List<EdgeModel> { outEdge };
+                }
+                else
+                {
+                    _edges.Add(outEdge);
+                }
+                
+                FinishWriteResource();
+                
+                return;
             }
-            else
-            {
-                _edges.Add(outEdge);
-            }
+            
+            throw new CollisionException();
+            
         }
 
         /// <summary>
@@ -121,15 +160,23 @@ namespace Fallen8.API.Model
         internal void AddEdges(IEnumerable<EdgeModel> edges)
         {
             if (edges == null) return;
-
-            if (_edges == null)
-            {
-                _edges = new List<EdgeModel>(edges);
+   
+            if (WriteResource()) {
+                if (_edges == null)
+                {
+                    _edges = new List<EdgeModel>(edges);
+                }
+                else
+                {
+                    _edges.AddRange(edges);
+                }
+                
+                FinishWriteResource();
+                
+                return;
             }
-            else
-            {
-                _edges.AddRange(edges);
-            }
+            
+            throw new CollisionException();
         }
 
         #endregion
