@@ -102,7 +102,7 @@ namespace Fallen8.API.Model
         }
         #endregion
   
-        #region public methods
+        #region internal methods
 
         /// <summary>
         /// Trims the edges and makes them distinct.
@@ -179,6 +179,32 @@ namespace Fallen8.API.Model
             throw new CollisionException();
         }
 
+        #endregion
+        
+        #region public methods
+        
+        /// <summary>
+        /// Gets the edges.
+        /// </summary>
+        /// <returns>
+        /// The edges.
+        /// </returns>
+        public IEnumerable<EdgeModel> GetEdges()
+        {
+            if (ReadResource()) {
+                
+                foreach (var aEdge in _edges) {
+                    yield return aEdge;
+                }
+                
+                FinishReadResource();
+                
+                yield break;
+            }
+            
+            throw new CollisionException();
+        }
+        
         #endregion
     }
 }
