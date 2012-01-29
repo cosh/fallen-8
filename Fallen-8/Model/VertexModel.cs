@@ -197,7 +197,7 @@ namespace Fallen8.API.Model
                 {
                     foreach (var aOutEdge in _outEdges)
                     {
-                        neighbors.AddRange(aOutEdge.Value.Select(_ => _.TargetVertex));
+                        neighbors.AddRange(aOutEdge.Value.GetEdges().Select(_ => _.TargetVertex));
                     }
                 }
 

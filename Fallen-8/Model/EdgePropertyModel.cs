@@ -35,7 +35,7 @@ namespace Fallen8.API.Model
     /// <summary>
     /// Edge property model.
     /// </summary>
-    public sealed class EdgePropertyModel : AThreadSafeElement, IEnumerable<EdgeModel>
+    public sealed class EdgePropertyModel : AThreadSafeElement
     {
         #region Data
         
@@ -70,38 +70,6 @@ namespace Fallen8.API.Model
     
         #endregion
        
-        #region IEnumerable[Fallen8.Model.IEdgeModel] implementation
-        public IEnumerator<EdgeModel> GetEnumerator ()
-        {
-            if (ReadResource()) {
-                
-                var enumerator = new List<EdgeModel>(_edges).GetEnumerator();
-                
-                FinishReadResource();
-                
-                return enumerator;
-            }
-            
-            throw new CollisionException();
-        }
-        #endregion
-
-        #region IEnumerable implementation
-        IEnumerator IEnumerable.GetEnumerator ()
-        {
-            if (ReadResource()) {
-                
-                var enumerator = new List<EdgeModel>(_edges).GetEnumerator();
-                
-                FinishReadResource();
-                
-                return enumerator;
-            }
-            
-            throw new CollisionException();
-        }
-        #endregion
-  
         #region internal methods
 
         /// <summary>
