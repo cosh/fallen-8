@@ -150,19 +150,19 @@ namespace Fallen8.API.Model
         /// <returns>
         /// All properties.
         /// </returns>
-        public IEnumerable<PropertyContainer> GetAllProperties()
+        public List<PropertyContainer> GetAllProperties()
         {
             if (ReadResource())
             {
-                var result = new List<PropertyContainer>();
-
                 if (Properties != null)
                 {
+                    var result = new List<PropertyContainer>();
+
                     result.AddRange(Properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
                 }
                 FinishReadResource();
 
-                return result;
+                return (List<PropertyContainer>) Enumerable.Empty<PropertyContainer>();
             }
 
             throw new CollisionException();
@@ -217,7 +217,6 @@ namespace Fallen8.API.Model
         {
             if (WriteResource())
             {
-
                 var foundProperty = false;
 
                 if (Properties != null)

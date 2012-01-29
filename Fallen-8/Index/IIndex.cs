@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.ObjectModel;
 using Fallen8.API.Model;
 using Fallen8.API.Plugin;
 using System.Collections.Generic;
@@ -100,7 +101,7 @@ namespace Fallen8.API.Index
         /// <returns>
         /// The key values.
         /// </returns>
-        IEnumerable<KeyValuePair<IComparable, IEnumerable<AGraphElement>>> GetKeyValues();
+        IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues();
         
         /// <summary>
         /// Gets the value.
@@ -114,7 +115,7 @@ namespace Fallen8.API.Index
         /// <param name='key'>
         /// Key.
         /// </param>
-        Boolean TryGetValue(out IEnumerable<AGraphElement> result, IComparable key);
+        Boolean TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key);
     }
 }
 

@@ -24,19 +24,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
 using Fallen8.API.Model;
-using Fallen8.API.Plugin;
-using Fallen8.API.Helper;
-using Fallen8.API.Error;
 
 namespace Fallen8.API.Index
 {
     /// <summary>
     /// Single value index.
     /// </summary>
-    public sealed class SingleValueIndex : AThreadSafeElement, IIndex
+    public sealed class SingleValueIndex : IIndex
     {
         #region Data
         
@@ -49,6 +48,11 @@ namespace Fallen8.API.Index
         /// The description of the plugin
         /// </summary>
         private String _description = "A very simple single value index.";
+
+        /// <summary>
+        /// The lock
+        /// </summary>
+        private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         
         #endregion
   
@@ -66,150 +70,128 @@ namespace Fallen8.API.Index
         #region IIndex implementation
         public long CountOfKeys ()
         {
-            if (ReadResource ())
+            _lock.EnterReadLock();
+            try
             {
-                var result = _idx.Count;
-                
-                FinishReadResource ();
-                
-                return result;
+                return _idx.Count;
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         public long CountOfValues()
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                var result = _idx.Count;
-
-                FinishReadResource();
-
-                return result;
+                return _idx.Count;
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         public void AddOrUpdate(IComparable key, AGraphElement graphElement)
         {
-            if (WriteResource())
+            _lock.EnterWriteLock();
+            try
             {
-
-                try
-                {
-                    _idx[key] = graphElement;
-                }
-                finally
-                {
-                    FinishWriteResource();
-                }
-
-                return;
+                _idx[key] = graphElement;
             }
-
-
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public bool TryRemoveKey (IComparable key)
         {
-            if (WriteResource ()) {
-                var removedSomething = _idx.Remove (key);
-                
-                FinishWriteResource ();
-                
-                return removedSomething;
+            _lock.EnterWriteLock();
+            try
+            {
+                return _idx.Remove(key);
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public void RemoveValue(AGraphElement graphElement)
         {
-            if (WriteResource ()) {
-
-                var toBeRemovedKeys = new List<IComparable>();
-
-                foreach (var aKv in _idx) 
-                {
-                    if (ReferenceEquals(aKv.Value, graphElement))
-                    {
-                        toBeRemovedKeys.Add(aKv.Key);
-                    }
-                }
+            _lock.EnterWriteLock();
+            try
+            {
+                var toBeRemovedKeys = (from aKv in _idx where ReferenceEquals(aKv.Value, graphElement) select aKv.Key).ToList();
 
                 toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
-                
-                FinishWriteResource ();
-
-                return;
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
         
         public void Wipe ()
         {
-            if (WriteResource ()) {
-                
-                _idx.Clear ();
-                
-                FinishWriteResource ();
-
-                return;
+            _lock.EnterWriteLock();
+            try
+            {
+                _idx.Clear();
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public IEnumerable<IComparable> GetKeys ()
         {
-            if (ReadResource ()) {
-                
-                var result = new List<IComparable> (_idx.Keys);
-                
-                FinishReadResource ();
-                
-                return result;
-            }
-            
-            throw new CollisionException ();
-        }
-
-
-        public IEnumerable<KeyValuePair<IComparable, IEnumerable<AGraphElement>>> GetKeyValues()
-        {
-            if (ReadResource ()) {
-                
-                foreach (var aKv in _idx)
-                    yield return new KeyValuePair<IComparable, IEnumerable<AGraphElement>>(aKv.Key, new List<AGraphElement>{aKv.Value});
-                
-                FinishReadResource ();
-                
-                yield break;
-            }
-            
-            throw new CollisionException ();
-        }
-
-        public bool TryGetValue(out IEnumerable<AGraphElement> result, IComparable key)
-        {
-            if (ReadResource ())
+            _lock.EnterReadLock();
+            try
             {
+                return new List<IComparable>(_idx.Keys);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
 
+
+        public IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
+        {
+            _lock.EnterReadLock();
+            try
+            {
+                foreach (var aKv in _idx)
+                    yield return new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(new List<AGraphElement> { aKv.Value }));
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+
+        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key)
+        {
+            _lock.EnterReadLock();
+            try
+            {
                 AGraphElement element;
                 var foundSth = _idx.TryGetValue(key, out element);
 
-                result = foundSth ? new List<AGraphElement> {element} : null;
-                
-                FinishReadResource ();
-                
+                result = foundSth ? new ReadOnlyCollection<AGraphElement>(new List<AGraphElement> { element }) : null;
+
                 return foundSth;
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
         #endregion
 
@@ -255,6 +237,8 @@ namespace Fallen8.API.Index
         {
             _idx.Clear();
             _idx = null;
+            _lock.Dispose();
+            _lock = null;
         }
 
         #endregion
@@ -271,16 +255,15 @@ namespace Fallen8.API.Index
         /// </returns>
         public bool TryGetValue(out AGraphElement result, IComparable key)
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                var foundSth = _idx.TryGetValue(key, out result);
-
-                FinishReadResource();
-
-                return foundSth;
+                return _idx.TryGetValue(key, out result);
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         #endregion

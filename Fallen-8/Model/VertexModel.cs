@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Fallen8.API.Error;
+using System.Threading;
 
 namespace Fallen8.API.Model
 {
@@ -87,11 +88,13 @@ namespace Fallen8.API.Model
         /// </exception>
         internal void AddOutEdge(Int32 edgePropertyId, EdgeModel outEdge)
         {
+            //Interlocked.CompareExchange(ref _outEdges, new Dictionary<int, EdgePropertyModel>(), null);
+
             if (WriteResource())
             {
                 if (_outEdges == null)
                 {
-                    _outEdges = new Dictionary<Int32, EdgePropertyModel>();
+                    _outEdges = new Dictionary<int, EdgePropertyModel>();
                 }
 
                 EdgePropertyModel edgeProperty;
@@ -148,18 +151,18 @@ namespace Fallen8.API.Model
         /// </exception>
         internal void AddIncomingEdge(Int32 edgePropertyId, EdgeModel incomingEdge)
         {
+            //Interlocked.CompareExchange(ref _inEdges, new Dictionary<int, List<EdgeModel>>(), null);
+
             if (WriteResource())
             {
-
                 if (_inEdges == null)
                 {
-                    _inEdges = new Dictionary<Int32, List<EdgeModel>>();
+                    _inEdges = new Dictionary<int, List<EdgeModel>>();
                 }
 
                 List<EdgeModel> inEdges;
                 if (_inEdges.TryGetValue(edgePropertyId, out inEdges))
                 {
-
                     inEdges.Add(incomingEdge);
                 }
                 else
@@ -175,60 +178,7 @@ namespace Fallen8.API.Model
         }
 
         #endregion
-        
-        #region Equals Overrides
 
-        public override Boolean Equals (Object obj)
-        {
-            // If parameter is null return false.
-            if (obj == null) {
-                return false;
-            }
-
-            // If parameter cannot be cast to VertexModel return false.
-            var p = obj as VertexModel;
-
-            return p != null && Equals (p);
-        }
-
-        public Boolean Equals (VertexModel p)
-        {
-            // If parameter is null return false:
-            if ((object)p == null) {
-                return false;
-            }
-
-            return Id == p.Id;
-        }
-
-        public static Boolean operator == (VertexModel a, VertexModel b)
-        {
-            // If both are null, or both are same instance, return true.
-            if (ReferenceEquals (a, b)) {
-                return true;
-            }
-
-            // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null)) {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return a.Equals (b);
-        }
-
-        public static Boolean operator != (VertexModel a, VertexModel b)
-        {
-            return !(a == b);
-        }
-
-        public override int GetHashCode ()
-        {
-            return Id.GetHashCode ();
-        }
-        
-        #endregion
-        
         #region IVertexModel implementation
 
         /// <summary>
@@ -237,7 +187,7 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The neighbors.
         /// </returns>
-        public IEnumerable<VertexModel> GetAllNeighbors()
+        public List<VertexModel> GetAllNeighbors()
         {
             if (ReadResource())
             {
@@ -273,7 +223,7 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The incoming edge identifiers.
         /// </returns>
-        public IEnumerable<Int32> GetIncomingEdgeIds()
+        public List<Int32> GetIncomingEdgeIds()
         {
             if (ReadResource())
             {
@@ -297,7 +247,7 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The outgoing edge identifiers.
         /// </returns>
-        public IEnumerable<Int32> GetOutgoingEdgeIds()
+        public List<Int32> GetOutgoingEdgeIds()
         {
             if (ReadResource())
             {
@@ -331,13 +281,10 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
-
                 var foundSth = false;
-
 
                 if (_outEdges != null && _outEdges.Count > 0)
                 {
-
                     foundSth = _outEdges.TryGetValue(edgePropertyId, out result);
                 }
                 else
@@ -365,27 +312,18 @@ namespace Fallen8.API.Model
         /// <param name='edgePropertyId'>
         /// Edge property identifier.
         /// </param>
-        public Boolean TryGetInEdges(out IEnumerable<EdgeModel> result, Int32 edgePropertyId)
+        public Boolean TryGetInEdges(out List<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource())
             {
-
-                var foundSth = false;
-
                 if (_inEdges != null && _inEdges.Count > 0)
                 {
-
-                    List<EdgeModel> inEdges;
-                    foundSth = _inEdges.TryGetValue(edgePropertyId, out inEdges);
-                    result = inEdges;
-                }
-                else
-                {
-                    result = null;
+                    return _inEdges.TryGetValue(edgePropertyId, out result);
                 }
                 FinishReadResource();
 
-                return foundSth;
+                result = null;
+                return false;
             }
 
             throw new CollisionException ();

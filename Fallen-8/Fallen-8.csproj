@@ -41,8 +41,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Error\CollisionException.cs" />
     <Compile Include="Expression\BinaryOperator.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helper\AThreadSafeElement.cs" />
     <Compile Include="Helper\EdgeModelDefinition.cs" />
     <Compile Include="Helper\Statistics.cs" />
     <Compile Include="IFallen8Read.cs" />
@@ -71,8 +73,6 @@
     <Compile Include="Index\Fallen8IndexFactory.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
-    <Compile Include="Error\CollisionException.cs" />
-    <Compile Include="Helper\AThreadSafeElement.cs" />
     <Compile Include="Fallen8Server.cs" />
     <Compile Include="Service\IFallen8Service.cs" />
   </ItemGroup>

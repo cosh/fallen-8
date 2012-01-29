@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.ObjectModel;
 using Fallen8.API.Model;
 using System.Collections.Generic;
 
@@ -50,7 +51,7 @@ namespace Fallen8.API.Index.Range
 		/// <param name='includeKey'>
 		/// Include the key.
 		/// </param>
-        Boolean LowerThan(out IEnumerable<AGraphElement> result, IComparable key, bool includeKey = true);
+        Boolean LowerThan(out ReadOnlyCollection<AGraphElement> result, IComparable key, bool includeKey = true);
 		
 		/// <summary>
 		/// Searches for graph elements greater than the the key.
@@ -67,7 +68,7 @@ namespace Fallen8.API.Index.Range
 		/// <param name='includeKey'>
 		/// Include the key.
 		/// </param>
-        Boolean GreaterThan(out IEnumerable<AGraphElement> result, IComparable key, bool includeKey = true);
+        Boolean GreaterThan(out ReadOnlyCollection<AGraphElement> result, IComparable key, bool includeKey = true);
 		
 		/// <summary>
 		/// Searches for graph elements between a specified range
@@ -90,7 +91,7 @@ namespace Fallen8.API.Index.Range
 		/// <param name='includerightLimit'>
 		/// Include the right limit.
 		/// </param>
-        Boolean Between(out IEnumerable<AGraphElement> result, IComparable leftLimit, IComparable rightLimit, bool includeleftLimit = true, bool includerightLimit = true);
+        Boolean Between(out ReadOnlyCollection<AGraphElement> result, IComparable leftLimit, IComparable rightLimit, bool includeleftLimit = true, bool includerightLimit = true);
 	}
 }
 

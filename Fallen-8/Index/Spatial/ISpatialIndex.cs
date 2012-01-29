@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.ObjectModel;
 using Fallen8.API.Model;
 using System.Collections.Generic;
 
@@ -47,7 +48,7 @@ namespace Fallen8.API.Index.Spatial
 		/// <param name='geometry'>
 		/// Geometry.
 		/// </param>
-        Boolean TryGetValues(out IEnumerable<AGraphElement> result, IGeometry geometry);
+        Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry);
 	}
 }
 

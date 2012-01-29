@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Fallen8.API.Expression;
 using Fallen8.API.Index.Fulltext;
 using Fallen8.API.Index.Spatial;
@@ -78,7 +79,7 @@ namespace Fallen8.API
 		/// <param name='binOp'>
 		/// Binary operator.
 		/// </param>
-        Boolean SearchInIndex(out List<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
+        Boolean SearchInIndex(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp = BinaryOperator.Equals);
 		
 		/// <summary>
 		/// Search for graph elements by a specified property range.
@@ -104,7 +105,7 @@ namespace Fallen8.API
 		/// <param name='includeRight'>
 		/// Include right.
 		/// </param>
-        Boolean SearchInRange(out List<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
+        Boolean SearchInRange(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
 		
 		/// <summary>
 		/// Fulltext search for graph elements by a specified query string using an index.
@@ -138,7 +139,7 @@ namespace Fallen8.API
 		/// <param name='geometry'>
 		/// Geometry.
 		/// </param>
-        Boolean SearchSpatial(out List<AGraphElement> result, String indexId, IGeometry geometry);
+        Boolean SearchSpatial(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry);
 		
 		#endregion
         

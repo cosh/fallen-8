@@ -33,7 +33,6 @@ using Fallen8.API.Helper;
 using Fallen8.API.Expression;
 using System.Collections.Generic;
 using System.Threading;
-using Fallen8.API.Error;
 using System.Collections.ObjectModel;
 using Fallen8.API.Index.Range;
 using System.IO;
@@ -43,7 +42,7 @@ namespace Fallen8.API
     /// <summary>
     /// Fallen8.
     /// </summary>
-    public sealed class Fallen8 : AThreadSafeElement, IFallen8Read, IFallen8Write
+    public sealed class Fallen8 : IFallen8Read, IFallen8Write, IDisposable
 	{
         #region Data
         
@@ -55,7 +54,7 @@ namespace Fallen8.API
         /// <summary>
         /// The index factory.
         /// </summary>
-        public readonly IFallen8IndexFactory IndexFactory;
+        public IFallen8IndexFactory IndexFactory;
         
         /// <summary>
         /// The current identifier.
@@ -66,6 +65,11 @@ namespace Fallen8.API
         /// Binary operator delegate.
         /// </summary>
         private delegate Boolean BinaryOperatorDelegate(IComparable property, IComparable literal);
+
+        /// <summary>
+        /// The lock
+        /// </summary>
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
         #endregion
         
@@ -92,25 +96,26 @@ namespace Fallen8.API
         
         public void TabulaRasa()
         {
-            if (WriteResource())
+            _lock.EnterWriteLock();
+            try
             {
                 _currentId = -1;
                 _graphElements = new List<AGraphElement>(5000000);
                 IndexFactory.DeleteAllIndices();
-                FinishWriteResource();
-
-                return;
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public VertexModel CreateVertex(DateTime creationDate, IDictionary<Int32, Object> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null)
         {
-            if (WriteResource())
+            _lock.EnterWriteLock();
+            try
             {
                 //create the new vertex
-                VertexModel newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
+                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
                 _graphElements.Add(newVertex);
 
@@ -121,85 +126,86 @@ namespace Fallen8.API
 
                     newVertex.SetOutEdges(outEdges);
                 }
-                FinishWriteResource();
 
                 return newVertex;
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public EdgeModel CreateEdge(Int32 sourceVertexId, Int32 edgePropertyId, EdgeModelDefinition edgeDefinition)
         {
-            if (WriteResource())
+            _lock.EnterWriteLock();
+            try
             {
                 EdgeModel outgoingEdge;
 
-                try
+                //get the related vertices
+                var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
+                var targetVertex = (VertexModel) _graphElements[edgeDefinition.TargetVertexId];
+
+                EdgePropertyModel epm;
+                if (sourceVertex.TryGetOutEdge(out epm, edgePropertyId))
                 {
-                    //get the related vertices
-                    var sourceVertex = (VertexModel)_graphElements[sourceVertexId];
-                    var targetVertex = (VertexModel)_graphElements[edgeDefinition.TargetVertexId];
-
-                    EdgePropertyModel epm;
-                    if (sourceVertex.TryGetOutEdge(out epm, edgePropertyId))
-                    {
-                        outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
-                        epm.AddEdge(outgoingEdge);
-                    }
-                    else
-                    {
-                        //build the necessary edge contruct
-                        epm = new EdgePropertyModel(sourceVertex, null);
-                        outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate, targetVertex, epm, edgeDefinition.Properties);
-                        epm.AddEdge(outgoingEdge);
-
-                        sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
-                    }
-
-                    //add the edge to the graph elements
-                    _graphElements.Add(outgoingEdge);
-
-                    //link the vertices
-                    targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
+                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
+                                                 targetVertex, epm, edgeDefinition.Properties);
+                    epm.AddEdge(outgoingEdge);
                 }
-                finally
+                else
                 {
-                    FinishWriteResource();
+                    //build the necessary edge contruct
+                    epm = new EdgePropertyModel(sourceVertex, null);
+                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
+                                                 targetVertex, epm, edgeDefinition.Properties);
+                    epm.AddEdge(outgoingEdge);
+
+                    sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
                 }
+
+                //add the edge to the graph elements
+                _graphElements.Add(outgoingEdge);
+
+                //link the vertices
+                targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
 
                 return outgoingEdge;
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public bool TryAddProperty(Int32 graphElementId, Int32 propertyId, Object property)
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                var graphElement = _graphElements.ElementAtOrDefault(graphElementId);
-
-                FinishReadResource();
+                var graphElement = Enumerable.ElementAtOrDefault(_graphElements, graphElementId);
 
                 return graphElement != null && graphElement.TryAddProperty(propertyId, property);
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         public bool TryRemoveProperty(Int32 graphElementId, Int32 propertyId)
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                var graphElement = _graphElements.ElementAtOrDefault(graphElementId);
-                    
-                FinishReadResource();
+                var graphElement = Enumerable.ElementAtOrDefault(_graphElements, graphElementId);
 
                 return graphElement != null && graphElement.TryRemoveProperty(propertyId);
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         public bool TryRemoveGraphElement(Int32 graphElementId)
@@ -251,7 +257,7 @@ namespace Fallen8.API
             return result.Count > 0;
         }
 
-        public bool SearchInIndex(out List<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
+        public bool SearchInIndex(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex(out index, indexId))
@@ -267,9 +273,7 @@ namespace Fallen8.API
             {
                 case BinaryOperator.Equals:
 
-                    IEnumerable<AGraphElement> equalsResult;
-                    index.TryGetValue(out equalsResult, literal);
-                    result = new List<AGraphElement>(equalsResult);
+                    index.TryGetValue(out result, literal);
                     break;
 
                 case BinaryOperator.Greater:
@@ -293,9 +297,8 @@ namespace Fallen8.API
                     break;
 
                 default:
-                    result = new List<AGraphElement>();
-
-                    break;
+                    result = null;
+                    return false;
             }
 
             #endregion
@@ -303,7 +306,7 @@ namespace Fallen8.API
             return result.Count > 0;
         }
 
-        public bool SearchInRange (out List<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
+        public bool SearchInRange (out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex (out index, indexId)) {
@@ -312,14 +315,11 @@ namespace Fallen8.API
                 return false;
             }
             
-            IRangeIndex rangeIndex = index as IRangeIndex;
+            var rangeIndex = index as IRangeIndex;
             if (rangeIndex != null) {
                 
-                IEnumerable<AGraphElement> graphElementResult;
-                if (rangeIndex.Between (out graphElementResult, leftLimit, rightLimit, includeLeft, includeRight)) {
-                    
-                    result = graphElementResult.ToList ();
-                    
+                if (rangeIndex.Between(out result, leftLimit, rightLimit, includeLeft, includeRight))
+                {
                     return true;
                 }
             }
@@ -337,7 +337,7 @@ namespace Fallen8.API
                 return false;
             }
             
-            IFulltextIndex fulltextIndex = index as IFulltextIndex;
+            var fulltextIndex = index as IFulltextIndex;
             if (fulltextIndex != null) {
                 
                 if (fulltextIndex.TryQuery(out result, searchQuery)) {
@@ -350,7 +350,7 @@ namespace Fallen8.API
             return false;
         }
 
-        public bool SearchSpatial (out List<AGraphElement> result, String indexId, IGeometry geometry)
+        public bool SearchSpatial(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex (out index, indexId)) {
@@ -359,14 +359,11 @@ namespace Fallen8.API
                 return false;
             }
             
-            ISpatialIndex spatialIndex = index as ISpatialIndex;
+            var spatialIndex = index as ISpatialIndex;
             if (spatialIndex != null) {
-                
-                IEnumerable<AGraphElement> graphElementResult;
-                if (spatialIndex.TryGetValues (out graphElementResult, geometry)) {
-                    
-                    result = graphElementResult.ToList ();
-                    
+
+                if (spatialIndex.TryGetValues(out result, geometry))
+                {
                     return true;
                 }
             }
@@ -398,25 +395,27 @@ namespace Fallen8.API
         /// </param>
         public Boolean TryGetVertex(out VertexModel result, Int32 id)
         {
-            if (ReadResource())
+            AGraphElement graphElement;
+
+            _lock.EnterReadLock();
+            try
             {
-                var graphElement  = _graphElements.ElementAtOrDefault(id);
-
-                FinishReadResource();
-
-                if (graphElement != null)
-                {
-                    result = graphElement as VertexModel;
-
-                    return result != null;
-                }
-
-                result = null;
-                return false;
+                graphElement = _graphElements.ElementAtOrDefault(id);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
             }
 
-            throw new CollisionException();
+            if (graphElement != null)
+            {
+                result = graphElement as VertexModel;
 
+                return result != null;
+            }
+
+            result = null;
+            return false;
         }
 
         /// <summary>
@@ -427,23 +426,15 @@ namespace Fallen8.API
         /// </returns>
         public ReadOnlyCollection<VertexModel> GetVertices()
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                ReadOnlyCollection<VertexModel> vertices;
-
-                try
-                {
-                    vertices = new ReadOnlyCollection<VertexModel>(_graphElements.OfType<VertexModel>().ToList());
-                }
-                finally
-                {
-                    FinishReadResource();
-                }
-
-                return vertices;
+                 return new ReadOnlyCollection<VertexModel>(_graphElements.OfType<VertexModel>().ToList());
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         /// <summary>
@@ -460,29 +451,27 @@ namespace Fallen8.API
         /// </param>
         public Boolean TryGetEdge(out EdgeModel result, Int32 id)
         {
-            if (ReadResource())
+            AGraphElement graphElement;
+
+            _lock.EnterReadLock();
+            try
             {
-                if (ReadResource())
-                {
-                    var graphElement = _graphElements.ElementAtOrDefault(id);
-
-                    FinishReadResource();
-
-                    if (graphElement != null)
-                    {
-                        result = graphElement as EdgeModel;
-
-                        return result != null;
-                    }
-
-                    result = null;
-                    return false;
-                }
-
-                throw new CollisionException();
+                graphElement = _graphElements.ElementAtOrDefault(id);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
             }
 
-            throw new CollisionException();
+            if (graphElement != null)
+            {
+                result = graphElement as EdgeModel;
+
+                return result != null;
+            }
+
+            result = null;
+            return false;
         }
 
         /// <summary>
@@ -493,23 +482,15 @@ namespace Fallen8.API
         /// </returns>
         public ReadOnlyCollection<EdgeModel> GetEdges()
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                ReadOnlyCollection<EdgeModel> edges;
-
-                try
-                {
-                    edges = new ReadOnlyCollection<EdgeModel>(_graphElements.OfType<EdgeModel>().ToList());
-                }
-                finally
-                {
-                    FinishReadResource();
-                }
-
-                return edges;
+                return new ReadOnlyCollection<EdgeModel>(_graphElements.OfType<EdgeModel>().ToList());
             }
-
-            throw new CollisionException();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         #endregion
@@ -533,25 +514,22 @@ namespace Fallen8.API
         /// </param>
         private List<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, Int32 propertyId)
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                List<AGraphElement> result;
-
-                result = _graphElements.AsParallel().Where(aGraphElement =>
-                                                               {
-                                                                   Object property;
-                                                                   return
-                                                                       aGraphElement.TryGetProperty(out property,
-                                                                                                    propertyId) &&
-                                                                       finder(property as IComparable, literal);
-                                                               }).ToList();
-                FinishReadResource();
-
-                return result;
+                return _graphElements
+                    .AsParallel()
+                    .Where(aGraphElement =>
+                    {
+                        Object property;
+                        return aGraphElement.TryGetProperty(out property,propertyId) && finder(property as IComparable, literal);
+                    })
+                    .ToList();
             }
-
-            throw new CollisionException();
-   
+            finally
+            {
+                _lock.ExitReadLock();
+            }   
         }
         
         /// <summary>
@@ -569,15 +547,15 @@ namespace Fallen8.API
         /// <param name='index'>
         /// Index.
         /// </param>
-        private static List<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
+        private static ReadOnlyCollection<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
         {
-            return index.GetKeyValues ()
-                .AsParallel ()
-                .Where (aIndexElement => finder (aIndexElement.Key, literal))
-                .Select (_ => _.Value)
-                .SelectMany(__ => __)
-                .Distinct()
-                .ToList();       
+            return new ReadOnlyCollection<AGraphElement>(index.GetKeyValues()
+                                                             .AsParallel()
+                                                             .Where(aIndexElement => finder(aIndexElement.Key, literal))
+                                                             .Select(_ => _.Value)
+                                                             .SelectMany(__ => __)
+                                                             .Distinct()
+                                                             .ToList());
         }
         
         /// <summary>
@@ -720,6 +698,20 @@ namespace Fallen8.API
             return result;
         }
         
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            TabulaRasa();
+
+            _graphElements = null;
+            IndexFactory = null;
+
+            _lock.Dispose();
+        }
+
         #endregion
     }
 }

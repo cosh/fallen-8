@@ -24,18 +24,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 using Fallen8.API.Model;
-using Fallen8.API.Helper;
-using Fallen8.API.Error;
 
 namespace Fallen8.API.Index
 {
     /// <summary>
     /// Dictionary index.
     /// </summary>
-    public sealed class DictionaryIndex : AThreadSafeElement, IIndex
+    public sealed class DictionaryIndex : IIndex
     {
         #region Data
         
@@ -48,7 +48,12 @@ namespace Fallen8.API.Index
         /// The description of the plugin
         /// </summary>
         private String _description = "A very conservative dictionary index";
-        
+
+        /// <summary>
+        /// The lock
+        /// </summary>
+        private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+
         #endregion
   
         #region Constructor
@@ -65,78 +70,75 @@ namespace Fallen8.API.Index
         #region IIndex implementation
         public long CountOfKeys ()
         {
-            if (ReadResource())
+            _lock.EnterReadLock();
+            try
             {
-                var result = _idx.Keys.Count;
-
-                FinishReadResource();
-
-                return result;
+                return _idx.Keys.Count;
             }
-
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         public long CountOfValues ()
         {
-            if (ReadResource ()) {
-                
-                var result = _idx.Values.SelectMany (_ => _).Count ();
-                
-                FinishReadResource ();
-                
-                return result;
+            _lock.EnterReadLock();
+            try
+            {
+                return _idx.Values.SelectMany(_ => _).Count();
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         public void AddOrUpdate(IComparable key, AGraphElement graphElement)
         {
-            if (WriteResource ()) {
-
+            _lock.EnterWriteLock();
+            try
+            {
                 List<AGraphElement> values;
-                if (_idx.TryGetValue (key, out values)) {
-                
-                    values.Add (graphElement);
-                
-                } else {
-
-                    values = new List<AGraphElement> {graphElement};
-                    _idx.Add (key, values);
+                if (_idx.TryGetValue(key, out values))
+                {
+                    values.Add(graphElement);
                 }
-                
-                FinishWriteResource ();
-
-                return;
+                else
+                {
+                    values = new List<AGraphElement> { graphElement };
+                    _idx.Add(key, values);
+                }
             }
-            
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public bool TryRemoveKey (IComparable key)
         {
-            if (WriteResource ()) {
-                var removedSomething = _idx.Remove (key);
-                
-                FinishWriteResource ();
-                
-                return removedSomething;
+            _lock.EnterWriteLock();
+            try
+            {
+                return _idx.Remove(key);
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public void RemoveValue(AGraphElement graphElement)
         {
-            if (WriteResource ()) {
-
+            _lock.EnterWriteLock();
+            try
+            {
                 var toBeRemovedKeys = new List<IComparable>();
 
-                foreach (var aKv in _idx) 
+                foreach (var aKv in _idx)
                 {
-                    aKv.Value.Remove (graphElement);
+                    aKv.Value.Remove(graphElement);
                     if (aKv.Value.Count == 0)
                     {
                         toBeRemovedKeys.Add(aKv.Key);
@@ -144,75 +146,70 @@ namespace Fallen8.API.Index
                 }
 
                 toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
-                
-                FinishWriteResource ();
-
-                return;
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
         
         public void Wipe ()
         {
-            if (WriteResource ()) {
-                
-                _idx.Clear ();
-                
-                FinishWriteResource ();
-
-                return;
+            _lock.EnterWriteLock();
+            try
+            {
+                _idx.Clear();
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
 
         public IEnumerable<IComparable> GetKeys ()
         {
-            if (ReadResource ()) {
-                
-                var result = new List<IComparable> (_idx.Keys);
-                
-                FinishReadResource ();
-                
-                return result;
+            _lock.EnterReadLock();
+            try
+            {
+                return new List<IComparable>(_idx.Keys);
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
 
-        public IEnumerable<KeyValuePair<IComparable, IEnumerable<AGraphElement>>> GetKeyValues()
+        public IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
         {
-            if (ReadResource ()) {
-                
+            _lock.EnterReadLock();
+            try
+            {
                 foreach (var aKv in _idx)
-                    yield return new KeyValuePair<IComparable, IEnumerable<AGraphElement>>(aKv.Key, new List<AGraphElement>(aKv.Value));
-                
-                FinishReadResource ();
-                
-                yield break;
+                    yield return new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(aKv.Value));
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
-        public bool TryGetValue(out IEnumerable<AGraphElement> result, IComparable key)
+        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key)
         {
-            if (ReadResource ()) {
-
+            _lock.EnterReadLock();
+            try
+            {
                 List<AGraphElement> graphElements;
-                
-                var foundSth = _idx.TryGetValue (key, out graphElements);
-                
-                result = foundSth ? graphElements : null;
-                
-                FinishReadResource ();
-                
+                var foundSth = _idx.TryGetValue(key, out graphElements);
+
+                result = foundSth ? new ReadOnlyCollection<AGraphElement>(graphElements) : null;
+
                 return foundSth;
             }
-            
-            throw new CollisionException ();
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
         #endregion
 
@@ -258,6 +255,8 @@ namespace Fallen8.API.Index
         {
             _idx.Clear();
             _idx = null;
+            _lock.Dispose();
+            _lock = null;
         }
 
         #endregion

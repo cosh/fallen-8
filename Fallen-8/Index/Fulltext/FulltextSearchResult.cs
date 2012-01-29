@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Fallen8.API.Index.Fulltext
@@ -33,7 +32,7 @@ namespace Fallen8.API.Index.Fulltext
 	/// <summary>
 	/// Fulltext search result.
 	/// </summary>
-	public class FulltextSearchResult
+	public sealed class FulltextSearchResult
 	{
 		/// <summary>
 		/// Gets or sets the maximum score.

@@ -27,7 +27,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
-using Fallen8.API.Error;
 
 namespace Fallen8.API.Model
 {
@@ -72,14 +71,14 @@ namespace Fallen8.API.Model
         #region IEnumerable[Fallen8.Model.IEdgeModel] implementation
         public IEnumerator<EdgeModel> GetEnumerator ()
         {
-            return _edges.GetEnumerator();
+            return new List<EdgeModel>(_edges).GetEnumerator();
         }
         #endregion
 
         #region IEnumerable implementation
         IEnumerator IEnumerable.GetEnumerator ()
         {
-            return _edges.GetEnumerator();
+            return new List<EdgeModel>(_edges).GetEnumerator();
         }
         #endregion
   
@@ -88,7 +87,7 @@ namespace Fallen8.API.Model
         /// <summary>
         /// Trims the edges and makes them distinct.
         /// </summary>
-        public void TrimEdges()
+        internal void TrimEdges()
         {
             _edges = _edges.Distinct().ToList();
         }
@@ -99,10 +98,7 @@ namespace Fallen8.API.Model
         /// <param name='outEdge'>
         /// Out edge.
         /// </param>
-        /// <exception cref='CollisionException'>
-        /// Is thrown when the collision exception.
-        /// </exception>
-        public void AddEdge(EdgeModel outEdge)
+        internal void AddEdge(EdgeModel outEdge)
         {
             if (outEdge == null) return;
 
@@ -122,7 +118,7 @@ namespace Fallen8.API.Model
         /// <param name='edges'>
         /// Edges.
         /// </param>
-        public void AddEdges(IEnumerable<EdgeModel> edges)
+        internal void AddEdges(IEnumerable<EdgeModel> edges)
         {
             if (edges == null) return;
 

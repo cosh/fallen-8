@@ -34,19 +34,19 @@ namespace Fallen8.API
     /// <summary>
     /// Fallen8 server.
     /// </summary>
-    public sealed class Fallen8Server
+    public sealed class Fallen8Server : IDisposable
     {
         #region Data
         
         /// <summary>
         /// The services.
         /// </summary>
-        public readonly List<IFallen8Service> Services; 
+        public List<IFallen8Service> Services; 
         
         /// <summary>
         /// The Fallen-8.
         /// </summary>
-        public readonly Fallen8 Fallen8;
+        public Fallen8 Fallen8;
         
         #endregion
         
@@ -129,6 +129,19 @@ namespace Fallen8.API
 
             service = null;
             return false;
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Services.ForEach(_ => _.Dispose());
+            Fallen8.Dispose();
+
+            Services = null;
+            Fallen8 = null;
         }
 
         #endregion
