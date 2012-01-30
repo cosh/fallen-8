@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Fallen8.API.Error;
-using System.Threading;
 
 namespace Fallen8.API.Model
 {

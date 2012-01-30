@@ -68,7 +68,7 @@ namespace Fallen8.API.Index
         #endregion
         
         #region IIndex implementation
-        public long CountOfKeys ()
+        public Int32 CountOfKeys ()
         {
             _lock.EnterReadLock();
             try
@@ -81,7 +81,7 @@ namespace Fallen8.API.Index
             }
         }
 
-        public long CountOfValues()
+        public Int32 CountOfValues()
         {
             _lock.EnterReadLock();
             try

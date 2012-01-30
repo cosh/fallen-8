@@ -42,7 +42,7 @@ namespace Fallen8.API.Index
 		/// <returns>
 		/// The key count.
 		/// </returns>
-		Int64 CountOfKeys ();
+        Int32 CountOfKeys();
 		
 		/// <summary>
 		/// Count of the values.
@@ -50,7 +50,7 @@ namespace Fallen8.API.Index
 		/// <returns>
 		/// The value count.
 		/// </returns>
-		Int64 CountOfValues ();
+        Int32 CountOfValues();
 		
 		/// <summary>
 		/// Tries to add or update.
