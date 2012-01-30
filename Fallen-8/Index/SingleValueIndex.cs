@@ -266,6 +266,19 @@ namespace Fallen8.API.Index
             }
         }
 
+        public List<AGraphElement> Values()
+        {
+            _lock.EnterReadLock();
+            try
+            {
+                return new List<AGraphElement>(_idx.Values);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+
         #endregion
     }
 }
