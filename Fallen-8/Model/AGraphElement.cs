@@ -154,15 +154,15 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
+                List<PropertyContainer> result = null;
+
                 if (Properties != null)
                 {
-                    var result = new List<PropertyContainer>();
-
-                    result.AddRange(Properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
+                    result = new List<PropertyContainer>(Properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
                 }
                 FinishReadResource();
 
-                return (List<PropertyContainer>) Enumerable.Empty<PropertyContainer>();
+                return result;
             }
 
             throw new CollisionException();
