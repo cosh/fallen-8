@@ -80,13 +80,35 @@ namespace Fallen8.API.Plugin
         /// <typeparam name='T'>
         /// The interface type of the plugin.
         /// </typeparam>
-        public static Boolean TryGetAvailablePlugins<T> (out IEnumerable<String> result)
+        public static Boolean TryGetAvailablePluginsWithDescriptions<T> (out Dictionary<String,String> result)
         {
             result = (from aPluginTypeOfT in GetAllTypes<T>()
                       select Activate(aPluginTypeOfT)
                       into aPluginInstance
                       where aPluginInstance != null
-                      select GenerateDescription(aPluginInstance));
+                          select aPluginInstance).ToDictionary(key => key.PluginName, value => GenerateDescription(value));
+            return result.Any();
+        }
+
+        /// <summary>
+        /// Tries to get available plugin descriptions.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// Result.
+        /// </param>
+        /// <typeparam name='T'>
+        /// The interface type of the plugin.
+        /// </typeparam>
+        public static Boolean TryGetAvailablePlugins<T>(out IEnumerable<String> result)
+        {
+            result = (from aPluginTypeOfT in GetAllTypes<T>()
+                      select Activate(aPluginTypeOfT)
+                          into aPluginInstance
+                          where aPluginInstance != null
+                          select aPluginInstance.PluginName);
             return result.Any();
         }
 

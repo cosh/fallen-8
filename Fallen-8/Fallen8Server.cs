@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Fallen8.API.Log;
 using Fallen8.API.Plugin;
@@ -84,11 +85,11 @@ namespace Fallen8.API
         /// </returns>
         public IEnumerable<String> GetAvailableServicePlugins ()
         {
-            IEnumerable<String> result;
+            Dictionary<String, string> result;
+
+            Fallen8PluginFactory.TryGetAvailablePluginsWithDescriptions<IFallen8Service>(out result);
             
-            Fallen8PluginFactory.TryGetAvailablePlugins<IFallen8Service> (out result);
-            
-            return result;
+            return result.Select(_ => _.Value);
         }
 
         /// <summary>
