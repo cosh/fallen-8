@@ -76,6 +76,7 @@
     <Compile Include="Fallen8Server.cs" />
     <Compile Include="Service\IFallen8Service.cs" />
     <Compile Include="Model\OutEdgeContainer.cs" />
+    <Compile Include="Model\IncEdgeContainer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

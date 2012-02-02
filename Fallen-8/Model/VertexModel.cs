@@ -46,7 +46,7 @@ namespace Fallen8.API.Model
         /// <summary>
         /// The in edges.
         /// </summary>
-        private Dictionary<Int32, List<EdgeModel>> _inEdges;
+        private List<IncEdgeContainer> _inEdges;
         
         #endregion
         
@@ -164,18 +164,26 @@ namespace Fallen8.API.Model
             {
                 if (_inEdges == null)
                 {
-                    _inEdges = new Dictionary<int, List<EdgeModel>>();
+                    _inEdges = new List<IncEdgeContainer>();
                 }
-
-                List<EdgeModel> inEdges;
-                if (_inEdges.TryGetValue(edgePropertyId, out inEdges))
+    
+                Boolean foundSth = false;
+                
+                foreach(var aIncomingEdge in _inEdges)
                 {
-                    inEdges.Add(incomingEdge);
+                    if (aIncomingEdge.EdgePropertyId == edgePropertyId) 
+                    {
+                        aIncomingEdge.IncomingEdges.Add(incomingEdge);
+                        foundSth = true;
+                        break;
+                    }
                 }
-                else
+                
+                if (!foundSth) 
                 {
-                    _inEdges.Add(edgePropertyId, new List<EdgeModel> {incomingEdge});
+                    _inEdges.Add(new IncEdgeContainer { EdgePropertyId = edgePropertyId, IncomingEdges = new List<EdgeModel> {incomingEdge}});    
                 }
+                
                 FinishWriteResource();
 
                 return;
@@ -212,7 +220,7 @@ namespace Fallen8.API.Model
                 {
                     foreach (var aInEdge in _inEdges)
                     {
-                        neighbors.AddRange(aInEdge.Value.Select(_ => _.SourceEdgeProperty.SourceVertex));
+                        neighbors.AddRange(aInEdge.IncomingEdges.Select(_ => _.SourceEdgeProperty.SourceVertex));
                     }
 
                 }
@@ -238,7 +246,7 @@ namespace Fallen8.API.Model
 
                 if (_inEdges != null)
                 {
-                    inEdges.AddRange(_inEdges.Select(_ => _.Key));
+                    inEdges.AddRange(_inEdges.Select(_ => _.EdgePropertyId));
                 }
                 FinishReadResource();
 
@@ -328,14 +336,25 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
-                if (_inEdges != null && _inEdges.Count > 0)
+                result = null;
+                Boolean foundSth = false;
+                
+                if (_inEdges != null)
                 {
-                    return _inEdges.TryGetValue(edgePropertyId, out result);
+                    foreach (var aIncomingEdgeProperty in _inEdges) 
+                    {
+                        if (aIncomingEdgeProperty.EdgePropertyId == edgePropertyId) 
+                        {
+                            result = new List<EdgeModel>(aIncomingEdgeProperty.IncomingEdges);
+                            foundSth = true;
+                            break;
+                        }
+                    }
                 }
+                
                 FinishReadResource();
 
-                result = null;
-                return false;
+                return foundSth;
             }
 
             throw new CollisionException ();
