@@ -96,9 +96,12 @@ namespace Fallen8.API.Helper
                 return true;
             }
 
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < int.MaxValue; i++)
             {
-                Thread.Sleep(1);
+                if (i%100000 == 99999)
+                {
+                    Thread.Sleep(1);                    
+                }
 
                 if (0 == Interlocked.CompareExchange(ref _usingResource, Int32.MinValue, 0))
                 {
