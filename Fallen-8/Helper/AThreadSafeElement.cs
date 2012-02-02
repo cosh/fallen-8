@@ -98,7 +98,7 @@ namespace Fallen8.API.Helper
 
             for (var i = 0; i < int.MaxValue; i++)
             {
-                if (i%100000 == 99999)
+                if (i%10000 == 9999)
                 {
                     Thread.Sleep(1);                    
                 }
