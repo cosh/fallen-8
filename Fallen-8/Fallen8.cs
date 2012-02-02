@@ -121,8 +121,7 @@ namespace Fallen8.API
 
                 if (edges != null && edges.Count > 0)
                 {
-                    var outEdges = edges.ToDictionary(aEdge => aEdge.Key,
-                                                      aEdge => CreateEdgeProperty(aEdge.Key, aEdge.Value, newVertex));
+                    var outEdges = edges.Select(_ => new OutEdgeContainer { EdgePropertyId = _.Key, EdgeProperty = CreateEdgeProperty(_.Key, _.Value, newVertex)}).ToList();
 
                     newVertex.SetOutEdges(outEdges);
                 }

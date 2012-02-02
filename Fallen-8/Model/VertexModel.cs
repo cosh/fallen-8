@@ -41,7 +41,7 @@ namespace Fallen8.API.Model
         /// <summary>
         /// The out edges.
         /// </summary>
-        private Dictionary<Int32, EdgePropertyModel> _outEdges;
+        private List<OutEdgeContainer> _outEdges;
         
         /// <summary>
         /// The in edges.
@@ -87,24 +87,32 @@ namespace Fallen8.API.Model
         /// </exception>
         internal void AddOutEdge(Int32 edgePropertyId, EdgeModel outEdge)
         {
-            //Interlocked.CompareExchange(ref _outEdges, new Dictionary<int, EdgePropertyModel>(), null);
-
             if (WriteResource())
             {
                 if (_outEdges == null)
                 {
-                    _outEdges = new Dictionary<int, EdgePropertyModel>();
+                    _outEdges = new List<OutEdgeContainer>();
                 }
-
-                EdgePropertyModel edgeProperty;
-                if (_outEdges.TryGetValue(edgePropertyId, out edgeProperty))
+    
+                Boolean foundSth = false;
+                
+                foreach(var aEdgeProperty in _outEdges)
                 {
-                    edgeProperty.AddEdge(outEdge);
+                    if (aEdgeProperty.EdgePropertyId == edgePropertyId) 
+                    {
+                        aEdgeProperty.EdgeProperty.AddEdge(outEdge);
+                        
+                        foundSth = true;
+                        
+                        break;
+                    }
                 }
-                else
+                
+                if (!foundSth) 
                 {
-                    _outEdges.Add(edgePropertyId, outEdge.SourceEdgeProperty);
+                    _outEdges.Add(new OutEdgeContainer { EdgePropertyId = edgePropertyId, EdgeProperty = outEdge.SourceEdgeProperty});
                 }
+                
                 FinishWriteResource();
 
                 return;
@@ -123,7 +131,7 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        internal void SetOutEdges(Dictionary<Int32, EdgePropertyModel> outEdges)
+        internal void SetOutEdges(List<OutEdgeContainer> outEdges)
         {
             if (WriteResource())
             {
@@ -192,11 +200,11 @@ namespace Fallen8.API.Model
             {
                 var neighbors = new List<VertexModel>();
 
-                if (_outEdges != null && _outEdges.Count > 0)
+                if (_outEdges != null)
                 {
                     foreach (var aOutEdge in _outEdges)
                     {
-                        neighbors.AddRange(aOutEdge.Value.GetEdges().Select(_ => _.TargetVertex));
+                        neighbors.AddRange(aOutEdge.EdgeProperty.GetEdges().Select(_ => _.TargetVertex));
                     }
                 }
 
@@ -254,7 +262,7 @@ namespace Fallen8.API.Model
 
                 if (_outEdges != null)
                 {
-                    outEdges.AddRange(_outEdges.Select(_ => _.Key));
+                    outEdges.AddRange(_outEdges.Select(_ => _.EdgePropertyId));
                 }
                 FinishReadResource();
 
@@ -281,16 +289,21 @@ namespace Fallen8.API.Model
             if (ReadResource())
             {
                 var foundSth = false;
-
-                if (_outEdges != null && _outEdges.Count > 0)
+                result = null; 
+                
+                if (_outEdges != null)
                 {
-                    foundSth = _outEdges.TryGetValue(edgePropertyId, out result);
+                    foreach (var aOutEdge in _outEdges) 
+                    {
+                        if (aOutEdge.EdgePropertyId == edgePropertyId) 
+                        {
+                            result = aOutEdge.EdgeProperty;
+                            foundSth = true;
+                            break;
+                        } 
+                    }
                 }
-                else
-                {
-                    result = null;
-                }
-
+                
                 FinishReadResource();
 
                 return foundSth;
