@@ -171,24 +171,27 @@ namespace Fallen8.API.Model
             if (WriteResource())
             {
                 var foundProperty = false;
+                var idx = 0;
                 
                 if (Properties != null)
                 {
-                    foreach (var aProperty in Properties) 
+                    for (int i = 0; i < Properties.Count; i++)
                     {
-                        if (aProperty.PropertyId == propertyId) 
+                        if (Properties[i].PropertyId == propertyId) 
                         {
                             foundProperty = true;
-                            
-                            aProperty.Value = property;
-                            
+                            idx = i;
                             break;
                         }    
                     }
-                    
+
                     if (!foundProperty) 
                     {
                         Properties.Add(new PropertyContainer { PropertyId = propertyId, Value = property});
+                    }
+                    else
+                    {
+                        Properties[idx] = new PropertyContainer {PropertyId = propertyId, Value = property};
                     }
                 }
                 else 
