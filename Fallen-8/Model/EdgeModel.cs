@@ -54,7 +54,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public EdgeModel(Int32 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty, IDictionary<Int32, Object> properties)
+        public EdgeModel(Int32 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty, List<PropertyContainer> properties)
             : base(id, creationDate, properties)
         {
             TargetVertex = targetVertex;
@@ -100,8 +100,7 @@ namespace Fallen8.API.Model
             }
 
             return TargetVertex.Id == p.TargetVertex.Id
-                   && (SourceEdgeProperty.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id)
-                   && (PropertiesEqual(Properties, p.Properties));
+                   && (SourceEdgeProperty.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id);
         }
 
         public static Boolean operator == (EdgeModel a, EdgeModel b)

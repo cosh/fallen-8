@@ -57,7 +57,7 @@ namespace Fallen8.API.Model
         /// <summary>
         /// The properties.
         /// </summary>
-        protected IDictionary<Int32, object> Properties;
+        protected List<PropertyContainer> Properties;
   
         #endregion
         
@@ -75,7 +75,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        protected AGraphElement(Int32 id, DateTime creationDate, IDictionary<Int32, Object> properties)
+        protected AGraphElement(Int32 id, DateTime creationDate, List<PropertyContainer> properties)
         {
             Id = id;
             CreationDate = creationDate;
@@ -85,63 +85,6 @@ namespace Fallen8.API.Model
         
         #endregion
         
-        #region protected helpers
-        
-        /// <summary>
-        /// Compares the properties of a graph element
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if the properties are equal; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='propertiesA'>
-        /// Properties a.
-        /// </param>
-        /// <param name='propertiesB'>
-        /// Properties b.
-        /// </param>
-        protected Boolean PropertiesEqual(IDictionary<Int32, object> propertiesA, IDictionary<Int32, object> propertiesB)
-        {
-            if (propertiesA == null && propertiesB == null)
-            {
-                return true;
-            }
-
-            if (propertiesA != null && propertiesB == null)
-            {
-                return false;
-            }
-
-            if (propertiesA == null)
-            {
-                return false;
-            }
-
-            if (propertiesA.Count != propertiesB.Count)
-            {
-                return false;
-            }
-
-            foreach (var aPropertyInA in propertiesA)
-            {
-                Object valueOfB;
-                if (propertiesB.TryGetValue(aPropertyInA.Key, out valueOfB))
-                {
-                    if (!aPropertyInA.Value.Equals(valueOfB))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        #endregion
-  
         #region public methods
 
         /// <summary>
@@ -150,19 +93,24 @@ namespace Fallen8.API.Model
         /// <returns>
         /// All properties.
         /// </returns>
-        public List<PropertyContainer> GetAllProperties()
+        public IEnumerable<PropertyContainer> GetAllProperties()
         {
             if (ReadResource())
             {
-                List<PropertyContainer> result = null;
-
                 if (Properties != null)
                 {
-                    result = new List<PropertyContainer>(Properties.Select(_ => new PropertyContainer(_.Key, _.Value)));
+                    foreach(var aProperty in Properties)
+                    {
+                        if (aProperty.Value != null) 
+                        {
+                            yield return aProperty;    
+                        }
+                    }
                 }
+                
                 FinishReadResource();
-
-                return result;
+                
+                yield break;
             }
 
             throw new CollisionException();
@@ -180,18 +128,23 @@ namespace Fallen8.API.Model
             if (ReadResource())
             {
                 var foundsth = false;
-                Object rawResult;
-                if (Properties != null && Properties.TryGetValue(propertyId, out rawResult))
+                
+                foreach (var aPropertyContainer in Properties) 
                 {
-                    result = (TProperty) rawResult;
-                    foundsth = true;
+                    if (aPropertyContainer.Value != null && aPropertyContainer.PropertyId == propertyId) 
+                    {
+                        result = (TProperty) aPropertyContainer.Value;
+                        
+                        FinishReadResource();
+                        
+                        return true;
+                    }
                 }
-                else
-                {
-                    result = default(TProperty);
-                }
+                
+                result = default(TProperty);
+                
                 FinishReadResource();
-
+                
                 return foundsth;
             }
 
@@ -213,28 +166,39 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public bool TryAddProperty(Int32 propertyId, object property)
+        internal bool TryAddProperty(Int32 propertyId, object property)
         {
             if (WriteResource())
             {
                 var foundProperty = false;
-
+                
                 if (Properties != null)
                 {
-                    foundProperty = Properties.ContainsKey(propertyId);
-                    if (foundProperty)
+                    foreach (var aProperty in Properties) 
                     {
-                        Properties[propertyId] = property;
+                        if (aProperty.PropertyId == propertyId) 
+                        {
+                            foundProperty = true;
+                            
+                            aProperty.Value = property;
+                            
+                            break;
+                        }    
                     }
-                    else
+                    
+                    if (!foundProperty) 
                     {
-                        Properties.Add(propertyId, property);
+                        Properties.Add(new PropertyContainer { PropertyId = propertyId, Value = property});
                     }
-
-                    //set the modificationdate
-                    ModificationDate = DateTime.Now;
-
                 }
+                else 
+                {
+                    Properties = new List<PropertyContainer> { new PropertyContainer { PropertyId = propertyId, Value = property}};     
+                }
+                
+                //set the modificationdate
+                ModificationDate = DateTime.Now;
+                
                 FinishWriteResource();
 
                 return foundProperty;
@@ -255,19 +219,30 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        public bool TryRemoveProperty(Int32 propertyId)
+        internal bool TryRemoveProperty(Int32 propertyId)
         {
             if (WriteResource())
             {
-
                 var removedSomething = false;
 
                 if (Properties != null)
                 {
-                    removedSomething = Properties.Remove(propertyId);
-
+                    int toBeRemovedIdx = 0;
+                    
+                    for (int i = 0; i < Properties.Count; i++) 
+                    {
+                        if (Properties[i].PropertyId == propertyId) 
+                        {
+                            toBeRemovedIdx = i;
+                            removedSomething = true;
+                            break;
+                        }    
+                    }
+                    
                     if (removedSomething)
                     {
+                        Properties.RemoveAt(toBeRemovedIdx);
+                        
                         //set the modificationdate
                         ModificationDate = DateTime.Now;
                     }

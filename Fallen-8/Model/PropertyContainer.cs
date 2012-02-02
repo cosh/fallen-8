@@ -31,7 +31,7 @@ namespace Fallen8.API.Model
     /// <summary>
     /// Property container.
     /// </summary>
-    public sealed class PropertyContainer
+    public struct PropertyContainer
     {
         #region Data
         
@@ -41,7 +41,7 @@ namespace Fallen8.API.Model
         /// <value>
         /// The property identifier.
         /// </value>
-        public Int32 PropertyId { get; private set; }
+        public Int32 PropertyId { get; internal set; }
         
         /// <summary>
         /// Gets or sets the value.
@@ -49,26 +49,7 @@ namespace Fallen8.API.Model
         /// <value>
         /// The value.
         /// </value>
-        public Object Value { get; private set; }
-        
-        #endregion
-        
-        #region constructor
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyContainer"/> class.
-        /// </summary>
-        /// <param name='id'>
-        /// Identifier.
-        /// </param>
-        /// <param name='value'>
-        /// Value.
-        /// </param>
-        public PropertyContainer (Int32 id, Object value)
-        {
-            PropertyId = id;
-            Value = value;
-        }
+        public Object Value { get; internal set; }
         
         #endregion
     }

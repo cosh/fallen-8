@@ -109,7 +109,7 @@ namespace Fallen8.API
             }
         }
 
-        public VertexModel CreateVertex(DateTime creationDate, IDictionary<Int32, Object> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null)
+        public VertexModel CreateVertex(DateTime creationDate, List<PropertyContainer> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null)
         {
             _lock.EnterWriteLock();
             try

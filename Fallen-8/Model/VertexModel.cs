@@ -64,7 +64,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public VertexModel(Int32 id, DateTime creationDate, IDictionary<Int32, Object> properties)
+        public VertexModel(Int32 id, DateTime creationDate, List<PropertyContainer> properties)
             : base(id, creationDate, properties)
         {
         }

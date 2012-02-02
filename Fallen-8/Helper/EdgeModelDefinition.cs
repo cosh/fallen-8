@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using Fallen8.API.Model;
 
 namespace Fallen8.API.Helper
 {
@@ -49,7 +50,7 @@ namespace Fallen8.API.Helper
         /// <value>
         /// The properties.
         /// </value>
-        public Dictionary<Int32, Object> Properties;
+        public List<PropertyContainer> Properties;
 
         /// <summary>
         /// Gets or sets the target vertex identifier.
@@ -73,7 +74,7 @@ namespace Fallen8.API.Helper
 	    /// Creation date.
 	    /// </param>
 	    /// <param name="properties">Properties</param>
-	    public EdgeModelDefinition(Int32 targetVertex, DateTime creationDate, Dictionary<Int32, Object> properties = null)
+	    public EdgeModelDefinition(Int32 targetVertex, DateTime creationDate, List<PropertyContainer> properties = null)
         {
             TargetVertexId = targetVertex;
             CreationDate = creationDate;
