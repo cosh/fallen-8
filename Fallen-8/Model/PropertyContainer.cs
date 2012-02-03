@@ -41,7 +41,7 @@ namespace Fallen8.API.Model
         /// <value>
         /// The property identifier.
         /// </value>
-        public Int32 PropertyId { get; internal set; }
+        public Int32 PropertyId;
         
         /// <summary>
         /// Gets or sets the value.
@@ -49,8 +49,8 @@ namespace Fallen8.API.Model
         /// <value>
         /// The value.
         /// </value>
-        public Object Value { get; internal set; }
-        
+        public Object Value;
+		
         #endregion
     }
 }
