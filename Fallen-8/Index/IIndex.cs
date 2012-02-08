@@ -28,6 +28,7 @@ using System.Collections.ObjectModel;
 using Fallen8.API.Model;
 using Fallen8.API.Plugin;
 using System.Collections.Generic;
+using Framework.Serialization;
 
 namespace Fallen8.API.Index
 {
@@ -116,6 +117,14 @@ namespace Fallen8.API.Index
         /// Key.
         /// </param>
         Boolean TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key);
+        
+        /// <summary>
+        /// Save the index in the serialization writer
+        /// </summary>
+        /// <param name='writer'>
+        /// Serialization writer.
+        /// </param>
+        void Save(ref SerializationWriter writer);
     }
 }
 

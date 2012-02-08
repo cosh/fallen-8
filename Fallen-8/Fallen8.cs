@@ -87,13 +87,34 @@ namespace Fallen8.API
             IndexFactory.Indices.Clear();
         }
         
+        /// <summary>
+        /// Initializes a new instance of the Fallen-8 class and loads the vertices from a save point.
+        /// </summary>
+        /// <param name='path'>
+        /// Path to the save point.
+        /// </param>
+        public Fallen8(String path)
+        {
+            Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory);
+        }
+        
         #endregion
         
         #region IFallen8Write implementation
   
-        public void Open (String path)
+        public void Open(String path)
         {
-            throw new NotImplementedException ();
+            _lock.EnterWriteLock();
+            try
+            {
+                _graphElements = new List<AGraphElement>();
+                IndexFactory.DeleteAllIndices();
+                Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory);
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
         
         public void TabulaRasa()

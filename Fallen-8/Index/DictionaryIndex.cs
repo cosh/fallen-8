@@ -29,6 +29,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using Fallen8.API.Model;
+using Framework.Serialization;
 
 namespace Fallen8.API.Index
 {
@@ -68,6 +69,29 @@ namespace Fallen8.API.Index
         #endregion
         
         #region IIndex implementation
+        
+        public void Save(ref SerializationWriter writer)
+        {
+            _lock.EnterReadLock();
+            try
+            {
+                writer.WriteOptimized(_idx.Count);
+                foreach (var aKV in _idx) 
+                {
+                    writer.WriteObject(aKV.Key);
+                    writer.WriteOptimized(aKV.Value.Count);
+                    foreach (var aItem in aKV.Value) 
+                    {
+                        writer.WriteOptimized(aItem.Id);
+                    }
+                }
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+        
         public Int32 CountOfKeys()
         {
             _lock.EnterReadLock();

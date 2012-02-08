@@ -41,9 +41,29 @@ namespace Fallen8.API.Persistency
     public static class Fallen8PersistencyFactory
     {
         #region public methods
+  
+        /// <summary>
+        /// Load Fallen-8 from a save point
+        /// </summary>
+        /// <param name='pathToSavePoint'>
+        /// Path to save point.
+        /// </param>
+        /// <param name='currentIdOfFallen8'>
+        /// Current identifier of Fallen-8.
+        /// </param>
+        /// <param name='graphElementsOfFallen8'>
+        /// Graph elements of Fallen-8.
+        /// </param>
+        /// <param name='indexFactoryOfFallen8'>
+        /// Index factory of Fallen-8.
+        /// </param>
+        public static void Load (string pathToSavePoint, ref int currentIdOfFallen8, ref List<AGraphElement> graphElementsOfFallen8, ref IFallen8IndexFactory indexFactoryOfFallen8)
+        {
+            throw new NotImplementedException ();
+        }
         
         /// <summary>
-        /// Save the specified graphElements, indices and path.
+        /// Save the specified graphElements, indices and pathToSavePoint.
         /// </summary>
         /// <param name='graphElements'>
         /// Graph elements.
@@ -83,7 +103,7 @@ namespace Fallen8.API.Persistency
                 () => String.Empty,
                 (range, loopstate, initialValue) =>
                     {
-                        String partitionFileName = path + "_" + range.Item1 + "_to_" + range.Item2;
+                        String partitionFileName = path + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
                 
                         //create file for range
                         var partitionFile = File.Create(partitionFileName, Constants.BufferSize, FileOptions.SequentialScan);
@@ -138,6 +158,55 @@ namespace Fallen8.API.Persistency
             foreach (var aFileStreamName in fileStreamNames) 
             {
                 writer.WriteOptimized(aFileStreamName);    
+            }
+            
+            #endregion
+            
+            #region indices
+            
+            //the number of indicex
+            writer.WriteOptimized(indices.Count);
+            
+            List<String> indexfileStreamNames = new List<String>();
+            Parallel.ForEach(
+                indices,
+                () => String.Empty,
+                (indexKV, loopstate, initialValue) =>
+                    {
+                        String indexFileName = path + "_index_" + indexKV.Key;
+                
+                        var indexFile = File.Create(indexFileName, Constants.BufferSize, FileOptions.SequentialScan);
+                        SerializationWriter indexWriter = new SerializationWriter(indexFile);
+                       
+                        indexKV.Value.Save(ref indexWriter);
+                
+                        if (indexWriter != null) 
+                        {
+                            indexWriter.Flush();
+                            indexWriter.Close();
+                        }
+            
+                        if (indexFile != null) 
+                        {
+                            indexFile.Flush();
+                            indexFile.Close();
+                        }
+                        
+                        return indexFileName;
+
+                    },
+                delegate(String indexFileName)
+                    {
+                        lock (indexfileStreamNames)
+                        {
+                            indexfileStreamNames.Add(indexFileName);
+                        }
+                    });
+            
+            writer.WriteOptimized(indexfileStreamNames.Count);
+            foreach (var aIndexFileName in indexfileStreamNames) 
+            {
+                writer.WriteOptimized(aIndexFileName);    
             }
             
             #endregion
@@ -247,7 +316,7 @@ namespace Fallen8.API.Persistency
         /// <param name='writer'>
         /// Writer.
         /// </param>
-        public static void WriteEdge (EdgeModel edge, SerializationWriter writer)
+        private static void WriteEdge (EdgeModel edge, SerializationWriter writer)
         {
             writer.WriteOptimized(0);//0 for edge
             WriteAGraphElement(edge, writer);
