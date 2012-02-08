@@ -71,7 +71,7 @@ namespace Fallen8.API.Model
         
         #endregion
         
-        #region public methods
+        #region internal methods
 
         /// <summary>
         /// Adds the out edge.
@@ -158,8 +158,6 @@ namespace Fallen8.API.Model
         /// </exception>
         internal void AddIncomingEdge(Int32 edgePropertyId, EdgeModel incomingEdge)
         {
-            //Interlocked.CompareExchange(ref _inEdges, new Dictionary<int, List<EdgeModel>>(), null);
-
             if (WriteResource())
             {
                 if (_inEdges == null)
@@ -191,7 +189,57 @@ namespace Fallen8.API.Model
 
             throw new CollisionException();
         }
+  
+        /// <summary>
+        /// Gets the incoming edges.
+        /// </summary>
+        /// <returns>
+        /// The incoming edges.
+        /// </returns>
+        internal List<IncEdgeContainer> GetIncomingEdges()
+        {
+            List<IncEdgeContainer> result = null;
+            
+            if (ReadResource())
+            {
+                if (_inEdges != null)
+                {
+                    result = new List<IncEdgeContainer>(_inEdges);
+                }
+                    
+                FinishReadResource();
 
+                return result;
+            }
+
+            throw new CollisionException();
+        }
+        
+        /// <summary>
+        /// Gets the outgoing edges.
+        /// </summary>
+        /// <returns>
+        /// The outgoing edges.
+        /// </returns>
+        internal List<OutEdgeContainer> GetOutgoingEdges()
+        {
+            List<OutEdgeContainer> result = null;
+            
+            if (ReadResource())
+            {
+                if (_outEdges != null)
+                {
+                    result = new List<OutEdgeContainer>(_outEdges);
+                }
+                    
+                FinishReadResource();
+
+                return result;
+            }
+
+            throw new CollisionException();
+        }
+        
         #endregion
 
         #region IVertexModel implementation

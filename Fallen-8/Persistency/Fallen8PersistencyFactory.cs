@@ -156,6 +156,30 @@ namespace Fallen8.API.Persistency
         #endregion
         
         #region private helper
+  
+        /// <summary>
+        /// Writes A graph element.
+        /// </summary>
+        /// <param name='graphElement'>
+        /// Graph element.
+        /// </param>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        private static void WriteAGraphElement (AGraphElement graphElement, SerializationWriter writer)
+        {
+            writer.WriteOptimized(graphElement.Id);
+            writer.WriteOptimized(graphElement.CreationDate);
+            writer.WriteOptimized(graphElement.ModificationDate);
+            
+            List<PropertyContainer> properties = new List<PropertyContainer>(graphElement.GetAllProperties());
+            writer.WriteOptimized(properties.Count);
+            foreach (var aProperty in properties) 
+            {
+                writer.WriteOptimized(aProperty.PropertyId);
+                writer.WriteObject(aProperty.Value);
+            }
+        }
         
         /// <summary>
         /// Writes the vertex.
@@ -168,7 +192,50 @@ namespace Fallen8.API.Persistency
         /// </param>
         private static void WriteVertex (VertexModel vertex, SerializationWriter writer)
         {
-            throw new NotImplementedException ();
+            writer.WriteOptimized(1);// 1 for vertex
+            WriteAGraphElement(vertex, writer);
+            
+            #region edges
+            
+            var outgoingEdges = vertex.GetOutgoingEdges();
+            if(outgoingEdges == null)
+            {
+                writer.WriteOptimized(0);
+            }
+            else 
+            {
+                writer.WriteOptimized(outgoingEdges.Count);
+                foreach(var aOutEdgeProperty in outgoingEdges)
+                {
+                    writer.WriteOptimized(aOutEdgeProperty.EdgePropertyId);
+                    writer.WriteOptimized(aOutEdgeProperty.EdgeProperty.Count);
+                    foreach(var aOutEdge in aOutEdgeProperty.EdgeProperty)
+                    {
+                        writer.WriteOptimized(aOutEdge.Id);
+                    }
+                }
+            }
+            
+            var incomingEdges = vertex.GetIncomingEdges();
+            if(incomingEdges == null)
+            {
+                writer.WriteOptimized(0);
+            }
+            else 
+            {
+                writer.WriteOptimized(incomingEdges.Count);
+                foreach(var aIncEdgeProperty in incomingEdges)
+                {
+                    writer.WriteOptimized(aIncEdgeProperty.EdgePropertyId);
+                    writer.WriteOptimized(aIncEdgeProperty.IncomingEdges.Count);
+                    foreach(var aIncEdge in aIncEdgeProperty.IncomingEdges)
+                    {
+                        writer.WriteOptimized(aIncEdge.Id);
+                    }
+                }
+            }
+            
+            #endregion
         }
   
         /// <summary>
@@ -182,7 +249,10 @@ namespace Fallen8.API.Persistency
         /// </param>
         public static void WriteEdge (EdgeModel edge, SerializationWriter writer)
         {
-            throw new NotImplementedException ();
+            writer.WriteOptimized(0);//0 for edge
+            WriteAGraphElement(edge, writer);
+            writer.WriteOptimized(edge.SourceVertex.Id);
+            writer.WriteOptimized(edge.TargetVertex.Id);
         }
         
         #endregion
