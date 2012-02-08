@@ -100,7 +100,7 @@ namespace Fallen8.API.Model
                 {
                     if (aEdgeProperty.EdgePropertyId == edgePropertyId) 
                     {
-                        aEdgeProperty.EdgeProperty.AddEdge(outEdge);
+                        aEdgeProperty.EdgeProperty.Add(outEdge);
                         
                         foundSth = true;
                         
@@ -110,7 +110,7 @@ namespace Fallen8.API.Model
                 
                 if (!foundSth) 
                 {
-                    _outEdges.Add(new OutEdgeContainer { EdgePropertyId = edgePropertyId, EdgeProperty = outEdge.SourceEdgeProperty});
+                    _outEdges.Add(new OutEdgeContainer { EdgePropertyId = edgePropertyId, EdgeProperty = new List<EdgeModel> {outEdge}});
                 }
                 
                 FinishWriteResource();
@@ -212,7 +212,7 @@ namespace Fallen8.API.Model
                 {
                     foreach (var aOutEdge in _outEdges)
                     {
-                        neighbors.AddRange(aOutEdge.EdgeProperty.GetEdges().Select(_ => _.TargetVertex));
+                        neighbors.AddRange(aOutEdge.EdgeProperty.Select(_ => _.TargetVertex));
                     }
                 }
 
@@ -220,7 +220,7 @@ namespace Fallen8.API.Model
                 {
                     foreach (var aInEdge in _inEdges)
                     {
-                        neighbors.AddRange(aInEdge.IncomingEdges.Select(_ => _.SourceEdgeProperty.SourceVertex));
+                        neighbors.AddRange(aInEdge.IncomingEdges.Select(_ => _.SourceVertex));
                     }
 
                 }
@@ -292,7 +292,7 @@ namespace Fallen8.API.Model
         /// <param name='edgePropertyId'>
         /// Edge property identifier.
         /// </param>
-        public Boolean TryGetOutEdge(out EdgePropertyModel result, Int32 edgePropertyId)
+        public Boolean TryGetOutEdge(out List<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource())
             {

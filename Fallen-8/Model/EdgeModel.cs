@@ -54,11 +54,11 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public EdgeModel(Int32 id, DateTime creationDate, VertexModel targetVertex, EdgePropertyModel sourceEdgeProperty, List<PropertyContainer> properties)
+        public EdgeModel(Int32 id, DateTime creationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
             : base(id, creationDate, properties)
         {
             TargetVertex = targetVertex;
-            SourceEdgeProperty = sourceEdgeProperty;
+            SourceVertex = sourceVertex;
         }
         
         #endregion
@@ -71,9 +71,9 @@ namespace Fallen8.API.Model
         public readonly VertexModel TargetVertex;
 
         /// <summary>
-        /// The source edge property.
+        /// The source vertex.
         /// </summary>
-        public readonly EdgePropertyModel SourceEdgeProperty;
+        public readonly VertexModel SourceVertex;
         
         #endregion
 
@@ -100,7 +100,7 @@ namespace Fallen8.API.Model
             }
 
             return TargetVertex.Id == p.TargetVertex.Id
-                   && (SourceEdgeProperty.SourceVertex.Id == p.SourceEdgeProperty.SourceVertex.Id);
+                   && (SourceVertex.Id == p.SourceVertex.Id);
         }
 
         public static Boolean operator == (EdgeModel a, EdgeModel b)
@@ -126,7 +126,7 @@ namespace Fallen8.API.Model
 
         public override int GetHashCode ()
         {
-            return TargetVertex.GetHashCode () ^ SourceEdgeProperty.SourceVertex.GetHashCode ();
+            return TargetVertex.GetHashCode () ^ SourceVertex.GetHashCode ();
         }
 
         #endregion

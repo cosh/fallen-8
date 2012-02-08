@@ -69,7 +69,6 @@
     <Compile Include="Model\VertexModel.cs" />
     <Compile Include="Fallen8.cs" />
     <Compile Include="Model\AGraphElement.cs" />
-    <Compile Include="Model\EdgePropertyModel.cs" />
     <Compile Include="Index\Fallen8IndexFactory.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />

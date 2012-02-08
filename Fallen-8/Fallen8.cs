@@ -147,20 +147,18 @@ namespace Fallen8.API
                 var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
                 var targetVertex = (VertexModel) _graphElements[edgeDefinition.TargetVertexId];
 
-                EdgePropertyModel epm;
-                if (sourceVertex.TryGetOutEdge(out epm, edgePropertyId))
+                List<EdgeModel> outEdges;
+                if (sourceVertex.TryGetOutEdge(out outEdges, edgePropertyId))
                 {
                     outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
-                                                 targetVertex, epm, edgeDefinition.Properties);
-                    epm.AddEdge(outgoingEdge);
+                                                 targetVertex, sourceVertex, edgeDefinition.Properties);
+                    outEdges.Add(outgoingEdge);
                 }
                 else
                 {
                     //build the necessary edge contruct
-                    epm = new EdgePropertyModel(sourceVertex, null);
                     outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
-                                                 targetVertex, epm, edgeDefinition.Properties);
-                    epm.AddEdge(outgoingEdge);
+                                                 targetVertex, sourceVertex, edgeDefinition.Properties);
 
                     sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
                 }
@@ -673,7 +671,7 @@ namespace Fallen8.API
         /// Creates the edge property.
         /// </summary>
         /// <returns>
-        /// The edge property.
+        /// The out edges.
         /// </returns>
         /// <param name='edgePropertyId'>
         /// Edge property identifier.
@@ -684,17 +682,15 @@ namespace Fallen8.API
         /// <param name='sourceVertex'>
         /// New vertex.
         /// </param>
-        private EdgePropertyModel CreateEdgeProperty(Int32 edgePropertyId, IEnumerable<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
+        private List<EdgeModel> CreateEdgeProperty(Int32 edgePropertyId, IEnumerable<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
         {
             var edges = new List<EdgeModel> ();
-            
-            var result = new EdgePropertyModel (sourceVertex, edges);
             
             foreach (var aEdgeDefinition in edgeDefinitions) {
                 
                 var targetVertex = (VertexModel)_graphElements [aEdgeDefinition.TargetVertexId];
                 
-                var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, result, aEdgeDefinition.Properties);
+                var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, sourceVertex, aEdgeDefinition.Properties);
                 
                 //add the new edge to the store
                 _graphElements.Add(outgoingEdge);
@@ -704,7 +700,7 @@ namespace Fallen8.API
                 edges.Add (outgoingEdge);
             }
             
-            return result;
+            return edges;
         }
         
         #endregion

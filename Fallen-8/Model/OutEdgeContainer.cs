@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Model
 {
@@ -49,7 +50,7 @@ namespace Fallen8.API.Model
         /// <value>
         /// The value.
         /// </value>
-        public EdgePropertyModel EdgeProperty { get; internal set; }
+        public List<EdgeModel> EdgeProperty { get; internal set; }
         
         #endregion
     }
