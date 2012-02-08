@@ -30,6 +30,8 @@ using Fallen8.API.Index;
 using System.IO;
 using Fallen8.API.Helper;
 using Framework.Serialization;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Fallen8.API.Persistency
 {
@@ -38,6 +40,8 @@ namespace Fallen8.API.Persistency
     /// </summary>
     public static class Fallen8PersistencyFactory
     {
+        #region public methods
+        
         /// <summary>
         /// Save the specified graphElements, indices and path.
         /// </summary>
@@ -55,25 +59,89 @@ namespace Fallen8.API.Persistency
             // Create the new, empty data file.
             if (File.Exists(path))
             {
-                File.Move(path, path + "OLD");
+                //the newer save gets an timestamp
+                path = path + DateTime.Now.ToBinary().ToString();
             }
             
             var file = File.Create(path, Constants.BufferSize, FileOptions.SequentialScan);
             SerializationWriter writer = null;
-            
            
             writer = new SerializationWriter(file);
             
-            #region write vertices and edges
+            //the maximum id
+            writer.WriteOptimized(currentId);
             
+            #region graph elements
+            
+            //the number of maximum graph elements
+            writer.WriteOptimized(graphElements.Count);
+            
+            List<String> fileStreamNames = new List<String>();
+            var partitions = Partitioner.Create(0, graphElements.Count);
+            Parallel.ForEach(
+                partitions,
+                () => String.Empty,
+                (range, loopstate, initialValue) =>
+                    {
+                        String partitionFileName = path + "_" + range.Item1 + "_to_" + range.Item2;
+                
+                        //create file for range
+                        var partitionFile = File.Create(partitionFileName, Constants.BufferSize, FileOptions.SequentialScan);
+                        SerializationWriter partitionWriter = new SerializationWriter(partitionFile);
+                        
+                        for (int i = range.Item1; i < range.Item2; i++) 
+                        {
+                            var aGraphElement = graphElements[i];
+                    
+                            //there can be nulls
+                            if (aGraphElement == null) 
+                            {
+                                writer.WriteObject (null);
+                                continue;
+                            }
+                            
+                            //code if it is an vertex or an edge
+                            if (aGraphElement is VertexModel) 
+                            {
+                                WriteVertex((VertexModel)aGraphElement, partitionWriter);
+                            }
+                            else
+                            {
+                                WriteEdge((EdgeModel)aGraphElement, partitionWriter);
+                            }
+                        }
+                
+                        if (partitionWriter != null) 
+                        {
+                            partitionWriter.Flush();
+                            partitionWriter.Close();
+                        }
+            
+                        if (partitionFile != null) 
+                        {
+                            partitionFile.Flush();
+                            partitionFile.Close();
+                        }
+                        
+                        return partitionFileName;
+
+                    },
+                delegate(String rangeFileStream)
+                    {
+                        lock (fileStreamNames)
+                        {
+                            fileStreamNames.Add(rangeFileStream);
+                        }
+                    });
+            
+            writer.WriteOptimized(fileStreamNames.Count);
+            foreach (var aFileStreamName in fileStreamNames) 
+            {
+                writer.WriteOptimized(aFileStreamName);    
+            }
             
             #endregion
             
-            #region write indices
-            
-            
-            #endregion
-     
             if (writer != null) {
                 writer.Flush();
                 writer.Close();
@@ -84,6 +152,40 @@ namespace Fallen8.API.Persistency
                 file.Close();
             }
         }
+  
+        #endregion
+        
+        #region private helper
+        
+        /// <summary>
+        /// Writes the vertex.
+        /// </summary>
+        /// <param name='vertex'>
+        /// Vertex.
+        /// </param>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        private static void WriteVertex (VertexModel vertex, SerializationWriter writer)
+        {
+            throw new NotImplementedException ();
+        }
+  
+        /// <summary>
+        /// Writes the edge.
+        /// </summary>
+        /// <param name='edge'>
+        /// Edge.
+        /// </param>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        public static void WriteEdge (EdgeModel edge, SerializationWriter writer)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        #endregion
     }
 }
 
