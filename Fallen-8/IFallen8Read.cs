@@ -146,15 +146,12 @@ namespace Fallen8.API
         #region Persistence
         
         /// <summary>
-        /// Tries to save Fallen-8 into a Stream
+        /// Save Fallen-8 in the specified path.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if save as was successful; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='savedFallen8'>
-        /// Saved Fallen-8.
+        /// <param name='path'>
+        /// Path.
         /// </param>
-        Boolean TrySaveAs(out Stream savedFallen8);
+        void Save(String path);
         
         #endregion
 	}

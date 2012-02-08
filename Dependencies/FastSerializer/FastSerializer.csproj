@@ -11,6 +11,8 @@
     <RootNamespace>FastSerializer</RootNamespace>
     <AssemblyName>FastSerializer</AssemblyName>
     <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Fallen-8\Fallen-8.key</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

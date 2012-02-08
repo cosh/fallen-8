@@ -127,15 +127,12 @@ namespace Fallen8.API
         #region Persistence
         
         /// <summary>
-        /// Tries to open Fallen-8 using a stream.
+        /// Opens Fallen-8 from the specified path.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if open was successful; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='streamRepresentation'>
-        /// Stream representation of Fallen-8.
+        /// <param name='path'>
+        /// Path.
         /// </param>
-        Boolean TryOpen(Stream streamRepresentation);
+        void Open(String path);
         
         #endregion
     }

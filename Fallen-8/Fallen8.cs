@@ -36,6 +36,8 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using Fallen8.API.Index.Range;
 using System.IO;
+using Framework.Serialization;
+using Fallen8.API.Persistency;
 
 namespace Fallen8.API
 {
@@ -89,7 +91,7 @@ namespace Fallen8.API
         
         #region IFallen8Write implementation
   
-        public Boolean TryOpen (Stream streamRepresentation)
+        public void Open (String path)
         {
             throw new NotImplementedException ();
         }
@@ -371,9 +373,17 @@ namespace Fallen8.API
             return false;
         }
         
-        public bool TrySaveAs (out Stream savedFallen8)
+        public void Save(String path)
         {
-            throw new NotImplementedException ();
+            _lock.EnterReadLock();
+            try
+            {
+                Fallen8PersistencyFactory.Save(_currentId, _graphElements, IndexFactory.Indices, path);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         #endregion
