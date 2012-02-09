@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Fallen8.API.Error;
+using Framework.Serialization;
 
 namespace Fallen8.API.Model
 {
@@ -237,6 +238,66 @@ namespace Fallen8.API.Model
                 return result;
             }
 
+            throw new CollisionException();
+        }
+        
+        /// <summary>
+        /// Writes the vertex.
+        /// </summary>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        internal void Save (SerializationWriter writer)
+        {
+            writer.WriteOptimized(1);// 1 for vertex
+            
+            if (ReadResource()) 
+            {
+                base.SaveGraphElement(writer);
+            
+                #region edges
+                
+                if(_outEdges == null)
+                {
+                    writer.WriteOptimized(0);
+                }
+                else 
+                {
+                    writer.WriteOptimized(_outEdges.Count);
+                    foreach(var aOutEdgeProperty in _outEdges)
+                    {
+                        writer.WriteOptimized(aOutEdgeProperty.EdgePropertyId);
+                        writer.WriteOptimized(aOutEdgeProperty.EdgeProperty.Count);
+                        foreach(var aOutEdge in aOutEdgeProperty.EdgeProperty)
+                        {
+                            writer.WriteOptimized(aOutEdge.Id);
+                        }
+                    }
+                }
+                
+                if(_inEdges == null)
+                {
+                    writer.WriteOptimized(0);
+                }
+                else 
+                {
+                    writer.WriteOptimized(_inEdges.Count);
+                    foreach(var aIncEdgeProperty in _inEdges)
+                    {
+                        writer.WriteOptimized(aIncEdgeProperty.EdgePropertyId);
+                        writer.WriteOptimized(aIncEdgeProperty.IncomingEdges.Count);
+                        foreach(var aIncEdge in aIncEdgeProperty.IncomingEdges)
+                        {
+                            writer.WriteOptimized(aIncEdge.Id);
+                        }
+                    }
+                }
+                
+                #endregion
+                
+                return;
+            }
+            
             throw new CollisionException();
         }
         

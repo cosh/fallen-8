@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using Framework.Serialization;
 
 namespace Fallen8.API.Model
 {
@@ -129,6 +130,24 @@ namespace Fallen8.API.Model
             return TargetVertex.GetHashCode () ^ SourceVertex.GetHashCode ();
         }
 
+        #endregion
+        
+        #region internal methods
+        
+        /// <summary>
+        /// Writes the edge.
+        /// </summary>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        internal void Save (SerializationWriter writer)
+        {
+            writer.WriteOptimized(0);//0 for edge
+            base.SaveGraphElement(writer);
+            writer.WriteOptimized(SourceVertex.Id);
+            writer.WriteOptimized(TargetVertex.Id);
+        }
+        
         #endregion
     }
 }

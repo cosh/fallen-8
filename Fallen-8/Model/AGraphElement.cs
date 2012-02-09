@@ -29,6 +29,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Fallen8.API.Helper;
 using Fallen8.API.Error;
+using Framework.Serialization;
 
 namespace Fallen8.API.Model
 {
@@ -256,6 +257,36 @@ namespace Fallen8.API.Model
             }
 
             throw new CollisionException ();
+            
+        }
+        
+        /// <summary>
+        /// Writes A graph element.
+        /// </summary>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        protected void SaveGraphElement (SerializationWriter writer)
+        {
+            writer.WriteOptimized(Id);
+            writer.WriteOptimized(CreationDate);
+            writer.WriteOptimized(ModificationDate);
+            
+            if (ReadResource())
+            {
+                writer.WriteOptimized(Properties.Count);
+                foreach (var aProperty in Properties) 
+                {
+                    writer.WriteOptimized(aProperty.PropertyId);
+                    writer.WriteObject(aProperty.Value);
+                }
+                
+                FinishReadResource();
+                
+                return;
+            }
+
+            throw new CollisionException();
             
         }
         
