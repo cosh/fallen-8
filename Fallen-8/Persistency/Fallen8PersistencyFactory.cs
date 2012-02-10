@@ -128,7 +128,7 @@ namespace Fallen8.API.Persistency
             
             #region graph elements
             
-            var graphElementPartitions = CreatePartitions(graphElements, savePartitions);
+            var graphElementPartitions = CreatePartitions(graphElements.Count, savePartitions);
             graphElementSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), graphElementPartitions.Count);
             
             for (int i = 0; i < graphElementPartitions.Count; i++) 
@@ -180,7 +180,22 @@ namespace Fallen8.API.Persistency
         #endregion
         
         #region private helper
-
+  
+        /// <summary>
+        /// Saves the index.
+        /// </summary>
+        /// <returns>
+        /// The filename of the persisted index.
+        /// </returns>
+        /// <param name='indexName'>
+        /// Index name.
+        /// </param>
+        /// <param name='index'>
+        /// Index.
+        /// </param>
+        /// <param name='path'>
+        /// Path.
+        /// </param>
         private static String SaveIndex (string indexName, IIndex index, string path)
         {
             String indexFileName = path + "_index_" + indexName;
@@ -205,6 +220,18 @@ namespace Fallen8.API.Persistency
             return indexFileName;
         }
   
+        /// <summary>
+        /// Loads a graph element bunch.
+        /// </summary>
+        /// <returns>
+        /// The edges that point to vertices that are not within this bunch.
+        /// </returns>
+        /// <param name='graphElementBunchPath'>
+        /// Graph element bunch path.
+        /// </param>
+        /// <param name='graphElementsOfFallen8'>
+        /// Graph elements of Fallen-8.
+        /// </param>
         private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, List<AGraphElement> graphElementsOfFallen8)
         {
             //if there is no savepoint file... do nothing
@@ -223,6 +250,21 @@ namespace Fallen8.API.Persistency
             return result;
         }
         
+        /// <summary>
+        /// Saves the graph element bunch.
+        /// </summary>
+        /// <returns>
+        /// The path to the graph element bunch
+        /// </returns>
+        /// <param name='range'>
+        /// Range.
+        /// </param>
+        /// <param name='graphElements'>
+        /// Graph elements.
+        /// </param>
+        /// <param name='pathToSavePoint'>
+        /// Path to save point basis.
+        /// </param>
         private static String SaveBunch (Tuple<Int32, Int32> range, List<AGraphElement> graphElements, String pathToSavePoint)
         {
             String partitionFileName = pathToSavePoint + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
@@ -270,7 +312,16 @@ namespace Fallen8.API.Persistency
             
             return partitionFileName;
         }
-
+  
+        /// <summary>
+        /// Loads the graph elements.
+        /// </summary>
+        /// <param name='graphElementsOfFallen8'>
+        /// Graph elements of Fallen-8.
+        /// </param>
+        /// <param name='graphElementStreams'>
+        /// Graph element streams.
+        /// </param>
         private static void LoadGraphElements (List<AGraphElement> graphElementsOfFallen8, List<String> graphElementStreams)
         {
             //create some futures to load as much as possible in parallel
@@ -285,11 +336,53 @@ namespace Fallen8.API.Persistency
 
             Task.WaitAll(tasks);   
         }
-
-        public static List<Tuple<Int32, Int32>> CreatePartitions (List<AGraphElement> graphElements, int savePartitions)
+  
+        /// <summary>
+        /// Creates the partitions.
+        /// </summary>
+        /// <returns>
+        /// The partitions.
+        /// </returns>
+        /// <param name='totalCount'>
+        /// Total count.
+        /// </param>
+        /// <param name='savePartitions'>
+        /// Save partitions.
+        /// </param>
+        private static List<Tuple<Int32, Int32>> CreatePartitions (int totalCount, int savePartitions)
         {
-            return null;
+            var result = new List<Tuple<Int32, Int32>>();
             
+            if (totalCount < savePartitions) 
+            {
+                for (int i = 0; i < totalCount; i++) 
+                {
+                    result.Add(new Tuple<Int32, Int32>(i, i + 1));
+                }
+                
+                return result;
+            }
+            else 
+            {
+                var size = totalCount / savePartitions;
+                for (int i = 0; i < savePartitions; i++) 
+                {
+                    var minimum = i*size;
+                    
+                    if (minimum < totalCount) 
+                    {
+                        var maximum = i*size + size;
+                        if (maximum > totalCount) 
+                        {
+                            maximum = totalCount;    
+                        }
+                    
+                        result.Add(new Tuple<Int32, Int32>(i * size, i * size + size));      
+                    }
+                }
+                
+                return result;
+            }
         }
 
         /// <summary>
