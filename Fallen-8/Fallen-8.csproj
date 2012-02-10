@@ -78,6 +78,7 @@
     <Compile Include="Model\IncEdgeContainer.cs" />
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
+    <Compile Include="Persistency\EdgeSneakPeak.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

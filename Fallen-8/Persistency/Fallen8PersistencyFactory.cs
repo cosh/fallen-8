@@ -32,6 +32,7 @@ using Fallen8.API.Helper;
 using Framework.Serialization;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Fallen8.API.Persistency
 {
@@ -59,7 +60,34 @@ namespace Fallen8.API.Persistency
         /// </param>
         public static void Load (string pathToSavePoint, ref int currentIdOfFallen8, ref List<AGraphElement> graphElementsOfFallen8, ref IFallen8IndexFactory indexFactoryOfFallen8)
         {
-            throw new NotImplementedException ();
+            //if there is no savepoint file... do nothing
+            if (!File.Exists(pathToSavePoint))
+            {
+                return;
+            }
+            
+            var file = File.Open(pathToSavePoint, FileMode.Open, FileAccess.Read);
+            var reader = new SerializationReader(file);
+            
+            //get the maximum id
+            currentIdOfFallen8 = reader.ReadOptimizedInt32();
+            
+            //initialize the list of graph elements
+            graphElementsOfFallen8 = new List<AGraphElement>(reader.ReadOptimizedInt32());
+            
+            var graphElementStreams = new List<String>();
+            for (int i = 0; i < reader.ReadOptimizedInt32(); i++) 
+            {
+                graphElementStreams.Add(reader.ReadOptimizedString());
+            }
+            
+            LoadGraphElements(graphElementsOfFallen8, graphElementStreams);
+            
+            var indexStreams = new List<String>();
+            for (int i = 0; i < reader.ReadOptimizedInt32(); i++) 
+            {
+                indexStreams.Add(reader.ReadOptimizedString());
+            }
         }
         
         /// <summary>
@@ -84,9 +112,7 @@ namespace Fallen8.API.Persistency
             }
             
             var file = File.Create(path, Constants.BufferSize, FileOptions.SequentialScan);
-            SerializationWriter writer = null;
-           
-            writer = new SerializationWriter(file);
+            var writer = new SerializationWriter(file);
             
             //the maximum id
             writer.WriteOptimized(currentId);
@@ -96,7 +122,7 @@ namespace Fallen8.API.Persistency
             //the number of maximum graph elements
             writer.WriteOptimized(graphElements.Count);
             
-            List<String> fileStreamNames = new List<String>();
+            List<String> graphElementStreams = new List<String>();
             var partitions = Partitioner.Create(0, graphElements.Count);
             Parallel.ForEach(
                 partitions,
@@ -123,11 +149,11 @@ namespace Fallen8.API.Persistency
                             //code if it is an vertex or an edge
                             if (aGraphElement is VertexModel) 
                             {
-                                ((VertexModel)aGraphElement).Save(partitionWriter);
+                                WriteVertex((VertexModel)aGraphElement, partitionWriter);
                             }
                             else
                             {
-                                ((EdgeModel)aGraphElement).Save(partitionWriter);
+                                WriteEdge((EdgeModel)aGraphElement, partitionWriter);
                             }
                         }
                 
@@ -148,14 +174,14 @@ namespace Fallen8.API.Persistency
                     },
                 delegate(String rangeFileStream)
                     {
-                        lock (fileStreamNames)
+                        lock (graphElementStreams)
                         {
-                            fileStreamNames.Add(rangeFileStream);
+                            graphElementStreams.Add(rangeFileStream);
                         }
                     });
             
-            writer.WriteOptimized(fileStreamNames.Count);
-            foreach (var aFileStreamName in fileStreamNames) 
+            writer.WriteOptimized(graphElementStreams.Count);
+            foreach (var aFileStreamName in graphElementStreams) 
             {
                 writer.WriteOptimized(aFileStreamName);    
             }
@@ -163,9 +189,6 @@ namespace Fallen8.API.Persistency
             #endregion
             
             #region indices
-            
-            //the number of indicex
-            writer.WriteOptimized(indices.Count);
             
             List<String> indexfileStreamNames = new List<String>();
             Parallel.ForEach(
@@ -222,6 +245,128 @@ namespace Fallen8.API.Persistency
             }
         }
   
+        #endregion
+        
+        #region private helper
+
+        private static void LoadGraphElements (List<AGraphElement> graphElementsOfFallen8, List<String> graphElementStreams)
+        {
+            //create some futures to load as much as possible in parallel
+            const TaskCreationOptions options = TaskCreationOptions.LongRunning;
+            var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
+            Task<List<EdgeSneakPeak>>[] tasks = (Task<List<EdgeSneakPeak>>[])Array.CreateInstance(typeof(Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
+            
+            for (int i = 0; i < graphElementStreams.Count; i++)
+            {
+                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElementsOfFallen8));
+            }
+
+            Task.WaitAll(tasks);   
+        }
+
+        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, List<AGraphElement> graphElementsOfFallen8)
+        {
+            return null;
+        }
+  
+        /// <summary>
+        /// Writes A graph element.
+        /// </summary>
+        /// <param name='graphElement'>
+        /// Graph element.
+        /// </param>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        private static void WriteAGraphElement (AGraphElement graphElement, SerializationWriter writer)
+        {
+            writer.WriteOptimized(graphElement.Id);
+            writer.WriteOptimized(graphElement.CreationDate);
+            writer.WriteOptimized(graphElement.ModificationDate);
+            
+            List<PropertyContainer> properties = new List<PropertyContainer>(graphElement.GetAllProperties());
+            writer.WriteOptimized(properties.Count);
+            foreach (var aProperty in properties) 
+            {
+                writer.WriteOptimized(aProperty.PropertyId);
+                writer.WriteObject(aProperty.Value);
+            }
+        }
+        
+        /// <summary>
+        /// Writes the vertex.
+        /// </summary>
+        /// <param name='vertex'>
+        /// Vertex.
+        /// </param>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        private static void WriteVertex (VertexModel vertex, SerializationWriter writer)
+        {
+            writer.WriteOptimized(1);// 1 for vertex
+            WriteAGraphElement(vertex, writer);
+            
+            #region edges
+            
+            var outgoingEdges = vertex.GetOutgoingEdges();
+            if(outgoingEdges == null)
+            {
+                writer.WriteOptimized(0);
+            }
+            else 
+            {
+                writer.WriteOptimized(outgoingEdges.Count);
+                foreach(var aOutEdgeProperty in outgoingEdges)
+                {
+                    writer.WriteOptimized(aOutEdgeProperty.EdgePropertyId);
+                    writer.WriteOptimized(aOutEdgeProperty.EdgeProperty.Count);
+                    foreach(var aOutEdge in aOutEdgeProperty.EdgeProperty)
+                    {
+                        writer.WriteOptimized(aOutEdge.Id);
+                    }
+                }
+            }
+            
+            var incomingEdges = vertex.GetIncomingEdges();
+            if(incomingEdges == null)
+            {
+                writer.WriteOptimized(0);
+            }
+            else 
+            {
+                writer.WriteOptimized(incomingEdges.Count);
+                foreach(var aIncEdgeProperty in incomingEdges)
+                {
+                    writer.WriteOptimized(aIncEdgeProperty.EdgePropertyId);
+                    writer.WriteOptimized(aIncEdgeProperty.IncomingEdges.Count);
+                    foreach(var aIncEdge in aIncEdgeProperty.IncomingEdges)
+                    {
+                        writer.WriteOptimized(aIncEdge.Id);
+                    }
+                }
+            }
+            
+            #endregion
+        }
+  
+        /// <summary>
+        /// Writes the edge.
+        /// </summary>
+        /// <param name='edge'>
+        /// Edge.
+        /// </param>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        private static void WriteEdge (EdgeModel edge, SerializationWriter writer)
+        {
+            writer.WriteOptimized(0);//0 for edge
+            WriteAGraphElement(edge, writer);
+            writer.WriteOptimized(edge.SourceVertex.Id);
+            writer.WriteOptimized(edge.TargetVertex.Id);
+        }
+        
         #endregion
     }
 }
