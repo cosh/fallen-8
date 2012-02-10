@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Fallen8.API.Model;
 using Fallen8.API.Index;
@@ -72,22 +73,30 @@ namespace Fallen8.API.Persistency
             //get the maximum id
             currentIdOfFallen8 = reader.ReadOptimizedInt32();
             
-            //initialize the list of graph elements
-            graphElementsOfFallen8 = new List<AGraphElement>(currentIdOfFallen8);
+            #region graph elements
             
+            //initialize the list of graph elements
+            var graphElements = new AGraphElement[currentIdOfFallen8];
             var graphElementStreams = new List<String>();
             for (int i = 0; i < reader.ReadOptimizedInt32(); i++) 
             {
                 graphElementStreams.Add(reader.ReadOptimizedString());
             }
             
-            LoadGraphElements(graphElementsOfFallen8, graphElementStreams);
+            LoadGraphElements(graphElements, graphElementStreams);
+            graphElementsOfFallen8 = new List<AGraphElement>(graphElements);
+            
+            #endregion
+            
+            #region indexe
             
             var indexStreams = new List<String>();
             for (int i = 0; i < reader.ReadOptimizedInt32(); i++) 
             {
                 indexStreams.Add(reader.ReadOptimizedString());
             }
+            
+            #endregion
         }
         
         /// <summary>
@@ -180,7 +189,22 @@ namespace Fallen8.API.Persistency
         #endregion
         
         #region private helper
-  
+        
+        /// <summary>
+        /// The serialized edge.
+        /// </summary>
+        private const Int32 SerializedEdge = 0;
+        
+        /// <summary>
+        /// The serialized vertex.
+        /// </summary>
+        private const Int32 SerializedVertex = 1; 
+        
+        /// <summary>
+        /// The serialized null.
+        /// </summary>
+        private const Int32 SerializedNull = 2;
+        
         /// <summary>
         /// Saves the index.
         /// </summary>
@@ -232,7 +256,7 @@ namespace Fallen8.API.Persistency
         /// <param name='graphElementsOfFallen8'>
         /// Graph elements of Fallen-8.
         /// </param>
-        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, List<AGraphElement> graphElementsOfFallen8)
+        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, AGraphElement[] graphElementsOfFallen8)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(graphElementBunchPath))
@@ -247,9 +271,29 @@ namespace Fallen8.API.Persistency
             var maximumId = reader.ReadOptimizedInt32() - 1;
             var countOfElements = maximumId - minimumId;
             
+            for (int i = 0; i < countOfElements; i++) 
+            {
+                var kind = reader.ReadOptimizedInt32();
+                switch (kind) {
+                
+                case SerializedEdge:
+                    //edge
+                    break;
+                    
+                case SerializedVertex: 
+                    //vertex
+                    LoadVertex(reader, graphElementsOfFallen8, minimumId, maximumId);
+                    break;
+                    
+                case SerializedNull:
+                    //null --> do nothing
+                    break;
+                }    
+            }
+            
             return result;
         }
-        
+
         /// <summary>
         /// Saves the graph element bunch.
         /// </summary>
@@ -283,7 +327,7 @@ namespace Fallen8.API.Persistency
                 //there can be nulls
                 if (aGraphElement == null) 
                 {
-                    partitionWriter.WriteObject (null);
+                    partitionWriter.WriteOptimized(SerializedNull);// 2 for null
                     continue;
                 }
                 
@@ -316,13 +360,13 @@ namespace Fallen8.API.Persistency
         /// <summary>
         /// Loads the graph elements.
         /// </summary>
-        /// <param name='graphElementsOfFallen8'>
+        /// <param name='graphElements'>
         /// Graph elements of Fallen-8.
         /// </param>
         /// <param name='graphElementStreams'>
         /// Graph element streams.
         /// </param>
-        private static void LoadGraphElements (List<AGraphElement> graphElementsOfFallen8, List<String> graphElementStreams)
+        private static void LoadGraphElements (AGraphElement[] graphElements, List<String> graphElementStreams)
         {
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
@@ -331,7 +375,7 @@ namespace Fallen8.API.Persistency
             
             for (int i = 0; i < graphElementStreams.Count; i++)
             {
-                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElementsOfFallen8));
+                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElements));
             }
 
             Task.WaitAll(tasks);   
@@ -409,6 +453,11 @@ namespace Fallen8.API.Persistency
             }
         }
         
+        private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, int minimumId, int maximumId)
+        {
+            throw new NotImplementedException();
+        }
+        
         /// <summary>
         /// Writes the vertex.
         /// </summary>
@@ -420,7 +469,7 @@ namespace Fallen8.API.Persistency
         /// </param>
         private static void WriteVertex (VertexModel vertex, SerializationWriter writer)
         {
-            writer.WriteOptimized(1);// 1 for vertex
+            writer.WriteOptimized(SerializedVertex);
             WriteAGraphElement(vertex, writer);
             
             #region edges
@@ -477,7 +526,7 @@ namespace Fallen8.API.Persistency
         /// </param>
         private static void WriteEdge (EdgeModel edge, SerializationWriter writer)
         {
-            writer.WriteOptimized(0);//0 for edge
+            writer.WriteOptimized(SerializedEdge);
             WriteAGraphElement(edge, writer);
             writer.WriteOptimized(edge.SourceVertex.Id);
             writer.WriteOptimized(edge.TargetVertex.Id);
