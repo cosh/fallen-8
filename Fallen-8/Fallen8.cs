@@ -392,12 +392,12 @@ namespace Fallen8.API
             return false;
         }
         
-        public void Save(String path)
+        public void Save(String path, Int32 savePartitions = 5)
         {
             _lock.EnterReadLock();
             try
             {
-                Fallen8PersistencyFactory.Save(_currentId, _graphElements, IndexFactory.Indices, path);
+                Fallen8PersistencyFactory.Save(_currentId, _graphElements, IndexFactory.Indices, path, savePartitions);
             }
             finally
             {

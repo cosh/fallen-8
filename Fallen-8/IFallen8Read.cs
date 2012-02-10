@@ -151,7 +151,10 @@ namespace Fallen8.API
         /// <param name='path'>
         /// Path.
         /// </param>
-        void Save(String path);
+        /// <param name='savePartitions'>
+        /// The number of save partitions.
+        /// </param>
+        void Save(String path, Int32 savePartitions = 5);
         
         #endregion
 	}

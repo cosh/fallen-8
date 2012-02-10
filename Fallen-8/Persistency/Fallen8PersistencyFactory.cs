@@ -73,7 +73,7 @@ namespace Fallen8.API.Persistency
             currentIdOfFallen8 = reader.ReadOptimizedInt32();
             
             //initialize the list of graph elements
-            graphElementsOfFallen8 = new List<AGraphElement>(reader.ReadOptimizedInt32());
+            graphElementsOfFallen8 = new List<AGraphElement>(currentIdOfFallen8);
             
             var graphElementStreams = new List<String>();
             for (int i = 0; i < reader.ReadOptimizedInt32(); i++) 
@@ -102,7 +102,10 @@ namespace Fallen8.API.Persistency
         /// <param name='path'>
         /// Path.
         /// </param>
-        public static void Save(Int32 currentId, List<AGraphElement> graphElements, IDictionary<String, IIndex> indices, String path)
+        /// <param name='savePartitions'>
+        /// The number of save partitions for the graph elements.
+        /// </param>
+        public static void Save(Int32 currentId, List<AGraphElement> graphElements, IDictionary<String, IIndex> indices, String path, int savePartitions)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
@@ -114,125 +117,54 @@ namespace Fallen8.API.Persistency
             var file = File.Create(path, Constants.BufferSize, FileOptions.SequentialScan);
             var writer = new SerializationWriter(file);
             
+            //create some futures to save as much as possible in parallel
+            const TaskCreationOptions options = TaskCreationOptions.LongRunning;
+            var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
+            Task<String>[] graphElementSaver;
+            Task<String>[] indexSaver;
+            
             //the maximum id
             writer.WriteOptimized(currentId);
             
             #region graph elements
             
-            //the number of maximum graph elements
-            writer.WriteOptimized(graphElements.Count);
+            var graphElementPartitions = CreatePartitions(graphElements, savePartitions);
+            graphElementSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), graphElementPartitions.Count);
             
-            List<String> graphElementStreams = new List<String>();
-            var partitions = Partitioner.Create(0, graphElements.Count);
-            Parallel.ForEach(
-                partitions,
-                () => String.Empty,
-                (range, loopstate, initialValue) =>
-                    {
-                        String partitionFileName = path + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
-                
-                        //create file for range
-                        var partitionFile = File.Create(partitionFileName, Constants.BufferSize, FileOptions.SequentialScan);
-                        SerializationWriter partitionWriter = new SerializationWriter(partitionFile);
-                        
-                        for (int i = range.Item1; i < range.Item2; i++) 
-                        {
-                            var aGraphElement = graphElements[i];
-                    
-                            //there can be nulls
-                            if (aGraphElement == null) 
-                            {
-                                writer.WriteObject (null);
-                                continue;
-                            }
-                            
-                            //code if it is an vertex or an edge
-                            if (aGraphElement is VertexModel) 
-                            {
-                                WriteVertex((VertexModel)aGraphElement, partitionWriter);
-                            }
-                            else
-                            {
-                                WriteEdge((EdgeModel)aGraphElement, partitionWriter);
-                            }
-                        }
-                
-                        if (partitionWriter != null) 
-                        {
-                            partitionWriter.Flush();
-                            partitionWriter.Close();
-                        }
-            
-                        if (partitionFile != null) 
-                        {
-                            partitionFile.Flush();
-                            partitionFile.Close();
-                        }
-                        
-                        return partitionFileName;
-
-                    },
-                delegate(String rangeFileStream)
-                    {
-                        lock (graphElementStreams)
-                        {
-                            graphElementStreams.Add(rangeFileStream);
-                        }
-                    });
-            
-            writer.WriteOptimized(graphElementStreams.Count);
-            foreach (var aFileStreamName in graphElementStreams) 
+            for (int i = 0; i < graphElementPartitions.Count; i++) 
             {
-                writer.WriteOptimized(aFileStreamName);    
+                graphElementSaver[i] = f.StartNew(() => SaveBunch(graphElementPartitions[i], graphElements, path));
             }
             
             #endregion
             
             #region indices
             
-            List<String> indexfileStreamNames = new List<String>();
-            Parallel.ForEach(
-                indices,
-                () => String.Empty,
-                (indexKV, loopstate, initialValue) =>
-                    {
-                        String indexFileName = path + "_index_" + indexKV.Key;
-                
-                        var indexFile = File.Create(indexFileName, Constants.BufferSize, FileOptions.SequentialScan);
-                        SerializationWriter indexWriter = new SerializationWriter(indexFile);
-                       
-                        indexKV.Value.Save(ref indexWriter);
-                
-                        if (indexWriter != null) 
-                        {
-                            indexWriter.Flush();
-                            indexWriter.Close();
-                        }
+            indexSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), indices.Count);
             
-                        if (indexFile != null) 
-                        {
-                            indexFile.Flush();
-                            indexFile.Close();
-                        }
-                        
-                        return indexFileName;
-
-                    },
-                delegate(String indexFileName)
-                    {
-                        lock (indexfileStreamNames)
-                        {
-                            indexfileStreamNames.Add(indexFileName);
-                        }
-                    });
-            
-            writer.WriteOptimized(indexfileStreamNames.Count);
-            foreach (var aIndexFileName in indexfileStreamNames) 
+            var counter = 0;
+            foreach(var aIndex in indices)
             {
-                writer.WriteOptimized(aIndexFileName);    
+                indexSaver[counter] = f.StartNew(() => SaveIndex(aIndex.Key, aIndex.Value, path));
+                counter++;
             }
             
             #endregion
+            
+            Task.WaitAll(graphElementSaver);   
+            Task.WaitAll(indexSaver);   
+            
+            writer.WriteOptimized(graphElementSaver.Length);
+            foreach (var aFileStreamName in graphElementSaver) 
+            {
+                writer.WriteOptimized(aFileStreamName.Result);    
+            }
+            
+            writer.WriteOptimized(indexSaver.Length);
+            foreach (var aIndexFileName in indexSaver) 
+            {
+                writer.WriteOptimized(aIndexFileName.Result);    
+            }
             
             if (writer != null) {
                 writer.Flush();
@@ -249,6 +181,96 @@ namespace Fallen8.API.Persistency
         
         #region private helper
 
+        private static String SaveIndex (string indexName, IIndex index, string path)
+        {
+            String indexFileName = path + "_index_" + indexName;
+                
+            var indexFile = File.Create(indexFileName, Constants.BufferSize, FileOptions.SequentialScan);
+            SerializationWriter indexWriter = new SerializationWriter(indexFile);
+            
+            index.Save(ref indexWriter);
+            
+            if (indexWriter != null) 
+            {
+                indexWriter.Flush();
+                indexWriter.Close();
+            }
+            
+            if (indexFile != null) 
+            {
+                indexFile.Flush();
+                indexFile.Close();
+            }
+            
+            return indexFileName;
+        }
+  
+        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, List<AGraphElement> graphElementsOfFallen8)
+        {
+            //if there is no savepoint file... do nothing
+            if (!File.Exists(graphElementBunchPath))
+            {
+                return null;
+            }
+            
+            var file = File.Open(graphElementBunchPath, FileMode.Open, FileAccess.Read);
+            var reader = new SerializationReader(file);
+            var result = new List<EdgeSneakPeak>();
+            var minimumId = reader.ReadOptimizedInt32();
+            var maximumId = reader.ReadOptimizedInt32() - 1;
+            var countOfElements = maximumId - minimumId;
+            
+            return result;
+        }
+        
+        private static String SaveBunch (Tuple<Int32, Int32> range, List<AGraphElement> graphElements, String pathToSavePoint)
+        {
+            String partitionFileName = pathToSavePoint + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
+            
+            //create file for range
+            var partitionFile = File.Create(partitionFileName, Constants.BufferSize, FileOptions.SequentialScan);
+            SerializationWriter partitionWriter = new SerializationWriter(partitionFile);
+            
+            partitionWriter.WriteOptimized(range.Item1);
+            partitionWriter.WriteOptimized(range.Item2);
+            
+            for (int i = range.Item1; i < range.Item2; i++) 
+            {
+                var aGraphElement = graphElements[i];
+            
+                //there can be nulls
+                if (aGraphElement == null) 
+                {
+                    partitionWriter.WriteObject (null);
+                    continue;
+                }
+                
+                //code if it is an vertex or an edge
+                if (aGraphElement is VertexModel) 
+                {
+                    WriteVertex((VertexModel)aGraphElement, partitionWriter);
+                }
+                else
+                {
+                    WriteEdge((EdgeModel)aGraphElement, partitionWriter);
+                }
+            }
+            
+            if (partitionWriter != null) 
+            {
+                partitionWriter.Flush();
+                partitionWriter.Close();
+            }
+            
+            if (partitionFile != null) 
+            {
+                partitionFile.Flush();
+                partitionFile.Close();
+            }
+            
+            return partitionFileName;
+        }
+
         private static void LoadGraphElements (List<AGraphElement> graphElementsOfFallen8, List<String> graphElementStreams)
         {
             //create some futures to load as much as possible in parallel
@@ -264,11 +286,12 @@ namespace Fallen8.API.Persistency
             Task.WaitAll(tasks);   
         }
 
-        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, List<AGraphElement> graphElementsOfFallen8)
+        public static List<Tuple<Int32, Int32>> CreatePartitions (List<AGraphElement> graphElements, int savePartitions)
         {
             return null;
+            
         }
-  
+
         /// <summary>
         /// Writes A graph element.
         /// </summary>
