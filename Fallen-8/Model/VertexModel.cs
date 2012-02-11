@@ -69,6 +69,36 @@ namespace Fallen8.API.Model
         {
         }
         
+        /// <summary>
+        /// Initializes a new instance of the VertexModel class.
+        /// For internal usage only
+        /// </summary>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        /// <param name='modificationDate'>
+        /// Modification date.
+        /// </param>
+        /// <param name='properties'>
+        /// Properties.
+        /// </param>
+        /// <param name='outEdges'>
+        /// Out edges.
+        /// </param>
+        /// <param name='incEdges'>
+        /// Inc edges.
+        /// </param>
+        internal VertexModel(Int32 id, DateTime creationDate, DateTime modificationDate, List<PropertyContainer> properties, List<OutEdgeContainer> outEdges, List<IncEdgeContainer> incEdges)
+            : base(id, creationDate, properties)
+        {
+            _outEdges = outEdges;
+            _inEdges = incEdges;
+            ModificationDate = modificationDate;
+        }
+        
         #endregion
         
         #region internal methods

@@ -79,6 +79,7 @@
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
+    <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

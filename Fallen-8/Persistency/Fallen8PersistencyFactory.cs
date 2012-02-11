@@ -256,7 +256,7 @@ namespace Fallen8.API.Persistency
         /// <param name='graphElementsOfFallen8'>
         /// Graph elements of Fallen-8.
         /// </param>
-        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, AGraphElement[] graphElementsOfFallen8)
+        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, AGraphElement[] graphElementsOfFallen8, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(graphElementBunchPath))
@@ -282,7 +282,7 @@ namespace Fallen8.API.Persistency
                     
                 case SerializedVertex: 
                     //vertex
-                    LoadVertex(reader, graphElementsOfFallen8, minimumId, maximumId);
+                    LoadVertex(reader, graphElementsOfFallen8, edgeTodo);
                     break;
                     
                 case SerializedNull:
@@ -372,10 +372,11 @@ namespace Fallen8.API.Persistency
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
             var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
             Task<List<EdgeSneakPeak>>[] tasks = (Task<List<EdgeSneakPeak>>[])Array.CreateInstance(typeof(Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
+            ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo = new ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>>();
             
             for (int i = 0; i < graphElementStreams.Count; i++)
             {
-                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElements));
+                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElements, edgeTodo));
             }
 
             Task.WaitAll(tasks);   
@@ -453,9 +454,134 @@ namespace Fallen8.API.Persistency
             }
         }
         
-        private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, int minimumId, int maximumId)
+        /// <summary>
+        /// Loads the vertex.
+        /// </summary>
+        /// <param name='reader'>
+        /// Reader.
+        /// </param>
+        /// <param name='graphElements'>
+        /// Graph elements.
+        /// </param>
+        /// <param name='edgeTodo'>
+        /// Edge todo.
+        /// </param>
+        private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
-            throw new NotImplementedException();
+            var id = reader.ReadOptimizedInt32();
+            var creationDate = reader.ReadOptimizedDateTime();
+            var modificationDate = reader.ReadOptimizedDateTime();
+            
+            #region properties
+            
+            List<PropertyContainer> properties = null;
+            var propertyCount = reader.ReadOptimizedInt32();
+            
+            if (propertyCount > 0) 
+            {
+                properties = new List<PropertyContainer>(propertyCount);
+                for (int i = 0; i < propertyCount; i++) 
+                {
+                    Int32 propertyIdentifier = reader.ReadOptimizedInt32();
+                    Object propertyValue = reader.ReadObject();
+                    
+                    properties.Add(new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue });   
+                }
+            }
+            
+            #endregion
+            
+            #region edges
+            
+            #region outgoing edges
+            
+            List<OutEdgeContainer> outEdgeProperties = null;
+            var outEdgeCount = reader.ReadOptimizedInt32();
+            
+            if (outEdgeCount > 0) 
+            {
+                outEdgeProperties = new List<OutEdgeContainer>(outEdgeCount);
+                for (int i = 0; i < outEdgeCount; i++) 
+                {
+                    var outEdgePropertyId = reader.ReadOptimizedInt32();
+                    var outEdgePropertyCount = reader.ReadOptimizedInt32();
+                    List<EdgeModel> outEdges = new List<EdgeModel>();
+                    for (int j = 0; j < outEdgePropertyCount; j++) 
+                    {
+                        var edgeId = reader.ReadOptimizedInt32();
+                        if (graphElements[edgeId] != null) 
+                        {
+                            outEdges.Add((EdgeModel)graphElements[edgeId]);
+                        }
+                        else 
+                        {
+                            var aEdgeTodo = new EdgeOnVertexToDo { VertexId = id, EdgePropertyId = outEdgePropertyId, IsIncomingEdge = false};
+                            
+                            edgeTodo.AddOrUpdate(
+                            edgeId, 
+                            new List<EdgeOnVertexToDo> 
+                            { 
+                                aEdgeTodo
+                            },
+                            (interestingId, todos) =>
+                            {
+                                todos.Add(aEdgeTodo);
+                                return todos;
+                            });
+                        }
+                    }
+                    outEdgeProperties.Add(new OutEdgeContainer { EdgePropertyId = outEdgePropertyId, EdgeProperty = outEdges});
+                }
+            }
+            
+            #endregion
+            
+            #region incoming edges
+            
+            List<IncEdgeContainer> incEdgeProperties = null;
+            var incEdgeCount = reader.ReadOptimizedInt32();
+            
+            if (incEdgeCount > 0) 
+            {
+                incEdgeProperties = new List<IncEdgeContainer>(incEdgeCount);
+                for (int i = 0; i < incEdgeCount; i++) 
+                {
+                    var incEdgePropertyId = reader.ReadOptimizedInt32();
+                    var incEdgePropertyCount = reader.ReadOptimizedInt32();
+                    List<EdgeModel> incEdges = new List<EdgeModel>();
+                    for (int j = 0; j < incEdgePropertyCount; j++) 
+                    {
+                        var edgeId = reader.ReadOptimizedInt32();
+                        if (graphElements[edgeId] != null) 
+                        {
+                            incEdges.Add((EdgeModel)graphElements[edgeId]);
+                        }
+                        else 
+                        {
+                            var aEdgeTodo = new EdgeOnVertexToDo { VertexId = id, EdgePropertyId = incEdgePropertyId, IsIncomingEdge = true};
+                            
+                            edgeTodo.AddOrUpdate(
+                            edgeId, 
+                            new List<EdgeOnVertexToDo> 
+                            { 
+                                aEdgeTodo
+                            },
+                            (interestingId, todos) =>
+                            {
+                                todos.Add(aEdgeTodo);
+                                return todos;
+                            });
+                        }
+                    }
+                    incEdgeProperties.Add(new IncEdgeContainer { EdgePropertyId = incEdgePropertyId, IncomingEdges = incEdges});
+                }
+            }
+            
+            #endregion
+            
+            #endregion
+            
+            graphElements[id] = new VertexModel(id, creationDate, modificationDate, properties, outEdgeProperties, incEdgeProperties);
         }
         
         /// <summary>
