@@ -84,7 +84,7 @@ namespace Fallen8.API.Persistency
             }
             
             LoadGraphElements(graphElements, graphElementStreams);
-            graphElementsOfFallen8 = new List<AGraphElement>(graphElements);
+            graphElementsOfFallen8 = new List<AGraphElement>(graphElements);//we'll see how much memory this action takes
             
             #endregion
             
@@ -378,12 +378,48 @@ namespace Fallen8.API.Persistency
             Task<List<EdgeSneakPeak>>[] tasks = (Task<List<EdgeSneakPeak>>[])Array.CreateInstance(typeof(Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
             ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo = new ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>>();
             
+            //create the major part of the graph elements
             for (int i = 0; i < graphElementStreams.Count; i++)
             {
                 tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElements, edgeTodo));
             }
-
-            Task.WaitAll(tasks);   
+            
+            f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks, finishedTasks =>
+            {
+                //add the remainign edges
+                Parallel.ForEach(finishedTasks, aFinishedTask =>
+                {
+                    foreach (var aSneakPeak in aFinishedTask.Result) 
+                    {
+                        graphElements[aSneakPeak.Id] = new EdgeModel(
+                            aSneakPeak.Id,
+                            aSneakPeak.CreationDate,
+                            aSneakPeak.ModificationDate,
+                            (VertexModel)graphElements[aSneakPeak.TargetVertexId],
+                            (VertexModel)graphElements[aSneakPeak.SourceVertexId],
+                            aSneakPeak.Properties);
+                    }    
+                });
+            }).ContinueWith(task =>
+            {
+                //add the remaining edges to vertices
+                Parallel.ForEach(edgeTodo, aKV =>
+                {
+                    var edge = (EdgeModel)graphElements[aKV.Key];
+                    foreach (var aTodo in aKV.Value) 
+                    {
+                        var interestingVertex = (VertexModel)graphElements[aTodo.VertexId];
+                        if (aTodo.IsIncomingEdge) 
+                        {
+                            interestingVertex.AddIncomingEdge(aTodo.EdgePropertyId, edge);    
+                        }
+                        else
+                        {
+                            interestingVertex.AddOutEdge(aTodo.EdgePropertyId, edge);
+                        }
+                    }
+                });
+            }).Wait();
         }
   
         /// <summary>
@@ -645,6 +681,18 @@ namespace Fallen8.API.Persistency
             #endregion
         }
 
+        /// <summary>
+        /// Loads the edge.
+        /// </summary>
+        /// <param name='reader'>
+        /// Reader.
+        /// </param>
+        /// <param name='graphElements'>
+        /// Graph elements.
+        /// </param>
+        /// <param name='sneakPeaks'>
+        /// Sneak peaks.
+        /// </param>
         private static void LoadEdge (SerializationReader reader, AGraphElement[] graphElements, List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadOptimizedInt32();
