@@ -256,7 +256,10 @@ namespace Fallen8.API.Persistency
         /// <param name='graphElementsOfFallen8'>
         /// Graph elements of Fallen-8.
         /// </param>
-        private static List<EdgeSneakPeak> LoadAGraphElementBunch (string graphElementBunchPath, AGraphElement[] graphElementsOfFallen8, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
+        private static List<EdgeSneakPeak> LoadAGraphElementBunch (
+            string graphElementBunchPath, 
+            AGraphElement[] graphElementsOfFallen8,
+            ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodoOnVertex)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(graphElementBunchPath))
@@ -278,11 +281,12 @@ namespace Fallen8.API.Persistency
                 
                 case SerializedEdge:
                     //edge
+                    LoadEdge(reader, graphElementsOfFallen8, result);
                     break;
                     
                 case SerializedVertex: 
                     //vertex
-                    LoadVertex(reader, graphElementsOfFallen8, edgeTodo);
+                    LoadVertex(reader, graphElementsOfFallen8, edgeTodoOnVertex);
                     break;
                     
                 case SerializedNull:
@@ -639,6 +643,47 @@ namespace Fallen8.API.Persistency
             }
             
             #endregion
+        }
+
+        private static void LoadEdge (SerializationReader reader, AGraphElement[] graphElements, List<EdgeSneakPeak> sneakPeaks)
+        {
+            var id = reader.ReadOptimizedInt32();
+            var creationDate = reader.ReadOptimizedDateTime();
+            var modificationDate = reader.ReadOptimizedDateTime();
+            
+            #region properties
+            
+            List<PropertyContainer> properties = null;
+            var propertyCount = reader.ReadOptimizedInt32();
+            
+            if (propertyCount > 0) 
+            {
+                properties = new List<PropertyContainer>(propertyCount);
+                for (int i = 0; i < propertyCount; i++) 
+                {
+                    Int32 propertyIdentifier = reader.ReadOptimizedInt32();
+                    Object propertyValue = reader.ReadObject();
+                    
+                    properties.Add(new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue });   
+                }
+            }
+            
+            #endregion
+            
+            var sourceVertexId = reader.ReadOptimizedInt32();
+            var targetVertexId = reader.ReadOptimizedInt32();
+            
+            var sourceVertex = graphElements[sourceVertexId];
+            var targetVertex = graphElements[targetVertexId];
+            
+            if (sourceVertex != null && targetVertex != null) 
+            {
+                graphElements[id] = new EdgeModel(id, creationDate, modificationDate, (VertexModel)targetVertex, (VertexModel)sourceVertex, properties);
+            }
+            else 
+            {
+                sneakPeaks.Add(new EdgeSneakPeak { CreationDate = creationDate, Id = id, ModificationDate = modificationDate, Properties = properties, SourceVertexId = sourceVertexId, TargetVertexId = targetVertexId});
+            }
         }
   
         /// <summary>

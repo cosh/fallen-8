@@ -61,6 +61,35 @@ namespace Fallen8.API.Model
             SourceVertex = sourceVertex;
         }
         
+        /// <summary>
+        /// Initializes a new instance of the EdgeModel class.
+        /// </summary>
+        /// <param name='id'>
+        /// Identifier.
+        /// </param>
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        /// <param name='modificationDate'>
+        /// Modification date.
+        /// </param>
+        /// <param name='targetVertex'>
+        /// Target vertex.
+        /// </param>
+        /// <param name='sourceVertex'>
+        /// Source vertex.
+        /// </param>
+        /// <param name='properties'>
+        /// Properties.
+        /// </param>
+        internal EdgeModel(Int32 id, DateTime creationDate, DateTime modificationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
+            : base(id, creationDate, properties)
+        {
+            TargetVertex = targetVertex;
+            SourceVertex = sourceVertex;
+            ModificationDate = modificationDate;
+        }
+        
         #endregion
         
         #region IEdgeModel implementation
