@@ -251,12 +251,12 @@ namespace Fallen8.API.Index
 
                 _idx = new Dictionary<IComparable, List<AGraphElement>>(keyCount);
 
-                for (int i = 0; i < keyCount; i++)
+                for (var i = 0; i < keyCount; i++)
                 {
                     var key = reader.ReadObject();
                     var value = new List<AGraphElement>();
                     var valueCount = reader.ReadOptimizedInt32();
-                    for (int j = 0; j < valueCount; j++)
+                    for (var j = 0; j < valueCount; j++)
                     {
                         var graphElementId = reader.ReadOptimizedInt32();
                         AGraphElement graphElement;

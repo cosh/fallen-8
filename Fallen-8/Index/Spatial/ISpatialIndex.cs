@@ -27,7 +27,6 @@
 using System;
 using System.Collections.ObjectModel;
 using Fallen8.API.Model;
-using System.Collections.Generic;
 
 namespace Fallen8.API.Index.Spatial
 {

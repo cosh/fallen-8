@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Linq;
+using System.Globalization;
 using System.Collections.Generic;
 using Fallen8.API.Model;
 using Fallen8.API.Index;
@@ -43,7 +43,7 @@ namespace Fallen8.API.Persistency
     public static class Fallen8PersistencyFactory
     {
         #region public methods
-  
+
         /// <summary>
         /// Load Fallen-8 from a save point
         /// </summary>
@@ -59,6 +59,7 @@ namespace Fallen8.API.Persistency
         /// <param name='indexFactoryOfFallen8'>
         /// Index factory of Fallen-8.
         /// </param>
+        /// <param name="fallen8">Fallen-8</param>
         public static void Load (string pathToSavePoint, ref int currentIdOfFallen8, ref List<AGraphElement> graphElementsOfFallen8, ref IFallen8IndexFactory indexFactoryOfFallen8, Fallen8 fallen8)
         {
             //if there is no savepoint file... do nothing
@@ -79,7 +80,7 @@ namespace Fallen8.API.Persistency
                 //initialize the list of graph elements
                 var graphElements = new AGraphElement[currentIdOfFallen8];
                 var graphElementStreams = new List<String>();
-                for (int i = 0; i < reader.ReadOptimizedInt32(); i++)
+                for (var i = 0; i < reader.ReadOptimizedInt32(); i++)
                 {
                     graphElementStreams.Add(reader.ReadOptimizedString());
                 }
@@ -92,7 +93,7 @@ namespace Fallen8.API.Persistency
                 #region indexe
 
                 var indexStreams = new List<String>();
-                for (int i = 0; i < reader.ReadOptimizedInt32(); i++)
+                for (var i = 0; i < reader.ReadOptimizedInt32(); i++)
                 {
                     indexStreams.Add(reader.ReadOptimizedString());
                 }
@@ -102,10 +103,11 @@ namespace Fallen8.API.Persistency
                 #endregion
             }
         }
-        
+
         /// <summary>
         /// Save the specified graphElements, indices and pathToSavePoint.
         /// </summary>
+        /// <param name="currentId">The current graph element id</param>
         /// <param name='graphElements'>
         /// Graph elements.
         /// </param>
@@ -124,7 +126,7 @@ namespace Fallen8.API.Persistency
             if (File.Exists(path))
             {
                 //the newer save gets an timestamp
-                path = path + DateTime.Now.ToBinary().ToString();
+                path = path + DateTime.Now.ToBinary().ToString(CultureInfo.InvariantCulture);
             }
 
             using (var file = File.Create(path, Constants.BufferSize, FileOptions.SequentialScan))
@@ -134,8 +136,6 @@ namespace Fallen8.API.Persistency
                 //create some futures to save as much as possible in parallel
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
                 var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
-                Task<String>[] graphElementSaver;
-                Task<String>[] indexSaver;
 
                 //the maximum id
                 writer.WriteOptimized(currentId);
@@ -143,9 +143,9 @@ namespace Fallen8.API.Persistency
                 #region graph elements
 
                 var graphElementPartitions = CreatePartitions(graphElements.Count, savePartitions);
-                graphElementSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), graphElementPartitions.Count);
+                var graphElementSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), graphElementPartitions.Count);
 
-                for (int i = 0; i < graphElementPartitions.Count; i++)
+                for (var i = 0; i < graphElementPartitions.Count; i++)
                 {
                     graphElementSaver[i] = f.StartNew(() => SaveBunch(graphElementPartitions[i], graphElements, path));
                 }
@@ -154,7 +154,7 @@ namespace Fallen8.API.Persistency
 
                 #region indices
 
-                indexSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), indices.Count);
+                var indexSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), indices.Count);
 
                 var counter = 0;
                 foreach (var aIndex in indices)
@@ -164,9 +164,6 @@ namespace Fallen8.API.Persistency
                 }
 
                 #endregion
-
-                Task.WaitAll(graphElementSaver);
-                Task.WaitAll(indexSaver);
 
                 writer.WriteOptimized(graphElementSaver.Length);
                 foreach (var aFileStreamName in graphElementSaver)
@@ -221,7 +218,7 @@ namespace Fallen8.API.Persistency
         /// </param>
         private static String SaveIndex (string indexName, IIndex index, string path)
         {
-            String indexFileName = path + "_index_" + indexName;
+            var indexFileName = path + "_index_" + indexName;
 
             using (var indexFile = File.Create(indexFileName, Constants.BufferSize, FileOptions.SequentialScan))
             {
@@ -237,7 +234,7 @@ namespace Fallen8.API.Persistency
 
             return indexFileName;
         }
-  
+
         /// <summary>
         /// Loads a graph element bunch.
         /// </summary>
@@ -250,6 +247,7 @@ namespace Fallen8.API.Persistency
         /// <param name='graphElementsOfFallen8'>
         /// Graph elements of Fallen-8.
         /// </param>
+        /// <param name="edgeTodoOnVertex">The edges that have to be added to this vertex</param>
         private static List<EdgeSneakPeak> LoadAGraphElementBunch (
             string graphElementBunchPath, 
             AGraphElement[] graphElementsOfFallen8,
@@ -270,7 +268,7 @@ namespace Fallen8.API.Persistency
                 var maximumId = reader.ReadOptimizedInt32() - 1;
                 var countOfElements = maximumId - minimumId;
 
-                for (int i = 0; i < countOfElements; i++)
+                for (var i = 0; i < countOfElements; i++)
                 {
                     var kind = reader.ReadOptimizedInt32();
                     switch (kind)
@@ -302,10 +300,10 @@ namespace Fallen8.API.Persistency
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
             var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
-            Task[] tasks = (Task[])Array.CreateInstance(typeof(Task), indexStreams.Count);
+            var tasks = (Task[])Array.CreateInstance(typeof(Task), indexStreams.Count);
             
             //load the indices
-            for (int i = 0; i < indexStreams.Count; i++)
+            for (var i = 0; i < indexStreams.Count; i++)
             {
                 tasks[i] = f.StartNew(() => LoadAnIndex(indexStreams[i], fallen8, indexFactory));
             }
@@ -347,7 +345,7 @@ namespace Fallen8.API.Persistency
         /// </param>
         private static String SaveBunch (Tuple<Int32, Int32> range, List<AGraphElement> graphElements, String pathToSavePoint)
         {
-            String partitionFileName = pathToSavePoint + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
+            var partitionFileName = pathToSavePoint + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
 
             using (var partitionFile = File.Create(partitionFileName, Constants.BufferSize, FileOptions.SequentialScan))
             {
@@ -356,7 +354,7 @@ namespace Fallen8.API.Persistency
                 partitionWriter.WriteOptimized(range.Item1);
                 partitionWriter.WriteOptimized(range.Item2);
 
-                for (int i = range.Item1; i < range.Item2; i++)
+                for (var i = range.Item1; i < range.Item2; i++)
                 {
                     var aGraphElement = graphElements[i];
 
@@ -394,56 +392,55 @@ namespace Fallen8.API.Persistency
         /// <param name='graphElementStreams'>
         /// Graph element streams.
         /// </param>
-        private static void LoadGraphElements (AGraphElement[] graphElements, List<String> graphElementStreams)
+        private static void LoadGraphElements(AGraphElement[] graphElements, List<String> graphElementStreams)
         {
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
             var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
-            Task<List<EdgeSneakPeak>>[] tasks = (Task<List<EdgeSneakPeak>>[])Array.CreateInstance(typeof(Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
-            ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo = new ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>>();
-            
+            var tasks = (Task<List<EdgeSneakPeak>>[])Array.CreateInstance(typeof(Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
+            var edgeTodo = new ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>>();
+
             //create the major part of the graph elements
-            for (int i = 0; i < graphElementStreams.Count; i++)
+            for (var i = 0; i < graphElementStreams.Count; i++)
             {
                 tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElements, edgeTodo));
             }
-            
-            f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks, finishedTasks =>
-            {
-                //add the remainign edges
-                Parallel.ForEach(finishedTasks, aFinishedTask =>
-                {
-                    foreach (var aSneakPeak in aFinishedTask.Result) 
-                    {
-                        graphElements[aSneakPeak.Id] = new EdgeModel(
-                            aSneakPeak.Id,
-                            aSneakPeak.CreationDate,
-                            aSneakPeak.ModificationDate,
-                            (VertexModel)graphElements[aSneakPeak.TargetVertexId],
-                            (VertexModel)graphElements[aSneakPeak.SourceVertexId],
-                            aSneakPeak.Properties);
-                    }    
-                });
-            }).ContinueWith(task =>
-            {
-                //add the remaining edges to vertices
-                Parallel.ForEach(edgeTodo, aKV =>
-                {
-                    var edge = (EdgeModel)graphElements[aKV.Key];
-                    foreach (var aTodo in aKV.Value) 
-                    {
-                        var interestingVertex = (VertexModel)graphElements[aTodo.VertexId];
-                        if (aTodo.IsIncomingEdge) 
+
+            f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks,
+                finishedTasks => Parallel.ForEach(finishedTasks, 
+                    aFinishedTask =>
                         {
-                            interestingVertex.AddIncomingEdge(aTodo.EdgePropertyId, edge);    
-                        }
-                        else
-                        {
-                            interestingVertex.AddOutEdge(aTodo.EdgePropertyId, edge);
-                        }
-                    }
-                });
-            }).Wait();
+                            foreach (var aSneakPeak in aFinishedTask.Result)
+                            {
+                                graphElements[aSneakPeak.Id] = new EdgeModel(
+                                    aSneakPeak.Id,
+                                    aSneakPeak.CreationDate,
+                                    aSneakPeak.ModificationDate,
+                                    (VertexModel)graphElements[aSneakPeak.TargetVertexId],
+                                    (VertexModel)graphElements[aSneakPeak.SourceVertexId],
+                                    aSneakPeak.Properties);
+                            }
+                        })).ContinueWith(
+                        task =>
+                            {
+                                //add the remaining edges to vertices
+                                Parallel.ForEach(edgeTodo, aKV =>
+                                {
+                                    var edge = (EdgeModel)graphElements[aKV.Key];
+                                    foreach (var aTodo in aKV.Value)
+                                    {
+                                        var interestingVertex = (VertexModel)graphElements[aTodo.VertexId];
+                                        if (aTodo.IsIncomingEdge)
+                                        {
+                                            interestingVertex.AddIncomingEdge(aTodo.EdgePropertyId, edge);
+                                        }
+                                        else
+                                        {
+                                            interestingVertex.AddOutEdge(aTodo.EdgePropertyId, edge);
+                                        }
+                                    }
+                                });
+                            }).Wait();
         }
   
         /// <summary>
@@ -458,40 +455,38 @@ namespace Fallen8.API.Persistency
         /// <param name='savePartitions'>
         /// Save partitions.
         /// </param>
-        private static List<Tuple<Int32, Int32>> CreatePartitions (int totalCount, int savePartitions)
+        private static List<Tuple<Int32, Int32>> CreatePartitions(int totalCount, int savePartitions)
         {
             var result = new List<Tuple<Int32, Int32>>();
-            
-            if (totalCount < savePartitions) 
+
+            if (totalCount < savePartitions)
             {
-                for (int i = 0; i < totalCount; i++) 
+                for (var i = 0; i < totalCount; i++)
                 {
                     result.Add(new Tuple<Int32, Int32>(i, i + 1));
                 }
-                
+
                 return result;
             }
-            else 
+
+            var size = totalCount/savePartitions;
+            for (var i = 0; i < savePartitions; i++)
             {
-                var size = totalCount / savePartitions;
-                for (int i = 0; i < savePartitions; i++) 
+                var minimum = i*size;
+
+                if (minimum < totalCount)
                 {
-                    var minimum = i*size;
-                    
-                    if (minimum < totalCount) 
+                    var maximum = i*size + size;
+                    if (maximum > totalCount)
                     {
-                        var maximum = i*size + size;
-                        if (maximum > totalCount) 
-                        {
-                            maximum = totalCount;    
-                        }
-                    
-                        result.Add(new Tuple<Int32, Int32>(i * size, i * size + size));      
+                        maximum = totalCount;
                     }
+
+                    result.Add(new Tuple<Int32, Int32>(minimum, maximum));
                 }
-                
-                return result;
             }
+
+            return result;
         }
 
         /// <summary>
@@ -509,7 +504,7 @@ namespace Fallen8.API.Persistency
             writer.WriteOptimized(graphElement.CreationDate);
             writer.WriteOptimized(graphElement.ModificationDate);
             
-            List<PropertyContainer> properties = new List<PropertyContainer>(graphElement.GetAllProperties());
+            var properties = new List<PropertyContainer>(graphElement.GetAllProperties());
             writer.WriteOptimized(properties.Count);
             foreach (var aProperty in properties) 
             {
@@ -544,10 +539,10 @@ namespace Fallen8.API.Persistency
             if (propertyCount > 0) 
             {
                 properties = new List<PropertyContainer>(propertyCount);
-                for (int i = 0; i < propertyCount; i++) 
+                for (var i = 0; i < propertyCount; i++) 
                 {
-                    Int32 propertyIdentifier = reader.ReadOptimizedInt32();
-                    Object propertyValue = reader.ReadObject();
+                    var propertyIdentifier = reader.ReadOptimizedInt32();
+                    var propertyValue = reader.ReadObject();
                     
                     properties.Add(new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue });   
                 }
@@ -565,12 +560,12 @@ namespace Fallen8.API.Persistency
             if (outEdgeCount > 0) 
             {
                 outEdgeProperties = new List<OutEdgeContainer>(outEdgeCount);
-                for (int i = 0; i < outEdgeCount; i++) 
+                for (var i = 0; i < outEdgeCount; i++) 
                 {
                     var outEdgePropertyId = reader.ReadOptimizedInt32();
                     var outEdgePropertyCount = reader.ReadOptimizedInt32();
-                    List<EdgeModel> outEdges = new List<EdgeModel>();
-                    for (int j = 0; j < outEdgePropertyCount; j++) 
+                    var outEdges = new List<EdgeModel>();
+                    for (var j = 0; j < outEdgePropertyCount; j++) 
                     {
                         var edgeId = reader.ReadOptimizedInt32();
                         if (graphElements[edgeId] != null) 
@@ -608,12 +603,12 @@ namespace Fallen8.API.Persistency
             if (incEdgeCount > 0) 
             {
                 incEdgeProperties = new List<IncEdgeContainer>(incEdgeCount);
-                for (int i = 0; i < incEdgeCount; i++) 
+                for (var i = 0; i < incEdgeCount; i++) 
                 {
                     var incEdgePropertyId = reader.ReadOptimizedInt32();
                     var incEdgePropertyCount = reader.ReadOptimizedInt32();
-                    List<EdgeModel> incEdges = new List<EdgeModel>();
-                    for (int j = 0; j < incEdgePropertyCount; j++) 
+                    var incEdges = new List<EdgeModel>();
+                    for (var j = 0; j < incEdgePropertyCount; j++) 
                     {
                         var edgeId = reader.ReadOptimizedInt32();
                         if (graphElements[edgeId] != null) 
@@ -731,10 +726,10 @@ namespace Fallen8.API.Persistency
             if (propertyCount > 0) 
             {
                 properties = new List<PropertyContainer>(propertyCount);
-                for (int i = 0; i < propertyCount; i++) 
+                for (var i = 0; i < propertyCount; i++) 
                 {
-                    Int32 propertyIdentifier = reader.ReadOptimizedInt32();
-                    Object propertyValue = reader.ReadObject();
+                    var propertyIdentifier = reader.ReadOptimizedInt32();
+                    var propertyValue = reader.ReadObject();
                     
                     properties.Add(new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue });   
                 }

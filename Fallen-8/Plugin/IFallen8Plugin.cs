@@ -92,14 +92,17 @@ namespace Fallen8.API.Plugin
         /// Writer.
         /// </param>
         void Save(SerializationWriter writer);
-        
-        /// <summary>
-        /// Open the plugin.
-        /// </summary>
-        /// <param name='reader'>
-        /// Reader.
-        /// </param>
-        void Open(SerializationReader reader, Fallen8 fallen8);
+
+	    /// <summary>
+	    /// Open the plugin.
+	    /// </summary>
+	    /// <param name='reader'>
+	    /// Reader.
+	    /// </param>
+	    /// <param name="fallen8">
+	    /// Fallen-8 
+	    /// </param>
+	    void Open(SerializationReader reader, Fallen8 fallen8);
 	}
 }
 

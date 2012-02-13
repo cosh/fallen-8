@@ -35,8 +35,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Collections.ObjectModel;
 using Fallen8.API.Index.Range;
-using System.IO;
-using Framework.Serialization;
 using Fallen8.API.Persistency;
 
 namespace Fallen8.API

@@ -30,7 +30,6 @@ using Fallen8.API.Expression;
 using Fallen8.API.Index.Fulltext;
 using Fallen8.API.Index.Spatial;
 using Fallen8.API.Model;
-using System.IO;
 
 namespace Fallen8.API
 {

@@ -50,7 +50,7 @@ namespace Fallen8.API.Helper
         /// <value>
         /// The properties.
         /// </value>
-        public List<PropertyContainer> Properties;
+        public readonly List<PropertyContainer> Properties;
 
         /// <summary>
         /// Gets or sets the target vertex identifier.
@@ -58,7 +58,7 @@ namespace Fallen8.API.Helper
         /// <value>
         /// The target vertex identifier.
         /// </value>
-        public Int32 TargetVertexId;
+        public readonly Int32 TargetVertexId;
         
         #endregion
         

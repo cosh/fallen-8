@@ -48,8 +48,8 @@ namespace Fallen8.API.Model
         /// <param name='targetVertex'>
         /// Target vertex.
         /// </param>
-        /// <param name='sourceEdgeProperty'>
-        /// Source edge property.
+        /// <param name='sourceVertex'>
+        /// Source vertex.
         /// </param>
         /// <param name='properties'>
         /// Properties.

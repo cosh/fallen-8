@@ -124,7 +124,7 @@ namespace Fallen8.API.Model
                     _outEdges = new List<OutEdgeContainer>();
                 }
     
-                Boolean foundSth = false;
+                var foundSth = false;
                 
                 foreach(var aEdgeProperty in _outEdges)
                 {
@@ -195,7 +195,7 @@ namespace Fallen8.API.Model
                     _inEdges = new List<IncEdgeContainer>();
                 }
     
-                Boolean foundSth = false;
+                var foundSth = false;
                 
                 foreach(var aIncomingEdge in _inEdges)
                 {
@@ -415,7 +415,7 @@ namespace Fallen8.API.Model
             if (ReadResource())
             {
                 result = null;
-                Boolean foundSth = false;
+                var foundSth = false;
                 
                 if (_inEdges != null)
                 {

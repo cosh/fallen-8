@@ -35,7 +35,7 @@ namespace Fallen8.API.Helper
         /// <summary>
         /// The size of the file buffer when reading or writing Fallen-8 from a file stream.
         /// </summary>
-        public static int BufferSize = 104857600;
+        public const int BufferSize = 104857600;
     }
 }
 

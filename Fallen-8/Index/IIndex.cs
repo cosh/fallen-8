@@ -28,7 +28,6 @@ using System.Collections.ObjectModel;
 using Fallen8.API.Model;
 using Fallen8.API.Plugin;
 using System.Collections.Generic;
-using Framework.Serialization;
 
 namespace Fallen8.API.Index
 {

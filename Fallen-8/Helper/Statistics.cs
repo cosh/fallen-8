@@ -78,7 +78,7 @@ namespace Fallen8.API.Helper
                 {
                     return numbers.OrderBy(_ => _).Skip(numbers.Count() / 2 - 1).Take(2).Sum() / 2;
                 }
-                return numbers.OrderBy(_ => _).ElementAt((int)Math.Floor(d: (decimal)(numbers.Count() / 2)));
+                return numbers.OrderBy(_ => _).ElementAt(Convert.ToInt32(Math.Floor((Convert.ToDouble(numbers.Count()) / 2))));
             }
 
             throw new ArgumentException("Numbers are null or 0", "numbers");

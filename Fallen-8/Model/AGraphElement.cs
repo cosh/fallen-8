@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Fallen8.API.Helper;
 using Fallen8.API.Error;
@@ -57,7 +56,7 @@ namespace Fallen8.API.Model
         /// <summary>
         /// The properties.
         /// </summary>
-        protected List<PropertyContainer> Properties;
+        private List<PropertyContainer> _properties;
   
         #endregion
         
@@ -80,7 +79,7 @@ namespace Fallen8.API.Model
             Id = id;
             CreationDate = creationDate;
             ModificationDate = creationDate;
-            Properties = properties;
+            _properties = properties;
         }
         
         #endregion
@@ -97,9 +96,9 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
-                if (Properties != null)
+                if (_properties != null)
                 {
-                    foreach(var aProperty in Properties)
+                    foreach(var aProperty in _properties)
                     {
                         if (aProperty.Value != null) 
                         {
@@ -127,9 +126,7 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
-                var foundsth = false;
-                
-                foreach (var aPropertyContainer in Properties) 
+                foreach (var aPropertyContainer in _properties) 
                 {
                     if (aPropertyContainer.Value != null && aPropertyContainer.PropertyId == propertyId) 
                     {
@@ -144,8 +141,8 @@ namespace Fallen8.API.Model
                 result = default(TProperty);
                 
                 FinishReadResource();
-                
-                return foundsth;
+
+                return false;
             }
 
             throw new CollisionException();
@@ -173,11 +170,11 @@ namespace Fallen8.API.Model
                 var foundProperty = false;
                 var idx = 0;
                 
-                if (Properties != null)
+                if (_properties != null)
                 {
-                    for (int i = 0; i < Properties.Count; i++)
+                    for (var i = 0; i < _properties.Count; i++)
                     {
-                        if (Properties[i].PropertyId == propertyId) 
+                        if (_properties[i].PropertyId == propertyId) 
                         {
                             foundProperty = true;
                             idx = i;
@@ -187,16 +184,16 @@ namespace Fallen8.API.Model
 
                     if (!foundProperty) 
                     {
-                        Properties.Add(new PropertyContainer { PropertyId = propertyId, Value = property});
+                        _properties.Add(new PropertyContainer { PropertyId = propertyId, Value = property});
                     }
                     else
                     {
-                        Properties[idx] = new PropertyContainer {PropertyId = propertyId, Value = property};
+                        _properties[idx] = new PropertyContainer {PropertyId = propertyId, Value = property};
                     }
                 }
                 else 
                 {
-                    Properties = new List<PropertyContainer> { new PropertyContainer { PropertyId = propertyId, Value = property}};     
+                    _properties = new List<PropertyContainer> { new PropertyContainer { PropertyId = propertyId, Value = property}};     
                 }
                 
                 //set the modificationdate
@@ -228,13 +225,13 @@ namespace Fallen8.API.Model
             {
                 var removedSomething = false;
 
-                if (Properties != null)
+                if (_properties != null)
                 {
-                    int toBeRemovedIdx = 0;
+                    var toBeRemovedIdx = 0;
                     
-                    for (int i = 0; i < Properties.Count; i++) 
+                    for (var i = 0; i < _properties.Count; i++) 
                     {
-                        if (Properties[i].PropertyId == propertyId) 
+                        if (_properties[i].PropertyId == propertyId) 
                         {
                             toBeRemovedIdx = i;
                             removedSomething = true;
@@ -244,7 +241,7 @@ namespace Fallen8.API.Model
                     
                     if (removedSomething)
                     {
-                        Properties.RemoveAt(toBeRemovedIdx);
+                        _properties.RemoveAt(toBeRemovedIdx);
                         
                         //set the modificationdate
                         ModificationDate = DateTime.Now;
