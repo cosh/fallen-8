@@ -145,9 +145,10 @@ namespace Fallen8.API.Persistency
                 var graphElementPartitions = CreatePartitions(graphElements.Count, savePartitions);
                 var graphElementSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), graphElementPartitions.Count);
 
-                for (var i = 0; i < graphElementPartitions.Count; i++)
+                for (int i = 0; i < graphElementPartitions.Count; i++)
                 {
-                    graphElementSaver[i] = f.StartNew(() => SaveBunch(graphElementPartitions[i], graphElements, path));
+                    var partition = graphElementPartitions[i];
+                    graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, path));
                 }
 
                 #endregion
@@ -159,7 +160,10 @@ namespace Fallen8.API.Persistency
                 var counter = 0;
                 foreach (var aIndex in indices)
                 {
-                    indexSaver[counter] = f.StartNew(() => SaveIndex(aIndex.Key, aIndex.Value, path));
+                    var indexName = aIndex.Key;
+                    var index = aIndex.Value;
+
+                    indexSaver[counter] = f.StartNew(() => SaveIndex(indexName, index, path));
                     counter++;
                 }
 
@@ -305,7 +309,8 @@ namespace Fallen8.API.Persistency
             //load the indices
             for (var i = 0; i < indexStreams.Count; i++)
             {
-                tasks[i] = f.StartNew(() => LoadAnIndex(indexStreams[i], fallen8, indexFactory));
+                var indexStreamLocation = indexStreams[i];
+                tasks[i] = f.StartNew(() => LoadAnIndex(indexStreamLocation, fallen8, indexFactory));
             }
         }
 
@@ -403,7 +408,8 @@ namespace Fallen8.API.Persistency
             //create the major part of the graph elements
             for (var i = 0; i < graphElementStreams.Count; i++)
             {
-                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(graphElementStreams[i], graphElements, edgeTodo));
+                var streamLocation = graphElementStreams[i];
+                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(streamLocation, graphElements, edgeTodo));
             }
 
             f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks,
@@ -501,8 +507,8 @@ namespace Fallen8.API.Persistency
         private static void WriteAGraphElement (AGraphElement graphElement, SerializationWriter writer)
         {
             writer.WriteOptimized(graphElement.Id);
-            writer.WriteOptimized(graphElement.CreationDate);
-            writer.WriteOptimized(graphElement.ModificationDate);
+            writer.Write(graphElement.CreationDate);
+            writer.Write(graphElement.ModificationDate);
             
             var properties = new List<PropertyContainer>(graphElement.GetAllProperties());
             writer.WriteOptimized(properties.Count);
@@ -528,8 +534,8 @@ namespace Fallen8.API.Persistency
         private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadOptimizedDateTime();
-            var modificationDate = reader.ReadOptimizedDateTime();
+            var creationDate = reader.ReadDateTime();
+            var modificationDate = reader.ReadDateTime();
             
             #region properties
             
@@ -715,8 +721,8 @@ namespace Fallen8.API.Persistency
         private static void LoadEdge (SerializationReader reader, AGraphElement[] graphElements, List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadOptimizedDateTime();
-            var modificationDate = reader.ReadOptimizedDateTime();
+            var creationDate = reader.ReadDateTime();
+            var modificationDate = reader.ReadDateTime();
             
             #region properties
             
