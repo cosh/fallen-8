@@ -54,7 +54,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public EdgeModel(Int32 id, DateTime creationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
+        public EdgeModel(Int32 id, Int64 creationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
             : base(id, creationDate, properties)
         {
             TargetVertex = targetVertex;
@@ -82,7 +82,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        internal EdgeModel(Int32 id, DateTime creationDate, DateTime modificationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
+        internal EdgeModel(Int32 id, Int64 creationDate, Int64 modificationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
             : base(id, creationDate, properties)
         {
             TargetVertex = targetVertex;

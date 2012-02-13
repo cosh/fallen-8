@@ -36,14 +36,15 @@ namespace Fallen8.API
 	public interface IFallen8Write
 	{
 		#region create
-		
-		/// <summary>
-		/// Creates a vertex.
-		/// </summary>
-		/// <returns>
-		/// The vertex model.
-		/// </returns>
-        VertexModel CreateVertex(DateTime creationDate, List<PropertyContainer> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null);
+
+        /// <summary>
+        /// Creates a vertex
+        /// </summary>
+        /// <param name="creationDate">The DateTime.ToBinary() representation of the creation date</param>
+        /// <param name="properties">The properties.</param>
+        /// <param name="edges">The edges</param>
+        /// <returns>The created vertex</returns>
+        VertexModel CreateVertex(Int64 creationDate, List<PropertyContainer> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null);
 		
 		/// <summary>
 		/// Creates an edge.

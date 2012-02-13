@@ -42,12 +42,12 @@ namespace Fallen8.API.Persistency
         /// <summary>
         /// The creation date.
         /// </summary>
-        public DateTime CreationDate;
+        public Int64 CreationDate;
         
         /// <summary>
         /// The modification date.
         /// </summary>
-        public DateTime ModificationDate;
+        public Int64 ModificationDate;
         
         /// <summary>
         /// The properties.

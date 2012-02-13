@@ -40,9 +40,9 @@ namespace Fallen8.API.Helper
         /// Gets or sets the creation date.
         /// </summary>
         /// <value>
-        /// The creation date.
+        /// The DateTime.ToBinary representation of the creation date.
         /// </value>
-        public DateTime CreationDate;
+        public Int64 CreationDate;
 
         /// <summary>
         /// Gets or sets the properties.
@@ -71,10 +71,10 @@ namespace Fallen8.API.Helper
 	    /// Target vertex.
 	    /// </param>
 	    /// <param name='creationDate'>
-	    /// Creation date.
+	    /// Creation date as DateTime.ToBinary().
 	    /// </param>
 	    /// <param name="properties">Properties</param>
-	    public EdgeModelDefinition(Int32 targetVertex, DateTime creationDate, List<PropertyContainer> properties = null)
+	    public EdgeModelDefinition(Int32 targetVertex, Int64 creationDate, List<PropertyContainer> properties = null)
         {
             TargetVertexId = targetVertex;
             CreationDate = creationDate;

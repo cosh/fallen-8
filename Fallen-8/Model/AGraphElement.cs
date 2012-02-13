@@ -46,12 +46,12 @@ namespace Fallen8.API.Model
         /// <summary>
         /// The creation date.
         /// </summary>
-        public readonly DateTime CreationDate;
+        public readonly Int64 CreationDate;
         
         /// <summary>
         /// The modification date.
         /// </summary>
-        public DateTime ModificationDate;
+        public Int64 ModificationDate;
         
         /// <summary>
         /// The properties.
@@ -74,7 +74,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        protected AGraphElement(Int32 id, DateTime creationDate, List<PropertyContainer> properties)
+        protected AGraphElement(Int32 id, Int64 creationDate, List<PropertyContainer> properties)
         {
             Id = id;
             CreationDate = creationDate;
@@ -197,7 +197,7 @@ namespace Fallen8.API.Model
                 }
                 
                 //set the modificationdate
-                ModificationDate = DateTime.Now;
+                ModificationDate = DateTime.Now.ToBinary();
                 
                 FinishWriteResource();
 
@@ -244,7 +244,7 @@ namespace Fallen8.API.Model
                         _properties.RemoveAt(toBeRemovedIdx);
                         
                         //set the modificationdate
-                        ModificationDate = DateTime.Now;
+                        ModificationDate = DateTime.Now.ToBinary();
                     }
                 }
                 FinishWriteResource();

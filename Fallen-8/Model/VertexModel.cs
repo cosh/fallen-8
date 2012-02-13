@@ -64,7 +64,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public VertexModel(Int32 id, DateTime creationDate, List<PropertyContainer> properties)
+        public VertexModel(Int32 id, Int64 creationDate, List<PropertyContainer> properties)
             : base(id, creationDate, properties)
         {
         }
@@ -91,7 +91,7 @@ namespace Fallen8.API.Model
         /// <param name='incEdges'>
         /// Inc edges.
         /// </param>
-        internal VertexModel(Int32 id, DateTime creationDate, DateTime modificationDate, List<PropertyContainer> properties, List<OutEdgeContainer> outEdges, List<IncEdgeContainer> incEdges)
+        internal VertexModel(Int32 id, Int64 creationDate, Int64 modificationDate, List<PropertyContainer> properties, List<OutEdgeContainer> outEdges, List<IncEdgeContainer> incEdges)
             : base(id, creationDate, properties)
         {
             _outEdges = outEdges;

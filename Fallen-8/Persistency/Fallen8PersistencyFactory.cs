@@ -475,22 +475,14 @@ namespace Fallen8.API.Persistency
                 return result;
             }
 
-            var size = totalCount/savePartitions;
+            var size = (totalCount/savePartitions);
+
             for (var i = 0; i < savePartitions; i++)
             {
-                var minimum = i*size;
-
-                if (minimum < totalCount)
-                {
-                    var maximum = i*size + size;
-                    if (maximum > totalCount)
-                    {
-                        maximum = totalCount;
-                    }
-
-                    result.Add(new Tuple<Int32, Int32>(minimum, maximum));
-                }
+                result.Add(new Tuple<int, int>(i * size, (i * size) + size));
             }
+
+            result[savePartitions - 1] = new Tuple<int, int>(result[savePartitions - 1].Item1, totalCount);
 
             return result;
         }
@@ -534,8 +526,8 @@ namespace Fallen8.API.Persistency
         private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadDateTime();
-            var modificationDate = reader.ReadDateTime();
+            var creationDate = reader.ReadInt64();
+            var modificationDate = reader.ReadInt64();
             
             #region properties
             
@@ -721,8 +713,8 @@ namespace Fallen8.API.Persistency
         private static void LoadEdge (SerializationReader reader, AGraphElement[] graphElements, List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadDateTime();
-            var modificationDate = reader.ReadDateTime();
+            var creationDate = reader.ReadInt64();
+            var modificationDate = reader.ReadInt64();
             
             #region properties
             
