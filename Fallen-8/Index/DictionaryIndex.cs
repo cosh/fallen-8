@@ -70,29 +70,6 @@ namespace Fallen8.API.Index
         
         #region IIndex implementation
         
-        public void Save(ref SerializationWriter writer)
-        {
-            _lock.EnterReadLock();
-            try
-            {
-                writer.WriteOptimized(0);//parameter
-                writer.WriteOptimized(_idx.Count);
-                foreach (var aKV in _idx) 
-                {
-                    writer.WriteObject(aKV.Key);
-                    writer.WriteOptimized(aKV.Value.Count);
-                    foreach (var aItem in aKV.Value) 
-                    {
-                        writer.WriteOptimized(aItem.Id);
-                    }
-                }
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-        }
-        
         public Int32 CountOfKeys()
         {
             _lock.EnterReadLock();
@@ -239,6 +216,65 @@ namespace Fallen8.API.Index
         #endregion
 
         #region IFallen8Plugin implementation
+
+        public void Save(SerializationWriter writer)
+        {
+            _lock.EnterReadLock();
+            try
+            {
+                writer.WriteOptimized(0);//parameter
+                writer.WriteOptimized(_idx.Count);
+                foreach (var aKV in _idx)
+                {
+                    writer.WriteObject(aKV.Key);
+                    writer.WriteOptimized(aKV.Value.Count);
+                    foreach (var aItem in aKV.Value)
+                    {
+                        writer.WriteOptimized(aItem.Id);
+                    }
+                }
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+
+        public void Open(SerializationReader reader, Fallen8 fallen8)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                reader.ReadOptimizedInt32();//parameter
+
+                var keyCount = reader.ReadOptimizedInt32();
+
+                _idx = new Dictionary<IComparable, List<AGraphElement>>(keyCount);
+
+                for (int i = 0; i < keyCount; i++)
+                {
+                    var key = reader.ReadObject();
+                    var value = new List<AGraphElement>();
+                    var valueCount = reader.ReadOptimizedInt32();
+                    for (int j = 0; j < valueCount; j++)
+                    {
+                        var graphElementId = reader.ReadOptimizedInt32();
+                        AGraphElement graphElement;
+                        fallen8.TryGetGraphElement(out graphElement, graphElementId);
+                        if (graphElement != null)
+                        {
+                            value.Add(graphElement);
+                        }
+                    }
+                    _idx.Add((IComparable)key, value);
+                }
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
         public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, List<AGraphElement>>();

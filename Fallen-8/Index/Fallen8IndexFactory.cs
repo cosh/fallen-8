@@ -24,10 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Fallen8.API.Plugin;
 using System.Threading;
+using Framework.Serialization;
 
 namespace Fallen8.API.Index
 {
@@ -121,6 +121,31 @@ namespace Fallen8.API.Index
             Interlocked.Exchange(ref _indices, newIndices);
         }
         #endregion   
+    
+        #region internal methods
+        
+        /// <summary>
+        /// Opens and deserializes an index
+        /// </summary>
+        /// <param name="indexName">The index name</param>
+        /// <param name="indexPluginName">The index plugin name</param>
+        /// <param name="reader">Serialization reader</param>
+        /// <param name="fallen8">Fallen-8</param>
+        internal void OpenIndex(string indexName, string indexPluginName, SerializationReader reader, Fallen8 fallen8)
+        {
+            IIndex index;
+            if (Fallen8PluginFactory.TryFindPlugin<IIndex>(out index, indexPluginName))
+            {
+                index.Open(reader, fallen8);
+
+                var newIndices = new Dictionary<string, IIndex>(_indices);
+                newIndices.Add(indexName, index);
+
+                Interlocked.Exchange(ref _indices, newIndices);
+            }
+        }
+
+        #endregion
     }
 }
 

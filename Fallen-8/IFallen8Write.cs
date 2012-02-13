@@ -27,7 +27,6 @@ using System;
 using Fallen8.API.Helper;
 using Fallen8.API.Model;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Fallen8.API
 {
@@ -122,18 +121,6 @@ namespace Fallen8.API
         /// </summary>
         void TabulaRasa();
 
-        #endregion
-  
-        #region Persistence
-        
-        /// <summary>
-        /// Opens Fallen-8 from the specified path.
-        /// </summary>
-        /// <param name='path'>
-        /// Path.
-        /// </param>
-        void Open(String path);
-        
         #endregion
     }
 }

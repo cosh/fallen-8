@@ -95,28 +95,13 @@ namespace Fallen8.API
         /// </param>
         public Fallen8(String path)
         {
-            Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory);
+            Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
         }
         
         #endregion
         
         #region IFallen8Write implementation
   
-        public void Open(String path)
-        {
-            _lock.EnterWriteLock();
-            try
-            {
-                _graphElements = new List<AGraphElement>();
-                IndexFactory.DeleteAllIndices();
-                Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory);
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
-        }
-        
         public void TabulaRasa()
         {
             _lock.EnterWriteLock();
@@ -519,6 +504,33 @@ namespace Fallen8.API
             {
                 _lock.ExitReadLock();
             }
+        }
+
+        /// <summary>
+        /// Gets an graph element by its identifier.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if something was found; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name='result'>
+        /// The graph element.
+        /// </param>
+        /// <param name='id'>
+        /// System wide unique identifier.
+        /// </param>
+        public Boolean TryGetGraphElement(out AGraphElement result, Int32 id)
+        {
+            _lock.EnterReadLock();
+            try
+            {
+                result = _graphElements.ElementAtOrDefault(id);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+
+            return result != null;
         }
 
         #endregion

@@ -117,22 +117,6 @@ namespace Fallen8.API.Index
         /// Key.
         /// </param>
         Boolean TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key);
-        
-        /// <summary>
-        /// Save the index in the serialization writer
-        /// </summary>
-        /// <param name='writer'>
-        /// Serialization writer.
-        /// </param>
-        void Save(ref SerializationWriter writer);
-        
-        /// <summary>
-        /// Opens the index
-        /// </summary>
-        /// <param name='reader'>
-        /// Reader.
-        /// </param>
-        void Open(ref SerializationReader reader);
     }
 }
 

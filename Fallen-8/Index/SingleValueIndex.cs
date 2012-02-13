@@ -217,23 +217,28 @@ namespace Fallen8.API.Index
                 _lock.ExitReadLock();
             }
         }
-        
-        public void Open (SerializationReader reader, Fallen8 fallen8)
+
+        public void Open(SerializationReader reader, Fallen8 fallen8)
         {
             _lock.EnterWriteLock();
             try
             {
-                reader.ReadOptimizedInt32(); //parameterCount -> 0
-                for (int i = 0; i < reader.ReadOptimizedInt32(); i++) 
+                reader.ReadOptimizedInt32();//parameter
+
+                var keyCount = reader.ReadOptimizedInt32();
+
+                _idx = new Dictionary<IComparable, AGraphElement>(keyCount);
+
+                for (int i = 0; i < keyCount; i++)
                 {
-                    asdasd
-                }
-                
-                writer.WriteOptimized(_idx.Count);
-                foreach (var aKV in _idx) 
-                {
-                    writer.WriteObject(aKV.Key);
-                    writer.WriteOptimized(aKV.Value.Id);
+                    var key = reader.ReadObject();
+                    var graphElementId = reader.ReadOptimizedInt32();
+                    AGraphElement graphElement;
+                    fallen8.TryGetGraphElement(out graphElement, graphElementId);
+                    if (graphElement != null)
+                    {
+                        _idx.Add((IComparable) key, graphElement);
+                    }
                 }
             }
             finally
@@ -241,7 +246,7 @@ namespace Fallen8.API.Index
                 _lock.ExitWriteLock();
             }
         }
-        
+
         public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, AGraphElement>();
