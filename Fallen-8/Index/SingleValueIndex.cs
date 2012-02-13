@@ -70,26 +70,6 @@ namespace Fallen8.API.Index
         
         #region IIndex implementation
         
-        public void Save(ref SerializationWriter writer)
-        {
-            _lock.EnterReadLock();
-            try
-            {
-                writer.WriteOptimized(PluginName);
-                writer.WriteOptimized(0);//parameter
-                writer.WriteOptimized(_idx.Count);
-                foreach (var aKV in _idx) 
-                {
-                    writer.WriteObject(aKV.Key);
-                    writer.WriteOptimized(aKV.Value.Id);
-                }
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-        }
-        
         public Int32 CountOfKeys ()
         {
             _lock.EnterReadLock();
@@ -218,6 +198,50 @@ namespace Fallen8.API.Index
         #endregion
 
         #region IFallen8Plugin implementation
+        
+        public void Save(SerializationWriter writer)
+        {
+            _lock.EnterReadLock();
+            try
+            {
+                writer.WriteOptimized(0);//parameter
+                writer.WriteOptimized(_idx.Count);
+                foreach (var aKV in _idx) 
+                {
+                    writer.WriteObject(aKV.Key);
+                    writer.WriteOptimized(aKV.Value.Id);
+                }
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+        
+        public void Open (SerializationReader reader, Fallen8 fallen8)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                reader.ReadOptimizedInt32(); //parameterCount -> 0
+                for (int i = 0; i < reader.ReadOptimizedInt32(); i++) 
+                {
+                    asdasd
+                }
+                
+                writer.WriteOptimized(_idx.Count);
+                foreach (var aKV in _idx) 
+                {
+                    writer.WriteObject(aKV.Key);
+                    writer.WriteOptimized(aKV.Value.Id);
+                }
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+        
         public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, AGraphElement>();

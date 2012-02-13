@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using Framework.Serialization;
 
 namespace Fallen8.API.Plugin
 {
@@ -83,6 +84,22 @@ namespace Fallen8.API.Plugin
         /// The initialized plugin
         /// </returns>
         void Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
+        
+        /// <summary>
+        /// Save the plugin.
+        /// </summary>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        void Save(SerializationWriter writer);
+        
+        /// <summary>
+        /// Open the plugin.
+        /// </summary>
+        /// <param name='reader'>
+        /// Reader.
+        /// </param>
+        void Open(SerializationReader reader, Fallen8 fallen8);
 	}
 }
 

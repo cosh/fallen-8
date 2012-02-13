@@ -95,7 +95,9 @@ namespace Fallen8.API.Persistency
             {
                 indexStreams.Add(reader.ReadOptimizedString());
             }
-            
+            var newIndexFactory = new Fallen8IndexFactory();
+            LoadIndices(graphElementsOfFallen8, newIndexFactory, indexStreams);
+            indexFactoryOfFallen8 = newIndexFactory;
             #endregion
         }
         
@@ -227,6 +229,8 @@ namespace Fallen8.API.Persistency
             var indexFile = File.Create(indexFileName, Constants.BufferSize, FileOptions.SequentialScan);
             SerializationWriter indexWriter = new SerializationWriter(indexFile);
             
+            indexWriter.WriteOptimized(indexName);
+            indexWriter.WriteOptimized(index.PluginName);
             index.Save(ref indexWriter);
             
             if (indexWriter != null) 
@@ -296,6 +300,38 @@ namespace Fallen8.API.Persistency
             }
             
             return result;
+        }
+  
+        
+        public static void LoadIndices (List<AGraphElement> graphElements, Fallen8IndexFactory indexFactory, List<String> indexStreams)
+        {
+            //create some futures to load as much as possible in parallel
+            const TaskCreationOptions options = TaskCreationOptions.LongRunning;
+            var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
+            Task[] tasks = (Task[])Array.CreateInstance(typeof(Task), indexStreams.Count);
+            
+            //load the indices
+            for (int i = 0; i < indexStreams.Count; i++)
+            {
+                tasks[i] = f.StartNew(() => LoadAnIndex(indexStreams[i], graphElements, indexFactory));
+            }
+        }
+
+        public static void LoadAnIndex (string indexLocaion, List<AGraphElement> graphElements, Fallen8IndexFactory indexFactory)
+        {
+            //if there is no savepoint file... do nothing
+            if (!File.Exists(indexLocaion))
+            {
+                return;
+            }
+            
+            var file = File.Open(graphElementBunchPath, FileMode.Open, FileAccess.Read);
+            var reader = new SerializationReader(file);
+            
+            var indexName = reader.ReadOptimizedString();
+            var indexPluginName = reader.ReadOptimizedString();
+            
+            
         }
 
         /// <summary>

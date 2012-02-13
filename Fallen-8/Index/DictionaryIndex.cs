@@ -75,7 +75,6 @@ namespace Fallen8.API.Index
             _lock.EnterReadLock();
             try
             {
-                writer.WriteOptimized(PluginName);
                 writer.WriteOptimized(0);//parameter
                 writer.WriteOptimized(_idx.Count);
                 foreach (var aKV in _idx) 

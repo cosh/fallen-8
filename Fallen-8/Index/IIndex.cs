@@ -125,6 +125,14 @@ namespace Fallen8.API.Index
         /// Serialization writer.
         /// </param>
         void Save(ref SerializationWriter writer);
+        
+        /// <summary>
+        /// Opens the index
+        /// </summary>
+        /// <param name='reader'>
+        /// Reader.
+        /// </param>
+        void Open(ref SerializationReader reader);
     }
 }
 
