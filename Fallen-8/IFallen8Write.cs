@@ -123,6 +123,15 @@ namespace Fallen8.API
         void TabulaRasa();
 
         #endregion
-    }
+
+        #region Trim
+
+        /// <summary>
+        /// Trims Fallen-8 to its minimum memory usage
+        /// </summary>
+	    void Trim();
+
+	    #endregion
+	}
 }
 

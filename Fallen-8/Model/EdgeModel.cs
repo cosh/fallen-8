@@ -159,5 +159,17 @@ namespace Fallen8.API.Model
         }
 
         #endregion
+
+        #region AGraphElement
+
+        /// <summary>
+        /// The overide of the trim method
+        /// </summary>
+        internal override void Trim()
+        {
+            base.TrimProperties();
+        }
+
+        #endregion
     }
 }

@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Fallen8.API.Error;
 
@@ -370,7 +371,7 @@ namespace Fallen8.API.Model
         /// <param name='edgePropertyId'>
         /// Edge property identifier.
         /// </param>
-        public Boolean TryGetOutEdge(out List<EdgeModel> result, Int32 edgePropertyId)
+        public Boolean TryGetOutEdge(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource())
             {
@@ -383,7 +384,7 @@ namespace Fallen8.API.Model
                     {
                         if (aOutEdge.EdgePropertyId == edgePropertyId) 
                         {
-                            result = aOutEdge.EdgeProperty;
+                            result = aOutEdge.EdgeProperty.AsReadOnly();
                             foundSth = true;
                             break;
                         } 
@@ -410,7 +411,7 @@ namespace Fallen8.API.Model
         /// <param name='edgePropertyId'>
         /// Edge property identifier.
         /// </param>
-        public Boolean TryGetInEdges(out List<EdgeModel> result, Int32 edgePropertyId)
+        public Boolean TryGetInEdges(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource())
             {
@@ -423,7 +424,7 @@ namespace Fallen8.API.Model
                     {
                         if (aIncomingEdgeProperty.EdgePropertyId == edgePropertyId) 
                         {
-                            result = new List<EdgeModel>(aIncomingEdgeProperty.IncomingEdges);
+                            result = aIncomingEdgeProperty.IncomingEdges.AsReadOnly();
                             foundSth = true;
                             break;
                         }
@@ -445,6 +446,30 @@ namespace Fallen8.API.Model
         public override int GetHashCode()
         {
             return Id;
+        }
+
+        #endregion
+
+        #region AGraphElement
+
+        /// <summary>
+        /// The overide of the trim method
+        /// </summary>
+        internal override void Trim()
+        {
+            base.TrimProperties();
+
+            if (WriteResource())
+            {
+                _outEdges.TrimExcess();
+                _inEdges.TrimExcess();
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
         }
 
         #endregion

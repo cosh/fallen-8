@@ -147,6 +147,15 @@ namespace Fallen8.API.Model
 
             throw new CollisionException();
         }
+ 
+        #endregion
+
+        #region internal methods
+
+        /// <summary>
+        /// Trims the graph element
+        /// </summary>
+        internal abstract void Trim();
 
         /// <summary>
         /// Tries to add a property.
@@ -169,36 +178,36 @@ namespace Fallen8.API.Model
             {
                 var foundProperty = false;
                 var idx = 0;
-                
+
                 if (_properties != null)
                 {
                     for (var i = 0; i < _properties.Count; i++)
                     {
-                        if (_properties[i].PropertyId == propertyId) 
+                        if (_properties[i].PropertyId == propertyId)
                         {
                             foundProperty = true;
                             idx = i;
                             break;
-                        }    
+                        }
                     }
 
-                    if (!foundProperty) 
+                    if (!foundProperty)
                     {
-                        _properties.Add(new PropertyContainer { PropertyId = propertyId, Value = property});
+                        _properties.Add(new PropertyContainer { PropertyId = propertyId, Value = property });
                     }
                     else
                     {
-                        _properties[idx] = new PropertyContainer {PropertyId = propertyId, Value = property};
+                        _properties[idx] = new PropertyContainer { PropertyId = propertyId, Value = property };
                     }
                 }
-                else 
+                else
                 {
-                    _properties = new List<PropertyContainer> { new PropertyContainer { PropertyId = propertyId, Value = property}};     
+                    _properties = new List<PropertyContainer> { new PropertyContainer { PropertyId = propertyId, Value = property } };
                 }
-                
+
                 //set the modificationdate
                 ModificationDate = DateTime.Now.ToBinary();
-                
+
                 FinishWriteResource();
 
                 return foundProperty;
@@ -228,21 +237,21 @@ namespace Fallen8.API.Model
                 if (_properties != null)
                 {
                     var toBeRemovedIdx = 0;
-                    
-                    for (var i = 0; i < _properties.Count; i++) 
+
+                    for (var i = 0; i < _properties.Count; i++)
                     {
-                        if (_properties[i].PropertyId == propertyId) 
+                        if (_properties[i].PropertyId == propertyId)
                         {
                             toBeRemovedIdx = i;
                             removedSomething = true;
                             break;
-                        }    
+                        }
                     }
-                    
+
                     if (removedSomething)
                     {
                         _properties.RemoveAt(toBeRemovedIdx);
-                        
+
                         //set the modificationdate
                         ModificationDate = DateTime.Now.ToBinary();
                     }
@@ -252,10 +261,31 @@ namespace Fallen8.API.Model
                 return removedSomething;
             }
 
-            throw new CollisionException ();
-            
+            throw new CollisionException();
+
         }
-        
+
+        #endregion
+
+        #region protected members
+
+        /// <summary>
+        /// Trims the properties for size
+        /// </summary>
+        protected void TrimProperties()
+        {
+            if (WriteResource())
+            {
+                _properties.TrimExcess();
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
+        }
+
         #endregion
     }
 }

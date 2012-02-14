@@ -100,6 +100,28 @@ namespace Fallen8.API
         
         #region IFallen8Write implementation
   
+        public void Trim()
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                _graphElements.TrimExcess();
+                foreach (var aGraphElement in _graphElements)
+                {
+                    aGraphElement.Trim();
+                }
+
+                GC.Collect();
+                GC.Collect();
+
+                GC.WaitForFullGCComplete();
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
         public void TabulaRasa()
         {
             _lock.EnterWriteLock();
@@ -125,9 +147,14 @@ namespace Fallen8.API
 
                 _graphElements.Add(newVertex);
 
-                if (edges != null && edges.Count > 0)
+                if (edges != null)
                 {
-                    var outEdges = edges.Select(_ => new OutEdgeContainer { EdgePropertyId = _.Key, EdgeProperty = CreateEdgeProperty(_.Key, _.Value, newVertex)}).ToList();
+                    var outEdges = new List<OutEdgeContainer>(edges.Count);
+
+                    foreach (var edge in edges)
+                    {
+                        outEdges.Add(new OutEdgeContainer { EdgePropertyId = edge.Key, EdgeProperty = CreateEdgeProperty(edge.Key, edge.Value, newVertex) });
+                    }
 
                     newVertex.SetOutEdges(outEdges);
                 }
@@ -145,30 +172,18 @@ namespace Fallen8.API
             _lock.EnterWriteLock();
             try
             {
-                EdgeModel outgoingEdge;
-
                 //get the related vertices
                 var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
                 var targetVertex = (VertexModel) _graphElements[edgeDefinition.TargetVertexId];
 
-                List<EdgeModel> outEdges;
-                if (sourceVertex.TryGetOutEdge(out outEdges, edgePropertyId))
-                {
-                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
+                var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
                                                  targetVertex, sourceVertex, edgeDefinition.Properties);
-                    outEdges.Add(outgoingEdge);
-                }
-                else
-                {
-                    //build the necessary edge contruct
-                    outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
-                                                 targetVertex, sourceVertex, edgeDefinition.Properties);
-
-                    sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
-                }
 
                 //add the edge to the graph elements
                 _graphElements.Add(outgoingEdge);
+
+                //add the edge to the source vertex
+                sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
 
                 //link the vertices
                 targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
@@ -713,9 +728,9 @@ namespace Fallen8.API
         /// <param name='sourceVertex'>
         /// New vertex.
         /// </param>
-        private List<EdgeModel> CreateEdgeProperty(Int32 edgePropertyId, IEnumerable<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
+        private List<EdgeModel> CreateEdgeProperty(Int32 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
         {
-            var edges = new List<EdgeModel> ();
+            var edges = new List<EdgeModel>(edgeDefinitions.Count);
             
             foreach (var aEdgeDefinition in edgeDefinitions) {
                 
