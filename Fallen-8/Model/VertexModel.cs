@@ -461,8 +461,15 @@ namespace Fallen8.API.Model
 
             if (WriteResource())
             {
-                _outEdges.TrimExcess();
-                _inEdges.TrimExcess();
+                if (_outEdges != null)
+                {
+                    _outEdges.TrimExcess();                    
+                }
+
+                if (_inEdges != null)
+                {
+                    _inEdges.TrimExcess();                    
+                }
 
                 FinishWriteResource();
 

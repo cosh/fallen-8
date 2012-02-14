@@ -276,7 +276,10 @@ namespace Fallen8.API.Model
         {
             if (WriteResource())
             {
-                _properties.TrimExcess();
+                if (_properties != null)
+                {
+                    _properties.TrimExcess();                    
+                }
 
                 FinishWriteResource();
 

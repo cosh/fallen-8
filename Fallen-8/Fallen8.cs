@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Linq;
+using System.Runtime;
 using Fallen8.API.Index.Fulltext;
 using Fallen8.API.Index.Spatial;
 using Fallen8.API.Model;
@@ -80,6 +81,8 @@ namespace Fallen8.API
         /// </summary>
         public Fallen8 ()
         {
+            GCSettings.LatencyMode = GCLatencyMode.Batch;
+
             IndexFactory = new Fallen8IndexFactory();
             _graphElements = new List<AGraphElement>(5000000);
             IndexFactory.Indices.Clear();
@@ -93,6 +96,8 @@ namespace Fallen8.API
         /// </param>
         public Fallen8(String path)
         {
+            GCSettings.LatencyMode = GCLatencyMode.Batch;
+
             Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
         }
         
