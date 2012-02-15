@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using Fallen8.API.Model;
 
 namespace Fallen8.API.Helper
@@ -42,7 +41,7 @@ namespace Fallen8.API.Helper
         /// <value>
         /// The DateTime.ToBinary representation of the creation date.
         /// </value>
-        public Int64 CreationDate;
+        public DateTime CreationDate;
 
         /// <summary>
         /// Gets or sets the properties.
@@ -50,7 +49,7 @@ namespace Fallen8.API.Helper
         /// <value>
         /// The properties.
         /// </value>
-        public readonly List<PropertyContainer> Properties;
+        public readonly PropertyContainer[] Properties;
 
         /// <summary>
         /// Gets or sets the target vertex identifier.
@@ -71,10 +70,10 @@ namespace Fallen8.API.Helper
 	    /// Target vertex.
 	    /// </param>
 	    /// <param name='creationDate'>
-	    /// Creation date as DateTime.ToBinary().
+	    /// Creation date.
 	    /// </param>
 	    /// <param name="properties">Properties</param>
-	    public EdgeModelDefinition(Int32 targetVertex, Int64 creationDate, List<PropertyContainer> properties = null)
+	    public EdgeModelDefinition(Int32 targetVertex, DateTime creationDate, PropertyContainer[] properties = null)
         {
             TargetVertexId = targetVertex;
             CreationDate = creationDate;

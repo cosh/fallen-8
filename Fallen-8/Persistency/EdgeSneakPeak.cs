@@ -42,17 +42,17 @@ namespace Fallen8.API.Persistency
         /// <summary>
         /// The creation date.
         /// </summary>
-        public Int64 CreationDate;
+        public UInt32 CreationDate;
         
         /// <summary>
         /// The modification date.
         /// </summary>
-        public Int64 ModificationDate;
+        public UInt32 ModificationDate;
         
         /// <summary>
         /// The properties.
         /// </summary>
-        public List<PropertyContainer> Properties;
+        public PropertyContainer[] Properties;
         
         /// <summary>
         /// The source vertex identifier.

@@ -42,7 +42,7 @@ namespace Fallen8.API.Model
         /// <value>
         /// The edge property identifier.
         /// </value>
-        public Int32 EdgePropertyId { get; internal set; }
+        public UInt16 EdgePropertyId { get; internal set; }
         
         /// <summary>
         /// Gets or sets the value.

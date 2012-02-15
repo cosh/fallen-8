@@ -65,7 +65,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public VertexModel(Int32 id, Int64 creationDate, List<PropertyContainer> properties)
+        public VertexModel(Int32 id, UInt32 creationDate, PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {
         }
@@ -92,7 +92,7 @@ namespace Fallen8.API.Model
         /// <param name='incEdges'>
         /// Inc edges.
         /// </param>
-        internal VertexModel(Int32 id, Int64 creationDate, Int64 modificationDate, List<PropertyContainer> properties, List<OutEdgeContainer> outEdges, List<IncEdgeContainer> incEdges)
+        internal VertexModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, PropertyContainer[] properties, List<OutEdgeContainer> outEdges, List<IncEdgeContainer> incEdges)
             : base(id, creationDate, properties)
         {
             _outEdges = outEdges;
@@ -116,7 +116,7 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        internal void AddOutEdge(Int32 edgePropertyId, EdgeModel outEdge)
+        internal void AddOutEdge(UInt16 edgePropertyId, EdgeModel outEdge)
         {
             if (WriteResource())
             {
@@ -187,7 +187,7 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        internal void AddIncomingEdge(Int32 edgePropertyId, EdgeModel incomingEdge)
+        internal void AddIncomingEdge(UInt16 edgePropertyId, EdgeModel incomingEdge)
         {
             if (WriteResource())
             {
@@ -317,11 +317,11 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The incoming edge identifiers.
         /// </returns>
-        public List<Int32> GetIncomingEdgeIds()
+        public List<UInt16> GetIncomingEdgeIds()
         {
             if (ReadResource())
             {
-                var inEdges = new List<Int32>();
+                var inEdges = new List<UInt16>();
 
                 if (_inEdges != null)
                 {
@@ -341,11 +341,11 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The outgoing edge identifiers.
         /// </returns>
-        public List<Int32> GetOutgoingEdgeIds()
+        public List<UInt16> GetOutgoingEdgeIds()
         {
             if (ReadResource())
             {
-                var outEdges = new List<Int32>();
+                var outEdges = new List<UInt16>();
 
                 if (_outEdges != null)
                 {
@@ -457,8 +457,6 @@ namespace Fallen8.API.Model
         /// </summary>
         internal override void Trim()
         {
-            base.TrimProperties();
-
             if (WriteResource())
             {
                 if (_outEdges != null)

@@ -46,17 +46,17 @@ namespace Fallen8.API.Model
         /// <summary>
         /// The creation date.
         /// </summary>
-        public readonly Int64 CreationDate;
+        public readonly UInt32 CreationDate;
         
         /// <summary>
         /// The modification date.
         /// </summary>
-        public Int64 ModificationDate;
+        public UInt32 ModificationDate;
         
         /// <summary>
         /// The properties.
         /// </summary>
-        private List<PropertyContainer> _properties;
+        private PropertyContainer[] _properties;
   
         #endregion
         
@@ -74,11 +74,11 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        protected AGraphElement(Int32 id, Int64 creationDate, List<PropertyContainer> properties)
+        protected AGraphElement(Int32 id, UInt32 creationDate, PropertyContainer[] properties)
         {
             Id = id;
             CreationDate = creationDate;
-            ModificationDate = creationDate;
+            ModificationDate = 0;
             _properties = properties;
         }
         
@@ -155,7 +155,10 @@ namespace Fallen8.API.Model
         /// <summary>
         /// Trims the graph element
         /// </summary>
-        internal abstract void Trim();
+        internal virtual void Trim()
+        {
+            //do nothing
+        }
 
         /// <summary>
         /// Tries to add a property.
@@ -172,7 +175,7 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        internal bool TryAddProperty(Int32 propertyId, object property)
+        internal bool TryAddProperty(UInt16 propertyId, object property)
         {
             if (WriteResource())
             {
@@ -181,7 +184,7 @@ namespace Fallen8.API.Model
 
                 if (_properties != null)
                 {
-                    for (var i = 0; i < _properties.Count; i++)
+                    for (var i = 0; i < _properties.Length; i++)
                     {
                         if (_properties[i].PropertyId == propertyId)
                         {
@@ -193,7 +196,12 @@ namespace Fallen8.API.Model
 
                     if (!foundProperty)
                     {
-                        _properties.Add(new PropertyContainer { PropertyId = propertyId, Value = property });
+                        //resize
+                        var newProperties = new PropertyContainer[_properties.Length + 1];
+                        Array.Copy(_properties, newProperties, _properties.Length);
+                        newProperties[_properties.Length] = new PropertyContainer{PropertyId = propertyId, Value = property};
+
+                        _properties = newProperties;
                     }
                     else
                     {
@@ -202,11 +210,12 @@ namespace Fallen8.API.Model
                 }
                 else
                 {
-                    _properties = new List<PropertyContainer> { new PropertyContainer { PropertyId = propertyId, Value = property } };
+                    _properties = new PropertyContainer[0];
+                    _properties[0] = new PropertyContainer {PropertyId = propertyId, Value = property};
                 }
 
                 //set the modificationdate
-                ModificationDate = DateTime.Now.ToBinary();
+                ModificationDate = Constants.GetModificationDate(CreationDate);
 
                 FinishWriteResource();
 
@@ -228,7 +237,7 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        internal bool TryRemoveProperty(Int32 propertyId)
+        internal bool TryRemoveProperty(UInt16 propertyId)
         {
             if (WriteResource())
             {
@@ -238,7 +247,7 @@ namespace Fallen8.API.Model
                 {
                     var toBeRemovedIdx = 0;
 
-                    for (var i = 0; i < _properties.Count; i++)
+                    for (var i = 0; i < _properties.Length; i++)
                     {
                         if (_properties[i].PropertyId == propertyId)
                         {
@@ -250,10 +259,21 @@ namespace Fallen8.API.Model
 
                     if (removedSomething)
                     {
-                        _properties.RemoveAt(toBeRemovedIdx);
+                        //resize
+                        var newProperties = new PropertyContainer[_properties.Length - 1];
+                        if (newProperties.Length != 0)
+                        {
+                            //everything until the to be removed item
+                            Array.Copy(_properties, newProperties, toBeRemovedIdx);
+
+                            //everything after the removed item
+                            Array.Copy(_properties, toBeRemovedIdx + 1, newProperties, toBeRemovedIdx, _properties.Length - toBeRemovedIdx);
+
+                            _properties = newProperties;
+                        }
 
                         //set the modificationdate
-                        ModificationDate = DateTime.Now.ToBinary();
+                        ModificationDate = Constants.GetModificationDate(CreationDate);
                     }
                 }
                 FinishWriteResource();
@@ -265,31 +285,7 @@ namespace Fallen8.API.Model
 
         }
 
-        #endregion
-
-        #region protected members
-
-        /// <summary>
-        /// Trims the properties for size
-        /// </summary>
-        protected void TrimProperties()
-        {
-            if (WriteResource())
-            {
-                if (_properties != null)
-                {
-                    _properties.TrimExcess();                    
-                }
-
-                FinishWriteResource();
-
-                return;
-            }
-
-            throw new CollisionException();
-        }
-
-        #endregion
+        #endregion  
     }
 }
 

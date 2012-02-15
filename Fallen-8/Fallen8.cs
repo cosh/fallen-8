@@ -138,13 +138,15 @@ namespace Fallen8.API
             }
         }
 
-        public VertexModel CreateVertex(Int64 creationDate, List<PropertyContainer> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null)
+        public VertexModel CreateVertex(DateTime creationDate, PropertyContainer[] properties = null, IDictionary<UInt16, List<EdgeModelDefinition>> edges = null)
         {
+            var encodedCreationDate = Constants.ConvertDateTime(creationDate);
+
             _lock.EnterWriteLock();
             try
             {
                 //create the new vertex
-                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
+                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), encodedCreationDate, properties);
 
                 _graphElements.Add(newVertex);
 
@@ -168,8 +170,10 @@ namespace Fallen8.API
             }
         }
 
-        public EdgeModel CreateEdge(Int32 sourceVertexId, Int32 edgePropertyId, EdgeModelDefinition edgeDefinition)
+        public EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, EdgeModelDefinition edgeDefinition)
         {
+            var encodedCreationDate = Constants.ConvertDateTime(edgeDefinition.CreationDate);
+
             _lock.EnterWriteLock();
             try
             {
@@ -177,7 +181,7 @@ namespace Fallen8.API
                 var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
                 var targetVertex = (VertexModel) _graphElements[edgeDefinition.TargetVertexId];
 
-                var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), edgeDefinition.CreationDate,
+                var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), encodedCreationDate,
                                                  targetVertex, sourceVertex, edgeDefinition.Properties);
 
                 //add the edge to the graph elements
@@ -197,7 +201,7 @@ namespace Fallen8.API
             }
         }
 
-        public bool TryAddProperty(Int32 graphElementId, Int32 propertyId, Object property)
+        public bool TryAddProperty(Int32 graphElementId, UInt16 propertyId, Object property)
         {
             _lock.EnterReadLock();
             try
@@ -212,7 +216,7 @@ namespace Fallen8.API
             }
         }
 
-        public bool TryRemoveProperty(Int32 graphElementId, Int32 propertyId)
+        public bool TryRemoveProperty(Int32 graphElementId, UInt16 propertyId)
         {
             _lock.EnterReadLock();
             try
@@ -729,15 +733,17 @@ namespace Fallen8.API
         /// <param name='sourceVertex'>
         /// New vertex.
         /// </param>
-        private List<EdgeModel> CreateEdgeProperty(Int32 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
+        private List<EdgeModel> CreateEdgeProperty(UInt16 edgePropertyId, List<EdgeModelDefinition> edgeDefinitions, VertexModel sourceVertex)
         {
             var edges = new List<EdgeModel>(edgeDefinitions.Count);
             
             foreach (var aEdgeDefinition in edgeDefinitions) {
                 
                 var targetVertex = (VertexModel)_graphElements [aEdgeDefinition.TargetVertexId];
-                
-                var outgoingEdge = new EdgeModel (Interlocked.Increment (ref _currentId), aEdgeDefinition.CreationDate, targetVertex, sourceVertex, aEdgeDefinition.Properties);
+
+                var encodedCreationDate = Constants.ConvertDateTime(aEdgeDefinition.CreationDate);
+
+                var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), encodedCreationDate, targetVertex, sourceVertex, aEdgeDefinition.Properties);
                 
                 //add the new edge to the store
                 _graphElements.Add(outgoingEdge);

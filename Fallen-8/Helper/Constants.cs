@@ -36,6 +36,41 @@ namespace Fallen8.API.Helper
         /// The size of the file buffer when reading or writing Fallen-8 from a file stream.
         /// </summary>
         public const int BufferSize = 104857600;
+
+        /// <summary>
+        /// The basic DateTime: 01.01.1970
+        /// </summary>
+        private static DateTime NineTeenSeventy = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+
+        /// <summary>
+        /// Convertes the DateTime format to an Unix-TimeStamp
+        /// </summary>
+        /// <param name="date">The DateTime</param>
+        /// <returns>UInt32 representation</returns>
+        public static UInt32 ConvertDateTime(DateTime date)
+        {
+            return (Convert.ToUInt32((date - NineTeenSeventy).TotalSeconds));
+        }
+
+        /// <summary>
+        /// Returns the modification date as a delta from the creation date representation
+        /// </summary>
+        /// <param name="creationDate">The creation date representation</param>
+        /// <returns>The modification date delta</returns>
+        public static UInt32 GetModificationDate(UInt32 creationDate)
+        {
+            return ConvertDateTime(DateTime.Now) - creationDate;
+        }
+
+        /// <summary>
+        /// Get a DateTime
+        /// </summary>
+        /// <param name="secondsFromNineTeenSeventy">The seconds from 1970</param>
+        /// <returns>The DateTime</returns>
+        public static DateTime GetDateTimeFromUnixTimeStamp(uint secondsFromNineTeenSeventy)
+        {
+            return NineTeenSeventy.AddSeconds(secondsFromNineTeenSeventy);
+        }
     }
 }
 

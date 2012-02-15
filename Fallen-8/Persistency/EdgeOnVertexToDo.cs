@@ -40,7 +40,7 @@ namespace Fallen8.API.Persistency
         /// <summary>
         /// The edge property identifier.
         /// </summary>
-        public Int32 EdgePropertyId;
+        public UInt16 EdgePropertyId;
         
         /// <summary>
         /// Is this an incoming edge?

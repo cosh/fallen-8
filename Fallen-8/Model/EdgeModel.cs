@@ -54,7 +54,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        public EdgeModel(Int32 id, Int64 creationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
+        public EdgeModel(Int32 id, UInt32 creationDate, VertexModel targetVertex, VertexModel sourceVertex, PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {
             TargetVertex = targetVertex;
@@ -82,7 +82,7 @@ namespace Fallen8.API.Model
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        internal EdgeModel(Int32 id, Int64 creationDate, Int64 modificationDate, VertexModel targetVertex, VertexModel sourceVertex, List<PropertyContainer> properties)
+        internal EdgeModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, VertexModel targetVertex, VertexModel sourceVertex, PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {
             TargetVertex = targetVertex;
@@ -156,18 +156,6 @@ namespace Fallen8.API.Model
         public override int GetHashCode ()
         {
             return TargetVertex.GetHashCode () ^ SourceVertex.GetHashCode ();
-        }
-
-        #endregion
-
-        #region AGraphElement
-
-        /// <summary>
-        /// The overide of the trim method
-        /// </summary>
-        internal override void Trim()
-        {
-            base.TrimProperties();
         }
 
         #endregion

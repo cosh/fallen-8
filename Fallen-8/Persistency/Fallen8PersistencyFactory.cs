@@ -499,8 +499,8 @@ namespace Fallen8.API.Persistency
         private static void WriteAGraphElement (AGraphElement graphElement, SerializationWriter writer)
         {
             writer.WriteOptimized(graphElement.Id);
-            writer.Write(graphElement.CreationDate);
-            writer.Write(graphElement.ModificationDate);
+            writer.WriteOptimized(graphElement.CreationDate);
+            writer.WriteOptimized(graphElement.ModificationDate);
             
             var properties = new List<PropertyContainer>(graphElement.GetAllProperties());
             writer.WriteOptimized(properties.Count);
@@ -526,23 +526,23 @@ namespace Fallen8.API.Persistency
         private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadInt64();
-            var modificationDate = reader.ReadInt64();
+            var creationDate = reader.ReadOptimizedUInt32();
+            var modificationDate = reader.ReadOptimizedUInt32();
             
             #region properties
             
-            List<PropertyContainer> properties = null;
             var propertyCount = reader.ReadOptimizedInt32();
-            
+            PropertyContainer[] properties = null;
+
             if (propertyCount > 0) 
             {
-                properties = new List<PropertyContainer>(propertyCount);
+                properties = new PropertyContainer[propertyCount];
                 for (var i = 0; i < propertyCount; i++) 
                 {
-                    var propertyIdentifier = reader.ReadOptimizedInt32();
+                    var propertyIdentifier = reader.ReadOptimizedUInt16();
                     var propertyValue = reader.ReadObject();
                     
-                    properties.Add(new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue });   
+                    properties[i] = new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue };   
                 }
             }
             
@@ -560,7 +560,7 @@ namespace Fallen8.API.Persistency
                 outEdgeProperties = new List<OutEdgeContainer>(outEdgeCount);
                 for (var i = 0; i < outEdgeCount; i++) 
                 {
-                    var outEdgePropertyId = reader.ReadOptimizedInt32();
+                    var outEdgePropertyId = reader.ReadOptimizedUInt16();
                     var outEdgePropertyCount = reader.ReadOptimizedInt32();
                     var outEdges = new List<EdgeModel>();
                     for (var j = 0; j < outEdgePropertyCount; j++) 
@@ -603,7 +603,7 @@ namespace Fallen8.API.Persistency
                 incEdgeProperties = new List<IncEdgeContainer>(incEdgeCount);
                 for (var i = 0; i < incEdgeCount; i++) 
                 {
-                    var incEdgePropertyId = reader.ReadOptimizedInt32();
+                    var incEdgePropertyId = reader.ReadOptimizedUInt16();
                     var incEdgePropertyCount = reader.ReadOptimizedInt32();
                     var incEdges = new List<EdgeModel>();
                     for (var j = 0; j < incEdgePropertyCount; j++) 
@@ -713,23 +713,23 @@ namespace Fallen8.API.Persistency
         private static void LoadEdge (SerializationReader reader, AGraphElement[] graphElements, List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadInt64();
-            var modificationDate = reader.ReadInt64();
+            var creationDate = reader.ReadOptimizedUInt32();
+            var modificationDate = reader.ReadOptimizedUInt32();
             
             #region properties
             
-            List<PropertyContainer> properties = null;
+            PropertyContainer[] properties = null;
             var propertyCount = reader.ReadOptimizedInt32();
             
             if (propertyCount > 0) 
             {
-                properties = new List<PropertyContainer>(propertyCount);
+                properties = new PropertyContainer[propertyCount];
                 for (var i = 0; i < propertyCount; i++) 
                 {
-                    var propertyIdentifier = reader.ReadOptimizedInt32();
+                    var propertyIdentifier = reader.ReadOptimizedUInt16();
                     var propertyValue = reader.ReadObject();
                     
-                    properties.Add(new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue });   
+                    properties[i] = new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue };   
                 }
             }
             

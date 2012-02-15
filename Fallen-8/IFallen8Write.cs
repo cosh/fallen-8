@@ -40,11 +40,11 @@ namespace Fallen8.API
         /// <summary>
         /// Creates a vertex
         /// </summary>
-        /// <param name="creationDate">The DateTime.ToBinary() representation of the creation date</param>
+        /// <param name="creationDate">The creation date</param>
         /// <param name="properties">The properties.</param>
         /// <param name="edges">The edges</param>
         /// <returns>The created vertex</returns>
-        VertexModel CreateVertex(Int64 creationDate, List<PropertyContainer> properties = null, IDictionary<Int32, List<EdgeModelDefinition>> edges = null);
+        VertexModel CreateVertex(DateTime creationDate, PropertyContainer[] properties = null, IDictionary<UInt16, List<EdgeModelDefinition>> edges = null);
 		
 		/// <summary>
 		/// Creates an edge.
@@ -61,7 +61,7 @@ namespace Fallen8.API
 		/// <param name='edgeDefinition'>
 		/// Edge definition.
 		/// </param>
-        EdgeModel CreateEdge(Int32 sourceVertexId, Int32 edgePropertyId, EdgeModelDefinition edgeDefinition);
+        EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, EdgeModelDefinition edgeDefinition);
 		
 		#endregion
 		
@@ -82,7 +82,7 @@ namespace Fallen8.API
 		/// <param name='property'>
 		/// The to be added property.
 		/// </param>
-        Boolean TryAddProperty(Int32 graphElementId, Int32 propertyId, Object property);
+        Boolean TryAddProperty(Int32 graphElementId, UInt16 propertyId, Object property);
 		
 		/// <summary>
 		/// Tries to remove a property.
@@ -96,7 +96,7 @@ namespace Fallen8.API
 		/// <param name='propertyId'>
 		/// Property identifier.
 		/// </param>
-        Boolean TryRemoveProperty(Int32 graphElementId, Int32 propertyId);
+        Boolean TryRemoveProperty(Int32 graphElementId, UInt16 propertyId);
 		
 		#endregion
 		

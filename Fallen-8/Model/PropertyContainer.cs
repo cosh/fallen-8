@@ -41,7 +41,7 @@ namespace Fallen8.API.Model
         /// <value>
         /// The property identifier.
         /// </value>
-        public Int32 PropertyId;
+        public UInt16 PropertyId;
         
         /// <summary>
         /// Gets or sets the value.
