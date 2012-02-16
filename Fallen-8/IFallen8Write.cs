@@ -132,6 +132,15 @@ namespace Fallen8.API
 	    void Trim();
 
 	    #endregion
+
+        #region Trim
+
+        /// <summary>
+        /// Loads Fallen-8 from the specified path
+        /// </summary>
+        void Load(String path);
+
+        #endregion
 	}
 }
 

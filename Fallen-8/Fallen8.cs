@@ -101,6 +101,23 @@ namespace Fallen8.API
         
         #region IFallen8Write implementation
   
+        public void Load(String path)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                IndexFactory = new Fallen8IndexFactory();
+                _graphElements = new List<AGraphElement>();
+                IndexFactory.Indices.Clear();
+                Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
+                Trim();
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
         public void Trim()
         {
             _lock.EnterWriteLock();
