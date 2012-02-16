@@ -499,8 +499,8 @@ namespace Fallen8.API.Persistency
         private static void WriteAGraphElement (AGraphElement graphElement, SerializationWriter writer)
         {
             writer.WriteOptimized(graphElement.Id);
-            writer.WriteOptimized(graphElement.CreationDate);
-            writer.WriteOptimized(graphElement.ModificationDate);
+            writer.Write(graphElement.CreationDate);
+            writer.Write(graphElement.ModificationDate);
             
             var properties = new List<PropertyContainer>(graphElement.GetAllProperties());
             writer.WriteOptimized(properties.Count);
@@ -526,8 +526,8 @@ namespace Fallen8.API.Persistency
         private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadOptimizedUInt32();
-            var modificationDate = reader.ReadOptimizedUInt32();
+            var creationDate = reader.ReadUInt32();
+            var modificationDate = reader.ReadUInt32();
             
             #region properties
             
@@ -713,8 +713,8 @@ namespace Fallen8.API.Persistency
         private static void LoadEdge (SerializationReader reader, AGraphElement[] graphElements, List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadOptimizedInt32();
-            var creationDate = reader.ReadOptimizedUInt32();
-            var modificationDate = reader.ReadOptimizedUInt32();
+            var creationDate = reader.ReadUInt32();
+            var modificationDate = reader.ReadUInt32();
             
             #region properties
             
