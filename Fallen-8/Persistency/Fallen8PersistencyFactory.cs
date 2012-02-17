@@ -26,6 +26,7 @@
 using System;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Fallen8.API.Model;
 using Fallen8.API.Index;
 using System.IO;
@@ -75,12 +76,15 @@ namespace Fallen8.API.Persistency
                 //get the maximum id
                 currentIdOfFallen8 = reader.ReadOptimizedInt32();
 
+                var numberOfGraphElements = currentIdOfFallen8 + 1;
+                
                 #region graph elements
 
                 //initialize the list of graph elements
-                var graphElements = new AGraphElement[currentIdOfFallen8];
+                var graphElements = new AGraphElement[numberOfGraphElements];
                 var graphElementStreams = new List<String>();
-                for (var i = 0; i < reader.ReadOptimizedInt32(); i++)
+                var numberOfGraphElemementStreams = reader.ReadOptimizedInt32();
+                for (var i = 0; i < numberOfGraphElemementStreams; i++)
                 {
                     graphElementStreams.Add(reader.ReadOptimizedString());
                 }
@@ -93,7 +97,8 @@ namespace Fallen8.API.Persistency
                 #region indexe
 
                 var indexStreams = new List<String>();
-                for (var i = 0; i < reader.ReadOptimizedInt32(); i++)
+                var numberOfIndexStreams = reader.ReadOptimizedInt32();
+                for (var i = 0; i < numberOfIndexStreams; i++)
                 {
                     indexStreams.Add(reader.ReadOptimizedString());
                 }
@@ -131,7 +136,7 @@ namespace Fallen8.API.Persistency
 
             using (var file = File.Create(path, Constants.BufferSize, FileOptions.SequentialScan))
             {
-                var writer = new SerializationWriter(file);
+                var writer = new SerializationWriter(file, true);
 
                 //create some futures to save as much as possible in parallel
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
@@ -181,6 +186,7 @@ namespace Fallen8.API.Persistency
                     writer.WriteOptimized(aIndexFileName.Result);
                 }
 
+                writer.UpdateHeader();
                 writer.Flush();
                 file.Flush();
             }
@@ -232,6 +238,7 @@ namespace Fallen8.API.Persistency
                 indexWriter.WriteOptimized(index.PluginName);
                 index.Save(indexWriter);
 
+                indexWriter.UpdateHeader();
                 indexWriter.Flush();
                 indexFile.Flush();
             }
@@ -269,7 +276,7 @@ namespace Fallen8.API.Persistency
             {
                 var reader = new SerializationReader(file);
                 var minimumId = reader.ReadOptimizedInt32();
-                var maximumId = reader.ReadOptimizedInt32() - 1;
+                var maximumId = reader.ReadOptimizedInt32();
                 var countOfElements = maximumId - minimumId;
 
                 for (var i = 0; i < countOfElements; i++)
@@ -381,6 +388,7 @@ namespace Fallen8.API.Persistency
                     }
                 }
 
+                partitionWriter.UpdateHeader();
                 partitionWriter.Flush();
                 partitionFile.Flush();
             }
@@ -412,7 +420,7 @@ namespace Fallen8.API.Persistency
                 tasks[i] = f.StartNew(() => LoadAGraphElementBunch(streamLocation, graphElements, edgeTodo));
             }
 
-            f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks,
+            var continuationTask = f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks,
                 finishedTasks => Parallel.ForEach(finishedTasks, 
                     aFinishedTask =>
                         {
@@ -446,7 +454,9 @@ namespace Fallen8.API.Persistency
                                         }
                                     }
                                 });
-                            }).Wait();
+                            });
+
+            continuationTask.Wait();
         }
   
         /// <summary>
@@ -501,8 +511,8 @@ namespace Fallen8.API.Persistency
             writer.WriteOptimized(graphElement.Id);
             writer.Write(graphElement.CreationDate);
             writer.Write(graphElement.ModificationDate);
-            
-            var properties = new List<PropertyContainer>(graphElement.GetAllProperties());
+
+            var properties = graphElement.GetAllProperties();
             writer.WriteOptimized(properties.Count);
             foreach (var aProperty in properties) 
             {

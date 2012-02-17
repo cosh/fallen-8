@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Fallen8.API.Helper;
 using Fallen8.API.Error;
 
@@ -87,29 +88,47 @@ namespace Fallen8.API.Model
         #region public methods
 
         /// <summary>
+        /// Returns the count of properties
+        /// </summary>
+        /// <returns>Count of Properties</returns>
+        public Int32 GetPropertyCount()
+        {
+            if (ReadResource())
+            {
+                var count = _properties.Length;
+
+                FinishReadResource();
+
+                return count;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
         /// Gets all properties.
         /// </summary>
         /// <returns>
         /// All properties.
         /// </returns>
-        public IEnumerable<PropertyContainer> GetAllProperties()
+        public ReadOnlyCollection<PropertyContainer> GetAllProperties()
         {
             if (ReadResource())
             {
+                ReadOnlyCollection<PropertyContainer> result;
+                
                 if (_properties != null)
                 {
-                    foreach(var aProperty in _properties)
-                    {
-                        if (aProperty.Value != null) 
-                        {
-                            yield return aProperty;    
-                        }
-                    }
+                    result = new ReadOnlyCollection<PropertyContainer>(_properties);
+                }
+                else
+                {
+                    result = new ReadOnlyCollection<PropertyContainer>(new PropertyContainer[0]);
                 }
                 
                 FinishReadResource();
-                
-                yield break;
+
+                return result;
             }
 
             throw new CollisionException();

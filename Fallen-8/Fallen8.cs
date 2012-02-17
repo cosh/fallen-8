@@ -70,7 +70,7 @@ namespace Fallen8.API
         /// <summary>
         /// The lock
         /// </summary>
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         #endregion
         
@@ -109,6 +109,10 @@ namespace Fallen8.API
                 IndexFactory = new Fallen8IndexFactory();
                 _graphElements = new List<AGraphElement>();
                 IndexFactory.Indices.Clear();
+                GC.Collect();
+                GC.Collect();
+                GC.WaitForFullGCComplete();
+                GC.WaitForPendingFinalizers();
                 Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
                 Trim();
             }
