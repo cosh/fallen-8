@@ -173,11 +173,11 @@ namespace Fallen8.API
 
                 if (edges != null)
                 {
-                    var outEdges = new List<OutEdgeContainer>(edges.Count);
+                    var outEdges = new List<EdgeContainer>(edges.Count);
 
                     foreach (var edge in edges)
                     {
-                        outEdges.Add(new OutEdgeContainer { EdgePropertyId = edge.Key, EdgeProperty = CreateEdgeProperty(edge.Key, edge.Value, newVertex) });
+                        outEdges.Add(new EdgeContainer(edge.Key, CreateEdgeProperty(edge.Key, edge.Value, newVertex)));
                     }
 
                     newVertex.SetOutEdges(outEdges);

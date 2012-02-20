@@ -65,6 +65,7 @@
     <Compile Include="Index\Spatial\Point.cs" />
     <Compile Include="Index\Spatial\Rectangle.cs" />
     <Compile Include="Log\Logger.cs" />
+    <Compile Include="Model\EdgeContainer.cs" />
     <Compile Include="Model\PropertyContainer.cs" />
     <Compile Include="Plugin\IFallen8Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,8 +78,6 @@
     <Compile Include="Index\DictionaryIndex.cs" />
     <Compile Include="Fallen8Server.cs" />
     <Compile Include="Service\IFallen8Service.cs" />
-    <Compile Include="Model\OutEdgeContainer.cs" />
-    <Compile Include="Model\IncEdgeContainer.cs" />
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />

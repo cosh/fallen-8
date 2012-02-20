@@ -562,12 +562,12 @@ namespace Fallen8.API.Persistency
             
             #region outgoing edges
             
-            List<OutEdgeContainer> outEdgeProperties = null;
+            List<EdgeContainer> outEdgeProperties = null;
             var outEdgeCount = reader.ReadOptimizedInt32();
             
             if (outEdgeCount > 0) 
             {
-                outEdgeProperties = new List<OutEdgeContainer>(outEdgeCount);
+                outEdgeProperties = new List<EdgeContainer>(outEdgeCount);
                 for (var i = 0; i < outEdgeCount; i++) 
                 {
                     var outEdgePropertyId = reader.ReadOptimizedUInt16();
@@ -597,7 +597,7 @@ namespace Fallen8.API.Persistency
                             });
                         }
                     }
-                    outEdgeProperties.Add(new OutEdgeContainer { EdgePropertyId = outEdgePropertyId, EdgeProperty = outEdges});
+                    outEdgeProperties.Add(new EdgeContainer (outEdgePropertyId, outEdges));
                 }
             }
             
@@ -605,12 +605,12 @@ namespace Fallen8.API.Persistency
             
             #region incoming edges
             
-            List<IncEdgeContainer> incEdgeProperties = null;
+            List<EdgeContainer> incEdgeProperties = null;
             var incEdgeCount = reader.ReadOptimizedInt32();
             
             if (incEdgeCount > 0) 
             {
-                incEdgeProperties = new List<IncEdgeContainer>(incEdgeCount);
+                incEdgeProperties = new List<EdgeContainer>(incEdgeCount);
                 for (var i = 0; i < incEdgeCount; i++) 
                 {
                     var incEdgePropertyId = reader.ReadOptimizedUInt16();
@@ -640,7 +640,7 @@ namespace Fallen8.API.Persistency
                             });
                         }
                     }
-                    incEdgeProperties.Add(new IncEdgeContainer { EdgePropertyId = incEdgePropertyId, IncomingEdges = incEdges});
+                    incEdgeProperties.Add(new EdgeContainer(incEdgePropertyId, incEdges));
                 }
             }
             
@@ -678,8 +678,8 @@ namespace Fallen8.API.Persistency
                 foreach(var aOutEdgeProperty in outgoingEdges)
                 {
                     writer.WriteOptimized(aOutEdgeProperty.EdgePropertyId);
-                    writer.WriteOptimized(aOutEdgeProperty.EdgeProperty.Count);
-                    foreach(var aOutEdge in aOutEdgeProperty.EdgeProperty)
+                    writer.WriteOptimized(aOutEdgeProperty.Edges.Count);
+                    foreach(var aOutEdge in aOutEdgeProperty.Edges)
                     {
                         writer.WriteOptimized(aOutEdge.Id);
                     }
@@ -697,8 +697,8 @@ namespace Fallen8.API.Persistency
                 foreach(var aIncEdgeProperty in incomingEdges)
                 {
                     writer.WriteOptimized(aIncEdgeProperty.EdgePropertyId);
-                    writer.WriteOptimized(aIncEdgeProperty.IncomingEdges.Count);
-                    foreach(var aIncEdge in aIncEdgeProperty.IncomingEdges)
+                    writer.WriteOptimized(aIncEdgeProperty.Edges.Count);
+                    foreach(var aIncEdge in aIncEdgeProperty.Edges)
                     {
                         writer.WriteOptimized(aIncEdge.Id);
                     }

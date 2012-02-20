@@ -42,12 +42,12 @@ namespace Fallen8.API.Model
         /// <summary>
         /// The out edges.
         /// </summary>
-        private List<OutEdgeContainer> _outEdges;
+        private List<EdgeContainer> _outEdges;
         
         /// <summary>
         /// The in edges.
         /// </summary>
-        private List<IncEdgeContainer> _inEdges;
+        private List<EdgeContainer> _inEdges;
         
         #endregion
         
@@ -92,7 +92,7 @@ namespace Fallen8.API.Model
         /// <param name='incEdges'>
         /// Inc edges.
         /// </param>
-        internal VertexModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, PropertyContainer[] properties, List<OutEdgeContainer> outEdges, List<IncEdgeContainer> incEdges)
+        internal VertexModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, PropertyContainer[] properties, List<EdgeContainer> outEdges, List<EdgeContainer> incEdges)
             : base(id, creationDate, properties)
         {
             _outEdges = outEdges;
@@ -122,7 +122,7 @@ namespace Fallen8.API.Model
             {
                 if (_outEdges == null)
                 {
-                    _outEdges = new List<OutEdgeContainer>();
+                    _outEdges = new List<EdgeContainer>();
                 }
     
                 var foundSth = false;
@@ -131,7 +131,7 @@ namespace Fallen8.API.Model
                 {
                     if (aEdgeProperty.EdgePropertyId == edgePropertyId) 
                     {
-                        aEdgeProperty.EdgeProperty.Add(outEdge);
+                        aEdgeProperty.Edges.Add(outEdge);
                         
                         foundSth = true;
                         
@@ -141,7 +141,7 @@ namespace Fallen8.API.Model
                 
                 if (!foundSth) 
                 {
-                    _outEdges.Add(new OutEdgeContainer { EdgePropertyId = edgePropertyId, EdgeProperty = new List<EdgeModel> {outEdge}});
+                    _outEdges.Add(new EdgeContainer(edgePropertyId, new List<EdgeModel> {outEdge}));
                 }
                 
                 FinishWriteResource();
@@ -162,7 +162,7 @@ namespace Fallen8.API.Model
         /// <exception cref='CollisionException'>
         /// Is thrown when the collision exception.
         /// </exception>
-        internal void SetOutEdges(List<OutEdgeContainer> outEdges)
+        internal void SetOutEdges(List<EdgeContainer> outEdges)
         {
             if (WriteResource())
             {
@@ -193,7 +193,7 @@ namespace Fallen8.API.Model
             {
                 if (_inEdges == null)
                 {
-                    _inEdges = new List<IncEdgeContainer>();
+                    _inEdges = new List<EdgeContainer>();
                 }
     
                 var foundSth = false;
@@ -202,7 +202,7 @@ namespace Fallen8.API.Model
                 {
                     if (aIncomingEdge.EdgePropertyId == edgePropertyId) 
                     {
-                        aIncomingEdge.IncomingEdges.Add(incomingEdge);
+                        aIncomingEdge.Edges.Add(incomingEdge);
                         foundSth = true;
                         break;
                     }
@@ -210,7 +210,7 @@ namespace Fallen8.API.Model
                 
                 if (!foundSth) 
                 {
-                    _inEdges.Add(new IncEdgeContainer { EdgePropertyId = edgePropertyId, IncomingEdges = new List<EdgeModel> {incomingEdge}});    
+                    _inEdges.Add(new EdgeContainer(edgePropertyId, new List<EdgeModel> {incomingEdge}));
                 }
                 
                 FinishWriteResource();
@@ -227,15 +227,15 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The incoming edges.
         /// </returns>
-        internal List<IncEdgeContainer> GetIncomingEdges()
+        internal ReadOnlyCollection<EdgeContainer> GetIncomingEdges()
         {
-            List<IncEdgeContainer> result = null;
+            ReadOnlyCollection<EdgeContainer> result = null;
             
             if (ReadResource())
             {
                 if (_inEdges != null)
                 {
-                    result = new List<IncEdgeContainer>(_inEdges);
+                    result = new ReadOnlyCollection<EdgeContainer>(_inEdges);
                 }
                     
                 FinishReadResource();
@@ -252,15 +252,15 @@ namespace Fallen8.API.Model
         /// <returns>
         /// The outgoing edges.
         /// </returns>
-        internal List<OutEdgeContainer> GetOutgoingEdges()
+        internal ReadOnlyCollection<EdgeContainer> GetOutgoingEdges()
         {
-            List<OutEdgeContainer> result = null;
+            ReadOnlyCollection<EdgeContainer> result = null;
             
             if (ReadResource())
             {
                 if (_outEdges != null)
                 {
-                    result = new List<OutEdgeContainer>(_outEdges);
+                    result = new ReadOnlyCollection<EdgeContainer>(_outEdges);
                 }
                     
                 FinishReadResource();
@@ -291,7 +291,7 @@ namespace Fallen8.API.Model
                 {
                     foreach (var aOutEdge in _outEdges)
                     {
-                        neighbors.AddRange(aOutEdge.EdgeProperty.Select(_ => _.TargetVertex));
+                        neighbors.AddRange(aOutEdge.Edges.Select(_ => _.TargetVertex));
                     }
                 }
 
@@ -299,7 +299,7 @@ namespace Fallen8.API.Model
                 {
                     foreach (var aInEdge in _inEdges)
                     {
-                        neighbors.AddRange(aInEdge.IncomingEdges.Select(_ => _.SourceVertex));
+                        neighbors.AddRange(aInEdge.Edges.Select(_ => _.SourceVertex));
                     }
 
                 }
@@ -384,7 +384,7 @@ namespace Fallen8.API.Model
                     {
                         if (aOutEdge.EdgePropertyId == edgePropertyId) 
                         {
-                            result = aOutEdge.EdgeProperty.AsReadOnly();
+                            result = aOutEdge.Edges.AsReadOnly();
                             foundSth = true;
                             break;
                         } 
@@ -424,7 +424,7 @@ namespace Fallen8.API.Model
                     {
                         if (aIncomingEdgeProperty.EdgePropertyId == edgePropertyId) 
                         {
-                            result = aIncomingEdgeProperty.IncomingEdges.AsReadOnly();
+                            result = aIncomingEdgeProperty.Edges.AsReadOnly();
                             foundSth = true;
                             break;
                         }

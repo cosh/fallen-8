@@ -1,5 +1,5 @@
 // 
-// OutEdgeContainer.cs
+// EdgeContainer.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -30,19 +30,19 @@ using System.Collections.Generic;
 namespace Fallen8.API.Model
 {
     /// <summary>
-    /// Outgoing edge container.
+    /// edge container.
     /// </summary>
-    public struct OutEdgeContainer
+    public struct EdgeContainer
     {
         #region Data
         
         /// <summary>
-        /// Gets or sets the outgoing edge property identifier.
+        /// Gets or sets the edge property identifier.
         /// </summary>
         /// <value>
         /// The edge property identifier.
         /// </value>
-        public UInt16 EdgePropertyId { get; internal set; }
+        public UInt16 EdgePropertyId { get; private set; }
         
         /// <summary>
         /// Gets or sets the value.
@@ -50,8 +50,18 @@ namespace Fallen8.API.Model
         /// <value>
         /// The value.
         /// </value>
-        public List<EdgeModel> EdgeProperty { get; internal set; }
+        public List<EdgeModel> Edges { get; private set; }
         
+        #endregion
+
+        #region constructor
+
+        public EdgeContainer(UInt16 edgePropertyId, List<EdgeModel> edges) : this()
+        {
+            EdgePropertyId = edgePropertyId;
+            Edges = edges;
+        }
+
         #endregion
     }
 }
