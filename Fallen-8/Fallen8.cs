@@ -87,7 +87,7 @@ namespace Fallen8.API
         public Fallen8 ()
         {
             IndexFactory = new Fallen8IndexFactory();
-            _graphElements = new List<AGraphElement>(5000000);
+            _graphElements = new List<AGraphElement>();
             IndexFactory.Indices.Clear();
         }
         
@@ -157,7 +157,7 @@ namespace Fallen8.API
             try
             {
                 _currentId = -1;
-                _graphElements = new List<AGraphElement>(5000000);
+                _graphElements = new List<AGraphElement>();
                 IndexFactory.DeleteAllIndices();
             }
             finally
@@ -191,30 +191,27 @@ namespace Fallen8.API
             var encodedCreationDate = Constants.ConvertDateTime(creationDate);
 
             _lock.EnterWriteLock();
-            try
-            {
-                //get the related vertices
-                var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
-                var targetVertex = (VertexModel)_graphElements[targetVertexId];
 
-                var outgoingEdge = new EdgeModel(Interlocked.Increment(ref _currentId), encodedCreationDate,
-                                                 targetVertex, sourceVertex, properties);
+            //get the related vertices
+            var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
+            var targetVertex = (VertexModel) _graphElements[targetVertexId];
 
-                //add the edge to the graph elements
-                _graphElements.Add(outgoingEdge);
+            var id = Interlocked.Increment(ref _currentId);
 
-                //add the edge to the source vertex
-                sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+            var outgoingEdge = new EdgeModel(id, encodedCreationDate, targetVertex, sourceVertex, properties);
 
-                //link the vertices
-                targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
+            //add the edge to the graph elements
+            _graphElements.Add(outgoingEdge);
 
-                return outgoingEdge;
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
+            //add the edge to the source vertex
+            sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+
+            //link the vertices
+            targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
+
+            _lock.ExitWriteLock();
+
+            return outgoingEdge;
         }
 
         public bool TryAddProperty(Int32 graphElementId, UInt16 propertyId, Object property)
