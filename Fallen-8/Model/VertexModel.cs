@@ -126,19 +126,20 @@ namespace Fallen8.API.Model
                 }
     
                 var foundSth = false;
-                
-                foreach(var aEdgeProperty in _outEdges)
+
+                for (var i = 0; i < _outEdges.Count; i++)
                 {
-                    if (aEdgeProperty.EdgePropertyId == edgePropertyId) 
+                    var aOutEdge = _outEdges[i];
+                    if (aOutEdge.EdgePropertyId == edgePropertyId)
                     {
-                        aEdgeProperty.Edges.Add(outEdge);
-                        
+                        aOutEdge.Edges.Add(outEdge);
+
                         foundSth = true;
-                        
+
                         break;
                     }
                 }
-                
+
                 if (!foundSth) 
                 {
                     _outEdges.Add(new EdgeContainer(edgePropertyId, new List<EdgeModel> {outEdge}));
@@ -197,12 +198,13 @@ namespace Fallen8.API.Model
                 }
     
                 var foundSth = false;
-                
-                foreach(var aIncomingEdge in _inEdges)
+
+                for (int i = 0; i < _inEdges.Count; i++)
                 {
-                    if (aIncomingEdge.EdgePropertyId == edgePropertyId) 
+                    var aInEdge = _inEdges[i];
+                    if (aInEdge.EdgePropertyId == edgePropertyId)
                     {
-                        aIncomingEdge.Edges.Add(incomingEdge);
+                        aInEdge.Edges.Add(incomingEdge);
                         foundSth = true;
                         break;
                     }
@@ -289,19 +291,18 @@ namespace Fallen8.API.Model
 
                 if (_outEdges != null)
                 {
-                    foreach (var aOutEdge in _outEdges)
+                    for (int i = 0; i < _outEdges.Count; i++)
                     {
-                        neighbors.AddRange(aOutEdge.Edges.Select(_ => _.TargetVertex));
+                        neighbors.AddRange(_outEdges[i].Edges.Select(_ => _.TargetVertex));
                     }
                 }
 
-                if (_inEdges != null && _inEdges.Count > 0)
+                if (_inEdges != null)
                 {
-                    foreach (var aInEdge in _inEdges)
+                    for (var i = 0; i < _inEdges.Count; i++)
                     {
-                        neighbors.AddRange(aInEdge.Edges.Select(_ => _.SourceVertex));
+                        neighbors.AddRange(_inEdges[i].Edges.Select(_ => _.SourceVertex));
                     }
-
                 }
                 FinishReadResource();
 
@@ -380,9 +381,10 @@ namespace Fallen8.API.Model
                 
                 if (_outEdges != null)
                 {
-                    foreach (var aOutEdge in _outEdges) 
+                    for (var i = 0; i < _outEdges.Count; i++)
                     {
-                        if (aOutEdge.EdgePropertyId == edgePropertyId) 
+                        var aOutEdge = _outEdges[i];
+                        if (aOutEdge.EdgePropertyId == edgePropertyId)
                         {
                             result = aOutEdge.Edges.AsReadOnly();
                             foundSth = true;
@@ -420,11 +422,12 @@ namespace Fallen8.API.Model
                 
                 if (_inEdges != null)
                 {
-                    foreach (var aIncomingEdgeProperty in _inEdges) 
+                    for (var i = 0; i < _inEdges.Count; i++)
                     {
-                        if (aIncomingEdgeProperty.EdgePropertyId == edgePropertyId) 
+                        var aInEdge = _inEdges[i];
+                        if (aInEdge.EdgePropertyId == edgePropertyId)
                         {
-                            result = aIncomingEdgeProperty.Edges.AsReadOnly();
+                            result = aInEdge.Edges.AsReadOnly();
                             foundSth = true;
                             break;
                         }

@@ -133,15 +133,17 @@ namespace Fallen8.API
             try
             {
                 _graphElements.TrimExcess();
-                foreach (var aGraphElement in _graphElements)
+                for (var i = 0; i < _graphElements.Count; i++)
                 {
-                    aGraphElement.Trim();
+                    var graphElement = _graphElements[i];
+                    graphElement.Trim();
                 }
 
                 GC.Collect();
                 GC.Collect();
 
                 GC.WaitForFullGCComplete();
+                GC.WaitForPendingFinalizers();
 
                 EmptyWorkingSet(Process.GetCurrentProcess().Handle);
             }

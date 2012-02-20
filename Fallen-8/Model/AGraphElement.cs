@@ -145,15 +145,20 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
-                foreach (var aPropertyContainer in _properties) 
+
+                if (_properties != null)
                 {
-                    if (aPropertyContainer.Value != null && aPropertyContainer.PropertyId == propertyId) 
+                    for (var i = 0; i < _properties.Length; i++)
                     {
-                        result = (TProperty) aPropertyContainer.Value;
-                        
-                        FinishReadResource();
-                        
-                        return true;
+                        var aPropContainer = _properties[i];
+                        if (aPropContainer.Value != null && aPropContainer.PropertyId == propertyId)
+                        {
+                            result = (TProperty)aPropContainer.Value;
+
+                            FinishReadResource();
+
+                            return true;
+                        }
                     }
                 }
                 
