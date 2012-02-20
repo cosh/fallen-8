@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using Fallen8.API.Helper;
 using Fallen8.API.Model;
 using System.Collections.Generic;
 
@@ -42,9 +41,8 @@ namespace Fallen8.API
         /// </summary>
         /// <param name="creationDate">The creation date</param>
         /// <param name="properties">The properties.</param>
-        /// <param name="edges">The edges</param>
         /// <returns>The created vertex</returns>
-        VertexModel CreateVertex(DateTime creationDate, PropertyContainer[] properties = null, IDictionary<UInt16, List<EdgeModelDefinition>> edges = null);
+        VertexModel CreateVertex(DateTime creationDate, PropertyContainer[] properties = null);
 		
 		/// <summary>
 		/// Creates an edge.
@@ -58,10 +56,16 @@ namespace Fallen8.API
 		/// <param name='edgePropertyId'>
 		/// Edge property identifier.
 		/// </param>
-		/// <param name='edgeDefinition'>
-		/// Edge definition.
+        /// <param name='targetVertexId'>
+		/// Target vertex identifier.
 		/// </param>
-        EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, EdgeModelDefinition edgeDefinition);
+        /// <param name='creationDate'>
+        /// Creation date.
+        /// </param>
+        /// <param name='properties'>
+        /// Properties.
+        /// </param>
+        EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId, DateTime creationDate, PropertyContainer[] properties = null);
 		
 		#endregion
 		
