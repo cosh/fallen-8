@@ -44,10 +44,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\Path\IShortestPathAlgorithm.cs" />
     <Compile Include="Algorithms\Path\PathDelegates.cs" />
     <Compile Include="Algorithms\Path\Direction.cs" />
     <Compile Include="Algorithms\Path\PathElement.cs" />
-    <Compile Include="Algorithms\Path\IPathAlgorithm.cs" />
     <Compile Include="Algorithms\Path\Path.cs" />
     <Compile Include="Error\CollisionException.cs" />
     <Compile Include="Expression\BinaryOperator.cs" />
