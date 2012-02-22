@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using Framework.Serialization;
 
-namespace Fallen8.API.Service
+namespace Fallen8.API.Service.REST
 {
 	/// <summary>
 	/// Fallen-8 REST service.

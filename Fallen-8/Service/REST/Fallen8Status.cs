@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service
+namespace Fallen8.API.Service.REST
 {
 	/// <summary>
     ///   The Fallen-8 status

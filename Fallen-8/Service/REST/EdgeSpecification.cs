@@ -1,5 +1,5 @@
 // 
-//  VertexSpecification.cs
+//  EdgeSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -18,23 +18,35 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
-namespace Fallen8.API.Service
+namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The vertex specification
+    ///   The edge specification
     /// </summary>
     [DataContract]
-    public sealed class VertexSpecification
+    public sealed class EdgeSpecification
     {
         /// <summary>
         ///   The creation date
         /// </summary>
         [DataMember]
         public UInt32 CreationDate { get; set; }
-
+		
+		// <summary>
+        ///   The source vertex
+        /// </summary>
+        [DataMember]
+        public Int32 SourceVertex { get; set; }
+		
+		// <summary>
+        ///   The target vertex
+        /// </summary>
+        [DataMember]
+        public Int32 TargetVertex { get; set; }
+		
         /// <summary>
         ///   The properties of the vertex
         /// </summary>

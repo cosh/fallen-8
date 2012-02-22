@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 
-namespace Fallen8.API.Service
+namespace Fallen8.API.Service.REST
 {
 	/// <summary>
 	/// The Fallen-8 REST service.

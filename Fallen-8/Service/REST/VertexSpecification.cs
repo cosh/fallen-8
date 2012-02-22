@@ -1,5 +1,5 @@
 // 
-//  PropertySpecification.cs
+//  VertexSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -18,26 +18,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service
+namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The property specification
+    ///   The vertex specification
     /// </summary>
     [DataContract]
-    public sealed class PropertySpecification
+    public sealed class VertexSpecification
     {
         /// <summary>
-        ///   The type name
+        ///   The creation date
         /// </summary>
         [DataMember]
-        public String TypeName { get; set; }
+        public UInt32 CreationDate { get; set; }
 
         /// <summary>
-        ///   The property string representation
+        ///   The properties of the vertex
         /// </summary>
         [DataMember]
-        public String Property { get; set; }
+        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
     }
 }
+

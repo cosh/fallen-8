@@ -1,5 +1,5 @@
 // 
-//  EdgeSpecification.cs
+//  PropertySpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -19,39 +19,25 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Runtime.Serialization;
-using System.Collections.Generic;
 
-namespace Fallen8.API.Service
+namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The edge specification
+    ///   The property specification
     /// </summary>
     [DataContract]
-    public sealed class EdgeSpecification
+    public sealed class PropertySpecification
     {
         /// <summary>
-        ///   The creation date
+        ///   The type name
         /// </summary>
         [DataMember]
-        public UInt32 CreationDate { get; set; }
-		
-		// <summary>
-        ///   The source vertex
-        /// </summary>
-        [DataMember]
-        public Int32 SourceVertex { get; set; }
-		
-		// <summary>
-        ///   The target vertex
-        /// </summary>
-        [DataMember]
-        public Int32 TargetVertex { get; set; }
-		
+        public String TypeName { get; set; }
+
         /// <summary>
-        ///   The properties of the vertex
+        ///   The property string representation
         /// </summary>
         [DataMember]
-        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
+        public String Property { get; set; }
     }
 }
-

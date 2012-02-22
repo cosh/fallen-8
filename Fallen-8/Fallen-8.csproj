@@ -89,12 +89,12 @@
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
-    <Compile Include="Service\Fallen8RESTServicePlugin.cs" />
-    <Compile Include="Service\IFallen8RESTService.cs" />
-    <Compile Include="Service\VertexSpecification.cs" />
-    <Compile Include="Service\PropertySpecification.cs" />
-    <Compile Include="Service\EdgeSpecification.cs" />
-    <Compile Include="Service\Fallen8Status.cs" />
+    <Compile Include="Service\REST\EdgeSpecification.cs" />
+    <Compile Include="Service\REST\Fallen8RESTServicePlugin.cs" />
+    <Compile Include="Service\REST\Fallen8Status.cs" />
+    <Compile Include="Service\REST\IFallen8RESTService.cs" />
+    <Compile Include="Service\REST\PropertySpecification.cs" />
+    <Compile Include="Service\REST\VertexSpecification.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
