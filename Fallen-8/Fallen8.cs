@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using Fallen8.API.Index.Fulltext;
 using Fallen8.API.Index.Spatial;
 using Fallen8.API.Model;
@@ -64,9 +65,6 @@ namespace Fallen8.API
         /// </summary>
         private Int32 _currentId = -1;
 
-        [DllImport("psapi.dll")]
-        static extern int EmptyWorkingSet(IntPtr hwProc);
-        
         /// <summary>
         /// Binary operator delegate.
         /// </summary>
@@ -145,7 +143,7 @@ namespace Fallen8.API
                 GC.WaitForFullGCComplete();
                 GC.WaitForPendingFinalizers();
 
-                EmptyWorkingSet(Process.GetCurrentProcess().Handle);
+                var errorCode = SaveNativeMethods.EmptyWorkingSet(Process.GetCurrentProcess().Handle);
             }
             finally
             {
