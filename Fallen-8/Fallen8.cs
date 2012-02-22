@@ -168,15 +168,13 @@ namespace Fallen8.API
             }
         }
 
-        public VertexModel CreateVertex(DateTime creationDate, PropertyContainer[] properties = null)
+        public VertexModel CreateVertex(UInt32 creationDate, PropertyContainer[] properties = null)
         {
-            var encodedCreationDate = Constants.ConvertDateTime(creationDate);
-
             _lock.EnterWriteLock();
             try
             {
                 //create the new vertex
-                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), encodedCreationDate, properties);
+                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
                 _graphElements.Add(newVertex);
 
@@ -188,10 +186,8 @@ namespace Fallen8.API
             }
         }
 
-        public EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId, DateTime creationDate, PropertyContainer[] properties = null)
+        public EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId, UInt32 creationDate, PropertyContainer[] properties = null)
         {
-            var encodedCreationDate = Constants.ConvertDateTime(creationDate);
-
             _lock.EnterWriteLock();
 
             //get the related vertices
@@ -200,7 +196,7 @@ namespace Fallen8.API
 
             var id = Interlocked.Increment(ref _currentId);
 
-            var outgoingEdge = new EdgeModel(id, encodedCreationDate, targetVertex, sourceVertex, properties);
+            var outgoingEdge = new EdgeModel(id, creationDate, targetVertex, sourceVertex, properties);
 
             //add the edge to the graph elements
             _graphElements.Add(outgoingEdge);

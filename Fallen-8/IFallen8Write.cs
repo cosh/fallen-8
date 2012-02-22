@@ -39,10 +39,10 @@ namespace Fallen8.API
         /// <summary>
         /// Creates a vertex
         /// </summary>
-        /// <param name="creationDate">The creation date</param>
+        /// <param name="creationDate">The creation date as Unix timestamp (seconds from 01/01/1971)</param>
         /// <param name="properties">The properties.</param>
         /// <returns>The created vertex</returns>
-        VertexModel CreateVertex(DateTime creationDate, PropertyContainer[] properties = null);
+        VertexModel CreateVertex(UInt32 creationDate, PropertyContainer[] properties = null);
 		
 		/// <summary>
 		/// Creates an edge.
@@ -60,12 +60,12 @@ namespace Fallen8.API
 		/// Target vertex identifier.
 		/// </param>
         /// <param name='creationDate'>
-        /// Creation date.
+        /// The creation date as Unix timestamp (seconds from 01/01/1971)
         /// </param>
         /// <param name='properties'>
         /// Properties.
         /// </param>
-        EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId, DateTime creationDate, PropertyContainer[] properties = null);
+        EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId, UInt32 creationDate, PropertyContainer[] properties = null);
 		
 		#endregion
 		
