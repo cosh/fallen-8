@@ -1,5 +1,5 @@
 ﻿// 
-// IPathAlgorithm.cs
+// IShortestPathAlgorithm.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
