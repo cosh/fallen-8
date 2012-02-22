@@ -40,14 +40,6 @@ namespace Fallen8.API.Plugin
         String PluginName { get; }
 
         /// <summary>
-        /// Gets or sets the type of the plugin.
-        /// </summary>
-        /// <value>
-        /// The type of the plugin.
-        /// </value>
-        Type PluginType { get; }
-
-        /// <summary>
         /// Gets or sets the plugin category.
         /// </summary>
         /// <value>
@@ -84,25 +76,6 @@ namespace Fallen8.API.Plugin
         /// The initialized plugin
         /// </returns>
         void Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
-        
-        /// <summary>
-        /// Save the plugin.
-        /// </summary>
-        /// <param name='writer'>
-        /// Writer.
-        /// </param>
-        void Save(SerializationWriter writer);
-
-	    /// <summary>
-	    /// Open the plugin.
-	    /// </summary>
-	    /// <param name='reader'>
-	    /// Reader.
-	    /// </param>
-	    /// <param name="fallen8">
-	    /// Fallen-8 
-	    /// </param>
-	    void Open(SerializationReader reader, Fallen8 fallen8);
 	}
 }
 

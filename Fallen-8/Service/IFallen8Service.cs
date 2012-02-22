@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using Fallen8.API.Persistency;
 using Fallen8.API.Plugin;
 
 namespace Fallen8.API.Service
@@ -32,7 +33,7 @@ namespace Fallen8.API.Service
 	/// <summary>
 	/// Fallen-8 service interface.
 	/// </summary>
-    public interface IFallen8Service : IFallen8Plugin
+    public interface IFallen8Service : IFallen8Plugin, IFallen8Serializable
     {
 		/// <summary>
 		/// Gets the start time.

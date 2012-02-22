@@ -26,6 +26,7 @@
 using System;
 using System.Collections.ObjectModel;
 using Fallen8.API.Model;
+using Fallen8.API.Persistency;
 using Fallen8.API.Plugin;
 using System.Collections.Generic;
 
@@ -34,7 +35,7 @@ namespace Fallen8.API.Index
 	/// <summary>
 	/// The Fallen8 index interface.
 	/// </summary>
-	public interface IIndex : IFallen8Plugin
+    public interface IIndex : IFallen8Plugin, IFallen8Serializable
 	{
 		/// <summary>
 		/// Count of the keys.

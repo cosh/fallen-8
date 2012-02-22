@@ -71,7 +71,7 @@ namespace Fallen8.API
         /// </summary>
         public void Shutdown ()
         {
-            for (int i = 0; i < Services.Count; i++)
+            for (var i = 0; i < Services.Count; i++)
             {
                 Services[i].TryStop();
             }

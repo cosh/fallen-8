@@ -215,7 +215,7 @@ namespace Fallen8.API.Index
         }
         #endregion
 
-        #region IFallen8Plugin implementation
+        #region IFallen8Serializable
 
         public void Save(SerializationWriter writer)
         {
@@ -275,6 +275,10 @@ namespace Fallen8.API.Index
             }
         }
 
+        #endregion
+
+        #region IFallen8Plugin implementation
+
         public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, List<AGraphElement>>();
@@ -283,11 +287,6 @@ namespace Fallen8.API.Index
         public string PluginName
         {
             get { return "DictionaryIndex"; }
-        }
-
-        public Type PluginType
-        {
-            get { return typeof(DictionaryIndex); }
         }
 
         public Type PluginCategory

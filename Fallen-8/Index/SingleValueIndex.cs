@@ -197,8 +197,8 @@ namespace Fallen8.API.Index
         }
         #endregion
 
-        #region IFallen8Plugin implementation
-        
+        #region IFallen8Serializable
+
         public void Save(SerializationWriter writer)
         {
             _lock.EnterReadLock();
@@ -206,7 +206,7 @@ namespace Fallen8.API.Index
             {
                 writer.WriteOptimized(0);//parameter
                 writer.WriteOptimized(_idx.Count);
-                foreach (var aKV in _idx) 
+                foreach (var aKV in _idx)
                 {
                     writer.WriteObject(aKV.Key);
                     writer.WriteOptimized(aKV.Value.Id);
@@ -237,7 +237,7 @@ namespace Fallen8.API.Index
                     fallen8.TryGetGraphElement(out graphElement, graphElementId);
                     if (graphElement != null)
                     {
-                        _idx.Add((IComparable) key, graphElement);
+                        _idx.Add((IComparable)key, graphElement);
                     }
                 }
             }
@@ -246,6 +246,10 @@ namespace Fallen8.API.Index
                 _lock.ExitWriteLock();
             }
         }
+
+        #endregion
+
+        #region IFallen8Plugin implementation
 
         public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {

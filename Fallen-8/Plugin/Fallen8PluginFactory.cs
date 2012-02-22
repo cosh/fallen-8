@@ -126,7 +126,7 @@ namespace Fallen8.API.Plugin
             sb.AppendLine(String.Format("NAME: {0}", aPluginInstance.PluginName));
             sb.AppendLine(String.Format("  *DESCRIPTION: {0}", aPluginInstance.Description));
             sb.AppendLine(String.Format("  *MANUFACTURER: {0}", aPluginInstance.Manufacturer));
-            sb.AppendLine(String.Format("  *TYPE: {0}", aPluginInstance.PluginType.FullName));
+            sb.AppendLine(String.Format("  *TYPE: {0}", aPluginInstance.GetType().FullName));
             sb.AppendLine(String.Format("  *CATEGORY: {0}", aPluginInstance.PluginCategory.FullName));
 
             return sb.ToString();

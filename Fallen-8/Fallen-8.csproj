@@ -44,7 +44,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithms\PathAlgorithms.cs" />
+    <Compile Include="Algorithms\Path\Direction.cs" />
+    <Compile Include="Algorithms\Path\PathElement.cs" />
+    <Compile Include="Algorithms\Path\IPathAlgorithm.cs" />
+    <Compile Include="Algorithms\Path\Path.cs" />
     <Compile Include="Error\CollisionException.cs" />
     <Compile Include="Expression\BinaryOperator.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -67,6 +70,7 @@
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Model\EdgeContainer.cs" />
     <Compile Include="Model\PropertyContainer.cs" />
+    <Compile Include="Persistency\IFallen8Serializable.cs" />
     <Compile Include="Plugin\IFallen8Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\EdgeModel.cs" />

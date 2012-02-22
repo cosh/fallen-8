@@ -52,7 +52,7 @@ namespace Fallen8.API
         /// <summary>
         /// The graph elements
         /// </summary>
-        private volatile List<AGraphElement> _graphElements;
+        private List<AGraphElement> _graphElements;
 
         /// <summary>
         /// The index factory.

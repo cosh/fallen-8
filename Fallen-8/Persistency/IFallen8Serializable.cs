@@ -1,5 +1,5 @@
 ﻿// 
-// PathAlgorithms.cs
+// IFallen8Serializable.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -23,15 +23,33 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 
-namespace Fallen8.API.Algorithms
+using Framework.Serialization;
+
+namespace Fallen8.API.Persistency
 {
     /// <summary>
-    /// Static path algorithms
+    /// The interface for serializable things in Fallen-8
     /// </summary>
-    public static class PathAlgorithms
+    public interface IFallen8Serializable
     {
-        
+        /// <summary>
+        /// Save the plugin.
+        /// </summary>
+        /// <param name='writer'>
+        /// Writer.
+        /// </param>
+        void Save(SerializationWriter writer);
+
+        /// <summary>
+        /// Open the plugin.
+        /// </summary>
+        /// <param name='reader'>
+        /// Reader.
+        /// </param>
+        /// <param name="fallen8">
+        /// Fallen-8 
+        /// </param>
+        void Open(SerializationReader reader, Fallen8 fallen8);
     }
 }
