@@ -78,16 +78,12 @@ namespace Fallen8.API.Algorithms.Path
             return _pathElements == null ? 0 : _idx + 1;
         }
 
-        #endregion
-
-        #region internal methods
-
         /// <summary>
         /// Adds a path element
         /// </summary>
         /// <param name="pathElement">PathElement.</param>
         /// <returns>True for successfull add, otherwise false</returns>
-        internal Boolean AddPathElement(PathElement pathElement)
+        public Boolean AddPathElement(PathElement pathElement)
         {
             if (_idx < (_pathElements.Length - 1))
             {

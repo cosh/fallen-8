@@ -49,9 +49,9 @@ namespace Fallen8.API.Algorithms.Path
         /// <returns>Paths</returns>
         IEnumerable<Path> Calculate<TOrderKey>(
             Int32 sourceVertexId, 
-            Int32 destinationVertexId, 
-            UInt32 maxDepth = 1, 
-            UInt32 maxResults = 1, 
+            Int32 destinationVertexId,
+            UInt16 maxDepth = 1,
+            UInt16 maxResults = 1, 
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
             PathDelegates.EdgePriority<TOrderKey> edgePriority = null);
@@ -69,8 +69,8 @@ namespace Fallen8.API.Algorithms.Path
         IEnumerable<Path> Calculate(
             Int32 sourceVertexId,
             Int32 destinationVertexId,
-            UInt32 maxDepth = 1,
-            UInt32 maxResults = 1,
+            UInt16 maxDepth = 1,
+            UInt16 maxResults = 1,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null);
     }
