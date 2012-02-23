@@ -38,40 +38,27 @@ namespace Fallen8.API.Algorithms.Path
         /// <summary>
         /// Calculates shortest paths
         /// </summary>
-        /// <typeparam name="TOrderKey">The type of the order key.</typeparam>
         /// <param name="sourceVertexId">The source vertex identifier.</param>
         /// <param name="destinationVertexId">The destination vertex identifier.</param>
         /// <param name="maxDepth">The maximum depth.</param>
         /// <param name="maxResults">The maximum number of results.</param>
+        /// <param name="edgePropertyFilter">Edge property filter delegate.</param>
         /// <param name="edgeFilter">Edge filter delegate.</param>
         /// <param name="adjacentVertexFilter">Vertex filter delegate.</param>
         /// <param name="edgePriority">Edge priority order delegate.</param>
+        /// <param name="edgeCost">The edge cost delegate.</param>
+        /// <param name="vertexCost">The vertex cost delegate.</param>
         /// <returns>Paths</returns>
-        IEnumerable<Path> Calculate<TOrderKey>(
+        IEnumerable<Path> Calculate(
             Int32 sourceVertexId, 
             Int32 destinationVertexId,
             UInt16 maxDepth = 1,
-            UInt16 maxResults = 1, 
+            UInt16 maxResults = 1,
+            PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
-            PathDelegates.EdgePriority<TOrderKey> edgePriority = null);
-
-        /// <summary>
-        /// Calculates shortest paths
-        /// </summary>
-        /// <param name="sourceVertexId">The source vertex identifier.</param>
-        /// <param name="destinationVertexId">The destination vertex identifier.</param>
-        /// <param name="maxDepth">The maximum depth.</param>
-        /// <param name="maxResults">The maximum number of results.</param>
-        /// <param name="edgeFilter">Edge filter delegate.</param>
-        /// <param name="adjacentVertexFilter">Vertex filter delegate.</param>
-        /// <returns>Paths</returns>
-        IEnumerable<Path> Calculate(
-            Int32 sourceVertexId,
-            Int32 destinationVertexId,
-            UInt16 maxDepth = 1,
-            UInt16 maxResults = 1,
-            PathDelegates.EdgeFilter edgeFilter = null,
-            PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null);
+            PathDelegates.EdgePriority edgePriority = null,
+            PathDelegates.EdgeCost edgeCost = null,
+            PathDelegates.VertexCost vertexCost = null);
     }
 }

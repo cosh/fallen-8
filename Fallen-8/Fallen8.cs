@@ -26,9 +26,8 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime;
-using System.Runtime.InteropServices;
-using System.Security.Permissions;
+using Fallen8.API.Algorithms;
+using Fallen8.API.Algorithms.Path;
 using Fallen8.API.Index.Fulltext;
 using Fallen8.API.Index.Spatial;
 using Fallen8.API.Model;
@@ -40,6 +39,7 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using Fallen8.API.Index.Range;
 using Fallen8.API.Persistency;
+using Fallen8.API.Plugin;
 
 namespace Fallen8.API
 {
@@ -59,7 +59,7 @@ namespace Fallen8.API
         /// The index factory.
         /// </summary>
         public IFallen8IndexFactory IndexFactory;
-        
+
         /// <summary>
         /// The current identifier.
         /// </summary>
@@ -248,6 +248,40 @@ namespace Fallen8.API
         #endregion
 
         #region IFallen8Read implementation
+
+        public bool CalculateShortestPath(
+            out IEnumerable<Algorithms.Path.Path> result,
+            string algorithmname,
+            int sourceVertexId,
+            int destinationVertexId,
+            ushort maxDepth = 1,
+            ushort maxResults = 1,
+            PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
+            PathDelegates.EdgeFilter edgeFilter = null,
+            PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
+            PathDelegates.EdgePriority edgePriority = null,
+            PathDelegates.EdgeCost edgeCost = null,
+            PathDelegates.VertexCost vertexCost = null)
+        {
+            IShortestPathAlgorithm algo;
+            if (Fallen8PluginFactory.TryFindPlugin<IShortestPathAlgorithm>(out algo, algorithmname))
+            {
+                algo.Initialize(this, null);
+
+                _lock.EnterReadLock();
+                
+                result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxResults, edgePropertyFilter,
+                                        edgeFilter, adjacentVertexFilter, edgePriority, edgeCost, vertexCost);
+
+                _lock.ExitReadLock();
+
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+        
         public bool Search(out List<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp)
         {
             #region binary operation

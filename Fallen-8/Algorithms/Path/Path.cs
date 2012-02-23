@@ -56,6 +56,20 @@ namespace Fallen8.API.Algorithms.Path
             _idx = 0;
         }
 
+        /// <summary>
+        /// Create a new path
+        /// </summary>
+        /// <param name="maxDepth">Maximum length</param>
+        /// <param name="path">The path where the to copy from</param>
+        /// <param name="aPathElement">A new path element</param>
+        public Path(ushort maxDepth, Path path, PathElement aPathElement)
+        {
+            _pathElements = new PathElement[maxDepth];
+            Array.Copy(path._pathElements, this._pathElements, path._pathElements.Length);
+            _idx = Convert.ToUInt16(_pathElements.Length); //works fine because the new PathElement that is going to be added
+            _pathElements[_idx] = aPathElement;
+        }
+
         #endregion
 
         #region public methods
@@ -95,7 +109,16 @@ namespace Fallen8.API.Algorithms.Path
 
             return false;
         }
-        
+
+        /// <summary>
+        /// Returns the last vertex of the path.
+        /// </summary>
+        /// <returns>Vertex.</returns>
+        public VertexModel GetLastVertex()
+        {
+            return _pathElements[_idx].GetTargetVertex();
+        }
+
         #endregion
 
         #region IEnumerable<VertexModel> Members

@@ -52,5 +52,18 @@ namespace Fallen8.API.Algorithms.Path
         public Direction Direction { get; set; }
 
         #endregion
+
+        #region public methods
+
+        /// <summary>
+        /// Gets the target vertex of this path element
+        /// </summary>
+        /// <returns>Vertex.</returns>
+        public VertexModel GetTargetVertex()
+        {
+            return Direction == Direction.IncomingEdge ? Edge.SourceVertex : Edge.TargetVertex;
+        }
+
+        #endregion
     }
 }

@@ -36,13 +36,21 @@ namespace Fallen8.API.Algorithms.Path
     public static class PathDelegates
     {
         /// <summary>
+        /// Filter for edge properties
+        /// </summary>
+        /// <param name="edgePropertyId">The edge property identifier.</param>
+        /// <param name="direction">The direction of the edge.</param>
+        /// <returns>False will filter the edge property</returns>
+        public delegate bool EdgePropertyFilter(UInt16 edgePropertyId, Direction direction);
+
+        /// <summary>
         /// Filter for edges
         /// </summary>
         /// <param name="edge">The edge.</param>
         /// <param name="edgePropertyId">The edge property identifier.</param>
         /// <param name="direction">The direction of the edge.</param>
         /// <returns>False will filter the edge</returns>
-        public delegate bool EdgeFilter(EdgeModel edge, UInt32 edgePropertyId, Direction direction);
+        public delegate bool EdgeFilter(EdgeModel edge, UInt16 edgePropertyId, Direction direction);
 
         /// <summary>
         /// Filter for the adjacent vertex
@@ -54,12 +62,23 @@ namespace Fallen8.API.Algorithms.Path
         /// <summary>
         /// Sets the priority for edges
         /// </summary>
-        /// <typeparam name="TOrderKey">The type of the order key.</typeparam>
         /// <param name="edge">The edge</param>
         /// <param name="edgePropertyId">The edge property identifier.</param>
         /// <param name="direction">The direction of the edge.</param>
-        /// <param name="keyComparer">The comparer for the order key</param>
         /// <returns>The order key.</returns>
-        public delegate TOrderKey EdgePriority<out TOrderKey>(EdgeModel edge, UInt32 edgePropertyId, Direction direction, IComparer<TOrderKey> keyComparer);
+        public delegate double EdgePriority(EdgeModel edge, UInt16 edgePropertyId, Direction direction);
+
+        /// <summary>
+        /// Sets the cost of for the edge
+        /// </summary>
+        /// <param name="edge">The edge</param>
+        /// <returns>The order key.</returns>
+        public delegate double EdgeCost(EdgeModel edge);
+
+        /// <summary>
+        /// Sets the cost of for the vertex
+        /// </summary>
+        /// <param name="vertex">The vertex</param>
+        public delegate double VertexCost(VertexModel vertex);
     }
 }
