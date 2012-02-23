@@ -112,17 +112,6 @@ namespace Fallen8.API.Service.REST
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/IncEdges/{edgePropertyIdentifier}", ResponseFormat = WebMessageFormat.Json)]
         List<Int32> GetIncomingEdges(String vertexIdentifier, String edgePropertyIdentifier);
 
-        /// <summary>
-        /// Search for vertices
-        /// </summary>
-        /// <param name="typeName">The vertex type name</param>
-        /// <param name="propertyName">The property name</param>
-        /// <param name="propertyValue">The property value</param>
-        /// <returns>List of matching vertex identifier</returns>
-        [OperationContract(Name = "SearchVertices")]
-        [WebGet(UriTemplate = "/SearchVertices?type={typeName}&property={propertyId}&value={propertyValue}", ResponseFormat = WebMessageFormat.Json)]
-        List<Int32> SearchVertices(String typeName, String propertyId, String propertyValue);
-		
 		#endregion
 		
         #region misc
@@ -130,10 +119,9 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         /// Trims the database
         /// </summary>
-        /// <returns>The memory used</returns>
         [OperationContract(Name = "Trim")]
         [WebGet(UriTemplate = "/Trim", ResponseFormat = WebMessageFormat.Json)]
-        Int64 Trim();
+        void Trim();
 		
 		/// <summary>
         /// Status of the database

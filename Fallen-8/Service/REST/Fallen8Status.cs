@@ -45,13 +45,13 @@ namespace Fallen8.API.Service.REST
         /// Vertex count
         /// </summary>
         [DataMember]
-        public UInt32 VertexCount { get; set; }
+        public Int32 VertexCount { get; set; }
 		
 		/// <summary>
         /// Edge count
         /// </summary>
         [DataMember]
-        public UInt32 EdgeCount { get; set; }
+        public Int32 EdgeCount { get; set; }
 		
 		/// <summary>
         /// Available index plugins

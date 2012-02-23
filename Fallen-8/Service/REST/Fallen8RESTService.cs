@@ -18,7 +18,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using Fallen8.API.Model;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Fallen8.API.Plugin;
+using Fallen8.API.Index;
+using Fallen8.API.Algorithms.Path;
 
 namespace Fallen8.API.Service.REST
 {
@@ -61,60 +68,193 @@ namespace Fallen8.API.Service.REST
         #endregion
 
 		#region IFallen8RESTService implementation
+		
 		public int AddVertex (VertexSpecification definition)
 		{
-			throw new NotImplementedException ();
+            #region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+			
+            return _fallen8.CreateVertex(definition.CreationDate, GenerateProperties(definition.Properties)).Id;
 		}
 
 		public int AddEdge (EdgeSpecification definition)
 		{
-			throw new NotImplementedException ();
+			#region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+		
+            #endregion
+
+            return _fallen8.CreateEdge(definition.SourceVertex, definition.EdgePropertyId, definition.TargetVertex, definition.CreationDate, GenerateProperties(definition.Properties)).Id;
 		}
 
 		public Dictionary<ushort, string> GetAllVertexProperties (string vertexIdentifier)
 		{
-			throw new NotImplementedException ();
+			return GetGraphElementProperties (vertexIdentifier);
 		}
 
 		public Dictionary<ushort, string> GetAllEdgeProperties (string edgeIdentifier)
 		{
-			throw new NotImplementedException ();
+			return GetGraphElementProperties (edgeIdentifier);
 		}
 
 		public List<ushort> GetAllAvailableOutEdgesOnVertex (string vertexIdentifier)
 		{
-			throw new NotImplementedException ();
+			VertexModel vertex;
+			if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))) 
+			{
+				return vertex.GetOutgoingEdgeIds();
+			}
+			return null;
 		}
 
 		public List<ushort> GetAllAvailableIncEdgesOnVertex (string vertexIdentifier)
 		{
-			throw new NotImplementedException ();
+			VertexModel vertex;
+			if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))) 
+			{
+				return vertex.GetIncomingEdgeIds();
+			}
+			return null;
 		}
 
 		public List<int> GetOutgoingEdges (string vertexIdentifier, string edgePropertyIdentifier)
 		{
-			throw new NotImplementedException ();
+			VertexModel vertex;
+			if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))) 
+			{
+				ReadOnlyCollection<EdgeModel> edges;
+				if (vertex.TryGetOutEdge(out edges, Convert.ToInt32(edgePropertyIdentifier))) 
+				{
+					return edges.Select(_ => _.Id).ToList();
+				}
+			}
+			return null;
 		}
 
 		public List<int> GetIncomingEdges (string vertexIdentifier, string edgePropertyIdentifier)
 		{
-			throw new NotImplementedException ();
+			VertexModel vertex;
+			if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))) 
+			{
+				ReadOnlyCollection<EdgeModel> edges;
+				if (vertex.TryGetInEdges(out edges, Convert.ToInt32(edgePropertyIdentifier))) 
+				{
+					return edges.Select(_ => _.Id).ToList();
+				}
+			}
+			return null;
 		}
 
-		public List<int> SearchVertices (string typeName, string propertyId, string propertyValue)
+		public void Trim ()
 		{
-			throw new NotImplementedException ();
-		}
-
-		public long Trim ()
-		{
-			throw new NotImplementedException ();
+			_fallen8.Trim();
 		}
 
 		public Fallen8Status Status ()
 		{
-			throw new NotImplementedException ();
+			var currentProcess = Process.GetCurrentProcess();
+            var totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
+			
+			PerformanceCounter freeMem = new PerformanceCounter("Memory", "Available Bytes");
+			var freeBytesOfMemory = Convert.ToInt64(freeMem.NextValue());
+			
+			var vertexCount = _fallen8.GetVertices().Count;
+			var edgeCount = _fallen8.GetVertices().Count;
+			
+			IEnumerable<String> availableIndices;
+			Fallen8PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);
+			
+			IEnumerable<String> availablePathAlgos;
+			Fallen8PluginFactory.TryGetAvailablePlugins<IShortestPathAlgorithm>(out availablePathAlgos);
+			
+			IEnumerable<String> availableServices;
+			Fallen8PluginFactory.TryGetAvailablePlugins<IFallen8Service>(out availableServices);
+			
+			return new Fallen8Status
+			{
+				AvailableIndexPlugins = new List<String>(availableIndices),
+				AvailablePathPlugins = new List<String>(availablePathAlgos),
+				AvailableServicePlugins = new List<String>(availableServices),
+				EdgeCount = edgeCount,
+				VertexCount = vertexCount,
+				UsedMemory = totalBytesOfMemoryUsed,
+				FreeMemory = freeBytesOfMemory
+			};
 		}
+		#endregion
+		
+		#region private helper
+		
+		/// <summary>
+		/// Generates the properties.
+		/// </summary>
+		/// <returns>
+		/// The properties.
+		/// </returns>
+		/// <param name='propertySpecification'>
+		/// Property specification.
+		/// </param>
+		private static PropertyContainer[] GenerateProperties (Dictionary<UInt16, PropertySpecification> propertySpecification)
+		{
+			PropertyContainer[] properties = null;
+			
+            if (propertySpecification != null)
+            {
+                var propCounter = 0;
+				properties = new PropertyContainer[propertySpecification.Count];
+				
+                foreach (var aPropertyDefinition in propertySpecification)
+                {
+                    properties[propCounter] = new PropertyContainer 
+					{ 
+						PropertyId = aPropertyDefinition.Key, 
+						Value = Convert.ChangeType(aPropertyDefinition.Value.Property, Type.GetType(aPropertyDefinition.Value.TypeName, true, true)) 
+					};
+                    propCounter++;
+				}
+            }
+		
+			return properties;
+		}
+		
+		/// <summary>
+		/// Gets the graph element properties.
+		/// </summary>
+		/// <returns>
+		/// The graph element properties.
+		/// </returns>
+		/// <param name='vertexIdentifier'>
+		/// Vertex identifier.
+		/// </param>
+		private Dictionary<ushort, string> GetGraphElementProperties (string vertexIdentifier)
+		{
+			AGraphElement vertex;
+			if (_fallen8.TryGetGraphElement(out vertex, Convert.ToInt32(vertexIdentifier))) 
+			{
+				var result = new Dictionary<ushort, String>();
+				var properties = vertex.GetAllProperties();
+				for (int i = 0; i < properties.Count; i++) 
+				{
+					var propertyContainer = properties[i];
+					result.Add(propertyContainer.PropertyId, propertyContainer.Value.ToString());
+				}
+				
+				return result;
+			}
+			
+			return null;
+		}
+		
 		#endregion
 	}
 }

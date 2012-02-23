@@ -46,6 +46,12 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         [DataMember]
         public Int32 TargetVertex { get; set; }
+	
+		/// <summary>
+        ///   The edge property identifier
+        /// </summary>
+        [DataMember]
+        public UInt16 EdgePropertyId { get; set; }
 		
         /// <summary>
         ///   The properties of the vertex
