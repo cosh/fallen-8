@@ -69,6 +69,25 @@ namespace Fallen8.API.Algorithms.Path
             return Direction == Direction.IncomingEdge ? Edge.SourceVertex : Edge.TargetVertex;
         }
 
+        /// <summary>
+        /// Calculates the weight of this path element
+        /// </summary>
+        /// <param name="vertexCost">The vertex cost delegate.</param>
+        /// <param name="edgeCost">The edge cost delegate</param>
+        public void CalculateWeight(PathDelegates.VertexCost vertexCost, PathDelegates.EdgeCost edgeCost)
+        {
+            Weight = 0;
+            if (vertexCost != null)
+            {
+                Weight = vertexCost(Edge.TargetVertex);
+            }
+
+            if (edgeCost != null)
+            {
+                Weight += edgeCost(Edge);
+            }
+        }
+
         #endregion
     }
 }

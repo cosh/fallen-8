@@ -116,7 +116,7 @@ namespace Fallen8.API.Algorithms.Path
             {
                 _pathElements[_idx] = pathElement;
                 _idx++;
-
+                Weight += pathElement.Weight;
                 return true;
             }
 
