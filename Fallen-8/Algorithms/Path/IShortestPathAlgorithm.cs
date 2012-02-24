@@ -50,12 +50,12 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="edgeCost">The edge cost delegate.</param>
         /// <param name="vertexCost">The vertex cost delegate.</param>
         /// <returns>Paths</returns>
-        IEnumerable<Path> Calculate(
+        List<Path> Calculate(
             Int32 sourceVertexId, 
             Int32 destinationVertexId,
-            UInt16 maxDepth = 1,
+            Int32 maxDepth = 1,
             Double maxPathWeight = Double.MaxValue,
-            UInt16 maxResults = 1,
+            Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,

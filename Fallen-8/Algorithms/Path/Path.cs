@@ -61,7 +61,7 @@ namespace Fallen8.API.Algorithms.Path
         /// Creates a new path
         /// </summary>
         /// <param name="maximumLength">Maximum length.</param>
-        public Path(UInt16 maximumLength = 6)
+        public Path(Int32 maximumLength = 6)
         {
             _pathElements = new PathElement[maximumLength];
             _idx = 0;
@@ -74,12 +74,14 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="maxDepth">Maximum length</param>
         /// <param name="path">The path where the to copy from</param>
         /// <param name="aPathElement">A new path element</param>
-        public Path(ushort maxDepth, Path path, PathElement aPathElement)
+        public Path(Int32 maxDepth, Path path, PathElement aPathElement)
         {
             _pathElements = new PathElement[maxDepth];
-            Array.Copy(path._pathElements, this._pathElements, path._pathElements.Length);
-            _idx = Convert.ToUInt16(_pathElements.Length); //works fine because the new PathElement that is going to be added
+            var pathLength = path.GetLength();
+            Array.Copy(path._pathElements, this._pathElements, pathLength);
+            _idx = Convert.ToUInt16(pathLength); //works fine because the new PathElement that is going to be added
             _pathElements[_idx] = aPathElement;
+
             Weight = path.Weight + aPathElement.Weight;
         }
 
@@ -115,7 +117,7 @@ namespace Fallen8.API.Algorithms.Path
             if (_idx < (_pathElements.Length - 1))
             {
                 _pathElements[_idx] = pathElement;
-                _idx++;
+                if (_idx != 0) { _idx++; }
                 Weight += pathElement.Weight;
                 return true;
             }

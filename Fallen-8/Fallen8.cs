@@ -250,13 +250,13 @@ namespace Fallen8.API
         #region IFallen8Read implementation
 
         public bool CalculateShortestPath(
-            out IEnumerable<Algorithms.Path.Path> result,
+            out List<Algorithms.Path.Path> result,
             string algorithmname,
-            int sourceVertexId,
-            int destinationVertexId,
-            ushort maxDepth = 1,
+            Int32 sourceVertexId,
+            Int32 destinationVertexId,
+            Int32 maxDepth = 1,
             Double maxPathWeight = Double.MaxValue,
-            ushort maxResults = 1,
+            Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,

@@ -63,25 +63,28 @@ namespace Fallen8.API.Algorithms.Path
 
                 if (edgepropertyFilter != null && !edgepropertyFilter(edgePropertyId, Direction.OutgoingEdge))
                 {
-                    if (vertex.TryGetOutEdge(out edges, edgePropertyId))
+                    continue;
+                }
+
+                if (vertex.TryGetOutEdge(out edges, edgePropertyId))
+                {
+                    for (var j = 0; j < edges.Count; j++)
                     {
-                        for (var j = 0; j < edges.Count; j++)
+                        edge = edges[j];
+
+                        if (edgeFilter != null && !edgeFilter(edge, edgePropertyId, Direction.OutgoingEdge))
                         {
-                            edge = edges[j];
-
-                            if (edgeFilter != null && !edgeFilter(edge, edgePropertyId, Direction.OutgoingEdge))
-                            {
-                                continue;
-                            }
-
-                            if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.TargetVertex))
-                            {
-                                continue;
-                            }
-
-                            yield return
-                                new PathElement { Direction = Direction.OutgoingEdge, Edge = edge, EdgePropertyId = edgePropertyId };
+                            continue;
                         }
+
+                        if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.TargetVertex))
+                        {
+                            continue;
+                        }
+
+                        yield return
+                            new PathElement
+                                {Direction = Direction.OutgoingEdge, Edge = edge, EdgePropertyId = edgePropertyId};
                     }
                 }
             }
@@ -97,25 +100,28 @@ namespace Fallen8.API.Algorithms.Path
 
                 if (edgepropertyFilter != null && !edgepropertyFilter(edgePropertyId, Direction.IncomingEdge))
                 {
-                    if (vertex.TryGetInEdges(out edges, edgePropertyId))
+                    continue;
+                }
+
+                if (vertex.TryGetInEdges(out edges, edgePropertyId))
+                {
+                    for (var j = 0; j < edges.Count; j++)
                     {
-                        for (var j = 0; j < edges.Count; j++)
+                        edge = edges[j];
+
+                        if (edgeFilter != null && !edgeFilter(edge, edgePropertyId, Direction.IncomingEdge))
                         {
-                            edge = edges[j];
-
-                            if (edgeFilter != null && !edgeFilter(edge, edgePropertyId, Direction.IncomingEdge))
-                            {
-                                continue;
-                            }
-
-                            if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.SourceVertex))
-                            {
-                                continue;
-                            }
-
-                            yield return
-                                new PathElement { Direction = Direction.IncomingEdge, Edge = edge, EdgePropertyId = edgePropertyId };
+                            continue;
                         }
+
+                        if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.SourceVertex))
+                        {
+                            continue;
+                        }
+
+                        yield return
+                            new PathElement
+                                {Direction = Direction.IncomingEdge, Edge = edge, EdgePropertyId = edgePropertyId};
                     }
                 }
             }

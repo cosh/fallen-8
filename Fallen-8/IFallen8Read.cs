@@ -181,13 +181,13 @@ namespace Fallen8.API
         /// <param name="vertexCost">The vertex cost.</param>
         /// <returns>True if the plugin was found, otherwise false.</returns>
         bool CalculateShortestPath(
-            out IEnumerable<Path> result,
+            out List<Path> result,
             string algorithmname,
-            int sourceVertexId,
-            int destinationVertexId,
-            ushort maxDepth = 1,
+            Int32 sourceVertexId,
+            Int32 destinationVertexId,
+            Int32 maxDepth = 1,
             double maxPathWeight = Double.MaxValue,
-            ushort maxResults = 1,
+            Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
