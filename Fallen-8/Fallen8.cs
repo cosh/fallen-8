@@ -255,6 +255,7 @@ namespace Fallen8.API
             int sourceVertexId,
             int destinationVertexId,
             ushort maxDepth = 1,
+            Double maxPathWeight = Double.MaxValue,
             ushort maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
@@ -270,7 +271,7 @@ namespace Fallen8.API
 
                 _lock.EnterReadLock();
                 
-                result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxResults, edgePropertyFilter,
+                result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxPathWeight, maxResults, edgePropertyFilter,
                                         edgeFilter, adjacentVertexFilter, edgePriority, edgeCost, vertexCost);
 
                 _lock.ExitReadLock();

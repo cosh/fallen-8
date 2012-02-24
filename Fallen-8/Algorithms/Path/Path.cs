@@ -38,9 +38,20 @@ namespace Fallen8.API.Algorithms.Path
     {
         #region Properties
 
+        /// <summary>
+        /// The path elements
+        /// </summary>
         private PathElement[] _pathElements;
 
+        /// <summary>
+        /// The current index
+        /// </summary>
         private UInt16 _idx;
+
+        /// <summary>
+        /// The weight of this path
+        /// </summary>
+        public double Weight;
 
         #endregion
 
@@ -54,6 +65,7 @@ namespace Fallen8.API.Algorithms.Path
         {
             _pathElements = new PathElement[maximumLength];
             _idx = 0;
+            Weight = 0;
         }
 
         /// <summary>
@@ -68,6 +80,7 @@ namespace Fallen8.API.Algorithms.Path
             Array.Copy(path._pathElements, this._pathElements, path._pathElements.Length);
             _idx = Convert.ToUInt16(_pathElements.Length); //works fine because the new PathElement that is going to be added
             _pathElements[_idx] = aPathElement;
+            Weight = path.Weight + aPathElement.Weight;
         }
 
         #endregion

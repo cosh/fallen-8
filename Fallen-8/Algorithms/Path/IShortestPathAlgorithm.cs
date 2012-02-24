@@ -41,6 +41,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="sourceVertexId">The source vertex identifier.</param>
         /// <param name="destinationVertexId">The destination vertex identifier.</param>
         /// <param name="maxDepth">The maximum depth.</param>
+        /// <param name="maxPathWeight">The maximum path weight.</param>
         /// <param name="maxResults">The maximum number of results.</param>
         /// <param name="edgePropertyFilter">Edge property filter delegate.</param>
         /// <param name="edgeFilter">Edge filter delegate.</param>
@@ -53,6 +54,7 @@ namespace Fallen8.API.Algorithms.Path
             Int32 sourceVertexId, 
             Int32 destinationVertexId,
             UInt16 maxDepth = 1,
+            Double maxPathWeight = Double.MaxValue,
             UInt16 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
