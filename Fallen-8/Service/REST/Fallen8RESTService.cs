@@ -26,6 +26,9 @@ using System.Diagnostics;
 using Fallen8.API.Plugin;
 using Fallen8.API.Index;
 using Fallen8.API.Algorithms.Path;
+using Fallen8.API.Helper;
+using System.IO;
+using System.ServiceModel.Web;
 
 namespace Fallen8.API.Service.REST
 {
@@ -40,6 +43,11 @@ namespace Fallen8.API.Service.REST
         ///   The internal Fallen-8 instance
         /// </summary>
         private readonly Fallen8 _fallen8;
+		
+		/// <summary>
+		/// The ressources.
+		/// </summary>
+		private readonly Dictionary<String, Stream> _ressources;
 		
 		#endregion
 		
@@ -97,12 +105,12 @@ namespace Fallen8.API.Service.REST
             return _fallen8.CreateEdge(definition.SourceVertex, definition.EdgePropertyId, definition.TargetVertex, definition.CreationDate, GenerateProperties(definition.Properties)).Id;
 		}
 
-		public Dictionary<ushort, string> GetAllVertexProperties (string vertexIdentifier)
+		public Fallen8RESTProperties GetAllVertexProperties (string vertexIdentifier)
 		{
 			return GetGraphElementProperties (vertexIdentifier);
 		}
 
-		public Dictionary<ushort, string> GetAllEdgeProperties (string edgeIdentifier)
+		public Fallen8RESTProperties GetAllEdgeProperties (string edgeIdentifier)
 		{
 			return GetGraphElementProperties (edgeIdentifier);
 		}
@@ -191,6 +199,54 @@ namespace Fallen8.API.Service.REST
 				FreeMemory = freeBytesOfMemory
 			};
 		}
+		
+		public Stream GetFrontend()
+		{
+			return new MemoryStream(System.Text.UTF8Encoding.ASCII.GetBytes("Hello World"));
+		}
+		
+		
+		public Stream GetFrontendRessources(String ressourceName)
+		{
+			Stream ressourceStream;
+			if (_ressources.TryGetValue(ressourceName, out ressourceStream)) 
+			{
+				var result = new MemoryStream();
+				ressourceStream.CopyTo(result);
+				
+				var extension = ressourceName.Split('.').Last();
+				
+				switch (extension) 
+				{
+					case "html":
+					case "htm":
+						WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
+						break;
+					case "css": 
+						WebOperationContext.Current.OutgoingResponse.ContentType = "text/css";
+						break;
+					case "gif": 
+						WebOperationContext.Current.OutgoingResponse.ContentType = "image/gif";
+						break;
+					case "ico": 
+						WebOperationContext.Current.OutgoingResponse.ContentType = "image/ico";
+						break;
+					case "swf": 
+						WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-shockwave-flash";
+						break;
+					case "js": 
+						WebOperationContext.Current.OutgoingResponse.ContentType = "text/javascript";
+						break;
+					default:
+						throw new ApplicationException(String.Format("File type {0} not supported", extension));
+				}
+				
+				return result;
+			}
+			
+			return null;
+		}
+		
 		#endregion
 		
 		#region private helper
@@ -236,20 +292,17 @@ namespace Fallen8.API.Service.REST
 		/// <param name='vertexIdentifier'>
 		/// Vertex identifier.
 		/// </param>
-		private Dictionary<ushort, string> GetGraphElementProperties (string vertexIdentifier)
+		private Fallen8RESTProperties GetGraphElementProperties (string vertexIdentifier)
 		{
 			AGraphElement vertex;
 			if (_fallen8.TryGetGraphElement(out vertex, Convert.ToInt32(vertexIdentifier))) 
 			{
-				var result = new Dictionary<ushort, String>();
-				var properties = vertex.GetAllProperties();
-				for (int i = 0; i < properties.Count; i++) 
+				return new Fallen8RESTProperties 
 				{
-					var propertyContainer = properties[i];
-					result.Add(propertyContainer.PropertyId, propertyContainer.Value.ToString());
-				}
-				
-				return result;
+					CreationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),
+					ModificationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate + vertex.ModificationDate),
+					Properties = vertex.GetAllProperties().ToDictionary(key => key.PropertyId, value => value.Value.ToString())
+				};
 			}
 			
 			return null;

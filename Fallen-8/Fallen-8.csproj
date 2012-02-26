@@ -97,6 +97,7 @@
     <Compile Include="Service\REST\PropertySpecification.cs" />
     <Compile Include="Service\REST\VertexSpecification.cs" />
     <Compile Include="Service\REST\Fallen8RESTService.cs" />
+    <Compile Include="Service\REST\Fallen8RESTProperties.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using System.IO;
 
 namespace Fallen8.API.Service.REST
 {
@@ -63,7 +64,7 @@ namespace Fallen8.API.Service.REST
         /// <returns>PropertyName -> PropertyValue</returns>
         [OperationContract(Name = "VertexProperties")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        Dictionary<UInt16, String> GetAllVertexProperties(String vertexIdentifier);
+		Fallen8RESTProperties GetAllVertexProperties(String vertexIdentifier);
         
 		/// <summary>
         /// Returns all edge properties
@@ -72,7 +73,7 @@ namespace Fallen8.API.Service.REST
         /// <returns>PropertyId -> PropertyValue</returns>
         [OperationContract(Name = "VertexProperties")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        Dictionary<UInt16, String> GetAllEdgeProperties(String edgeIdentifier);
+        Fallen8RESTProperties GetAllEdgeProperties(String edgeIdentifier);
 		
         /// <summary>
         /// Returns all available outgoing edges for a given vertex
@@ -132,6 +133,33 @@ namespace Fallen8.API.Service.REST
         Fallen8Status Status();
 
         #endregion
+		
+		#region frontend
+		
+		/// <summary>
+		/// Gets the frontend.
+		/// </summary>
+		/// <returns>
+		/// The frontend.
+		/// </returns>
+		[OperationContract(Name = "Frontend")]
+        [WebGet(UriTemplate = "/Frontend")]
+		Stream GetFrontend();
+		
+		/// <summary>
+        /// Gets the frontend ressources.
+        /// </summary>
+        /// <returns>
+        /// The frontend ressources.
+        /// </returns>
+        /// <param name='ressourceName'>
+        /// Ressource name.
+        /// </param>
+		[OperationContract(Name = "FrontendRessource")]
+        [WebGet(UriTemplate = "/Frontend/Ressource/{ressourceName}")]
+		Stream GetFrontendRessources(String ressourceName);
+		
+		#endregion
 	}
 }
 
