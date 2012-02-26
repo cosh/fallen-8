@@ -202,7 +202,10 @@ namespace Fallen8.API.Service.REST
 		
 		public String GetFrontend()
 		{
+			var BaseUri = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri; 
+			
 			WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
+			
 			return "Hello World";
 		}
 		
