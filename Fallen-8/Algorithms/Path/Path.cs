@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Fallen8.API.Model;
@@ -41,12 +42,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <summary>
         /// The path elements
         /// </summary>
-        private PathElement[] _pathElements;
-
-        /// <summary>
-        /// The current index
-        /// </summary>
-        private UInt16 _idx;
+        private List<PathElement> _pathElements;
 
         /// <summary>
         /// The weight of this path
@@ -63,8 +59,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="maximumLength">Maximum length.</param>
         public Path(Int32 maximumLength = 6)
         {
-            _pathElements = new PathElement[maximumLength];
-            _idx = 0;
+            _pathElements = new List<PathElement>(maximumLength);
             Weight = 0;
         }
 
@@ -76,11 +71,9 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="aPathElement">A new path element</param>
         public Path(Int32 maxDepth, Path path, PathElement aPathElement)
         {
-            _pathElements = new PathElement[maxDepth];
+            _pathElements = new List<PathElement>(path._pathElements);
             var pathLength = path.GetLength();
-            Array.Copy(path._pathElements, this._pathElements, pathLength);
-            _idx = Convert.ToUInt16(pathLength); //works fine because the new PathElement that is going to be added
-            _pathElements[_idx] = aPathElement;
+            _pathElements.Add(aPathElement);
 
             Weight = path.Weight + aPathElement.Weight;
         }
@@ -93,7 +86,7 @@ namespace Fallen8.API.Algorithms.Path
         /// Returns the elements of the path
         /// </summary>
         /// <returns>Path elements.</returns>
-        public PathElement[] GetPathElements()
+        public List<PathElement> GetPathElements()
         {
             return _pathElements;
         }
@@ -104,25 +97,17 @@ namespace Fallen8.API.Algorithms.Path
         /// <returns>Path length</returns>
         public Int32 GetLength()
         {
-            return _pathElements == null ? 0 : _idx + 1;
+            return _pathElements == null ? 0 : _pathElements.Count;
         }
 
         /// <summary>
         /// Adds a path element
         /// </summary>
         /// <param name="pathElement">PathElement.</param>
-        /// <returns>True for successfull add, otherwise false</returns>
-        public Boolean AddPathElement(PathElement pathElement)
+        public void AddPathElement(PathElement pathElement)
         {
-            if (_idx < (_pathElements.Length - 1))
-            {
-                _pathElements[_idx] = pathElement;
-                if (_idx != 0) { _idx++; }
-                Weight += pathElement.Weight;
-                return true;
-            }
-
-            return false;
+          	_pathElements.Add(pathElement);
+          	Weight += pathElement.Weight;
         }
 
         /// <summary>
@@ -131,7 +116,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <returns>Vertex.</returns>
         public VertexModel GetLastVertex()
         {
-            return _pathElements[_idx].GetTargetVertex();
+            return _pathElements.Last().GetTargetVertex();
         }
 
         #endregion
@@ -142,7 +127,7 @@ namespace Fallen8.API.Algorithms.Path
         {
             if (_pathElements != null)
             {
-                for (var i = 0; i < _idx + 1; i++)
+                for (var i = 0; i < _pathElements.Count + 1; i++)
                 {
                     var pathElement = _pathElements[i];
                     if (pathElement.Direction == Direction.IncomingEdge)
