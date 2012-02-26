@@ -112,11 +112,17 @@ namespace Fallen8.API
                 IndexFactory = new Fallen8IndexFactory();
                 _graphElements = new List<AGraphElement>();
                 IndexFactory.Indices.Clear();
-                GC.Collect();
+                
+				#if __MonoCS__
+ 				//mono specific code
+				#else 
+				GC.Collect();
                 GC.Collect();
                 GC.WaitForFullGCComplete();
                 GC.WaitForPendingFinalizers();
-                Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
+				#endif
+				
+				Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
                 Trim();
             }
             finally
@@ -137,13 +143,20 @@ namespace Fallen8.API
                     graphElement.Trim();
                 }
 
+                #if __MonoCS__
+ 				//mono specific code
+				#else 
+				GC.Collect();
                 GC.Collect();
-                GC.Collect();
-
                 GC.WaitForFullGCComplete();
                 GC.WaitForPendingFinalizers();
-
+				#endif
+				
+				#if __MonoCS__
+ 				//mono specific code
+				#else 
                 var errorCode = SaveNativeMethods.EmptyWorkingSet(Process.GetCurrentProcess().Handle);
+				#endif
             }
             finally
             {
