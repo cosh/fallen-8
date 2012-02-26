@@ -145,7 +145,7 @@ namespace Fallen8.API.Service.REST
 		public string Description {
 			get 
 			{
-				return "A simple REST service that talks JSON";
+				return _description;
 			}
 		}
 

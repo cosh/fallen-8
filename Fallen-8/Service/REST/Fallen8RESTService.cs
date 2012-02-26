@@ -200,9 +200,10 @@ namespace Fallen8.API.Service.REST
 			};
 		}
 		
-		public Stream GetFrontend()
+		public String GetFrontend()
 		{
-			return new MemoryStream(System.Text.UTF8Encoding.ASCII.GetBytes("Hello World"));
+			WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
+			return "Hello World";
 		}
 		
 		

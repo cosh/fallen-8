@@ -71,7 +71,7 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         /// <param name="edgeIdentifier">The edge identifier</param>
         /// <returns>PropertyId -> PropertyValue</returns>
-        [OperationContract(Name = "VertexProperties")]
+        [OperationContract(Name = "EdgeProperties")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
         Fallen8RESTProperties GetAllEdgeProperties(String edgeIdentifier);
 		
@@ -144,7 +144,7 @@ namespace Fallen8.API.Service.REST
 		/// </returns>
 		[OperationContract(Name = "Frontend")]
         [WebGet(UriTemplate = "/Frontend")]
-		Stream GetFrontend();
+		String GetFrontend();
 		
 		/// <summary>
         /// Gets the frontend ressources.
