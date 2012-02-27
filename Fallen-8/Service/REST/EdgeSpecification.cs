@@ -35,13 +35,13 @@ namespace Fallen8.API.Service.REST
         [DataMember]
         public UInt32 CreationDate { get; set; }
 		
-		// <summary>
+		/// <summary>
         ///   The source vertex
         /// </summary>
         [DataMember]
         public Int32 SourceVertex { get; set; }
 		
-		// <summary>
+		/// <summary>
         ///   The target vertex
         /// </summary>
         [DataMember]

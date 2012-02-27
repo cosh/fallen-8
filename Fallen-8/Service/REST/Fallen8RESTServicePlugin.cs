@@ -113,7 +113,7 @@ namespace Fallen8.API.Service.REST
 		#region IFallen8Plugin implementation
 		public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
 		{
-			String uriPattern = "Fallen8";
+			var uriPattern = "Fallen8";
             if (parameter != null && parameter.ContainsKey("URIPattern"))
                 uriPattern = (String) Convert.ChangeType(parameter["URIPattern"], typeof (String));
 
@@ -165,7 +165,16 @@ namespace Fallen8.API.Service.REST
 		}
 		#endregion
 
-		public void StartService (Fallen8 fallen8, IPAddress ipAddress, ushort port, string uriPattern)
+        #region private helper
+
+        /// <summary>
+        /// Starts the actual service
+        /// </summary>
+        /// <param name="fallen8">Fallen-8.</param>
+        /// <param name="ipAddress">IP address.</param>
+        /// <param name="port">Port.</param>
+        /// <param name="uriPattern">URI pattern</param>
+        private void StartService (Fallen8 fallen8, IPAddress ipAddress, ushort port, string uriPattern)
 		{
 			var uri = new Uri("http://" + ipAddress + ":" + port + "/" + uriPattern);
 
@@ -176,7 +185,7 @@ namespace Fallen8.API.Service.REST
 
             _host = new ServiceHost(_service, uri);
 			
-           	var restServiceAddress = "REST";
+           	const string restServiceAddress = "REST";
 			
             try
             {
@@ -220,8 +229,10 @@ namespace Fallen8.API.Service.REST
             _isRunning = true;
             _startTime = DateTime.Now;
             _description += Environment.NewLine + "   -> Service is started at " + uri + "/" + restServiceAddress;
-			
-		}
-	}
+
+        }
+
+        #endregion
+    }
 }
 
