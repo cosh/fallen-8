@@ -89,8 +89,8 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         /// <param name="vertexIdentifier">The vertex identifier</param>
         /// <returns>List of available incoming edge property ids</returns>
-        [OperationContract(Name = "AvailableIncEdges")]
-        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/AvailableOutEdges", ResponseFormat = WebMessageFormat.Json)]
+        [OperationContract(Name = "AvailableInEdges")]
+        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/AvailableInEdges", ResponseFormat = WebMessageFormat.Json)]
         List<UInt16> GetAllAvailableIncEdgesOnVertex(String vertexIdentifier);
 		
         /// <summary>

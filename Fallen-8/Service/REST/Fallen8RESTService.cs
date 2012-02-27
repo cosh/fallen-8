@@ -200,6 +200,7 @@ namespace Fallen8.API.Service.REST
                 var baseUri = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri;
 
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
+
             }
             
             return "Hello World";
