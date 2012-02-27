@@ -144,7 +144,7 @@ namespace Fallen8.API.Service.REST
 		/// </returns>
 		[OperationContract(Name = "Frontend")]
         [WebGet(UriTemplate = "/Frontend")]
-		String GetFrontend();
+        Stream GetFrontend();
 		
 		/// <summary>
         /// Gets the frontend ressources.

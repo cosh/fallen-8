@@ -29,6 +29,8 @@ using Fallen8.API.Algorithms.Path;
 using Fallen8.API.Helper;
 using System.IO;
 using System.ServiceModel.Web;
+using Fallen8.API.Service.REST.Ressource;
+using System.Text;
 
 namespace Fallen8.API.Service.REST
 {
@@ -48,6 +50,16 @@ namespace Fallen8.API.Service.REST
         /// The ressources.
         /// </summary>
         private readonly Dictionary<String, MemoryStream> _ressources;
+
+        /// <summary>
+        /// The html befor the code injection
+        /// </summary>
+        private readonly String _frontEndPre;
+
+        /// <summary>
+        /// The html after the code injection
+        /// </summary>
+        private readonly String _frontEndPost;
         
         #endregion
         
@@ -63,6 +75,8 @@ namespace Fallen8.API.Service.REST
         {
             _fallen8 = fallen8;
             _ressources = FindRessources();
+            _frontEndPre = Frontend.Pre;
+            _frontEndPost = Frontend.Post;
         }
  
         #endregion
@@ -193,7 +207,7 @@ namespace Fallen8.API.Service.REST
             };
         }
         
-        public String GetFrontend()
+        public Stream GetFrontend()
         {
             if (WebOperationContext.Current != null)
             {
@@ -201,9 +215,17 @@ namespace Fallen8.API.Service.REST
 
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
 
+                var sb = new StringBuilder();
+
+                sb.Append(_frontEndPre);
+                sb.Append(Environment.NewLine);
+                sb.AppendLine("var baseUri = \"" + baseUri.ToString() + "\"" + Environment.NewLine);
+                sb.Append(_frontEndPost);
+
+                return new MemoryStream(Encoding.UTF8.GetBytes(sb.ToString()));
             }
-            
-            return "Hello World";
+
+            return new MemoryStream(Encoding.UTF8.GetBytes("Sorry, no frontend available."));
         }
         
         public Stream GetFrontendRessources(String ressourceName)
@@ -211,9 +233,6 @@ namespace Fallen8.API.Service.REST
             MemoryStream ressourceStream;
             if (_ressources.TryGetValue(ressourceName, out ressourceStream)) 
             {
-                var result = new MemoryStream();
-                ressourceStream.CopyTo(result);
-
                 if (WebOperationContext.Current != null)
                 {
                     var extension = ressourceName.Split('.').Last();
@@ -244,7 +263,7 @@ namespace Fallen8.API.Service.REST
                     }
                 }
 
-                return result;
+                return ressourceStream;
             }
             
             return null;

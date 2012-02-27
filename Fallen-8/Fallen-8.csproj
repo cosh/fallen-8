@@ -95,6 +95,11 @@
     <Compile Include="Service\REST\Fallen8Status.cs" />
     <Compile Include="Service\REST\IFallen8RESTService.cs" />
     <Compile Include="Service\REST\PropertySpecification.cs" />
+    <Compile Include="Service\REST\Ressource\Frontend.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Frontend.resx</DependentUpon>
+    </Compile>
     <Compile Include="Service\REST\VertexSpecification.cs" />
     <Compile Include="Service\REST\Fallen8RESTService.cs" />
     <Compile Include="Service\REST\Fallen8RESTProperties.cs" />
@@ -109,6 +114,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Service\REST\Ressource\d3.v2.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Service\REST\Ressource\Frontend.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Frontend.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
