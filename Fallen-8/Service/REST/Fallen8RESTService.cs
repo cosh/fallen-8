@@ -184,7 +184,7 @@ namespace Fallen8.API.Service.REST
             var freeBytesOfMemory = Convert.ToInt64(freeMem.NextValue());
             
             var vertexCount = _fallen8.GetVertices().Count;
-            var edgeCount = _fallen8.GetVertices().Count;
+            var edgeCount = _fallen8.GetEdges().Count;
             
             IEnumerable<String> availableIndices;
             Fallen8PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);

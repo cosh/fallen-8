@@ -142,7 +142,7 @@ line {
 }
 
 text {
-  font: 12px sans-serif;
+  font: 10px sans-serif;
   pointer-events: none;
 }
 rect {
@@ -150,21 +150,21 @@ rect {
 }
 
 #logo {
-  font-size: 69px;
+  font-size: 42px;
   margin-top: 0.1em;
   color: darkred;
   text-align: left;
 }
 
 #status {
-  font-size: 12px;
+  font-size: 10px;
   margin-top: 0.1em;
   color: white;
-  text-align: right;
+  text-align: left;
 }
 
 #copyright {
-  font-size: 12px;
+  font-size: 10px;
   margin-top: 0.1em;
   color: white;
   text-align: right;
