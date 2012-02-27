@@ -118,11 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Post" xml:space="preserve">
-    <value>&lt;/script&gt;
-	&lt;div id="status"&gt;&lt;/div&gt;
-	&lt;script type="text/javascript" src="Frontend/Ressource/status.js"&gt;&lt;/script&gt;
-    &lt;div id="graph"&gt;&lt;/div&gt;
-    &lt;script type="text/javascript" src="Frontend/Ressource/graph.js"&gt;&lt;/script&gt;
+    <value>showLogo();
+	showCopyright();
+	showStatus();
+	&lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
@@ -132,6 +131,10 @@
   &lt;head&gt;
     &lt;title&gt;Fallen-8&lt;/title&gt;
     &lt;script type="text/javascript" src="Frontend/Ressource/d3.v2.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/copyright.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/logo.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/status.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/graph.js"&gt;&lt;/script&gt;
     &lt;style type="text/css"&gt;
 
 line {
@@ -146,6 +149,27 @@ rect {
   fill: #fff;
 }
 
+#logo {
+  font-size: 69px;
+  margin-top: 0.1em;
+  color: darkred;
+  text-align: left;
+}
+
+#status {
+  font-size: 12px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: right;
+}
+
+#copyright {
+  font-size: 12px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: right;
+}
+
 .cursor {
   fill: none;
   stroke: brown;
@@ -155,6 +179,12 @@ rect {
     &lt;/style&gt;
   &lt;/head&gt;
   &lt;body&gt;
+	&lt;div id="logo"&gt;&lt;/div&gt;
+    &lt;div id="misc"&gt;	
+	&lt;div id="copyright"&gt;&lt;/div&gt;
+	&lt;div id="status"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+	&lt;div id="graph"&gt;&lt;/div&gt;
 	&lt;script type="text/javascript"&gt;</value>
   </data>
 </root>
