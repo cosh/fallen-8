@@ -1,3 +1,8 @@
+var w = 150,
+    h = 150,
+    r = Math.min(w, h) / 2,
+    arc = d3.svg.arc().outerRadius(r);
+
 function showStatus() {
     FetchStatus();
 }
@@ -9,18 +14,84 @@ function FetchStatus() {
     d3.json(statusUri, function (json) {
 
         PrintStatus(json);
+        PrintPieCharts(json);
     });
 }
 
+function PrintPieCharts(json) {
+
+    PrintMemory(json);
+    PrintGraphStats(json);
+}
+
+function PrintMemory(json) {
+    var freemem = json["FreeMemory"];
+    var usedmem = json["UsedMemory"];
+
+    PrintPieChart(freemem, usedmem, "#memstats");
+}
+
+function PrintGraphStats(json) {
+    var vCount = json["VertexCount"];
+    var eCount = json["EdgeCount"];
+    if (vCount > 0) {
+        PrintPieChart(vCount, eCount, "#graphStats");
+    } else {
+        PrintPieChart(0, 1, "#graphStats");
+    }
+}
+
+function PrintPieChart(val1, val2, divName) {
+    var data = [val1, val2].sort(d3.descending),
+    //data2 = d3.range(2).map(Math.random).sort(d3.descending),
+    color = d3.scale.category20(),
+    donut = d3.layout.pie();
+
+    var vis = d3.select(divName).append("svg")
+    .data([data])
+    .attr("width", w)
+    .attr("height", h);
+
+    var arcs = vis.selectAll("g.arc")
+    .data(donut)
+  .enter().append("g")
+    .attr("class", "arc")
+    .attr("transform", "translate(" + r + "," + r + ")");
+
+    var paths = arcs.append("path")
+    .attr("fill", function (d, i) { return color(i); });
+
+    paths.transition()
+    .ease("bounce")
+    .duration(2000)
+    .attrTween("d", tweenPie);
+}
+
+function tweenPie(b) {
+    b.innerRadius = 0;
+    var i = d3.interpolate({ startAngle: 0, endAngle: 0 }, b);
+    return function (t) {
+        return arc(i(t));
+    };
+}
+
+function tweenDonut(b) {
+    b.innerRadius = r * .6;
+    var i = d3.interpolate({ innerRadius: 0 }, b);
+    return function (t) {
+        return arc(i(t));
+    };
+}
+
 function PrintStatus(json) {
-    d3.select("#status")
+    d3.select("#statusingeneral")
       .style("width", "0%")
       .style("background-color", "white")
       .html(JSONToText(json))
     .transition()
       .ease("bounce")
       .duration(2000)
-      .style("width", "100%")
+      .style("width", "25%")
       .style("background-color", "grey");
 }
 

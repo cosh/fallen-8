@@ -83,11 +83,15 @@ namespace Fallen8.API.Service.REST.Ressource {
         ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/copyright.js&quot;&gt;&lt;/script&gt;
         ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/logo.js&quot;&gt;&lt;/script&gt;
         ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/status.js&quot;&gt;&lt;/script&gt;
-        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/graph.js&quot;&gt;&lt;/script&gt;
         ///    &lt;style type=&quot;text/css&quot;&gt;
         ///
         ///line {
-        ///  stroke: rgba(32 [rest of string was truncated]&quot;;.
+        ///  stroke: rgba(32,32,32,3.3);
+        ///}
+        ///
+        ///text {
+        ///  font: 10px sans-serif;
+        ///  pointer-events: none;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Pre {
             get {

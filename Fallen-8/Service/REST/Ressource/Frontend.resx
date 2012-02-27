@@ -134,7 +134,6 @@
 	&lt;script type="text/javascript" src="Frontend/Ressource/copyright.js"&gt;&lt;/script&gt;
 	&lt;script type="text/javascript" src="Frontend/Ressource/logo.js"&gt;&lt;/script&gt;
 	&lt;script type="text/javascript" src="Frontend/Ressource/status.js"&gt;&lt;/script&gt;
-	&lt;script type="text/javascript" src="Frontend/Ressource/graph.js"&gt;&lt;/script&gt;
     &lt;style type="text/css"&gt;
 
 line {
@@ -156,11 +155,28 @@ rect {
   text-align: left;
 }
 
-#status {
+#statusingeneral {
+  float: left;
   font-size: 10px;
   margin-top: 0.1em;
   color: white;
   text-align: left;
+}
+
+#graphStats {
+  float: left;
+  font-size: 10px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: center;
+}
+
+#memstats {
+  float: left;
+  font-size: 10px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: center;
 }
 
 #copyright {
@@ -181,8 +197,12 @@ rect {
   &lt;body&gt;
 	&lt;div id="logo"&gt;&lt;/div&gt;
     &lt;div id="misc"&gt;	
-	&lt;div id="copyright"&gt;&lt;/div&gt;
-	&lt;div id="status"&gt;&lt;/div&gt;
+		&lt;div id="copyright"&gt;&lt;/div&gt;
+		&lt;div id="status"&gt;
+			&lt;div id="statusingeneral"&gt;&lt;/div&gt;
+			&lt;div id="graphStats"&gt;&lt;font color=darkred&gt;&lt;b&gt;GRAPH STATS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;/div&gt;
+			&lt;div id="memstats"&gt;&lt;font color=darkred&gt;&lt;b&gt;MEMORY USAGE&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;/div&gt;
+		&lt;/div&gt;
     &lt;/div&gt;
 	&lt;div id="graph"&gt;&lt;/div&gt;
 	&lt;script type="text/javascript"&gt;</value>
