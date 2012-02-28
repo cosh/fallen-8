@@ -184,7 +184,7 @@ namespace Fallen8.API.Service.REST
             var freeBytesOfMemory = Convert.ToInt64(freeMem.NextValue());
             
             var vertexCount = _fallen8.GetVertices().Count;
-            var edgeCount = _fallen8.GetVertices().Count;
+            var edgeCount = _fallen8.GetEdges().Count;
             
             IEnumerable<String> availableIndices;
             Fallen8PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);
@@ -219,7 +219,7 @@ namespace Fallen8.API.Service.REST
 
                 sb.Append(_frontEndPre);
                 sb.Append(Environment.NewLine);
-                sb.AppendLine("var baseUri = \"" + baseUri.ToString() + "\"" + Environment.NewLine);
+                sb.AppendLine("var baseUri = \"" + baseUri.ToString() + "\";" + Environment.NewLine);
                 sb.Append(_frontEndPost);
 
                 return new MemoryStream(Encoding.UTF8.GetBytes(sb.ToString()));
@@ -233,6 +233,16 @@ namespace Fallen8.API.Service.REST
             MemoryStream ressourceStream;
             if (_ressources.TryGetValue(ressourceName, out ressourceStream)) 
             {
+                var result = new MemoryStream();
+                var buffer = new byte[32768];
+                int read;
+                while ((read = ressourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    result.Write(buffer, 0, read);
+                }
+                ressourceStream.Position = 0;
+                result.Position = 0;
+
                 if (WebOperationContext.Current != null)
                 {
                     var extension = ressourceName.Split('.').Last();
@@ -263,7 +273,7 @@ namespace Fallen8.API.Service.REST
                     }
                 }
 
-                return ressourceStream;
+                return result;
             }
             
             return null;
@@ -356,6 +366,7 @@ namespace Fallen8.API.Service.REST
             {
                 return new Fallen8RESTProperties 
                 {
+                    Id = vertex.Id,
                     CreationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),
                     ModificationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate + vertex.ModificationDate),
                     Properties = vertex.GetAllProperties().ToDictionary(key => key.PropertyId, value => value.Value.ToString())

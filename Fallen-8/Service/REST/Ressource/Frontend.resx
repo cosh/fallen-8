@@ -118,11 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Post" xml:space="preserve">
-    <value>&lt;/script&gt;
-	&lt;div id="status"&gt;&lt;/div&gt;
-	&lt;script type="text/javascript" src="Frontend/Ressource/status.js"&gt;&lt;/script&gt;
-    &lt;div id="graph"&gt;&lt;/div&gt;
-    &lt;script type="text/javascript" src="Frontend/Ressource/graph.js"&gt;&lt;/script&gt;
+    <value>showLogo();
+	showCopyright();
+	showStatus();
+	&lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
@@ -132,6 +131,9 @@
   &lt;head&gt;
     &lt;title&gt;Fallen-8&lt;/title&gt;
     &lt;script type="text/javascript" src="Frontend/Ressource/d3.v2.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/copyright.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/logo.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/status.js"&gt;&lt;/script&gt;
     &lt;style type="text/css"&gt;
 
 line {
@@ -139,11 +141,49 @@ line {
 }
 
 text {
-  font: 12px sans-serif;
+  font: 10px sans-serif;
   pointer-events: none;
 }
 rect {
   fill: #fff;
+}
+
+#logo {
+  font-size: 42px;
+  margin-top: 0.1em;
+  color: darkred;
+  text-align: left;
+}
+
+#statusingeneral {
+  float: left;
+  font-size: 10px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: left;
+}
+
+#graphStats {
+  float: left;
+  font-size: 10px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: center;
+}
+
+#memstats {
+  float: left;
+  font-size: 10px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: center;
+}
+
+#copyright {
+  font-size: 10px;
+  margin-top: 0.1em;
+  color: white;
+  text-align: right;
 }
 
 .cursor {
@@ -155,6 +195,16 @@ rect {
     &lt;/style&gt;
   &lt;/head&gt;
   &lt;body&gt;
+	&lt;div id="logo"&gt;&lt;/div&gt;
+    &lt;div id="misc"&gt;	
+		&lt;div id="copyright"&gt;&lt;/div&gt;
+		&lt;div id="status"&gt;
+			&lt;div id="statusingeneral"&gt;&lt;/div&gt;
+			&lt;div id="graphStats"&gt;&lt;font color=darkred&gt;&lt;b&gt;GRAPH STATS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;/div&gt;
+			&lt;div id="memstats"&gt;&lt;font color=darkred&gt;&lt;b&gt;MEMORY USAGE&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;/div&gt;
+		&lt;/div&gt;
+    &lt;/div&gt;
+	&lt;div id="graph"&gt;&lt;/div&gt;
 	&lt;script type="text/javascript"&gt;</value>
   </data>
 </root>

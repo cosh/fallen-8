@@ -30,6 +30,12 @@ namespace Fallen8.API.Service.REST
     public sealed class Fallen8RESTProperties
     {
         /// <summary>
+        ///   The identifier
+        /// </summary>
+        [DataMember]
+        public Int32 Id { get; set; }
+
+        /// <summary>
         ///   The creation date
         /// </summary>
         [DataMember]

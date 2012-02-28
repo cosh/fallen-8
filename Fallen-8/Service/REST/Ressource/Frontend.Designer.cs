@@ -61,11 +61,10 @@ namespace Fallen8.API.Service.REST.Ressource {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;/script&gt;
-        ///	&lt;div id=&quot;status&quot;&gt;&lt;/div&gt;
-        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/status.js&quot;&gt;&lt;/script&gt;
-        ///    &lt;div id=&quot;graph&quot;&gt;&lt;/div&gt;
-        ///    &lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/graph.js&quot;&gt;&lt;/script&gt;
+        ///   Looks up a localized string similar to showLogo();
+        ///	showCopyright();
+        ///	showStatus();
+        ///	&lt;/script&gt;
         ///  &lt;/body&gt;
         ///&lt;/html&gt;.
         /// </summary>
@@ -81,6 +80,9 @@ namespace Fallen8.API.Service.REST.Ressource {
         ///  &lt;head&gt;
         ///    &lt;title&gt;Fallen-8&lt;/title&gt;
         ///    &lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/d3.v2.js&quot;&gt;&lt;/script&gt;
+        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/copyright.js&quot;&gt;&lt;/script&gt;
+        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/logo.js&quot;&gt;&lt;/script&gt;
+        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/status.js&quot;&gt;&lt;/script&gt;
         ///    &lt;style type=&quot;text/css&quot;&gt;
         ///
         ///line {
@@ -88,23 +90,8 @@ namespace Fallen8.API.Service.REST.Ressource {
         ///}
         ///
         ///text {
-        ///  font: 12px sans-serif;
-        ///  pointer-events: none;
-        ///}
-        ///rect {
-        ///  fill: #fff;
-        ///}
-        ///
-        ///.cursor {
-        ///  fill: none;
-        ///  stroke: brown;
-        ///  pointer-events: none;
-        ///}
-        ///
-        ///    &lt;/style&gt;
-        ///  &lt;/head&gt;
-        ///  &lt;body&gt;
-        ///	&lt;script type=&quot;text/javascript&quot;&gt;.
+        ///  font: 10px sans-serif;
+        ///  pointer-events: none;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Pre {
             get {
