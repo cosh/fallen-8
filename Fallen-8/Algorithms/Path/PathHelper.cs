@@ -42,8 +42,9 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="edgepropertyFilter">The edge property filter.</param>
         /// <param name="edgeFilter">The edge filter</param>
         /// <param name="adjacentVertexFilter">The adjacent vertex filter</param>
+        /// <param name="visitedVertices">The already visited vertices</param>
         /// <returns>Enumerable of path elements</returns>
-        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter)
+        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter, Dictionary<VertexModel, HashSet<Int32>> visitedVertices)
         {
             #region data
 
@@ -82,9 +83,20 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        yield return
-                            new PathElement
-                                {Direction = Direction.OutgoingEdge, Edge = edge, EdgePropertyId = edgePropertyId};
+                        HashSet<Int32> lookup;
+                        if (visitedVertices.TryGetValue(edge.TargetVertex, out lookup))
+                        {
+                            if (!lookup.Contains(edge.Id))
+                            {
+                                yield return
+                                    new PathElement { Direction = Direction.OutgoingEdge, Edge = edge, EdgePropertyId = edgePropertyId };
+                            }
+                        }
+                        else
+                        {
+                            yield return
+                                new PathElement { Direction = Direction.OutgoingEdge, Edge = edge, EdgePropertyId = edgePropertyId };
+                        }
                     }
                 }
             }
@@ -119,9 +131,12 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        yield return
-                            new PathElement
-                                {Direction = Direction.IncomingEdge, Edge = edge, EdgePropertyId = edgePropertyId};
+                        if (!visitedVertices[vertex].Contains(edge.Id))
+                        {
+                            yield return
+                                new PathElement
+                                    {Direction = Direction.IncomingEdge, Edge = edge, EdgePropertyId = edgePropertyId};
+                        }
                     }
                 }
             }

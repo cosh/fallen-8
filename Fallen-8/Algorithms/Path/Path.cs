@@ -127,7 +127,7 @@ namespace Fallen8.API.Algorithms.Path
         {
             if (_pathElements != null)
             {
-                for (var i = 0; i < _pathElements.Count + 1; i++)
+                for (var i = 0; i < _pathElements.Count; i++)
                 {
                     var pathElement = _pathElements[i];
                     if (pathElement.Direction == Direction.IncomingEdge)
