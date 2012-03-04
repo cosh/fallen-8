@@ -56,13 +56,16 @@ namespace Fallen8.API.Helper
             }
 
             //another thread writes something, so lets wait
-
-            for (var i = 0; i < 1000; i++)
+			
+			for (var i = 0; i < int.MaxValue; i++)
             {
                 //usingResource was incremented in the if clause, so lets decrement it again
                 Interlocked.Decrement(ref _usingResource);
 
-                Thread.Sleep(1);
+                if (i%10000 == 9999)
+                {
+                    Thread.Sleep(1);                    
+                }
 
                 if (Interlocked.Increment(ref _usingResource) >= 0)
                 {
