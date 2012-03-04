@@ -32,7 +32,7 @@ namespace Fallen8.API.Helper
 		/// <summary>
 		/// The place where the Fallen-8 live.
 		/// </summary>
-    	private ConcurrentQueue<Fallen8> _objects;
+    	private ConcurrentQueue<Fallen8> _instances;
 		
 		/// <summary>
 		/// The max count of instances.
@@ -67,10 +67,15 @@ namespace Fallen8.API.Helper
 		/// </param>
     	public Fallen8Pool(UInt32 minValue = 1, UInt32 maxValue = 2, Int32 startCapacity = 0)
     	{
+			if (maxValue < minValue) 
+			{
+				throw new ArgumentException("maxValue", String.Format("The maxvalue {0} is lower than the minvalue {1}.", maxValue, minValue));
+			}
+			
     	    _minValue = minValue;
 			_maxValue = maxValue;
 			_startCapacity = startCapacity;
-			_objects = new ConcurrentQueue<Fallen8>();
+			_instances = new ConcurrentQueue<Fallen8>();
 			FillQueue();
     	}
 		
@@ -89,9 +94,9 @@ namespace Fallen8.API.Helper
 		/// </param>
     	public bool TryGetFallen8(out Fallen8 result)
     	{
-    	    if (_objects.TryDequeue(out result))
+    	    if (_instances.TryDequeue(out result))
 			{
-				if (_objects.Count < _minValue) {
+				if (_instances.Count < _minValue) {
 					FillQueue();
 				}
 				
@@ -112,9 +117,9 @@ namespace Fallen8.API.Helper
     	{
 			instance.TabulaRasa();
 				
-			if (_objects.Count < _maxValue) 
+			if (_instances.Count < _maxValue) 
 			{
-    	    	_objects.Enqueue(instance);
+    	    	_instances.Enqueue(instance);
 			}
 		}
 		
@@ -127,7 +132,18 @@ namespace Fallen8.API.Helper
 		/// </summary>
 		private void FillQueue()
 		{
+			var countOfNewInstances = _maxValue - _instances.Count;
 			
+			if (countOfNewInstances > _minValue) 
+			{
+				//do not try to fill the pool entirely... maybe there are some recycled instances
+				countOfNewInstances = (countOfNewInstances + _minValue) / 2;	
+			}
+			
+			for (int i = 0; i < countOfNewInstances; i++) 
+			{
+				_instances.Enqueue(new Fallen8(_startCapacity));
+			}
 		}
 		
 		#endregion

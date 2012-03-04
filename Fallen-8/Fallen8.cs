@@ -76,12 +76,15 @@ namespace Fallen8.API
         #region Constructor
         
         /// <summary>
-        /// Initializes a new instance of the Fallen8 class.
+        /// Initializes a new instance of the Fallen-8 class.
         /// </summary>
-        public Fallen8 ()
+        /// <param name='startCapacity'>
+        /// Start capacity.
+        /// </param>
+        public Fallen8 (Int32 startCapacity = 0)
         {
             IndexFactory = new Fallen8IndexFactory();
-            _graphElements = new List<AGraphElement>();
+            _graphElements = new List<AGraphElement>(startCapacity);
             IndexFactory.Indices.Clear();
         }
         
