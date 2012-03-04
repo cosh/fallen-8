@@ -524,7 +524,7 @@ namespace Fallen8.API
         {
 			if (ReadResource()) 
 			{
-				var graphElement = _graphElements.ElementAtOrDefault(id);
+				var graphElement = _graphElements[id];
 				FinishReadResource();
 				if (graphElement != null)
             	{

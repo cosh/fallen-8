@@ -30,13 +30,15 @@ using System.Linq;
 using System.Threading;
 using Fallen8.API.Model;
 using Framework.Serialization;
+using Fallen8.API.Helper;
+using Fallen8.API.Error;
 
 namespace Fallen8.API.Index
 {
     /// <summary>
     /// Single value index.
     /// </summary>
-    public sealed class SingleValueIndex : IIndex
+    public sealed class SingleValueIndex : AThreadSafeElement, IIndex
     {
         #region Data
         
@@ -50,11 +52,6 @@ namespace Fallen8.API.Index
         /// </summary>
         private String _description = "A very simple single value index.";
 
-        /// <summary>
-        /// The lock
-        /// </summary>
-        private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
-        
         #endregion
   
         #region Constructor
@@ -72,128 +69,135 @@ namespace Fallen8.API.Index
         
         public Int32 CountOfKeys ()
         {
-            _lock.EnterReadLock();
-            try
-            {
-                return _idx.Count;
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+			if (ReadResource()) 
+			{
+				var count = _idx.Count;
+				
+				FinishReadResource();
+				
+				return count;
+			}
+			
+			throw new CollisionException();
         }
 
         public Int32 CountOfValues()
         {
-            _lock.EnterReadLock();
-            try
-            {
-                return _idx.Count;
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+			if (ReadResource()) 
+			{
+				var count = _idx.Count;
+				
+				FinishReadResource();
+				
+				return count;
+			}
+			
+			throw new CollisionException();
         }
 
         public void AddOrUpdate(IComparable key, AGraphElement graphElement)
         {
-            _lock.EnterWriteLock();
-            try
-            {
-                _idx[key] = graphElement;
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
+			if (WriteResource()) 
+			{
+				_idx[key] = graphElement;
+				
+				FinishWriteResource();
+				
+				return;
+			}
+			
+			throw new CollisionException();
         }
 
         public bool TryRemoveKey (IComparable key)
         {
-            _lock.EnterWriteLock();
-            try
-            {
-                return _idx.Remove(key);
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
+			if (WriteResource()) 
+			{
+				var removed = _idx.Remove(key);
+				
+				FinishWriteResource();
+				
+				return removed;
+			}
+			
+			throw new CollisionException();
         }
 
         public void RemoveValue(AGraphElement graphElement)
         {
-            _lock.EnterWriteLock();
-            try
-            {
-                var toBeRemovedKeys = (from aKv in _idx where ReferenceEquals(aKv.Value, graphElement) select aKv.Key).ToList();
+			if (WriteResource()) 
+			{
+				var toBeRemovedKeys = (from aKv in _idx where ReferenceEquals(aKv.Value, graphElement) select aKv.Key).ToList();
 
                 toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
+				
+				FinishWriteResource();
+				
+				return;
+			}
+			
+			throw new CollisionException();
         }
         
         public void Wipe ()
         {
-            _lock.EnterWriteLock();
-            try
-            {
+			if (WriteResource()) 
+			{
                 _idx.Clear();
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
+				
+				FinishWriteResource();
+				
+				return;
+			}
+			
+			throw new CollisionException();
         }
 
         public IEnumerable<IComparable> GetKeys ()
         {
-            _lock.EnterReadLock();
-            try
-            {
-                return new List<IComparable>(_idx.Keys);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+			if (ReadResource()) 
+			{
+                var keys = new List<IComparable>(_idx.Keys);
+				
+				FinishReadResource();
+				
+				return keys;
+			}
+			
+			throw new CollisionException();
         }
 
 
         public IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
         {
-            _lock.EnterReadLock();
-            try
-            {
+			if (ReadResource()) 
+			{
                 foreach (var aKv in _idx)
                     yield return new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(new List<AGraphElement> { aKv.Value }));
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+				
+				FinishReadResource();
+				
+				yield break;
+			}
+			
+			throw new CollisionException();
         }
 
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key)
         {
-            _lock.EnterReadLock();
-            try
-            {
+			if (ReadResource()) 
+			{
                 AGraphElement element;
                 var foundSth = _idx.TryGetValue(key, out element);
 
                 result = foundSth ? new ReadOnlyCollection<AGraphElement>(new List<AGraphElement> { element }) : null;
 
+				FinishReadResource();
+				
                 return foundSth;
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+			}
+			
+			throw new CollisionException();
         }
         #endregion
 
@@ -201,9 +205,8 @@ namespace Fallen8.API.Index
 
         public void Save(SerializationWriter writer)
         {
-            _lock.EnterReadLock();
-            try
-            {
+			if (ReadResource()) 
+			{
                 writer.WriteOptimized(0);//parameter
                 writer.WriteOptimized(_idx.Count);
                 foreach (var aKV in _idx)
@@ -211,18 +214,19 @@ namespace Fallen8.API.Index
                     writer.WriteObject(aKV.Key);
                     writer.WriteOptimized(aKV.Value.Id);
                 }
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+				
+				FinishReadResource();
+				
+                return;
+			}
+			
+			throw new CollisionException();
         }
 
         public void Open(SerializationReader reader, Fallen8 fallen8)
         {
-            _lock.EnterWriteLock();
-            try
-            {
+			if (WriteResource()) 
+			{
                 reader.ReadOptimizedInt32();//parameter
 
                 var keyCount = reader.ReadOptimizedInt32();
@@ -240,11 +244,13 @@ namespace Fallen8.API.Index
                         _idx.Add((IComparable)key, graphElement);
                     }
                 }
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
+				
+				FinishWriteResource();
+				
+                return;
+			}
+			
+			throw new CollisionException();
         }
 
         #endregion
@@ -292,8 +298,6 @@ namespace Fallen8.API.Index
         {
             _idx.Clear();
             _idx = null;
-            _lock.Dispose();
-            _lock = null;
         }
 
         #endregion
@@ -310,28 +314,33 @@ namespace Fallen8.API.Index
         /// </returns>
         public bool TryGetValue(out AGraphElement result, IComparable key)
         {
-            _lock.EnterReadLock();
-            try
-            {
-                return _idx.TryGetValue(key, out result);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+			if (ReadResource()) 
+			{
+				var value = _idx.TryGetValue(key, out result);
+					
+				FinishReadResource();
+				
+				return value;
+			}
+			
+			throw new CollisionException();
         }
-
+		
+		/// <summary>
+		/// The values.
+		/// </summary>
         public List<AGraphElement> Values()
         {
-            _lock.EnterReadLock();
-            try
-            {
-                return new List<AGraphElement>(_idx.Values);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
+			if (ReadResource()) 
+			{
+				var values = new List<AGraphElement>(_idx.Values);
+					
+				FinishReadResource();
+				
+				return values;
+			}
+			
+			throw new CollisionException();
         }
 
         #endregion
