@@ -38,7 +38,7 @@ namespace Fallen8.API.Log
         /// </summary>
         public static void LogError(String message)
         {
-            Console.WriteLine(message);
+        	Console.WriteLine(message);
         }
     }
 }
