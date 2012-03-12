@@ -272,7 +272,144 @@ namespace Fallen8.API.Model
 
             throw new CollisionException();
         }
-        
+
+        /// <summary>
+        /// Removes an incoming edge
+        /// </summary>
+        /// <param name="edgePropertyId">Edge property identifier.</param>
+        /// <param name="toBeRemovedEdge">The to be removed edge</param>
+        internal void RemoveIncomingEdge(ushort edgePropertyId, EdgeModel toBeRemovedEdge)
+        {
+            if (WriteResource())
+            {
+                if (_inEdges == null)
+                {
+                    FinishWriteResource();
+
+                    return;
+                }
+
+                for (var i = 0; i < _inEdges.Count; i++)
+                {
+                    var aInEdge = _inEdges[i];
+                    if (aInEdge.EdgePropertyId == edgePropertyId)
+                    {
+                        aInEdge.Edges.RemoveAll(_ => _.Id == toBeRemovedEdge.Id);
+                        break;
+                    }
+                }
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
+        /// Removes an incoming edge
+        /// </summary>
+        /// <param name="toBeRemovedEdge">The to be removed edge</param>
+        /// <returns>The edge property identifier where the edge was deleted</returns>
+        internal List<UInt16> RemoveIncomingEdge(EdgeModel toBeRemovedEdge)
+        {
+            if (WriteResource())
+            {
+                var result = new List<UInt16>();
+
+                if (_inEdges == null)
+                {
+                    FinishWriteResource();
+
+                    return result;
+                }
+
+                for (var i = 0; i < _inEdges.Count; i++)
+                {
+                    if (_inEdges[i].Edges.RemoveAll(_ => _.Id == toBeRemovedEdge.Id) > 0)
+                    {
+                        result.Add(_inEdges[i].EdgePropertyId);
+                    }
+                }
+
+                FinishWriteResource();
+
+                return result;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
+        /// Remove outgoing edge
+        /// </summary>
+        /// <param name="edgePropertyId">The edge property identifier.</param>
+        /// <param name="toBeRemovedEdge">The to be removed edge</param>
+        internal void RemoveOutGoingEdge(ushort edgePropertyId, EdgeModel toBeRemovedEdge)
+        {
+            if (WriteResource())
+            {
+                if (_outEdges == null)
+                {
+                    FinishWriteResource();
+
+                    return;
+                }
+
+                for (var i = 0; i < _outEdges.Count; i++)
+                {
+                    var aOutEdge = _outEdges[i];
+                    if (aOutEdge.EdgePropertyId == edgePropertyId)
+                    {
+                        aOutEdge.Edges.RemoveAll(_ => _.Id == toBeRemovedEdge.Id);
+                        break;
+                    }
+                }
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
+        /// Removes an outgoing edge
+        /// </summary>
+        /// <param name="toBeRemovedEdge">The to be removed edge</param>
+        /// <returns>The edge property identifier where the edge was deleted</returns>
+        internal List<UInt16> RemoveOutGoingEdge(EdgeModel toBeRemovedEdge)
+        {
+            if (WriteResource())
+            {
+                var result = new List<UInt16>();
+
+                if (_outEdges == null)
+                {
+
+                    FinishWriteResource();
+
+                    return result;
+                }
+
+                for (var i = 0; i < _outEdges.Count; i++)
+                {
+                    if (_outEdges[i].Edges.RemoveAll(_ => _.Id == toBeRemovedEdge.Id) > 0)
+                    {
+                        result.Add(_outEdges[i].EdgePropertyId);
+                    }
+                }
+
+                FinishWriteResource();
+
+                return result;
+            }
+
+            throw new CollisionException();
+        }
+
         #endregion
 
         #region IVertexModel implementation

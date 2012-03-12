@@ -26,7 +26,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using Fallen8.API.Algorithms;
 using Fallen8.API.Algorithms.Path;
 using Fallen8.API.Index.Fulltext;
 using Fallen8.API.Index.Spatial;
@@ -163,10 +162,12 @@ namespace Fallen8.API
 
         public VertexModel CreateVertex(UInt32 creationDate, PropertyContainer[] properties = null)
         {
-			if (WriteResource()) 
+			if (WriteResource())
 			{
+			    var newId = Interlocked.Increment(ref _currentId);
+
                 //create the new vertex
-                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
+                var newVertex = new VertexModel(newId, creationDate, properties);
 
                 _graphElements.Add(newVertex);
 				
@@ -241,9 +242,180 @@ namespace Fallen8.API
 
         public bool TryRemoveGraphElement(Int32 graphElementId)
         {
-            //different actions for vertices, and edges
-            throw new NotImplementedException();
+            if (WriteResource())
+            {
+                var graphElement = Enumerable.ElementAtOrDefault(_graphElements, graphElementId);
+
+                if (graphElement == null)
+                {
+                    FinishWriteResource();
+
+                    return false;
+                }
+
+                //used if an edge is removed
+                List<UInt16> inEdgeRemovals = null;
+                List<UInt16> outEdgeRemovals = null;
+
+                try
+                {
+                    #region remove element
+
+                    _graphElements[graphElementId] = null;
+
+                    if (graphElement is VertexModel)
+                    {
+                        #region remove vertex
+
+                        var vertex = (VertexModel) graphElement;
+
+                        #region out edges
+
+                        var outgoingEdgeConatiner = vertex.GetOutgoingEdges();
+                        for (var i = 0; i < outgoingEdgeConatiner.Count; i++)
+                        {
+                            var aOutEdgeContainer = outgoingEdgeConatiner[i];
+                            for (var j = 0; j < aOutEdgeContainer.Edges.Count; j++)
+                            {
+                                var aOutEdge = aOutEdgeContainer.Edges[j];
+
+                                //remove from incoming edges of target vertex
+                                aOutEdge.TargetVertex.RemoveIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
+
+                                //remove the edge itself
+                                _graphElements[aOutEdge.Id] = null;
+                            }
+                        }
+
+                        #endregion
+
+                        #region in edges
+
+                        var incomingEdgeContainer = vertex.GetIncomingEdges();
+
+                        for (var i = 0; i < incomingEdgeContainer.Count; i++)
+                        {
+                            var aInEdgeContainer = incomingEdgeContainer[i];
+                            for (var j = 0; j < aInEdgeContainer.Edges.Count; j++)
+                            {
+                                var aInEdge = aInEdgeContainer.Edges[j];
+
+                                //remove from outgoing edges of source vertex
+                                aInEdge.SourceVertex.RemoveOutGoingEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
+
+                                //remove the edge itself
+                                _graphElements[aInEdge.Id] = null;
+                            }
+                        }
+
+                        #endregion
+
+                        #endregion
+                    }
+                    else
+                    {
+                        #region remove edge
+
+                        var edge = (EdgeModel) graphElement;
+
+                        //remove from incoming edges of target vertex
+                        inEdgeRemovals = edge.TargetVertex.RemoveIncomingEdge(edge);
+
+                        //remove from outgoing edges of source vertex
+                        outEdgeRemovals = edge.SourceVertex.RemoveOutGoingEdge(edge);
+
+                        #endregion
+                    }
+
+                    #endregion
+                }
+                catch (Exception)
+                {
+                    #region restore
+
+                    _graphElements[graphElementId] = graphElement;
+
+                    if (graphElement is VertexModel)
+                    {
+                        #region restore vertex
+
+                        var vertex = (VertexModel)graphElement;
+
+                        #region out edges
+
+                        var outgoingEdgeConatiner = vertex.GetOutgoingEdges();
+                        for (var i = 0; i < outgoingEdgeConatiner.Count; i++)
+                        {
+                            var aOutEdgeContainer = outgoingEdgeConatiner[i];
+                            for (var j = 0; j < aOutEdgeContainer.Edges.Count; j++)
+                            {
+                                var aOutEdge = aOutEdgeContainer.Edges[j];
+
+                                //remove from incoming edges of target vertex
+                                aOutEdge.TargetVertex.AddIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
+
+                                //reset the edge
+                                _graphElements[aOutEdge.Id] = aOutEdge;
+                            }
+                        }
+
+                        #endregion
+
+                        #region in edges
+
+                        var incomingEdgeContainer = vertex.GetIncomingEdges();
+
+                        for (var i = 0; i < incomingEdgeContainer.Count; i++)
+                        {
+                            var aInEdgeContainer = incomingEdgeContainer[i];
+                            for (var j = 0; j < aInEdgeContainer.Edges.Count; j++)
+                            {
+                                var aInEdge = aInEdgeContainer.Edges[j];
+
+                                //remove from outgoing edges of source vertex
+                                aInEdge.SourceVertex.AddOutEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
+
+                                //remove the edge itself
+                                _graphElements[aInEdge.Id] = aInEdge;
+                            }
+                        }
+
+                        #endregion
+
+                        #endregion
+                    }
+                    else
+                    {
+                        #region restore edge
+
+                        var edge = (EdgeModel)graphElement;
+
+                        for (var i = 0; i < inEdgeRemovals.Count; i++)
+                        {
+                            edge.TargetVertex.AddIncomingEdge(inEdgeRemovals[i], edge);
+                        }
+
+                        for (var i = 0; i < outEdgeRemovals.Count; i++)
+                        {
+                            edge.SourceVertex.AddOutEdge(outEdgeRemovals[i], edge);                            
+                        }
+
+                        #endregion
+                    }
+
+                    #endregion
+
+                    throw;
+                }
+
+                FinishWriteResource();
+
+                return true;
+            }
+
+            throw new CollisionException();
         }
+
         #endregion
 
         #region IFallen8Read implementation
