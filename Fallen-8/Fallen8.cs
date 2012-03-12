@@ -164,10 +164,8 @@ namespace Fallen8.API
         {
 			if (WriteResource())
 			{
-			    var newId = Interlocked.Increment(ref _currentId);
-
                 //create the new vertex
-                var newVertex = new VertexModel(newId, creationDate, properties);
+                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
 
                 _graphElements.Add(newVertex);
 				
