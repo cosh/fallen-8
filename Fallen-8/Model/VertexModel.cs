@@ -581,14 +581,14 @@ namespace Fallen8.API.Model
 
         #endregion
 
-        #region Equals Overrides
+        //#region Equals Overrides
 
-        public override int GetHashCode()
-        {
-            return Id;
-        }
+        //public override int GetHashCode()
+        //{
+        //    return Id;
+        //}
 
-        #endregion
+        //#endregion
 
         #region AGraphElement
 
