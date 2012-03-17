@@ -42,38 +42,40 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="edgepropertyFilter">The edge property filter.</param>
         /// <param name="edgeFilter">The edge filter</param>
         /// <param name="adjacentVertexFilter">The adjacent vertex filter</param>
-        /// <param name="visitedVertices">The already visited vertices</param>
+        /// <param name="visitedEdges">The already visited edges</param>
         /// <returns>Enumerable of path elements</returns>
-        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter, Dictionary<VertexModel, HashSet<Int32>> visitedVertices)
+        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter, HashSet<PathElement> visitedEdges)
         {
             #region data
 
             ReadOnlyCollection<EdgeModel> edges;
             EdgeModel edge;
-            List<UInt16> edgePropertyIds;
-            UInt16 edgePropertyId;
+            ReadOnlyCollection<EdgeContainer> edgePropertys;
+            EdgeContainer edgeProperty;
+            var result = new List<PathElement>();
 
             #endregion
 
             #region Outgoing edges
 
-            edgePropertyIds = vertex.GetOutgoingEdgeIds();
-            for (var i = 0; i < edgePropertyIds.Count; i++)
+            edgePropertys = vertex.GetOutgoingEdges();
+            if (edgePropertys != null)
             {
-                edgePropertyId = edgePropertyIds[i];
-
-                if (edgepropertyFilter != null && !edgepropertyFilter(edgePropertyId, Direction.OutgoingEdge))
+                for (var i = 0; i < edgePropertys.Count; i++)
                 {
-                    continue;
-                }
+                    edgeProperty = edgePropertys[i];
 
-                if (vertex.TryGetOutEdge(out edges, edgePropertyId))
-                {
-                    for (var j = 0; j < edges.Count; j++)
+                    if (edgepropertyFilter != null &&
+                        !edgepropertyFilter(edgeProperty.EdgePropertyId, Direction.OutgoingEdge))
                     {
-                        edge = edges[j];
+                        continue;
+                    }
 
-                        if (edgeFilter != null && !edgeFilter(edge, edgePropertyId, Direction.OutgoingEdge))
+                    for (var j = 0; j < edgeProperty.Edges.Count; j++)
+                    {
+                        edge = edgeProperty.Edges[j];
+
+                        if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge))
                         {
                             continue;
                         }
@@ -83,45 +85,43 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        HashSet<Int32> lookup;
-                        if (visitedVertices.TryGetValue(edge.TargetVertex, out lookup))
+                        var pathElement = new PathElement
+                                              {
+                                                  Direction = Direction.OutgoingEdge,
+                                                  Edge = edge,
+                                                  EdgePropertyId = edgeProperty.EdgePropertyId
+                                              };
+
+                        if (!visitedEdges.Contains(pathElement))
                         {
-                            if (!lookup.Contains(edge.Id))
-                            {
-                                yield return
-                                    new PathElement { Direction = Direction.OutgoingEdge, Edge = edge, EdgePropertyId = edgePropertyId };
-                            }
-                        }
-                        else
-                        {
-                            yield return
-                                new PathElement { Direction = Direction.OutgoingEdge, Edge = edge, EdgePropertyId = edgePropertyId };
+                            result.Add(pathElement);
                         }
                     }
-                }
+                }    
             }
-
+            
             #endregion
 
             #region Incoming edges
 
-            edgePropertyIds = vertex.GetIncomingEdgeIds();
-            for (var i = 0; i < edgePropertyIds.Count; i++)
+            edgePropertys = vertex.GetIncomingEdges();
+            if (edgePropertys != null)
             {
-                edgePropertyId = edgePropertyIds[i];
-
-                if (edgepropertyFilter != null && !edgepropertyFilter(edgePropertyId, Direction.IncomingEdge))
+                for (var i = 0; i < edgePropertys.Count; i++)
                 {
-                    continue;
-                }
+                    edgeProperty = edgePropertys[i];
 
-                if (vertex.TryGetInEdges(out edges, edgePropertyId))
-                {
-                    for (var j = 0; j < edges.Count; j++)
+                    if (edgepropertyFilter != null &&
+                        !edgepropertyFilter(edgeProperty.EdgePropertyId, Direction.IncomingEdge))
                     {
-                        edge = edges[j];
+                        continue;
+                    }
 
-                        if (edgeFilter != null && !edgeFilter(edge, edgePropertyId, Direction.IncomingEdge))
+                    for (var j = 0; j < edgeProperty.Edges.Count; j++)
+                    {
+                        edge = edgeProperty.Edges[j];
+
+                        if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge))
                         {
                             continue;
                         }
@@ -131,17 +131,24 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        if (!visitedVertices[vertex].Contains(edge.Id))
+                        var pathElement = new PathElement
+                                              {
+                                                  Direction = Direction.IncomingEdge,
+                                                  Edge = edge,
+                                                  EdgePropertyId = edgeProperty.EdgePropertyId
+                                              };
+
+                        if (!visitedEdges.Contains(pathElement))
                         {
-                            yield return
-                                new PathElement
-                                    {Direction = Direction.IncomingEdge, Edge = edge, EdgePropertyId = edgePropertyId};
+                            result.Add(pathElement);
                         }
                     }
-                }
+                }                
             }
-
+            
             #endregion
+
+            return result;
         }
     }
 }

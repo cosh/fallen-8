@@ -35,7 +35,7 @@ namespace Fallen8.API.Algorithms.Path
     /// <summary>
     /// The Path.
     /// </summary>
-    public struct Path : IEnumerable<VertexModel>
+    public class Path : IEnumerable<VertexModel>
     {
         #region Properties
 
@@ -61,21 +61,6 @@ namespace Fallen8.API.Algorithms.Path
         {
             _pathElements = new List<PathElement>(maximumLength);
             Weight = 0;
-        }
-
-        /// <summary>
-        /// Create a new path
-        /// </summary>
-        /// <param name="maxDepth">Maximum length</param>
-        /// <param name="path">The path where the to copy from</param>
-        /// <param name="aPathElement">A new path element</param>
-        public Path(Int32 maxDepth, Path path, PathElement aPathElement)
-        {
-            _pathElements = new List<PathElement>(path._pathElements);
-            var pathLength = path.GetLength();
-            _pathElements.Add(aPathElement);
-
-            Weight = path.Weight + aPathElement.Weight;
         }
 
         #endregion

@@ -49,17 +49,17 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         /// The ressources.
         /// </summary>
-        private readonly Dictionary<String, MemoryStream> _ressources;
+        private Dictionary<String, MemoryStream> _ressources;
 
         /// <summary>
         /// The html befor the code injection
         /// </summary>
-        private readonly String _frontEndPre;
+        private String _frontEndPre;
 
         /// <summary>
         /// The html after the code injection
         /// </summary>
-        private readonly String _frontEndPost;
+        private String _frontEndPost;
         
         #endregion
         
@@ -74,11 +74,9 @@ namespace Fallen8.API.Service.REST
         public Fallen8RESTService(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
-            _ressources = FindRessources();
-            _frontEndPre = Frontend.Pre;
-            _frontEndPost = Frontend.Post;
+            LoadFrontend();
         }
- 
+
         #endregion
         
         #region IDisposable Members
@@ -227,7 +225,12 @@ namespace Fallen8.API.Service.REST
 
             return new MemoryStream(Encoding.UTF8.GetBytes("Sorry, no frontend available."));
         }
-        
+
+        public void ReloadFrontend()
+        {
+            LoadFrontend();
+        }
+
         public Stream GetFrontendRessources(String ressourceName)
         {
             MemoryStream ressourceStream;
@@ -282,6 +285,24 @@ namespace Fallen8.API.Service.REST
         #endregion
         
         #region private helper
+
+        /// <summary>
+        /// Load the frontend
+        /// </summary>
+        private void LoadFrontend()
+        {
+            if (_ressources != null)
+            {
+                foreach (var memoryStream in _ressources)
+                {
+                    memoryStream.Value.Dispose();
+                }
+            }
+
+            _ressources = FindRessources();
+            _frontEndPre = Frontend.Pre;
+            _frontEndPost = Frontend.Post;
+        }
 
         /// <summary>
         /// Find all ressources

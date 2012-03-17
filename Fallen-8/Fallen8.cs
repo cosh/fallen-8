@@ -445,7 +445,7 @@ namespace Fallen8.API
 					
 					FinishReadResource();
 					
-					return true;
+					return result != null && result.Count > 0;
 				}
 				
 				throw new CollisionException();

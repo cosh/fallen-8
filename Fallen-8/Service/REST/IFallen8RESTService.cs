@@ -145,6 +145,13 @@ namespace Fallen8.API.Service.REST
 		[OperationContract(Name = "Frontend")]
         [WebGet(UriTemplate = "/Frontend")]
         Stream GetFrontend();
+
+        /// <summary>
+        /// Reload the frontend.
+        /// </summary>
+        [OperationContract(Name = "ReloadFrontend")]
+        [WebGet(UriTemplate = "/ReloadFrontend")]
+        void ReloadFrontend();
 		
 		/// <summary>
         /// Gets the frontend ressources.
