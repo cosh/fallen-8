@@ -85,12 +85,7 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        var pathElement = new PathElement
-                                              {
-                                                  Direction = Direction.OutgoingEdge,
-                                                  Edge = edge,
-                                                  EdgePropertyId = edgeProperty.EdgePropertyId
-                                              };
+                        var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge);
 
                         if (!visitedEdges.Contains(pathElement))
                         {
@@ -131,12 +126,7 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        var pathElement = new PathElement
-                                              {
-                                                  Direction = Direction.IncomingEdge,
-                                                  Edge = edge,
-                                                  EdgePropertyId = edgeProperty.EdgePropertyId
-                                              };
+                        var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge);
 
                         if (!visitedEdges.Contains(pathElement))
                         {

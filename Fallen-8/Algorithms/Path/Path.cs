@@ -101,7 +101,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <returns>Vertex.</returns>
         public VertexModel GetLastVertex()
         {
-            return _pathElements.Last().GetTargetVertex();
+            return _pathElements.Last().TargetVertex;
         }
 
         #endregion
