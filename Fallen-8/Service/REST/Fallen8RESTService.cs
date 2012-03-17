@@ -256,6 +256,9 @@ namespace Fallen8.API.Service.REST
                         case "htm":
                             WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
                             break;
+                        case "png":
+                            WebOperationContext.Current.OutgoingResponse.ContentType = "image/png";
+                            break;
                         case "css":
                             WebOperationContext.Current.OutgoingResponse.ContentType = "text/css";
                             break;

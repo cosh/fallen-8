@@ -61,7 +61,7 @@ namespace Fallen8.API.Service.REST.Ressource {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die showLogo();
+        ///   Sucht eine lokalisierte Zeichenfolge, die 
         ///	showCopyright();
         ///	&lt;/script&gt;
         ///  &lt;/body&gt;
@@ -75,18 +75,20 @@ namespace Fallen8.API.Service.REST.Ressource {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;!DOCTYPE html&gt;
-        ///&lt;html&gt;
-        ///  &lt;head&gt;
-        ///    &lt;title&gt;Fallen-8&lt;/title&gt;
-        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/jquery-1.7.1.min.js&quot;&gt;&lt;/script&gt;
-        ///    &lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/d3.v2.js&quot;&gt;&lt;/script&gt;
-        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/copyright.js&quot;&gt;&lt;/script&gt;
-        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/logo.js&quot;&gt;&lt;/script&gt;
-        ///	&lt;script type=&quot;text/javascript&quot; src=&quot;Frontend/Ressource/status.js&quot;&gt;&lt;/script&gt;
-        ///    &lt;style type=&quot;text/css&quot;&gt;
-        ///
-        ///line {
-        ///  stro [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///&lt;!--
+        ///// 
+        ///// Frontend.resx
+        /////  
+        ///// Author:
+        /////       Sebastian Dechant &lt;s3bbi@fallen-8.com&gt;
+        /////
+        ///// Copyright (c) 2012 Sebastian Dechant
+        ///// 
+        ///// Permission is hereby granted, free of charge, to any person obtaining a copy
+        ///// of this software and associated documentation files (the &quot;Software&quot;), to deal
+        ///// in the Software without restriction, including without limitation the rights
+        ///// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        ///// copies of the Software,  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string Pre {
             get {
