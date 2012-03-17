@@ -37,37 +37,67 @@ namespace Fallen8.API.Algorithms.Path
         #region Data
 
         /// <summary>
+        /// The source vertex
+        /// </summary>
+        public VertexModel SourceVertex { get; private set; }
+
+        /// <summary>
+        /// The target vertex
+        /// </summary>
+        public VertexModel TargetVertex { get; private set; }
+
+        /// <summary>
         /// The edge.
         /// </summary>
-        public EdgeModel Edge { get; set; }
+        public EdgeModel Edge { get; private set; }
 
         /// <summary>
         /// The edge property identifier.
         /// </summary>
-        public UInt16 EdgePropertyId { get; set; }
+        public UInt16 EdgePropertyId { get; private set; }
 
         /// <summary>
         /// Direction.
         /// </summary>
-        public Direction Direction { get; set; }
+        public Direction Direction { get; private set; }
 
         /// <summary>
         /// The weight of this path element
         /// </summary>
-        public Double Weight { get; set; }
+        public Double Weight { get; private set; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Creates a new path element
+        /// </summary>
+        /// <param name="edge">The edge.</param>
+        /// <param name="edgePropertyId">The edge property identifier.</param>
+        /// <param name="direction">The direction.</param>
+        /// <param name="weight">The weight.</param>
+        public PathElement(EdgeModel edge, UInt16 edgePropertyId, Direction direction, Double weight = 0.0)
+        {
+            Edge = edge;
+            EdgePropertyId = edgePropertyId;
+            Direction = direction;
+            Weight = weight;
+            if (Direction == Direction.IncomingEdge)
+            {
+                TargetVertex = Edge.SourceVertex;
+                SourceVertex = Edge.TargetVertex;
+            }
+            else
+            {
+                TargetVertex = Edge.TargetVertex;
+                SourceVertex = Edge.SourceVertex;
+            }
+        }
 
         #endregion
 
         #region public methods
-
-        /// <summary>
-        /// Gets the target vertex of this path element
-        /// </summary>
-        /// <returns>Vertex.</returns>
-        public VertexModel GetTargetVertex()
-        {
-            return Direction == Direction.IncomingEdge ? Edge.SourceVertex : Edge.TargetVertex;
-        }
 
         /// <summary>
         /// Calculates the weight of this path element
