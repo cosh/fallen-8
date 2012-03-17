@@ -1,0 +1,16 @@
+﻿<div class="counter">0</div>
+
+<script type="text/javascript">
+var max = 20;// set with php
+$(function(){
+    incCounter();
+});
+function incCounter() {
+    var currCount = parseInt($('.counter').html());
+    $('.counter').text(currCount+1);
+    if (currCount + 1 != max) {
+        if(max-
+        setTimeout('incCounter()',1);
+    }
+}
+</script>
