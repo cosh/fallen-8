@@ -48,6 +48,14 @@ namespace Fallen8.API.Algorithms.Path
         /// The weight of this path
         /// </summary>
         public double Weight;
+		
+		/// <summary>
+		/// Gets or sets the last path element.
+		/// </summary>
+		/// <value>
+		/// The last path element.
+		/// </value>
+		public PathElement LastPathElement {get; private set;}
 
         #endregion
 
@@ -62,6 +70,23 @@ namespace Fallen8.API.Algorithms.Path
             _pathElements = new List<PathElement>(maximumLength);
             Weight = 0;
         }
+		
+		/// <summary>
+		/// Initializes a new instance of the Path class.
+		/// </summary>
+		/// <param name='anotherPath'>
+		/// Another path.
+		/// </param>
+		/// <param name='lastElement'>
+		/// Last element.
+		/// </param>
+		public Path(Path anotherPath, PathElement lastElement)
+		{
+			_pathElements = new List<PathElement>(anotherPath._pathElements);
+			_pathElements.Add(lastElement);
+			Weight = anotherPath.Weight + lastElement.Weight;
+			LastPathElement = lastElement;
+		}
 
         #endregion
 
@@ -93,6 +118,7 @@ namespace Fallen8.API.Algorithms.Path
         {
           	_pathElements.Add(pathElement);
           	Weight += pathElement.Weight;
+			LastPathElement = pathElement;
         }
 
         /// <summary>
@@ -101,7 +127,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <returns>Vertex.</returns>
         public VertexModel GetLastVertex()
         {
-            return _pathElements.Last().TargetVertex;
+            return LastPathElement.TargetVertex;
         }
 
         #endregion
@@ -137,5 +163,17 @@ namespace Fallen8.API.Algorithms.Path
         }
 
         #endregion
+		
+		#region internal methods
+		
+		/// <summary>
+		/// Revert this path.
+		/// </summary>
+		internal void Reverse ()
+		{
+			_pathElements.Reverse ();
+		}
+		
+		#endregion
     }
 }
