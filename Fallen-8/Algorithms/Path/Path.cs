@@ -129,7 +129,16 @@ namespace Fallen8.API.Algorithms.Path
         {
             return LastPathElement.TargetVertex;
         }
-
+		
+		/// <summary>
+		/// Revert this path.
+		/// </summary>
+		public void ReversePath ()
+		{
+			LastPathElement = _pathElements[0];
+			_pathElements.Reverse ();
+		}
+		
         #endregion
 
         #region IEnumerable<VertexModel> Members
@@ -163,17 +172,5 @@ namespace Fallen8.API.Algorithms.Path
         }
 
         #endregion
-		
-		#region internal methods
-		
-		/// <summary>
-		/// Revert this path.
-		/// </summary>
-		internal void Reverse ()
-		{
-			_pathElements.Reverse ();
-		}
-		
-		#endregion
     }
 }
