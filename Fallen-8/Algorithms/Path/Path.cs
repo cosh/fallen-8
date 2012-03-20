@@ -91,6 +91,21 @@ namespace Fallen8.API.Algorithms.Path
         #endregion
 
         #region public methods
+		
+		/// <summary>
+		/// Calculates the weight.
+		/// </summary>
+		/// <param name='vertexCost'>
+		/// Vertex cost.
+		/// </param>
+		/// <param name='edgeCost'>
+		/// Edge cost.
+		/// </param>
+		public void CalculateWeight (PathDelegates.VertexCost vertexCost, PathDelegates.EdgeCost edgeCost)
+		{
+			_pathElements.ForEach(_ => _.CalculateWeight(vertexCost, edgeCost));
+			Weight = _pathElements.Sum(_ => _.Weight);
+		}
 
         /// <summary>
         /// Returns the elements of the path
