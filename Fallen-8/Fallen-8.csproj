@@ -45,6 +45,7 @@
     <Reference Include="System.ServiceModel.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\Path\EdgeAsPath.cs" />
     <Compile Include="Algorithms\Path\PathHelper.cs" />
     <Compile Include="Algorithms\Path\IShortestPathAlgorithm.cs" />
     <Compile Include="Algorithms\Path\PathDelegates.cs" />

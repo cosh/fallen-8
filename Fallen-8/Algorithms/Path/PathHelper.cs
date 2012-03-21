@@ -26,7 +26,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Fallen8.API.Model;
 namespace Fallen8.API.Algorithms.Path
 {
@@ -39,26 +38,26 @@ namespace Fallen8.API.Algorithms.Path
         /// Gets all relevant path elements from a vertex
         /// </summary>
         /// <param name="vertex">The vertex.</param>
+        /// <param name="fromEdge">The edge where we came from</param>
         /// <param name="edgepropertyFilter">The edge property filter.</param>
         /// <param name="edgeFilter">The edge filter</param>
         /// <param name="adjacentVertexFilter">The adjacent vertex filter</param>
         /// <param name="visitedEdges">The already visited edges</param>
         /// <returns>Enumerable of path elements</returns>
-        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter, HashSet<PathElement> visitedEdges)
+        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, EdgeModel fromEdge, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter,
+            Dictionary<Int32, EdgeAsPath> visitedEdges)
         {
             #region data
 
-            ReadOnlyCollection<EdgeModel> edges;
             EdgeModel edge;
-            ReadOnlyCollection<EdgeContainer> edgePropertys;
             EdgeContainer edgeProperty;
-            var result = new List<PathElement>();
+            EdgeAsPath interestingPathElements;
 
             #endregion
 
             #region Outgoing edges
 
-            edgePropertys = vertex.GetOutgoingEdges();
+            var edgePropertys = vertex.GetOutgoingEdges();
             if (edgePropertys != null)
             {
                 for (var i = 0; i < edgePropertys.Count; i++)
@@ -75,6 +74,11 @@ namespace Fallen8.API.Algorithms.Path
                     {
                         edge = edgeProperty.Edges[j];
 
+                        if (fromEdge != null && ReferenceEquals(edge, fromEdge))
+                        {
+                            continue;
+                        }
+
                         if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge))
                         {
                             continue;
@@ -85,11 +89,21 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge);
-
-                        if (!visitedEdges.Contains(pathElement))
+                        if (visitedEdges.TryGetValue(edge.Id, out interestingPathElements))
                         {
-                            result.Add(pathElement);
+                            if (interestingPathElements.Outgoing == null)
+                            {
+                                var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId,
+                                                                  Direction.OutgoingEdge);
+                                interestingPathElements.Outgoing = pathElement;
+                                yield return pathElement;
+                            }
+                        }
+                        else
+                        {
+                            var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge);
+                            visitedEdges.Add(edge.Id, new EdgeAsPath(null, pathElement));
+                            yield return pathElement;
                         }
                     }
                 }    
@@ -116,6 +130,11 @@ namespace Fallen8.API.Algorithms.Path
                     {
                         edge = edgeProperty.Edges[j];
 
+                        if (fromEdge != null && ReferenceEquals(edge, fromEdge))
+                        {
+                            continue;
+                        }
+
                         if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge))
                         {
                             continue;
@@ -126,19 +145,26 @@ namespace Fallen8.API.Algorithms.Path
                             continue;
                         }
 
-                        var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge);
-
-                        if (!visitedEdges.Contains(pathElement))
+                        if (visitedEdges.TryGetValue(edge.Id, out interestingPathElements))
                         {
-                            result.Add(pathElement);
+                            if (interestingPathElements.Incoming == null)
+                            {
+                                var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId,Direction.IncomingEdge);
+                                interestingPathElements.Incoming = pathElement;
+                                yield return pathElement;
+                            }
+                        }
+                        else
+                        {
+                            var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge);
+                            visitedEdges.Add(edge.Id, new EdgeAsPath(pathElement, null));
+                            yield return pathElement;
                         }
                     }
                 }                
             }
             
             #endregion
-
-            return result;
         }
     }
 }

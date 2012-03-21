@@ -36,15 +36,29 @@ namespace Fallen8.API.Algorithms.Path
     {
         #region Data
 
+        private VertexModel _sourceVertex;
         /// <summary>
         /// The source vertex
         /// </summary>
-        public VertexModel SourceVertex { get; private set; }
+        public VertexModel SourceVertex { 
+            get 
+            {
+                return _sourceVertex ??
+                       (_sourceVertex = Direction == Direction.IncomingEdge ? Edge.TargetVertex : Edge.SourceVertex);
+            }}
 
+        private VertexModel _targetVertex;
         /// <summary>
         /// The target vertex
         /// </summary>
-        public VertexModel TargetVertex { get; private set; }
+        public VertexModel TargetVertex
+        {
+            get
+            {
+                return _targetVertex ??
+                       (_targetVertex = Direction == Direction.IncomingEdge ? Edge.SourceVertex : Edge.TargetVertex);
+            }
+        }
 
         /// <summary>
         /// The edge.
@@ -83,16 +97,8 @@ namespace Fallen8.API.Algorithms.Path
             EdgePropertyId = edgePropertyId;
             Direction = direction;
             Weight = weight;
-            if (Direction == Direction.IncomingEdge)
-            {
-                TargetVertex = Edge.SourceVertex;
-                SourceVertex = Edge.TargetVertex;
-            }
-            else
-            {
-                TargetVertex = Edge.TargetVertex;
-                SourceVertex = Edge.SourceVertex;
-            }
+            _sourceVertex = null;
+            _targetVertex = null;
         }
 
         #endregion
