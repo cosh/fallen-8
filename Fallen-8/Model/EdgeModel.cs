@@ -106,58 +106,13 @@ namespace Fallen8.API.Model
         
         #endregion
 
-        //#region Equals Overrides
+        #region overrides
 
-        //public override Boolean Equals (Object obj)
-        //{
-        //    // If parameter is null return false.
-        //    if (obj == null) {
-        //        return false;
-        //    }
+        public override string ToString()
+        {
+            return Id.ToString();
+        }
 
-        //    // If parameter cannot be cast to IEdgeModel return false.
-        //    var p = obj as EdgeModel;
-
-        //    return p != null && Equals (p);
-        //}
-
-        //public Boolean Equals (EdgeModel p)
-        //{
-        //    // If parameter is null return false:
-        //    if ((object)p == null) {
-        //        return false;
-        //    }
-
-        //    return TargetVertex.Id == p.TargetVertex.Id
-        //           && (SourceVertex.Id == p.SourceVertex.Id);
-        //}
-
-        //public static Boolean operator == (EdgeModel a, EdgeModel b)
-        //{
-        //    // If both are null, or both are same instance, return true.
-        //    if (ReferenceEquals (a, b)) {
-        //        return true;
-        //    }
-
-        //    // If one is null, but not both, return false.
-        //    if (((object)a == null) || ((object)b == null)) {
-        //        return false;
-        //    }
-
-        //    // Return true if the fields match:
-        //    return a.Equals (b);
-        //}
-
-        //public static Boolean operator != (EdgeModel a, EdgeModel b)
-        //{
-        //    return !(a == b);
-        //}
-
-        //public override int GetHashCode ()
-        //{
-        //    return TargetVertex.GetHashCode () ^ SourceVertex.GetHashCode ();
-        //}
-
-        //#endregion
+        #endregion
     }
 }

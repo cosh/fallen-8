@@ -29,7 +29,7 @@ namespace Fallen8.API.Algorithms.Path
     /// <summary>
     /// The path representation of an edge
     /// </summary>
-    public struct EdgeAsPath
+    public sealed class EdgeAsPath
     {
         #region Data
 

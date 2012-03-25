@@ -182,5 +182,14 @@ namespace Fallen8.API.Algorithms.Path
         }
 
         #endregion
+
+        #region overrides
+
+        public override string ToString()
+        {
+            return String.Format("{0}{1}{2}", SourceVertex.Id, Direction == Direction.IncomingEdge ? "<-" : "->", TargetVertex.Id);
+        }
+
+        #endregion
     }
 }
