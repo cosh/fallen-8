@@ -428,8 +428,6 @@ namespace Fallen8.API
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
-            PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
-            PathDelegates.EdgePriority edgePriority = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null)
         {
@@ -441,7 +439,7 @@ namespace Fallen8.API
 				if (ReadResource()) 
 				{
 					result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxPathWeight, maxResults, edgePropertyFilter,
-                                        edgeFilter, adjacentVertexFilter, edgePriority, edgeCost, vertexCost);
+                                        edgeFilter, edgeCost, vertexCost);
 					
 					FinishReadResource();
 					

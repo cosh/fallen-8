@@ -175,8 +175,6 @@ namespace Fallen8.API
         /// <param name="maxResults">The maximum number of results.</param>
         /// <param name="edgePropertyFilter">The edge property filter.</param>
         /// <param name="edgeFilter">The edge filter.</param>
-        /// <param name="adjacentVertexFilter">The adjacent vertex filter.</param>
-        /// <param name="edgePriority">The edge priority delegate.</param>
         /// <param name="edgeCost">The edge cost.</param>
         /// <param name="vertexCost">The vertex cost.</param>
         /// <returns>True if the plugin was found, otherwise false.</returns>
@@ -190,8 +188,6 @@ namespace Fallen8.API
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
-            PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
-            PathDelegates.EdgePriority edgePriority = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null);
 

@@ -73,7 +73,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <summary>
         /// Direction.
         /// </summary>
-        public Direction Direction { get; private set; }
+        public Direction Direction { get; set; }
 
         /// <summary>
         /// The weight of this path element

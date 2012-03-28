@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using Fallen8.API.Model;
 
 namespace Fallen8.API.Algorithms.Path
@@ -47,27 +46,10 @@ namespace Fallen8.API.Algorithms.Path
         /// Filter for edges
         /// </summary>
         /// <param name="edge">The edge.</param>
-        /// <param name="edgePropertyId">The edge property identifier.</param>
         /// <param name="direction">The direction of the edge.</param>
         /// <returns>False will filter the edge</returns>
-        public delegate bool EdgeFilter(EdgeModel edge, UInt16 edgePropertyId, Direction direction);
-
-        /// <summary>
-        /// Filter for the adjacent vertex
-        /// </summary>
-        /// <param name="vertex">The adjacent vertex.</param>
-        /// <returns>False will filter the vertex</returns>
-        public delegate bool AdjacentVertexFilter(VertexModel vertex);
-
-        /// <summary>
-        /// Sets the priority for edges
-        /// </summary>
-        /// <param name="edge">The edge</param>
-        /// <param name="edgePropertyId">The edge property identifier.</param>
-        /// <param name="direction">The direction of the edge.</param>
-        /// <returns>The order key.</returns>
-        public delegate double EdgePriority(EdgeModel edge, UInt16 edgePropertyId, Direction direction);
-
+        public delegate bool EdgeFilter(EdgeModel edge, Direction direction);
+       
         /// <summary>
         /// Sets the cost of for the edge
         /// </summary>

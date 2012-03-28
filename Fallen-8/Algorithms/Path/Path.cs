@@ -64,6 +64,29 @@ namespace Fallen8.API.Algorithms.Path
         /// <summary>
         /// Creates a new path
         /// </summary>
+        /// <param name="pathElement">Path element.</param>
+        public Path(PathElement pathElement)
+        {
+            _pathElements = new List<PathElement> {pathElement};
+            Weight = pathElement.Weight;
+            LastPathElement = pathElement;
+        }
+
+        /// <summary>
+        /// Creates a new path
+        /// </summary>
+        /// <param name="firstPathElement">First path element</param>
+        /// <param name="secondPathElement">Second path element</param>
+        public Path(PathElement firstPathElement, PathElement secondPathElement)
+        {
+            _pathElements = new List<PathElement> { firstPathElement, secondPathElement };
+            Weight = firstPathElement.Weight + secondPathElement.Weight;
+            LastPathElement = secondPathElement;
+        }
+
+        /// <summary>
+        /// Creates a new path
+        /// </summary>
         /// <param name="maximumLength">Maximum length.</param>
         public Path(Int32 maximumLength = 6)
         {
@@ -82,9 +105,8 @@ namespace Fallen8.API.Algorithms.Path
 		/// </param>
 		public Path(Path anotherPath, PathElement lastElement)
 		{
-			_pathElements = new List<PathElement>(anotherPath._pathElements);
-			_pathElements.Add(lastElement);
-			Weight = anotherPath.Weight + lastElement.Weight;
+			_pathElements = new List<PathElement>(anotherPath._pathElements) {lastElement};
+		    Weight = anotherPath.Weight + lastElement.Weight;
 			LastPathElement = lastElement;
 		}
 

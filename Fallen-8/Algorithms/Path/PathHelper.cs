@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using Fallen8.API.Model;
+
 namespace Fallen8.API.Algorithms.Path
 {
     /// <summary>
@@ -35,136 +36,48 @@ namespace Fallen8.API.Algorithms.Path
     public static class PathHelper
     {
         /// <summary>
-        /// Gets all relevant path elements from a vertex
+        /// Get the valid edges of a vertex
         /// </summary>
         /// <param name="vertex">The vertex.</param>
-        /// <param name="fromEdge">The edge where we came from</param>
+        /// <param name="direction">The direction.</param>
         /// <param name="edgepropertyFilter">The edge property filter.</param>
-        /// <param name="edgeFilter">The edge filter</param>
-        /// <param name="adjacentVertexFilter">The adjacent vertex filter</param>
-        /// <param name="visitedEdges">The already visited edges</param>
-        /// <returns>Enumerable of path elements</returns>
-        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, EdgeModel fromEdge, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter,
-            Dictionary<Int32, EdgeAsPath> visitedEdges)
+        /// <param name="edgeFilter">The edge filter.</param>
+        /// <returns>Valid edges</returns>
+        public static List<Tuple<UInt16, IEnumerable<EdgeModel>>> GetValidEdges(VertexModel vertex, Direction direction, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter)
         {
-            #region data
+            var edgeProperties = direction == Direction.IncomingEdge ? vertex.GetIncomingEdges() : vertex.GetOutgoingEdges();
+            var result = new List<Tuple<ushort, IEnumerable<EdgeModel>>>();
 
-            EdgeModel edge;
-            EdgeContainer edgeProperty;
-            EdgeAsPath interestingPathElements;
-
-            #endregion
-
-            #region Outgoing edges
-
-            var edgePropertys = vertex.GetOutgoingEdges();
-            if (edgePropertys != null)
+            if (edgeProperties != null)
             {
-                for (var i = 0; i < edgePropertys.Count; i++)
+                foreach (var edgeContainer in edgeProperties)
                 {
-                    edgeProperty = edgePropertys[i];
-
-                    if (edgepropertyFilter != null &&
-                        !edgepropertyFilter(edgeProperty.EdgePropertyId, Direction.OutgoingEdge))
+                    if (edgepropertyFilter != null && !edgepropertyFilter(edgeContainer.EdgePropertyId, direction))
                     {
                         continue;
                     }
 
-                    for (var j = 0; j < edgeProperty.Edges.Count; j++)
+                    if (edgeFilter != null)
                     {
-                        edge = edgeProperty.Edges[j];
+                        var validEdges = new List<EdgeModel>();
 
-                        if (fromEdge != null && ReferenceEquals(edge, fromEdge))
+                        foreach (var aEdge in edgeContainer.Edges)
                         {
-                            continue;
-                        }
-
-                        if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge))
-                        {
-                            continue;
-                        }
-
-                        if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.TargetVertex))
-                        {
-                            continue;
-                        }
-
-                        if (visitedEdges.TryGetValue(edge.Id, out interestingPathElements))
-                        {
-                            if (interestingPathElements.Outgoing == null)
+                            if (edgeFilter(aEdge, direction))
                             {
-                                var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId,
-                                                                  Direction.OutgoingEdge);
-                                interestingPathElements.Outgoing = pathElement;
-                                yield return pathElement;
+                                validEdges.Add(aEdge);
                             }
                         }
-                        else
-                        {
-                            var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge);
-                            visitedEdges.Add(edge.Id, new EdgeAsPath(null, pathElement));
-                            yield return pathElement;
-                        }
+                        result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, validEdges));
                     }
-                }    
-            }
-            
-            #endregion
-
-            #region Incoming edges
-
-            edgePropertys = vertex.GetIncomingEdges();
-            if (edgePropertys != null)
-            {
-                for (var i = 0; i < edgePropertys.Count; i++)
-                {
-                    edgeProperty = edgePropertys[i];
-
-                    if (edgepropertyFilter != null &&
-                        !edgepropertyFilter(edgeProperty.EdgePropertyId, Direction.IncomingEdge))
+                    else
                     {
-                        continue;
+                        result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, edgeContainer.Edges));
                     }
-
-                    for (var j = 0; j < edgeProperty.Edges.Count; j++)
-                    {
-                        edge = edgeProperty.Edges[j];
-
-                        if (fromEdge != null && ReferenceEquals(edge, fromEdge))
-                        {
-                            continue;
-                        }
-
-                        if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge))
-                        {
-                            continue;
-                        }
-
-                        if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.SourceVertex))
-                        {
-                            continue;
-                        }
-
-                        if (visitedEdges.TryGetValue(edge.Id, out interestingPathElements))
-                        {
-                            if (interestingPathElements.Incoming == null)
-                            {
-                                var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId,Direction.IncomingEdge);
-                                interestingPathElements.Incoming = pathElement;
-                                yield return pathElement;
-                            }
-                        }
-                        else
-                        {
-                            var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge);
-                            visitedEdges.Add(edge.Id, new EdgeAsPath(pathElement, null));
-                            yield return pathElement;
-                        }
-                    }
-                }                
+                }
             }
-            
-            #endregion
+
+            return result;
         }
     }
 }

@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>TRACE;CODE_ANALYSIS;DEBUG;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -45,7 +45,6 @@
     <Reference Include="System.ServiceModel.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithms\Path\EdgeAsPath.cs" />
     <Compile Include="Algorithms\Path\PathHelper.cs" />
     <Compile Include="Algorithms\Path\IShortestPathAlgorithm.cs" />
     <Compile Include="Algorithms\Path\PathDelegates.cs" />
