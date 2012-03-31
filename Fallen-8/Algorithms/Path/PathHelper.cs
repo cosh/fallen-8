@@ -26,8 +26,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Fallen8.API.Model;
+
 namespace Fallen8.API.Algorithms.Path
 {
     /// <summary>
@@ -36,107 +36,46 @@ namespace Fallen8.API.Algorithms.Path
     public static class PathHelper
     {
         /// <summary>
-        /// Gets all relevant path elements from a vertex
+        /// Get the valid edges of a vertex
         /// </summary>
         /// <param name="vertex">The vertex.</param>
+        /// <param name="direction">The direction.</param>
         /// <param name="edgepropertyFilter">The edge property filter.</param>
-        /// <param name="edgeFilter">The edge filter</param>
-        /// <param name="adjacentVertexFilter">The adjacent vertex filter</param>
-        /// <param name="visitedEdges">The already visited edges</param>
-        /// <returns>Enumerable of path elements</returns>
-        public static IEnumerable<PathElement> GetAllRelevantPathElements(VertexModel vertex, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter, PathDelegates.AdjacentVertexFilter adjacentVertexFilter, HashSet<PathElement> visitedEdges)
+        /// <param name="edgeFilter">The edge filter.</param>
+        /// <returns>Valid edges</returns>
+        public static List<Tuple<UInt16, IEnumerable<EdgeModel>>> GetValidEdges(VertexModel vertex, Direction direction, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter)
         {
-            #region data
+            var edgeProperties = direction == Direction.IncomingEdge ? vertex.GetIncomingEdges() : vertex.GetOutgoingEdges();
+            var result = new List<Tuple<ushort, IEnumerable<EdgeModel>>>();
 
-            ReadOnlyCollection<EdgeModel> edges;
-            EdgeModel edge;
-            ReadOnlyCollection<EdgeContainer> edgePropertys;
-            EdgeContainer edgeProperty;
-            var result = new List<PathElement>();
-
-            #endregion
-
-            #region Outgoing edges
-
-            edgePropertys = vertex.GetOutgoingEdges();
-            if (edgePropertys != null)
+            if (edgeProperties != null)
             {
-                for (var i = 0; i < edgePropertys.Count; i++)
+                foreach (var edgeContainer in edgeProperties)
                 {
-                    edgeProperty = edgePropertys[i];
-
-                    if (edgepropertyFilter != null &&
-                        !edgepropertyFilter(edgeProperty.EdgePropertyId, Direction.OutgoingEdge))
+                    if (edgepropertyFilter != null && !edgepropertyFilter(edgeContainer.EdgePropertyId, direction))
                     {
                         continue;
                     }
 
-                    for (var j = 0; j < edgeProperty.Edges.Count; j++)
+                    if (edgeFilter != null)
                     {
-                        edge = edgeProperty.Edges[j];
+                        var validEdges = new List<EdgeModel>();
 
-                        if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge))
+                        foreach (var aEdge in edgeContainer.Edges)
                         {
-                            continue;
+                            if (edgeFilter(aEdge, direction))
+                            {
+                                validEdges.Add(aEdge);
+                            }
                         }
-
-                        if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.TargetVertex))
-                        {
-                            continue;
-                        }
-
-                        var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.OutgoingEdge);
-
-                        if (!visitedEdges.Contains(pathElement))
-                        {
-                            result.Add(pathElement);
-                        }
+                        result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, validEdges));
                     }
-                }    
+                    else
+                    {
+                        result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, edgeContainer.Edges));
+                    }
+                }
             }
-            
-            #endregion
-
-            #region Incoming edges
-
-            edgePropertys = vertex.GetIncomingEdges();
-            if (edgePropertys != null)
-            {
-                for (var i = 0; i < edgePropertys.Count; i++)
-                {
-                    edgeProperty = edgePropertys[i];
-
-                    if (edgepropertyFilter != null &&
-                        !edgepropertyFilter(edgeProperty.EdgePropertyId, Direction.IncomingEdge))
-                    {
-                        continue;
-                    }
-
-                    for (var j = 0; j < edgeProperty.Edges.Count; j++)
-                    {
-                        edge = edgeProperty.Edges[j];
-
-                        if (edgeFilter != null && !edgeFilter(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge))
-                        {
-                            continue;
-                        }
-
-                        if (adjacentVertexFilter != null && !adjacentVertexFilter(edge.SourceVertex))
-                        {
-                            continue;
-                        }
-
-                        var pathElement = new PathElement(edge, edgeProperty.EdgePropertyId, Direction.IncomingEdge);
-
-                        if (!visitedEdges.Contains(pathElement))
-                        {
-                            result.Add(pathElement);
-                        }
-                    }
-                }                
-            }
-            
-            #endregion
 
             return result;
         }

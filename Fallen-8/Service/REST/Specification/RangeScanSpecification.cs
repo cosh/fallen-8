@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  RangeScanSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -23,58 +23,53 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The Fallen-8 status
+    ///   The range scan specification
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class RangeScanSpecification
     {
         /// <summary>
-        ///   The available memory
+        ///   Left limit
         /// </summary>
         [DataMember]
-        public Int64 FreeMemory { get; set; }
-		
-		/// <summary>
-        ///   The used memory
+        public String LeftLimit { get; set; }
+
+        /// <summary>
+        ///   Right limit
         /// </summary>
         [DataMember]
-        public Int64 UsedMemory { get; set; }
-		
-		/// <summary>
-        /// Vertex count
+        public String RightLimit { get; set; }
+
+        /// <summary>
+        ///   The type of the literals
         /// </summary>
         [DataMember]
-        public Int32 VertexCount { get; set; }
-		
-		/// <summary>
-        /// Edge count
+        public String FullQualifiedTypeName { get; set; }
+
+        /// <summary>
+        ///   Include left limit
         /// </summary>
         [DataMember]
-        public Int32 EdgeCount { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
+        public Boolean IncludeLeft { get; set; }
+
+        /// <summary>
+        ///   Include right limit
         /// </summary>
         [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
-		
-		/// <summary>
-        /// Available path plugins
+        public Boolean IncludeRight { get; set; }
+
+        /// <summary>
+        ///   Result type specification
         /// </summary>
         [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        public ResultTypeSpecification ResultType { get; set; }
     }
 }
+

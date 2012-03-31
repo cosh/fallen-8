@@ -24,19 +24,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System.Runtime.Serialization;
+
 namespace Fallen8.API.Expression
 {
 	/// <summary>
 	/// Binary operator.
 	/// </summary>
+    [DataContract]
 	public enum BinaryOperator
 	{
+        [EnumMember(Value = "==")]
 		Equals,
-		Greater,
+        
+        [EnumMember(Value = ">")]
+        Greater,
+        
+        [EnumMember(Value = ">=")]
 		GreaterOrEquals,
-		Lower,
+
+        [EnumMember(Value = "<")]
+        Lower,
+
+        [EnumMember(Value = "<=")]
 		LowerOrEquals,
-		NotEquals
+
+        [EnumMember(Value = "!=")]
+        NotEquals
 	}
 }
 

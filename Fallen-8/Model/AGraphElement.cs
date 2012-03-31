@@ -289,10 +289,13 @@ namespace Fallen8.API.Model
                         {
                             //everything until the to be removed item
                             Array.Copy(_properties, newProperties, toBeRemovedIdx);
-
-                            //everything after the removed item
-                            Array.Copy(_properties, toBeRemovedIdx + 1, newProperties, toBeRemovedIdx, _properties.Length - toBeRemovedIdx);
-
+							
+							if (toBeRemovedIdx > newProperties.Length) 
+							{
+								//everything after the removed item
+                            	Array.Copy(_properties, toBeRemovedIdx + 1, newProperties, toBeRemovedIdx, _properties.Length - toBeRemovedIdx);
+							}
+                            
                             _properties = newProperties;
                         }
 

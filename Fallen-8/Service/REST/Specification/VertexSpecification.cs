@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  VertexSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -30,51 +30,22 @@ using System.Runtime.Serialization;
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The Fallen-8 status
+    ///   The vertex specification
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class VertexSpecification
     {
         /// <summary>
-        ///   The available memory
+        ///   The creation date
         /// </summary>
         [DataMember]
-        public Int64 FreeMemory { get; set; }
-		
-		/// <summary>
-        ///   The used memory
+        public UInt32 CreationDate { get; set; }
+
+        /// <summary>
+        ///   The properties of the vertex
         /// </summary>
         [DataMember]
-        public Int64 UsedMemory { get; set; }
-		
-		/// <summary>
-        /// Vertex count
-        /// </summary>
-        [DataMember]
-        public Int32 VertexCount { get; set; }
-		
-		/// <summary>
-        /// Edge count
-        /// </summary>
-        [DataMember]
-        public Int32 EdgeCount { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
-		
-		/// <summary>
-        /// Available path plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
     }
 }
+

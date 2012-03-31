@@ -45,8 +45,6 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="maxResults">The maximum number of results.</param>
         /// <param name="edgePropertyFilter">Edge property filter delegate.</param>
         /// <param name="edgeFilter">Edge filter delegate.</param>
-        /// <param name="adjacentVertexFilter">Vertex filter delegate.</param>
-        /// <param name="edgePriority">Edge priority order delegate.</param>
         /// <param name="edgeCost">The edge cost delegate.</param>
         /// <param name="vertexCost">The vertex cost delegate.</param>
         /// <returns>Paths</returns>
@@ -58,8 +56,6 @@ namespace Fallen8.API.Algorithms.Path
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
-            PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
-            PathDelegates.EdgePriority edgePriority = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null);
     }

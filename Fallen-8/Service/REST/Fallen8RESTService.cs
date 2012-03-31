@@ -6,17 +6,23 @@
 //  
 //  Copyright (c) 2012 Henning Rauch
 // 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, version 3 of the License.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 // 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 // 
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -284,10 +290,93 @@ namespace Fallen8.API.Service.REST
             
             return null;
         }
-        
+
+        public IEnumerable<int> GraphScan(String propertyIdString, ScanSpecification definition)
+        {
+            #region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+            var propertyId = Convert.ToUInt16(propertyIdString);
+
+            var value = (IComparable)Convert.ChangeType(definition.Literal.Value,
+                                           Type.GetType(definition.Literal.FullQualifiedTypeName, true, true));
+
+            List<AGraphElement> graphElements;
+            return _fallen8.GraphScan(out graphElements, propertyId, value, definition.Operator) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();
+        }
+
+        public IEnumerable<int> IndexScan(string indexId, ScanSpecification definition)
+        {
+            #region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+            var value = (IComparable)Convert.ChangeType(definition.Literal.Value,
+                                          Type.GetType(definition.Literal.FullQualifiedTypeName, true, true));
+
+            ReadOnlyCollection<AGraphElement> graphElements;
+            return _fallen8.IndexScan(out graphElements, indexId, value, definition.Operator) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();
+        }
+
+        public IEnumerable<int> RangeIndexScan(string indexId, RangeScanSpecification definition)
+        {
+            #region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+            var left = (IComparable)Convert.ChangeType(definition.LeftLimit,
+                                          Type.GetType(definition.FullQualifiedTypeName, true, true));
+
+            var right = (IComparable)Convert.ChangeType(definition.RightLimit,
+                                          Type.GetType(definition.FullQualifiedTypeName, true, true));
+
+            ReadOnlyCollection<AGraphElement> graphElements;
+            return _fallen8.RangeIndexScan(out graphElements, indexId, left, right, definition.IncludeLeft, definition.IncludeRight) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();            
+        }
+
         #endregion
         
         #region private helper
+
+        /// <summary>
+        /// Creats the result
+        /// </summary>
+        /// <param name="graphElements">The graph elements</param>
+        /// <param name="resultTypeSpecification">The result specification</param>
+        /// <returns></returns>
+        private static IEnumerable<int> CreateResult(IEnumerable<AGraphElement> graphElements, ResultTypeSpecification resultTypeSpecification)
+        {
+            switch (resultTypeSpecification)
+            {
+                case ResultTypeSpecification.Vertices:
+                    return graphElements.OfType<VertexModel>().Select(_ => _.Id);
+
+                case ResultTypeSpecification.Edges:
+                    return graphElements.OfType<EdgeModel>().Select(_ => _.Id);
+
+                case ResultTypeSpecification.Both:
+                    return graphElements.Select(_ => _.Id);
+
+                default:
+                    throw new ArgumentOutOfRangeException("resultTypeSpecification");
+            }
+        }
 
         /// <summary>
         /// Load the frontend

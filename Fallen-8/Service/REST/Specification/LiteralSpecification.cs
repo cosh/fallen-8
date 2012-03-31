@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  LiteralSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,57 +24,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The Fallen-8 status
+    ///   The scan specification
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class LiteralSpecification
     {
         /// <summary>
-        ///   The available memory
+        ///   The value of the literal
         /// </summary>
         [DataMember]
-        public Int64 FreeMemory { get; set; }
-		
-		/// <summary>
-        ///   The used memory
+        public String Value { get; set; }
+
+        /// <summary>
+        ///   The type of the literal
         /// </summary>
         [DataMember]
-        public Int64 UsedMemory { get; set; }
-		
-		/// <summary>
-        /// Vertex count
-        /// </summary>
-        [DataMember]
-        public Int32 VertexCount { get; set; }
-		
-		/// <summary>
-        /// Edge count
-        /// </summary>
-        [DataMember]
-        public Int32 EdgeCount { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
-		
-		/// <summary>
-        /// Available path plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        public String FullQualifiedTypeName { get; set; }
     }
 }
+

@@ -42,7 +42,7 @@ namespace Fallen8.API
         #region search
 
         /// <summary>
-        /// Search for graph elements by a specified propertyId, literal and binary operation.
+        /// Scan for graph elements by a specified propertyId, literal and binary operation.
         /// </summary>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
@@ -59,11 +59,11 @@ namespace Fallen8.API
         /// <param name='binOp'>
         /// Binary operator.
         /// </param>
-        Boolean Search(out List<AGraphElement> result, Int32 propertyId, IComparable literal,
+        Boolean GraphScan(out List<AGraphElement> result, UInt16 propertyId, IComparable literal,
                        BinaryOperator binOp = BinaryOperator.Equals);
 
         /// <summary>
-        /// Search for graph elements by a specified index identifiert, a literal and a binary operation
+        /// Scan for graph elements by a specified index identifiert, a literal and a binary operation
         /// </summary>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
@@ -80,11 +80,11 @@ namespace Fallen8.API
         /// <param name='binOp'>
         /// Binary operator.
         /// </param>
-        Boolean SearchInIndex(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal,
+        Boolean IndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal,
                               BinaryOperator binOp = BinaryOperator.Equals);
 
         /// <summary>
-        /// Search for graph elements by a specified property range.
+        /// Scan for graph elements by a specified property range.
         /// </summary>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
@@ -107,7 +107,7 @@ namespace Fallen8.API
         /// <param name='includeRight'>
         /// Include right.
         /// </param>
-        Boolean SearchInRange(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit,
+        Boolean RangeIndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit,
                               IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
 
         /// <summary>
@@ -123,9 +123,9 @@ namespace Fallen8.API
         /// Index identifier.
         /// </param>
         /// <param name='searchQuery'>
-        /// Search query.
+        /// GraphScan query.
         /// </param>
-        Boolean SearchFulltext(out FulltextSearchResult result, String indexId, String searchQuery);
+        Boolean FulltextIndexScan(out FulltextSearchResult result, String indexId, String searchQuery);
 
         /// <summary>
         /// Spatial search for graph elements by a specified geometry and distance using an spatial index.
@@ -142,7 +142,7 @@ namespace Fallen8.API
         /// <param name='geometry'>
         /// Geometry.
         /// </param>
-        Boolean SearchSpatial(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry);
+        Boolean SpatialIndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry);
 
         #endregion
 
@@ -175,8 +175,6 @@ namespace Fallen8.API
         /// <param name="maxResults">The maximum number of results.</param>
         /// <param name="edgePropertyFilter">The edge property filter.</param>
         /// <param name="edgeFilter">The edge filter.</param>
-        /// <param name="adjacentVertexFilter">The adjacent vertex filter.</param>
-        /// <param name="edgePriority">The edge priority delegate.</param>
         /// <param name="edgeCost">The edge cost.</param>
         /// <param name="vertexCost">The vertex cost.</param>
         /// <returns>True if the plugin was found, otherwise false.</returns>
@@ -190,8 +188,6 @@ namespace Fallen8.API
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
-            PathDelegates.AdjacentVertexFilter adjacentVertexFilter = null,
-            PathDelegates.EdgePriority edgePriority = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null);
 

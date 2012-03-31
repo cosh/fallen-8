@@ -580,16 +580,7 @@ namespace Fallen8.API.Model
         }
 
         #endregion
-
-        //#region Equals Overrides
-
-        //public override int GetHashCode()
-        //{
-        //    return Id;
-        //}
-
-        //#endregion
-
+        
         #region AGraphElement
 
         /// <summary>
@@ -615,6 +606,15 @@ namespace Fallen8.API.Model
             }
 
             throw new CollisionException();
+        }
+
+        #endregion
+
+        #region overrides
+
+        public override string ToString()
+        {
+            return Id.ToString();
         }
 
         #endregion
