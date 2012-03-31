@@ -42,7 +42,7 @@ namespace Fallen8.API
         #region search
 
         /// <summary>
-        /// Search for graph elements by a specified propertyId, literal and binary operation.
+        /// Scan for graph elements by a specified propertyId, literal and binary operation.
         /// </summary>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
@@ -59,11 +59,11 @@ namespace Fallen8.API
         /// <param name='binOp'>
         /// Binary operator.
         /// </param>
-        Boolean Search(out List<AGraphElement> result, Int32 propertyId, IComparable literal,
+        Boolean Scan(out List<AGraphElement> result, Int32 propertyId, IComparable literal,
                        BinaryOperator binOp = BinaryOperator.Equals);
 
         /// <summary>
-        /// Search for graph elements by a specified index identifiert, a literal and a binary operation
+        /// Scan for graph elements by a specified index identifiert, a literal and a binary operation
         /// </summary>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
@@ -84,7 +84,7 @@ namespace Fallen8.API
                               BinaryOperator binOp = BinaryOperator.Equals);
 
         /// <summary>
-        /// Search for graph elements by a specified property range.
+        /// Scan for graph elements by a specified property range.
         /// </summary>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
@@ -123,7 +123,7 @@ namespace Fallen8.API
         /// Index identifier.
         /// </param>
         /// <param name='searchQuery'>
-        /// Search query.
+        /// Scan query.
         /// </param>
         Boolean SearchFulltext(out FulltextSearchResult result, String indexId, String searchQuery);
 

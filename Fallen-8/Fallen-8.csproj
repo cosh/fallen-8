@@ -90,6 +90,9 @@
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
+    <Compile Include="Service\REST\ResultTypeSpecification.cs" />
+    <Compile Include="Service\REST\LiteralSpecification.cs" />
+    <Compile Include="Service\REST\ScanSpecification.cs" />
     <Compile Include="Service\REST\EdgeSpecification.cs" />
     <Compile Include="Service\REST\Fallen8RESTServicePlugin.cs" />
     <Compile Include="Service\REST\Fallen8Status.cs" />

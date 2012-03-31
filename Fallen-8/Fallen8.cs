@@ -453,7 +453,7 @@ namespace Fallen8.API
             return false;
         }
         
-        public bool Search(out List<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp)
+        public bool Scan(out List<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp)
         {
             #region binary operation
 

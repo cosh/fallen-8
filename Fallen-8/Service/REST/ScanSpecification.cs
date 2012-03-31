@@ -1,5 +1,5 @@
 // 
-//  PropertySpecification.cs
+//  ScanSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -25,25 +25,39 @@
 // THE SOFTWARE.
 using System;
 using System.Runtime.Serialization;
+using Fallen8.API.Expression;
 
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The property specification
+    ///   The scan specification
     /// </summary>
     [DataContract]
-    public sealed class PropertySpecification
+    public sealed class ScanSpecification
     {
         /// <summary>
-        ///   The type name
+        ///   The property identifier
         /// </summary>
         [DataMember]
-        public String TypeName { get; set; }
+        public Int32 PropertyId { get; set; }
 
         /// <summary>
-        ///   The property string representation
+        ///   Binary Operator
         /// </summary>
         [DataMember]
-        public String Property { get; set; }
+        public BinaryOperator Operator { get; set; }
+
+        /// <summary>
+        ///   Literal specification
+        /// </summary>
+        [DataMember]
+        public LiteralSpecification Literal { get; set; }
+
+        /// <summary>
+        ///   Result type specification
+        /// </summary>
+        [DataMember]
+        public ResultTypeSpecification ResultType { get; set; }
     }
 }
+

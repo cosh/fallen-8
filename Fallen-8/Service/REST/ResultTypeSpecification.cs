@@ -1,5 +1,5 @@
 // 
-//  PropertySpecification.cs
+//  ResultTypeSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -23,27 +23,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The property specification
+    ///   The result type specification
     /// </summary>
     [DataContract]
-    public sealed class PropertySpecification
+    public enum ResultTypeSpecification : byte
     {
-        /// <summary>
-        ///   The type name
-        /// </summary>
-        [DataMember]
-        public String TypeName { get; set; }
+        [EnumMember(Value = "V")]
+        Vertices,
 
-        /// <summary>
-        ///   The property string representation
-        /// </summary>
-        [DataMember]
-        public String Property { get; set; }
+        [EnumMember(Value = "E")]
+        Edges,
+
+        [EnumMember(Value = "Both")]
+        Both,
     }
 }
+

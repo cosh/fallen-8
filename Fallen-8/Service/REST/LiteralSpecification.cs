@@ -1,5 +1,5 @@
 // 
-//  PropertySpecification.cs
+//  LiteralSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -29,21 +29,22 @@ using System.Runtime.Serialization;
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The property specification
+    ///   The scan specification
     /// </summary>
     [DataContract]
-    public sealed class PropertySpecification
+    public sealed class LiteralSpecification
     {
         /// <summary>
-        ///   The type name
+        ///   The value of the literal
         /// </summary>
         [DataMember]
-        public String TypeName { get; set; }
+        public String Value { get; set; }
 
         /// <summary>
-        ///   The property string representation
+        ///   The type of the literal
         /// </summary>
         [DataMember]
-        public String Property { get; set; }
+        public String FullQualifiedTypeName { get; set; }
     }
 }
+
