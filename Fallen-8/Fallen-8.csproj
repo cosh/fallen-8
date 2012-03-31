@@ -146,6 +146,18 @@
     <EmbeddedResource Include="Service\REST\Ressource\ajax-loader.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Content Include="Service\REST\Ressource\arbor.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Service\REST\Ressource\Explore.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Service\REST\Ressource\graphics.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Service\REST\Ressource\renderer.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Service\REST\Ressource\Stats.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

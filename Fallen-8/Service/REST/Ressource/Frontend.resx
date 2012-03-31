@@ -160,6 +160,9 @@
     &lt;script type="text/javascript" src="Frontend/Ressource/d3.v2.js"&gt;&lt;/script&gt;
 	&lt;script type="text/javascript" src="Frontend/Ressource/copyright.js"&gt;&lt;/script&gt;
 	&lt;script type="text/javascript" src="Frontend/Ressource/status.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/arbor.js" &gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/graphics.js" &gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/renderer.js" &gt;&lt;/script&gt;
 	&lt;link rel="stylesheet" type="text/css" href="Frontend/Ressource/style.css" /&gt;
   &lt;/head&gt;
   &lt;body&gt;
@@ -175,6 +178,8 @@
 					&lt;li&gt;&lt;a href="#"&gt;Explore&lt;/a&gt;&lt;/li&gt;
 					&lt;li&gt;&lt;a href="#"&gt;Stats&lt;/a&gt;&lt;/li&gt;
 					&lt;li&gt;&lt;a href="#"&gt;Help&lt;/a&gt;&lt;/li&gt;
+					&lt;li&gt;&lt;a href="https://github.com/cosh/fallen-8/issues"&gt;Issues&lt;/a&gt;&lt;/li&gt;
+					&lt;li&gt;&lt;a href="https://github.com/cosh/fallen-8/wiki"&gt;Wiki&lt;/a&gt;&lt;/li&gt;
 				&lt;/ul&gt;
 			
 		&lt;/div&gt;	
