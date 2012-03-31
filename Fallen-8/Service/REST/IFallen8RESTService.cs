@@ -177,14 +177,26 @@ namespace Fallen8.API.Service.REST
         #region scan
 
         /// <summary>
-        /// Scan for graph elements
+        /// Full graph scan for graph elements
         /// </summary>
+        /// <param name="propertyId"> The property identifier </param>
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
-        [OperationContract(Name = "Scan")]
-        [WebInvoke(UriTemplate = "/Scan", Method = "POST", RequestFormat = WebMessageFormat.Json,
+        [OperationContract(Name = "GraphScan")]
+        [WebInvoke(UriTemplate = "/GraphScan?propertyId={propertyId}", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> Scan(ScanSpecification definition);
+        IEnumerable<Int32> GraphScan(String propertyId, ScanSpecification definition);
+
+        /// <summary>
+        /// Index scan for graph elements
+        /// </summary>
+        /// <param name="indexId"> The index identifier </param>
+        /// <param name="definition"> The scan specification </param>
+        /// <returns> The matching identifier </returns>
+        [OperationContract(Name = "IndexScan")]
+        [WebInvoke(UriTemplate = "/IndexScan?indexId={indexId}", Method = "POST", RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
 
         #endregion
 

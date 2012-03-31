@@ -453,7 +453,7 @@ namespace Fallen8.API
             return false;
         }
         
-        public bool Scan(out List<AGraphElement> result, Int32 propertyId, IComparable literal, BinaryOperator binOp)
+        public bool GraphScan(out List<AGraphElement> result, UInt16 propertyId, IComparable literal, BinaryOperator binOp)
         {
             #region binary operation
 
@@ -494,7 +494,7 @@ namespace Fallen8.API
             return result.Count > 0;
         }
 
-        public bool SearchInIndex(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
+        public bool IndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex(out index, indexId))
@@ -543,7 +543,7 @@ namespace Fallen8.API
             return result.Count > 0;
         }
 
-        public bool SearchInRange (out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
+        public bool RangeIndexScan (out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex (out index, indexId)) {
@@ -565,7 +565,7 @@ namespace Fallen8.API
             return false;
         }
 
-        public bool SearchFulltext (out FulltextSearchResult result, String indexId, string searchQuery)
+        public bool FulltextIndexScan (out FulltextSearchResult result, String indexId, string searchQuery)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex (out index, indexId)) {
@@ -587,7 +587,7 @@ namespace Fallen8.API
             return false;
         }
 
-        public bool SearchSpatial(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry)
+        public bool SpatialIndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex (out index, indexId)) {
@@ -774,7 +774,7 @@ namespace Fallen8.API
         /// <param name='propertyId'>
         /// Property identifier.
         /// </param>
-        private List<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, Int32 propertyId)
+        private List<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, UInt16 propertyId)
         {
 			if (ReadResource()) 
 			{

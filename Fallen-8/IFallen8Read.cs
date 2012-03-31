@@ -59,7 +59,7 @@ namespace Fallen8.API
         /// <param name='binOp'>
         /// Binary operator.
         /// </param>
-        Boolean Scan(out List<AGraphElement> result, Int32 propertyId, IComparable literal,
+        Boolean GraphScan(out List<AGraphElement> result, UInt16 propertyId, IComparable literal,
                        BinaryOperator binOp = BinaryOperator.Equals);
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Fallen8.API
         /// <param name='binOp'>
         /// Binary operator.
         /// </param>
-        Boolean SearchInIndex(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal,
+        Boolean IndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal,
                               BinaryOperator binOp = BinaryOperator.Equals);
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Fallen8.API
         /// <param name='includeRight'>
         /// Include right.
         /// </param>
-        Boolean SearchInRange(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit,
+        Boolean RangeIndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit,
                               IComparable rightLimit, Boolean includeLeft = true, Boolean includeRight = true);
 
         /// <summary>
@@ -123,9 +123,9 @@ namespace Fallen8.API
         /// Index identifier.
         /// </param>
         /// <param name='searchQuery'>
-        /// Scan query.
+        /// GraphScan query.
         /// </param>
-        Boolean SearchFulltext(out FulltextSearchResult result, String indexId, String searchQuery);
+        Boolean FulltextIndexScan(out FulltextSearchResult result, String indexId, String searchQuery);
 
         /// <summary>
         /// Spatial search for graph elements by a specified geometry and distance using an spatial index.
@@ -142,7 +142,7 @@ namespace Fallen8.API
         /// <param name='geometry'>
         /// Geometry.
         /// </param>
-        Boolean SearchSpatial(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry);
+        Boolean SpatialIndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry);
 
         #endregion
 

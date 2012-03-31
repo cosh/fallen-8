@@ -36,12 +36,6 @@ namespace Fallen8.API.Service.REST
     public sealed class ScanSpecification
     {
         /// <summary>
-        ///   The property identifier
-        /// </summary>
-        [DataMember]
-        public Int32 PropertyId { get; set; }
-
-        /// <summary>
         ///   Binary Operator
         /// </summary>
         [DataMember]

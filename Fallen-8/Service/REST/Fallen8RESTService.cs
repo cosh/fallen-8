@@ -291,7 +291,27 @@ namespace Fallen8.API.Service.REST
             return null;
         }
 
-        public IEnumerable<int> Scan(ScanSpecification definition)
+        public IEnumerable<int> GraphScan(String propertyIdString, ScanSpecification definition)
+        {
+            #region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+            var propertyId = Convert.ToUInt16(propertyIdString);
+
+            var value = (IComparable)Convert.ChangeType(definition.Literal.Value,
+                                           Type.GetType(definition.Literal.FullQualifiedTypeName, true, true));
+
+            List<AGraphElement> graphElements;
+            return _fallen8.GraphScan(out graphElements, propertyId, value, definition.Operator) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();
+        }
+
+        public IEnumerable<int> IndexScan(string indexId, ScanSpecification definition)
         {
             #region initial checks
 
@@ -303,33 +323,39 @@ namespace Fallen8.API.Service.REST
             #endregion
 
             var value = (IComparable)Convert.ChangeType(definition.Literal.Value,
-                                           Type.GetType(definition.Literal.FullQualifiedTypeName, true, true));
+                                          Type.GetType(definition.Literal.FullQualifiedTypeName, true, true));
 
-            List<AGraphElement> graphElements;
-            if (_fallen8.Scan(out graphElements, definition.PropertyId, value, definition.Operator))
-            {
-                switch (definition.ResultType)
-                {
-                    case ResultTypeSpecification.Vertices:
-                        return graphElements.OfType<VertexModel>().Select(_ => _.Id);
-
-                    case ResultTypeSpecification.Edges:
-                        return graphElements.OfType<EdgeModel>().Select(_ => _.Id);
-
-                    case ResultTypeSpecification.Both:
-                        return graphElements.Select(_ => _.Id);
-
-                    default:
-                        throw new ArgumentOutOfRangeException("definition.ResultType");
-                }
-            }
-
-            return Enumerable.Empty<Int32>();
+            ReadOnlyCollection<AGraphElement> graphElements;
+            return _fallen8.IndexScan(out graphElements, indexId, value, definition.Operator) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();
         }
-        
+
         #endregion
         
         #region private helper
+
+        /// <summary>
+        /// Creats the result
+        /// </summary>
+        /// <param name="graphElements">The graph elements</param>
+        /// <param name="resultTypeSpecification">The result specification</param>
+        /// <returns></returns>
+        private static IEnumerable<int> CreateResult(IEnumerable<AGraphElement> graphElements, ResultTypeSpecification resultTypeSpecification)
+        {
+            switch (resultTypeSpecification)
+            {
+                case ResultTypeSpecification.Vertices:
+                    return graphElements.OfType<VertexModel>().Select(_ => _.Id);
+
+                case ResultTypeSpecification.Edges:
+                    return graphElements.OfType<EdgeModel>().Select(_ => _.Id);
+
+                case ResultTypeSpecification.Both:
+                    return graphElements.Select(_ => _.Id);
+
+                default:
+                    throw new ArgumentOutOfRangeException("resultTypeSpecification");
+            }
+        }
 
         /// <summary>
         /// Load the frontend
