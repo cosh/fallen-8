@@ -90,6 +90,7 @@
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
+    <Compile Include="Service\REST\RangeScanSpecification.cs" />
     <Compile Include="Service\REST\ResultTypeSpecification.cs" />
     <Compile Include="Service\REST\LiteralSpecification.cs" />
     <Compile Include="Service\REST\ScanSpecification.cs" />
@@ -158,5 +159,8 @@
     <Content Include="Service\REST\Ressource\Overview.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Service\REST\Specification\" />
   </ItemGroup>
 </Project>

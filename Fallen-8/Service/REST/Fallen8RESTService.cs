@@ -329,6 +329,27 @@ namespace Fallen8.API.Service.REST
             return _fallen8.IndexScan(out graphElements, indexId, value, definition.Operator) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();
         }
 
+        public IEnumerable<int> RangeIndexScan(string indexId, RangeScanSpecification definition)
+        {
+            #region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+            var left = (IComparable)Convert.ChangeType(definition.LeftLimit,
+                                          Type.GetType(definition.FullQualifiedTypeName, true, true));
+
+            var right = (IComparable)Convert.ChangeType(definition.RightLimit,
+                                          Type.GetType(definition.FullQualifiedTypeName, true, true));
+
+            ReadOnlyCollection<AGraphElement> graphElements;
+            return _fallen8.RangeIndexScan(out graphElements, indexId, left, right, definition.IncludeLeft, definition.IncludeRight) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();            
+        }
+
         #endregion
         
         #region private helper

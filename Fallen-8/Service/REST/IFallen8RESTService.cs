@@ -198,6 +198,17 @@ namespace Fallen8.API.Service.REST
             ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
 
+        /// <summary>
+        /// Scan for graph elements by a specified property range.
+        /// </summary>
+        /// <param name="indexId"> The index identifier </param>
+        /// <param name="definition"> The scan specification </param>
+        /// <returns> The matching identifier </returns>
+        [OperationContract(Name = "RangeIndexScan")]
+        [WebInvoke(UriTemplate = "/RangeIndexScan?indexId={indexId}", Method = "POST", RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
+
         #endregion
 
         #region persistence
