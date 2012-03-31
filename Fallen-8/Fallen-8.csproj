@@ -90,24 +90,24 @@
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
-    <Compile Include="Service\REST\RangeScanSpecification.cs" />
-    <Compile Include="Service\REST\ResultTypeSpecification.cs" />
-    <Compile Include="Service\REST\LiteralSpecification.cs" />
-    <Compile Include="Service\REST\ScanSpecification.cs" />
-    <Compile Include="Service\REST\EdgeSpecification.cs" />
     <Compile Include="Service\REST\Fallen8RESTServicePlugin.cs" />
     <Compile Include="Service\REST\Fallen8Status.cs" />
     <Compile Include="Service\REST\IFallen8RESTService.cs" />
-    <Compile Include="Service\REST\PropertySpecification.cs" />
     <Compile Include="Service\REST\Ressource\Frontend.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Frontend.resx</DependentUpon>
     </Compile>
-    <Compile Include="Service\REST\VertexSpecification.cs" />
     <Compile Include="Service\REST\Fallen8RESTService.cs" />
     <Compile Include="Service\REST\Fallen8RESTProperties.cs" />
     <Compile Include="Helper\Fallen8Pool.cs" />
+    <Compile Include="Service\REST\Specification\EdgeSpecification.cs" />
+    <Compile Include="Service\REST\Specification\LiteralSpecification.cs" />
+    <Compile Include="Service\REST\Specification\PropertySpecification.cs" />
+    <Compile Include="Service\REST\Specification\RangeScanSpecification.cs" />
+    <Compile Include="Service\REST\Specification\ResultTypeSpecification.cs" />
+    <Compile Include="Service\REST\Specification\ScanSpecification.cs" />
+    <Compile Include="Service\REST\Specification\VertexSpecification.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -160,7 +160,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Service\REST\Specification\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
