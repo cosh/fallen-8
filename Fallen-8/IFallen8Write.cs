@@ -137,7 +137,7 @@ namespace Fallen8.API
 
 	    #endregion
 
-        #region Trim
+        #region Load
 
         /// <summary>
         /// Loads Fallen-8 from the specified path

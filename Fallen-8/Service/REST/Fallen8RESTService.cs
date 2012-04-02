@@ -350,6 +350,16 @@ namespace Fallen8.API.Service.REST
             return _fallen8.RangeIndexScan(out graphElements, indexId, left, right, definition.IncludeLeft, definition.IncludeRight) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();            
         }
 
+        public void Load(Stream saveGame)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Stream Save(string numberOfPartitions)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
         
         #region private helper
