@@ -141,7 +141,7 @@ namespace Fallen8.API.Model
         /// <param name="result">Result.</param>
         /// <param name="propertyId">Property identifier.</param>
         /// <returns><c>true</c> if something was found; otherwise, <c>false</c>.</returns>
-        public Boolean TryGetProperty<TProperty>(out TProperty result, Int32 propertyId)
+        public Boolean TryGetProperty<TProperty>(out TProperty result, UInt16 propertyId)
         {
             if (ReadResource())
             {
