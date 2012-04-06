@@ -1,5 +1,5 @@
-// 
-// IGeometry.cs
+﻿// 
+// RTreeLeaf.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -23,35 +23,33 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Fallen8.API.Model;
+using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
-namespace Fallen8.API.Index.Spatial
+namespace Fallen8.API.Index.Spatial.Implementation.RTree
 {
     /// <summary>
-    /// Geometry interface for representation of objects as geometry object.
+    /// leaf node of r-tree
     /// </summary>
-    public interface IGeometry
+    public class RTreeLeaf : ARTreeContainer
     {
-        /// <summary>
-        /// convertion of geometry object to minimal bounded rechtangle
-        /// </summary>
-        /// <returns>
-        /// minimal bounded rechtangle
-        /// </returns>
-        IMBR GeometryToMBR();
-        /// <summary>
-        /// reflection point from any space in to n-dimensional real space
-        /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        IEnumerable<Double> PointToSpaceR();
-        /// <summary>
-        /// gets Description of an n-dimensional space
-        /// </summary>
-        IEnumerable<IDimension> Dimensions { get; }
+        public RTreeLeaf(IMBR myMBR, ARTreeContainer parent)
+        {
+            this.LowerPoint = new List<double>(myMBR.LowerPoint);
+            this.UpperPoint = new List<double>(myMBR.UpperPoint);
+            this.Parent = parent;
+        }
+
+        public override bool IsLeaf
+        {
+            get { return true; }
+        }
+        public List<Tuple<ARTreeContainer, AGraphElement>> Data { get; set; }
+
     }
 }
 

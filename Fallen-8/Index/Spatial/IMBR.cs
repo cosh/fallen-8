@@ -1,5 +1,5 @@
-// 
-// IGeometry.cs
+﻿// 
+// IMBR.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -26,32 +26,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
-    /// Geometry interface for representation of objects as geometry object.
+    /// Minimum Bounding Rectangle (MBR)
     /// </summary>
-    public interface IGeometry
+    public interface IMBR
     {
         /// <summary>
-        /// convertion of geometry object to minimal bounded rechtangle
+        /// gets lowest point of the rechtangle
         /// </summary>
-        /// <returns>
-        /// minimal bounded rechtangle
-        /// </returns>
-        IMBR GeometryToMBR();
+        IEnumerable<Double> LowerPoint { get; }
         /// <summary>
-        /// reflection point from any space in to n-dimensional real space
+        /// gets upperst point of the rechtangle
         /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        IEnumerable<Double> PointToSpaceR();
-        /// <summary>
-        /// gets Description of an n-dimensional space
-        /// </summary>
-        IEnumerable<IDimension> Dimensions { get; }
+        IEnumerable<Double> UpperPoint { get; }
     }
 }
-

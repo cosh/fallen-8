@@ -29,7 +29,7 @@ namespace Fallen8.API.Index.Spatial
 	/// <summary>
 	/// Rectangle.
 	/// </summary>
-	public sealed class Rectangle : IGeometry
+	public sealed class Rectangle //: IGeometry
 	{
 		/// <summary>
 		/// Gets or sets the lower left corner.

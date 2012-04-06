@@ -31,7 +31,7 @@ namespace Fallen8.API.Index.Spatial
 	/// <summary>
 	/// Point.
 	/// </summary>
-	public sealed class Point : IGeometry
+	public sealed class Point //: IGeometry
 	{
 		/// <summary>
 		/// Gets or sets the longitude.

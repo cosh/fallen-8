@@ -1,5 +1,5 @@
-// 
-// IGeometry.cs
+﻿// 
+// IMBP.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -23,35 +23,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace Fallen8.API.Index.Spatial
+namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 {
     /// <summary>
-    /// Geometry interface for representation of objects as geometry object.
+    /// IMBP is the interface for representation of point from n-dimensional real space
     /// </summary>
-    public interface IGeometry
+    public interface IMBP
     {
         /// <summary>
-        /// convertion of geometry object to minimal bounded rechtangle
+        /// gets coordinates of point
         /// </summary>
-        /// <returns>
-        /// minimal bounded rechtangle
-        /// </returns>
-        IMBR GeometryToMBR();
-        /// <summary>
-        /// reflection point from any space in to n-dimensional real space
-        /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        IEnumerable<Double> PointToSpaceR();
-        /// <summary>
-        /// gets Description of an n-dimensional space
-        /// </summary>
-        IEnumerable<IDimension> Dimensions { get; }
+        IEnumerable<Double> Coordinates { get; }
     }
 }
-

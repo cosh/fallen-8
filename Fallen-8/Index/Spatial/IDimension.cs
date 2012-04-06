@@ -1,5 +1,5 @@
-// 
-// IGeometry.cs
+﻿// 
+// IDimension.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -23,35 +23,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
-    /// Geometry interface for representation of objects as geometry object.
+    /// IDimension is the interface for representation of dimensions from n-dimensional real space
     /// </summary>
-    public interface IGeometry
+    public interface IDimension
     {
         /// <summary>
-        /// convertion of geometry object to minimal bounded rechtangle
+        ///gets the type of dimension
         /// </summary>
-        /// <returns>
-        /// minimal bounded rechtangle
-        /// </returns>
-        IMBR GeometryToMBR();
+        Type ObjectType { get; }
         /// <summary>
-        /// reflection point from any space in to n-dimensional real space
+        ///gets the count of dimension from real space 
         /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        IEnumerable<Double> PointToSpaceR();
-        /// <summary>
-        /// gets Description of an n-dimensional space
-        /// </summary>
-        IEnumerable<IDimension> Dimensions { get; }
+        int CountOfR { get; }
     }
 }
-

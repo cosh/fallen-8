@@ -1,5 +1,5 @@
-// 
-// IGeometry.cs
+﻿// 
+// EuclidianMetric.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -23,35 +23,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Fallen8.API.Index.Spatial.Implementation.RTree;
+using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
-namespace Fallen8.API.Index.Spatial
+namespace Fallen8.API.Index.Spatial.Implementation.Metric
 {
     /// <summary>
-    /// Geometry interface for representation of objects as geometry object.
+    /// Metric for n-dimensinal real space
     /// </summary>
-    public interface IGeometry
+   public class EuclidianMetric:IMetric
     {
-        /// <summary>
-        /// convertion of geometry object to minimal bounded rechtangle
-        /// </summary>
-        /// <returns>
-        /// minimal bounded rechtangle
-        /// </returns>
-        IMBR GeometryToMBR();
-        /// <summary>
-        /// reflection point from any space in to n-dimensional real space
-        /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        IEnumerable<Double> PointToSpaceR();
-        /// <summary>
-        /// gets Description of an n-dimensional space
-        /// </summary>
-        IEnumerable<IDimension> Dimensions { get; }
+     public  Double Distance(IMBP point1, IMBP point2)
+       {
+           Double currentDistance=0.0;
+           
+           if (point1.Coordinates.Count()==point2.Coordinates.Count()&&point1.Coordinates.Count()!=0)
+                throw new Exception("The points are in different space or space not exist ");
+
+           var currentRPointStart = point1.Coordinates.GetEnumerator();
+           var currentRPointEnd = point2.Coordinates.GetEnumerator();
+
+           do
+           {
+               currentDistance = (currentRPointStart.Current - currentRPointEnd.Current) *
+                   (currentRPointStart.Current - currentRPointEnd.Current);
+           }
+           while (currentRPointEnd.MoveNext()&&currentRPointStart.MoveNext());
+
+           currentDistance = Math.Sqrt(currentDistance);
+
+           return currentDistance; 
+       }
     }
 }
-

@@ -31,7 +31,7 @@ namespace Fallen8.API.Index.Spatial
 	/// <summary>
 	/// Circle.
 	/// </summary>
-	public sealed class Circle : IGeometry
+	public sealed class Circle //: IGeometry
 	{
 		/// <summary>
 		/// Gets or sets the center.
