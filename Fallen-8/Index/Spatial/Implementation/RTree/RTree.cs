@@ -137,6 +137,39 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #endregion
 
 
+
+        public string PluginName
+        {
+            get { return "SpatialIndex"; }
+        }
+
+        public Type PluginCategory
+        {
+            get { return typeof(IIndex); }
+        }
+
+        public string Description
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public string Manufacturer
+        {
+            get { return "Andriy Kupershmidt"; }
+        }
+
+        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
+        {
+          /*  IMetric currentMetric = parameter["IMetric"] as IMetric;
+            int minCountOfChilder = (int)parameter["MinCount"];
+            int maxCountofChildren = (int) parameter["MaxCount"];
+            IEnumerable<IDimension> space = parameter["Space"] as IEnumerable<IDimension>;
+*/
+            throw new NotImplementedException();
+        }
+
+
+
         public bool TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
@@ -147,7 +180,12 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new NotImplementedException();
         }
 
-        public bool Insert(AGraphElement element, IGeometry geometry)
+        public void AddOrUpdate(IGeometry key, AGraphElement graphElement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryRemoveKey(IGeometry key)
         {
             throw new NotImplementedException();
         }
@@ -167,52 +205,67 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new NotImplementedException();
         }
 
-        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat)
+        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat)
+        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat)
+        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat)
+        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat)
+        public bool Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat)
+        public bool Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat)
+        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry graphElement, Predicate<AGraphElement> predicat)
+        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry graphElement, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors, Predicate<AGraphElement> predicat)
+        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
 
-        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors, Predicate<AGraphElement> predicat)
+        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors, Predicate<AGraphElement> predicat = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SearchDistance(out ReadOnlyCollection<AGraphElement> result, double distance, AGraphElement graphElement, Predicate<AGraphElement> predicat = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SerchDistance(out ReadOnlyCollection<AGraphElement> result, double distance, IGeometry geometry, Predicate<AGraphElement> predicat = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point, Predicate<AGraphElement> predicat = null)
         {
             throw new NotImplementedException();
         }
@@ -224,7 +277,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         public int CountOfValues()
         {
-            return this.mapOfContainers.Count;
+            throw new NotImplementedException();
         }
 
         public void AddOrUpdate(IComparable key, AGraphElement graphElement)
@@ -262,36 +315,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new NotImplementedException();
         }
 
-        public string PluginName
-        {
-            get { return "SpatialIndex"; }
-        }
-
-        public Type PluginCategory
-        {
-            get { return typeof(IIndex); }
-        }
-
-        public string Description
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public string Manufacturer
-        {
-            get { return "Andriy Kupershmidt"; }
-        }
-
-        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
-        {
-          /*  IMetric currentMetric = parameter["IMetric"] as IMetric;
-            int minCountOfChilder = (int)parameter["MinCount"];
-            int maxCountofChildren = (int) parameter["MaxCount"];
-            IEnumerable<IDimension> space = parameter["Space"] as IEnumerable<IDimension>;
-*/
-            throw new NotImplementedException();
-        }
-
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -303,34 +326,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         }
 
         public void Open(SerializationReader reader, Fallen8 fallen8)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public bool SearchDistance(out ReadOnlyCollection<AGraphElement> result, double distance, AGraphElement graphElement, Predicate<AGraphElement> predicat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SerchDistance(out ReadOnlyCollection<AGraphElement> result, double distance, IGeometry geometry, Predicate<AGraphElement> predicat)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public void AddOrUpdate(IGeometry key, AGraphElement graphElement)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryRemoveKey(IGeometry key)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public bool SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point, Predicate<AGraphElement> predicat)
         {
             throw new NotImplementedException();
         }
