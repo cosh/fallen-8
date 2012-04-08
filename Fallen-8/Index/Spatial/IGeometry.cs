@@ -42,13 +42,6 @@ namespace Fallen8.API.Index.Spatial
         /// </returns>
         IMBR GeometryToMBR();
         /// <summary>
-        /// reflection point from any space in to n-dimensional real space
-        /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        IEnumerable<Double> PointToSpaceR();
-        /// <summary>
         /// gets Description of an n-dimensional space
         /// </summary>
         IEnumerable<IDimension> Dimensions { get; }

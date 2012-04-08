@@ -39,5 +39,12 @@ namespace Fallen8.API.Index.Spatial
         /// gets coordinates of point 
         /// </summary>
         IEnumerable<Object> Coordinates { get; }
+        /// <summary>
+        /// reflection point from any space in to n-dimensional real space
+        /// </summary>
+        /// <returns>
+        /// coordinates of point from n-dimensional real space 
+        /// </returns>
+        IEnumerable<Double> PointToSpaceR();
     }
 }
