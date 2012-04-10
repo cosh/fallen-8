@@ -23,29 +23,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 
 namespace Fallen8.API.Persistency
 {
     /// <summary>
-    /// A helper struct to track the edges that have to be added to the vertices
+    ///   A helper struct to track the edges that have to be added to the vertices
     /// </summary>
     public struct EdgeOnVertexToDo
     {
         /// <summary>
-        /// The vertex identifier.
+        ///   The vertex identifier.
         /// </summary>
         public Int32 VertexId;
-        
+
         /// <summary>
-        /// The edge property identifier.
+        ///   The edge property identifier.
         /// </summary>
         public UInt16 EdgePropertyId;
-        
+
         /// <summary>
-        /// Is this an incoming edge?
+        ///   Is this an incoming edge?
         /// </summary>
         public Boolean IsIncomingEdge;
     }
 }
-

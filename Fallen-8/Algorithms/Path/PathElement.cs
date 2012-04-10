@@ -30,26 +30,30 @@ using Fallen8.API.Model;
 namespace Fallen8.API.Algorithms.Path
 {
     /// <summary>
-    /// The element of a path
+    ///   The element of a path
     /// </summary>
     public sealed class PathElement
     {
         #region Data
 
         private VertexModel _sourceVertex;
+
         /// <summary>
-        /// The source vertex
+        ///   The source vertex
         /// </summary>
-        public VertexModel SourceVertex { 
-            get 
+        public VertexModel SourceVertex
+        {
+            get
             {
                 return _sourceVertex ??
                        (_sourceVertex = Direction == Direction.IncomingEdge ? Edge.TargetVertex : Edge.SourceVertex);
-            }}
+            }
+        }
 
         private VertexModel _targetVertex;
+
         /// <summary>
-        /// The target vertex
+        ///   The target vertex
         /// </summary>
         public VertexModel TargetVertex
         {
@@ -61,22 +65,22 @@ namespace Fallen8.API.Algorithms.Path
         }
 
         /// <summary>
-        /// The edge.
+        ///   The edge.
         /// </summary>
         public EdgeModel Edge { get; private set; }
 
         /// <summary>
-        /// The edge property identifier.
+        ///   The edge property identifier.
         /// </summary>
         public UInt16 EdgePropertyId { get; private set; }
 
         /// <summary>
-        /// Direction.
+        ///   Direction.
         /// </summary>
         public Direction Direction { get; set; }
 
         /// <summary>
-        /// The weight of this path element
+        ///   The weight of this path element
         /// </summary>
         public Double Weight { get; private set; }
 
@@ -85,12 +89,12 @@ namespace Fallen8.API.Algorithms.Path
         #region Constructor
 
         /// <summary>
-        /// Creates a new path element
+        ///   Creates a new path element
         /// </summary>
-        /// <param name="edge">The edge.</param>
-        /// <param name="edgePropertyId">The edge property identifier.</param>
-        /// <param name="direction">The direction.</param>
-        /// <param name="weight">The weight.</param>
+        /// <param name="edge"> The edge. </param>
+        /// <param name="edgePropertyId"> The edge property identifier. </param>
+        /// <param name="direction"> The direction. </param>
+        /// <param name="weight"> The weight. </param>
         public PathElement(EdgeModel edge, UInt16 edgePropertyId, Direction direction, Double weight = 0.0)
         {
             Edge = edge;
@@ -106,10 +110,10 @@ namespace Fallen8.API.Algorithms.Path
         #region public methods
 
         /// <summary>
-        /// Calculates the weight of this path element
+        ///   Calculates the weight of this path element
         /// </summary>
-        /// <param name="vertexCost">The vertex cost delegate.</param>
-        /// <param name="edgeCost">The edge cost delegate</param>
+        /// <param name="vertexCost"> The vertex cost delegate. </param>
+        /// <param name="edgeCost"> The edge cost delegate </param>
         public void CalculateWeight(PathDelegates.VertexCost vertexCost, PathDelegates.EdgeCost edgeCost)
         {
             Weight = 0;
@@ -145,7 +149,7 @@ namespace Fallen8.API.Algorithms.Path
         public Boolean Equals(PathElement p)
         {
             // If parameter is null return false:
-            if ((object)p == null)
+            if ((object) p == null)
             {
                 return false;
             }
@@ -162,7 +166,7 @@ namespace Fallen8.API.Algorithms.Path
             }
 
             // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null))
+            if (((object) a == null) || ((object) b == null))
             {
                 return false;
             }
@@ -187,7 +191,8 @@ namespace Fallen8.API.Algorithms.Path
 
         public override string ToString()
         {
-            return String.Format("{0}{1}{2}", SourceVertex.Id, Direction == Direction.IncomingEdge ? "<-" : "->", TargetVertex.Id);
+            return String.Format("{0}{1}{2}", SourceVertex.Id, Direction == Direction.IncomingEdge ? "<-" : "->",
+                                 TargetVertex.Id);
         }
 
         #endregion

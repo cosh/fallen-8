@@ -29,29 +29,24 @@ using System;
 namespace Fallen8.API.Model
 {
     /// <summary>
-    /// Property container.
+    ///   Property container.
     /// </summary>
     public struct PropertyContainer
     {
         #region Data
-        
+
         /// <summary>
-        /// Gets or sets the property identifier.
+        ///   Gets or sets the property identifier.
         /// </summary>
-        /// <value>
-        /// The property identifier.
-        /// </value>
+        /// <value> The property identifier. </value>
         public UInt16 PropertyId;
-        
+
         /// <summary>
-        /// Gets or sets the value.
+        ///   Gets or sets the value.
         /// </summary>
-        /// <value>
-        /// The value.
-        /// </value>
+        /// <value> The value. </value>
         public Object Value;
-		
+
         #endregion
     }
 }
-

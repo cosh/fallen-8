@@ -30,24 +30,17 @@ using Fallen8.API.Model;
 
 namespace Fallen8.API.Index.Spatial
 {
-	/// <summary>
-	/// Fallen8 spatial index interface.
-	/// </summary>
-	public interface ISpatialIndex : IIndex
-	{
-		/// <summary>
-		/// Tries to get the values.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if something was found; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='result'>
-		/// Result.
-		/// </param>
-		/// <param name='geometry'>
-		/// Geometry.
-		/// </param>
+    /// <summary>
+    ///   Fallen8 spatial index interface.
+    /// </summary>
+    public interface ISpatialIndex : IIndex
+    {
+        /// <summary>
+        ///   Tries to get the values.
+        /// </summary>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='geometry'> Geometry. </param>
         Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry);
-	}
+    }
 }
-

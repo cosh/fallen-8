@@ -33,89 +33,65 @@ using Fallen8.API.Error;
 namespace Fallen8.API.Model
 {
     /// <summary>
-    /// Vertex model.
+    ///   Vertex model.
     /// </summary>
     public sealed class VertexModel : AGraphElement
     {
         #region Data
-        
+
         /// <summary>
-        /// The out edges.
+        ///   The out edges.
         /// </summary>
         private List<EdgeContainer> _outEdges;
-        
+
         /// <summary>
-        /// The in edges.
+        ///   The in edges.
         /// </summary>
         private List<EdgeContainer> _inEdges;
-        
+
         #endregion
-        
+
         #region Constructor
-        
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="VertexModel"/> class.
+        ///   Initializes a new instance of the <see cref="VertexModel" /> class.
         /// </summary>
-        /// <param name='id'>
-        /// Identifier.
-        /// </param>
-        /// <param name='creationDate'>
-        /// Creation date.
-        /// </param>
-        /// <param name='properties'>
-        /// Properties.
-        /// </param>
+        /// <param name='id'> Identifier. </param>
+        /// <param name='creationDate'> Creation date. </param>
+        /// <param name='properties'> Properties. </param>
         public VertexModel(Int32 id, UInt32 creationDate, PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {
         }
-        
+
         /// <summary>
-        /// Initializes a new instance of the VertexModel class.
-        /// For internal usage only
+        ///   Initializes a new instance of the VertexModel class. For internal usage only
         /// </summary>
-        /// <param name='id'>
-        /// Identifier.
-        /// </param>
-        /// <param name='creationDate'>
-        /// Creation date.
-        /// </param>
-        /// <param name='modificationDate'>
-        /// Modification date.
-        /// </param>
-        /// <param name='properties'>
-        /// Properties.
-        /// </param>
-        /// <param name='outEdges'>
-        /// Out edges.
-        /// </param>
-        /// <param name='incEdges'>
-        /// Inc edges.
-        /// </param>
-        internal VertexModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, PropertyContainer[] properties, List<EdgeContainer> outEdges, List<EdgeContainer> incEdges)
+        /// <param name='id'> Identifier. </param>
+        /// <param name='creationDate'> Creation date. </param>
+        /// <param name='modificationDate'> Modification date. </param>
+        /// <param name='properties'> Properties. </param>
+        /// <param name='outEdges'> Out edges. </param>
+        /// <param name='incEdges'> Inc edges. </param>
+        internal VertexModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, PropertyContainer[] properties,
+                             List<EdgeContainer> outEdges, List<EdgeContainer> incEdges)
             : base(id, creationDate, properties)
         {
             _outEdges = outEdges;
             _inEdges = incEdges;
             ModificationDate = modificationDate;
         }
-        
+
         #endregion
-        
+
         #region internal methods
 
         /// <summary>
-        /// Adds the out edge.
+        ///   Adds the out edge.
         /// </summary>
-        /// <param name='edgePropertyId'>
-        /// Edge property identifier.
-        /// </param>
-        /// <param name='outEdge'>
-        /// Out edge.
-        /// </param>
-        /// <exception cref='CollisionException'>
-        /// Is thrown when the collision exception.
-        /// </exception>
+        /// <param name='edgePropertyId'> Edge property identifier. </param>
+        /// <param name='outEdge'> Out edge. </param>
+        /// <exception cref='CollisionException'>Is thrown when the collision exception.</exception>
         internal void AddOutEdge(UInt16 edgePropertyId, EdgeModel outEdge)
         {
             if (WriteResource())
@@ -124,7 +100,7 @@ namespace Fallen8.API.Model
                 {
                     _outEdges = new List<EdgeContainer>();
                 }
-    
+
                 var foundSth = false;
 
                 for (var i = 0; i < _outEdges.Count; i++)
@@ -140,11 +116,11 @@ namespace Fallen8.API.Model
                     }
                 }
 
-                if (!foundSth) 
+                if (!foundSth)
                 {
                     _outEdges.Add(new EdgeContainer(edgePropertyId, new List<EdgeModel> {outEdge}));
                 }
-                
+
                 FinishWriteResource();
 
                 return;
@@ -155,14 +131,10 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Adds the out edges.
+        ///   Adds the out edges.
         /// </summary>
-        /// <param name='outEdges'>
-        /// Out edges.
-        /// </param>
-        /// <exception cref='CollisionException'>
-        /// Is thrown when the collision exception.
-        /// </exception>
+        /// <param name='outEdges'> Out edges. </param>
+        /// <exception cref='CollisionException'>Is thrown when the collision exception.</exception>
         internal void SetOutEdges(List<EdgeContainer> outEdges)
         {
             if (WriteResource())
@@ -173,21 +145,15 @@ namespace Fallen8.API.Model
                 return;
             }
 
-            throw new CollisionException ();
+            throw new CollisionException();
         }
-        
+
         /// <summary>
-        /// Adds the incoming edge.
+        ///   Adds the incoming edge.
         /// </summary>
-        /// <param name='edgePropertyId'>
-        /// Edge property identifier.
-        /// </param>
-        /// <param name='incomingEdge'>
-        /// Incoming edge.
-        /// </param>
-        /// <exception cref='CollisionException'>
-        /// Is thrown when the collision exception.
-        /// </exception>
+        /// <param name='edgePropertyId'> Edge property identifier. </param>
+        /// <param name='incomingEdge'> Incoming edge. </param>
+        /// <exception cref='CollisionException'>Is thrown when the collision exception.</exception>
         internal void AddIncomingEdge(UInt16 edgePropertyId, EdgeModel incomingEdge)
         {
             if (WriteResource())
@@ -196,7 +162,7 @@ namespace Fallen8.API.Model
                 {
                     _inEdges = new List<EdgeContainer>();
                 }
-    
+
                 var foundSth = false;
 
                 for (int i = 0; i < _inEdges.Count; i++)
@@ -209,12 +175,12 @@ namespace Fallen8.API.Model
                         break;
                     }
                 }
-                
-                if (!foundSth) 
+
+                if (!foundSth)
                 {
                     _inEdges.Add(new EdgeContainer(edgePropertyId, new List<EdgeModel> {incomingEdge}));
                 }
-                
+
                 FinishWriteResource();
 
                 return;
@@ -222,24 +188,22 @@ namespace Fallen8.API.Model
 
             throw new CollisionException();
         }
-  
+
         /// <summary>
-        /// Gets the incoming edges.
+        ///   Gets the incoming edges.
         /// </summary>
-        /// <returns>
-        /// The incoming edges.
-        /// </returns>
+        /// <returns> The incoming edges. </returns>
         internal ReadOnlyCollection<EdgeContainer> GetIncomingEdges()
         {
             ReadOnlyCollection<EdgeContainer> result = null;
-            
+
             if (ReadResource())
             {
                 if (_inEdges != null)
                 {
                     result = new ReadOnlyCollection<EdgeContainer>(_inEdges);
                 }
-                    
+
                 FinishReadResource();
 
                 return result;
@@ -247,24 +211,22 @@ namespace Fallen8.API.Model
 
             throw new CollisionException();
         }
-        
+
         /// <summary>
-        /// Gets the outgoing edges.
+        ///   Gets the outgoing edges.
         /// </summary>
-        /// <returns>
-        /// The outgoing edges.
-        /// </returns>
+        /// <returns> The outgoing edges. </returns>
         internal ReadOnlyCollection<EdgeContainer> GetOutgoingEdges()
         {
             ReadOnlyCollection<EdgeContainer> result = null;
-            
+
             if (ReadResource())
             {
                 if (_outEdges != null)
                 {
                     result = new ReadOnlyCollection<EdgeContainer>(_outEdges);
                 }
-                    
+
                 FinishReadResource();
 
                 return result;
@@ -274,10 +236,10 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Removes an incoming edge
+        ///   Removes an incoming edge
         /// </summary>
-        /// <param name="edgePropertyId">Edge property identifier.</param>
-        /// <param name="toBeRemovedEdge">The to be removed edge</param>
+        /// <param name="edgePropertyId"> Edge property identifier. </param>
+        /// <param name="toBeRemovedEdge"> The to be removed edge </param>
         internal void RemoveIncomingEdge(ushort edgePropertyId, EdgeModel toBeRemovedEdge)
         {
             if (WriteResource())
@@ -308,10 +270,10 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Removes an incoming edge
+        ///   Removes an incoming edge
         /// </summary>
-        /// <param name="toBeRemovedEdge">The to be removed edge</param>
-        /// <returns>The edge property identifier where the edge was deleted</returns>
+        /// <param name="toBeRemovedEdge"> The to be removed edge </param>
+        /// <returns> The edge property identifier where the edge was deleted </returns>
         internal List<UInt16> RemoveIncomingEdge(EdgeModel toBeRemovedEdge)
         {
             if (WriteResource())
@@ -342,10 +304,10 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Remove outgoing edge
+        ///   Remove outgoing edge
         /// </summary>
-        /// <param name="edgePropertyId">The edge property identifier.</param>
-        /// <param name="toBeRemovedEdge">The to be removed edge</param>
+        /// <param name="edgePropertyId"> The edge property identifier. </param>
+        /// <param name="toBeRemovedEdge"> The to be removed edge </param>
         internal void RemoveOutGoingEdge(ushort edgePropertyId, EdgeModel toBeRemovedEdge)
         {
             if (WriteResource())
@@ -376,10 +338,10 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Removes an outgoing edge
+        ///   Removes an outgoing edge
         /// </summary>
-        /// <param name="toBeRemovedEdge">The to be removed edge</param>
-        /// <returns>The edge property identifier where the edge was deleted</returns>
+        /// <param name="toBeRemovedEdge"> The to be removed edge </param>
+        /// <returns> The edge property identifier where the edge was deleted </returns>
         internal List<UInt16> RemoveOutGoingEdge(EdgeModel toBeRemovedEdge)
         {
             if (WriteResource())
@@ -388,7 +350,6 @@ namespace Fallen8.API.Model
 
                 if (_outEdges == null)
                 {
-
                     FinishWriteResource();
 
                     return result;
@@ -415,11 +376,9 @@ namespace Fallen8.API.Model
         #region IVertexModel implementation
 
         /// <summary>
-        /// Gets all neighbors.
+        ///   Gets all neighbors.
         /// </summary>
-        /// <returns>
-        /// The neighbors.
-        /// </returns>
+        /// <returns> The neighbors. </returns>
         public List<VertexModel> GetAllNeighbors()
         {
             if (ReadResource())
@@ -450,11 +409,9 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Gets the incoming edge identifiers.
+        ///   Gets the incoming edge identifiers.
         /// </summary>
-        /// <returns>
-        /// The incoming edge identifiers.
-        /// </returns>
+        /// <returns> The incoming edge identifiers. </returns>
         public List<UInt16> GetIncomingEdgeIds()
         {
             if (ReadResource())
@@ -470,15 +427,13 @@ namespace Fallen8.API.Model
                 return inEdges;
             }
 
-            throw new CollisionException ();
+            throw new CollisionException();
         }
 
         /// <summary>
-        /// Gets the outgoing edge identifiers.
+        ///   Gets the outgoing edge identifiers.
         /// </summary>
-        /// <returns>
-        /// The outgoing edge identifiers.
-        /// </returns>
+        /// <returns> The outgoing edge identifiers. </returns>
         public List<UInt16> GetOutgoingEdgeIds()
         {
             if (ReadResource())
@@ -498,24 +453,18 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Tries to get an out edge.
+        ///   Tries to get an out edge.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <param name='edgePropertyId'>
-        /// Edge property identifier.
-        /// </param>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='edgePropertyId'> Edge property identifier. </param>
         public Boolean TryGetOutEdge(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource())
             {
                 var foundSth = false;
-                result = null; 
-                
+                result = null;
+
                 if (_outEdges != null)
                 {
                     for (var i = 0; i < _outEdges.Count; i++)
@@ -526,37 +475,31 @@ namespace Fallen8.API.Model
                             result = aOutEdge.Edges.AsReadOnly();
                             foundSth = true;
                             break;
-                        } 
+                        }
                     }
                 }
-                
+
                 FinishReadResource();
 
                 return foundSth;
             }
 
-            throw new CollisionException ();
+            throw new CollisionException();
         }
 
         /// <summary>
-        /// Tries to get in edges.
+        ///   Tries to get in edges.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <param name='edgePropertyId'>
-        /// Edge property identifier.
-        /// </param>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='edgePropertyId'> Edge property identifier. </param>
         public Boolean TryGetInEdges(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource())
             {
                 result = null;
                 var foundSth = false;
-                
+
                 if (_inEdges != null)
                 {
                     for (var i = 0; i < _inEdges.Count; i++)
@@ -570,21 +513,21 @@ namespace Fallen8.API.Model
                         }
                     }
                 }
-                
+
                 FinishReadResource();
 
                 return foundSth;
             }
 
-            throw new CollisionException ();
+            throw new CollisionException();
         }
 
         #endregion
-        
+
         #region AGraphElement
 
         /// <summary>
-        /// The overide of the trim method
+        ///   The overide of the trim method
         /// </summary>
         internal override void Trim()
         {
@@ -592,12 +535,12 @@ namespace Fallen8.API.Model
             {
                 if (_outEdges != null)
                 {
-                    _outEdges.TrimExcess();                    
+                    _outEdges.TrimExcess();
                 }
 
                 if (_inEdges != null)
                 {
-                    _inEdges.TrimExcess();                    
+                    _inEdges.TrimExcess();
                 }
 
                 FinishWriteResource();

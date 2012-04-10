@@ -23,59 +23,44 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using Framework.Serialization;
 
 namespace Fallen8.API.Plugin
 {
-	public interface IFallen8Plugin : IDisposable
-	{
+    public interface IFallen8Plugin : IDisposable
+    {
         /// <summary>
-        /// Gets the name.
+        ///   Gets the name.
         /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
+        /// <value> The name. </value>
         String PluginName { get; }
 
         /// <summary>
-        /// Gets or sets the plugin category.
+        ///   Gets or sets the plugin category.
         /// </summary>
-        /// <value>
-        /// The plugin category.
-        /// </value>
+        /// <value> The plugin category. </value>
         Type PluginCategory { get; }
 
         /// <summary>
-        /// Gets the description.
+        ///   Gets the description.
         /// </summary>
-        /// <value>
-        /// The description.
-        /// </value>
+        /// <value> The description. </value>
         String Description { get; }
 
         /// <summary>
-        /// Gets the manufacturer.
+        ///   Gets the manufacturer.
         /// </summary>
-        /// <value>
-        /// The manufacturer.
-        /// </value>
+        /// <value> The manufacturer. </value>
         String Manufacturer { get; }
-		
-		/// <summary>
-		/// Tries to inititialize the plugin.
-		/// </summary>
-        /// <param name='fallen8'>
-        /// A fallen-8 session.
-        /// </param>
-		/// <param name='parameter'>
-		/// Parameter.
-		/// </param>
-        /// <returns>
-        /// The initialized plugin
-        /// </returns>
-        void Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
-	}
-}
 
+        /// <summary>
+        ///   Tries to inititialize the plugin.
+        /// </summary>
+        /// <param name='fallen8'> A fallen-8 session. </param>
+        /// <param name='parameter'> Parameter. </param>
+        /// <returns> The initialized plugin </returns>
+        void Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
+    }
+}

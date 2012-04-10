@@ -23,44 +23,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Globalization;
-using System.Collections.Generic;
-using Fallen8.API.Model;
-using Fallen8.API.Index;
-using System.IO;
-using Fallen8.API.Helper;
-using Framework.Serialization;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
+using Fallen8.API.Helper;
+using Fallen8.API.Index;
+using Fallen8.API.Model;
+using Framework.Serialization;
 
 namespace Fallen8.API.Persistency
 {
     /// <summary>
-    /// Fallen8 persistency factory.
+    ///   Fallen8 persistency factory.
     /// </summary>
     public static class Fallen8PersistencyFactory
     {
         #region public methods
 
         /// <summary>
-        /// Load Fallen-8 from a save point
+        ///   Load Fallen-8 from a save point
         /// </summary>
-        /// <param name='pathToSavePoint'>
-        /// Path to save point.
-        /// </param>
-        /// <param name='currentIdOfFallen8'>
-        /// Current identifier of Fallen-8.
-        /// </param>
-        /// <param name='graphElementsOfFallen8'>
-        /// Graph elements of Fallen-8.
-        /// </param>
-        /// <param name='indexFactoryOfFallen8'>
-        /// Index factory of Fallen-8.
-        /// </param>
-        /// <param name="fallen8">Fallen-8</param>
-        public static void Load (string pathToSavePoint, ref int currentIdOfFallen8, ref List<AGraphElement> graphElementsOfFallen8, ref IFallen8IndexFactory indexFactoryOfFallen8, Fallen8 fallen8)
+        /// <param name='pathToSavePoint'> Path to save point. </param>
+        /// <param name='currentIdOfFallen8'> Current identifier of Fallen-8. </param>
+        /// <param name='graphElementsOfFallen8'> Graph elements of Fallen-8. </param>
+        /// <param name='indexFactoryOfFallen8'> Index factory of Fallen-8. </param>
+        /// <param name="fallen8"> Fallen-8 </param>
+        public static void Load(string pathToSavePoint, ref int currentIdOfFallen8,
+                                ref List<AGraphElement> graphElementsOfFallen8,
+                                ref IFallen8IndexFactory indexFactoryOfFallen8, Fallen8 fallen8)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
@@ -76,7 +71,7 @@ namespace Fallen8.API.Persistency
                 currentIdOfFallen8 = reader.ReadOptimizedInt32();
 
                 var numberOfGraphElements = currentIdOfFallen8 + 1;
-                
+
                 #region graph elements
 
                 //initialize the list of graph elements
@@ -89,7 +84,8 @@ namespace Fallen8.API.Persistency
                 }
 
                 LoadGraphElements(graphElements, graphElementStreams);
-                graphElementsOfFallen8 = new List<AGraphElement>(graphElements);//we'll see how much memory this action takes
+                graphElementsOfFallen8 = new List<AGraphElement>(graphElements);
+                    //we'll see how much memory this action takes
 
                 #endregion
 
@@ -104,27 +100,21 @@ namespace Fallen8.API.Persistency
                 var newIndexFactory = new Fallen8IndexFactory();
                 LoadIndices(fallen8, newIndexFactory, indexStreams);
                 indexFactoryOfFallen8 = newIndexFactory;
+
                 #endregion
             }
         }
 
         /// <summary>
-        /// Save the specified graphElements, indices and pathToSavePoint.
+        ///   Save the specified graphElements, indices and pathToSavePoint.
         /// </summary>
-        /// <param name="currentId">The current graph element id</param>
-        /// <param name='graphElements'>
-        /// Graph elements.
-        /// </param>
-        /// <param name='indices'>
-        /// Indices.
-        /// </param>
-        /// <param name='path'>
-        /// Path.
-        /// </param>
-        /// <param name='savePartitions'>
-        /// The number of save partitions for the graph elements.
-        /// </param>
-        public static void Save(Int32 currentId, List<AGraphElement> graphElements, IDictionary<String, IIndex> indices, String path, int savePartitions)
+        /// <param name="currentId"> The current graph element id </param>
+        /// <param name='graphElements'> Graph elements. </param>
+        /// <param name='indices'> Indices. </param>
+        /// <param name='path'> Path. </param>
+        /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
+        public static void Save(Int32 currentId, List<AGraphElement> graphElements, IDictionary<String, IIndex> indices,
+                                String path, int savePartitions)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
@@ -139,7 +129,8 @@ namespace Fallen8.API.Persistency
 
                 //create some futures to save as much as possible in parallel
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
-                var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
+                var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None,
+                                        TaskScheduler.Default);
 
                 //the maximum id
                 writer.WriteOptimized(currentId);
@@ -147,7 +138,8 @@ namespace Fallen8.API.Persistency
                 #region graph elements
 
                 var graphElementPartitions = CreatePartitions(graphElements.Count, savePartitions);
-                var graphElementSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), graphElementPartitions.Count);
+                var graphElementSaver =
+                    (Task<String>[]) Array.CreateInstance(typeof (Task<String>), graphElementPartitions.Count);
 
                 for (int i = 0; i < graphElementPartitions.Count; i++)
                 {
@@ -159,7 +151,7 @@ namespace Fallen8.API.Persistency
 
                 #region indices
 
-                var indexSaver = (Task<String>[])Array.CreateInstance(typeof(Task<String>), indices.Count);
+                var indexSaver = (Task<String>[]) Array.CreateInstance(typeof (Task<String>), indices.Count);
 
                 var counter = 0;
                 foreach (var aIndex in indices)
@@ -190,42 +182,34 @@ namespace Fallen8.API.Persistency
                 file.Flush();
             }
         }
-  
+
         #endregion
-        
+
         #region private helper
-        
+
         /// <summary>
-        /// The serialized edge.
+        ///   The serialized edge.
         /// </summary>
         private const Int32 SerializedEdge = 0;
-        
+
         /// <summary>
-        /// The serialized vertex.
+        ///   The serialized vertex.
         /// </summary>
-        private const Int32 SerializedVertex = 1; 
-        
+        private const Int32 SerializedVertex = 1;
+
         /// <summary>
-        /// The serialized null.
+        ///   The serialized null.
         /// </summary>
         private const Int32 SerializedNull = 2;
-        
+
         /// <summary>
-        /// Saves the index.
+        ///   Saves the index.
         /// </summary>
-        /// <returns>
-        /// The filename of the persisted index.
-        /// </returns>
-        /// <param name='indexName'>
-        /// Index name.
-        /// </param>
-        /// <param name='index'>
-        /// Index.
-        /// </param>
-        /// <param name='path'>
-        /// Path.
-        /// </param>
-        private static String SaveIndex (string indexName, IIndex index, string path)
+        /// <returns> The filename of the persisted index. </returns>
+        /// <param name='indexName'> Index name. </param>
+        /// <param name='index'> Index. </param>
+        /// <param name='path'> Path. </param>
+        private static String SaveIndex(string indexName, IIndex index, string path)
         {
             var indexFileName = path + "_index_" + indexName;
 
@@ -246,20 +230,14 @@ namespace Fallen8.API.Persistency
         }
 
         /// <summary>
-        /// Loads a graph element bunch.
+        ///   Loads a graph element bunch.
         /// </summary>
-        /// <returns>
-        /// The edges that point to vertices that are not within this bunch.
-        /// </returns>
-        /// <param name='graphElementBunchPath'>
-        /// Graph element bunch path.
-        /// </param>
-        /// <param name='graphElementsOfFallen8'>
-        /// Graph elements of Fallen-8.
-        /// </param>
-        /// <param name="edgeTodoOnVertex">The edges that have to be added to this vertex</param>
-        private static List<EdgeSneakPeak> LoadAGraphElementBunch (
-            string graphElementBunchPath, 
+        /// <returns> The edges that point to vertices that are not within this bunch. </returns>
+        /// <param name='graphElementBunchPath'> Graph element bunch path. </param>
+        /// <param name='graphElementsOfFallen8'> Graph elements of Fallen-8. </param>
+        /// <param name="edgeTodoOnVertex"> The edges that have to be added to this vertex </param>
+        private static List<EdgeSneakPeak> LoadAGraphElementBunch(
+            string graphElementBunchPath,
             AGraphElement[] graphElementsOfFallen8,
             ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodoOnVertex)
         {
@@ -283,7 +261,6 @@ namespace Fallen8.API.Persistency
                     var kind = reader.ReadOptimizedInt32();
                     switch (kind)
                     {
-
                         case SerializedEdge:
                             //edge
                             LoadEdge(reader, graphElementsOfFallen8, result);
@@ -303,15 +280,15 @@ namespace Fallen8.API.Persistency
 
             return result;
         }
-  
-        
-        private static void LoadIndices (Fallen8 fallen8, Fallen8IndexFactory indexFactory, List<String> indexStreams)
+
+
+        private static void LoadIndices(Fallen8 fallen8, Fallen8IndexFactory indexFactory, List<String> indexStreams)
         {
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
             var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
-            var tasks = (Task[])Array.CreateInstance(typeof(Task), indexStreams.Count);
-            
+            var tasks = (Task[]) Array.CreateInstance(typeof (Task), indexStreams.Count);
+
             //load the indices
             for (var i = 0; i < indexStreams.Count; i++)
             {
@@ -320,7 +297,7 @@ namespace Fallen8.API.Persistency
             }
         }
 
-        private static void LoadAnIndex (string indexLocaion, Fallen8 fallen8, Fallen8IndexFactory indexFactory)
+        private static void LoadAnIndex(string indexLocaion, Fallen8 fallen8, Fallen8IndexFactory indexFactory)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(indexLocaion))
@@ -340,21 +317,14 @@ namespace Fallen8.API.Persistency
         }
 
         /// <summary>
-        /// Saves the graph element bunch.
+        ///   Saves the graph element bunch.
         /// </summary>
-        /// <returns>
-        /// The path to the graph element bunch
-        /// </returns>
-        /// <param name='range'>
-        /// Range.
-        /// </param>
-        /// <param name='graphElements'>
-        /// Graph elements.
-        /// </param>
-        /// <param name='pathToSavePoint'>
-        /// Path to save point basis.
-        /// </param>
-        private static String SaveBunch (Tuple<Int32, Int32> range, List<AGraphElement> graphElements, String pathToSavePoint)
+        /// <returns> The path to the graph element bunch </returns>
+        /// <param name='range'> Range. </param>
+        /// <param name='graphElements'> Graph elements. </param>
+        /// <param name='pathToSavePoint'> Path to save point basis. </param>
+        private static String SaveBunch(Tuple<Int32, Int32> range, List<AGraphElement> graphElements,
+                                        String pathToSavePoint)
         {
             var partitionFileName = pathToSavePoint + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
 
@@ -372,18 +342,18 @@ namespace Fallen8.API.Persistency
                     //there can be nulls
                     if (aGraphElement == null)
                     {
-                        partitionWriter.WriteOptimized(SerializedNull);// 2 for null
+                        partitionWriter.WriteOptimized(SerializedNull); // 2 for null
                         continue;
                     }
 
                     //code if it is an vertex or an edge
                     if (aGraphElement is VertexModel)
                     {
-                        WriteVertex((VertexModel)aGraphElement, partitionWriter);
+                        WriteVertex((VertexModel) aGraphElement, partitionWriter);
                     }
                     else
                     {
-                        WriteEdge((EdgeModel)aGraphElement, partitionWriter);
+                        WriteEdge((EdgeModel) aGraphElement, partitionWriter);
                     }
                 }
 
@@ -394,22 +364,20 @@ namespace Fallen8.API.Persistency
 
             return partitionFileName;
         }
-  
+
         /// <summary>
-        /// Loads the graph elements.
+        ///   Loads the graph elements.
         /// </summary>
-        /// <param name='graphElements'>
-        /// Graph elements of Fallen-8.
-        /// </param>
-        /// <param name='graphElementStreams'>
-        /// Graph element streams.
-        /// </param>
+        /// <param name='graphElements'> Graph elements of Fallen-8. </param>
+        /// <param name='graphElementStreams'> Graph element streams. </param>
         private static void LoadGraphElements(AGraphElement[] graphElements, List<String> graphElementStreams)
         {
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
             var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
-            var tasks = (Task<List<EdgeSneakPeak>>[])Array.CreateInstance(typeof(Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
+            var tasks =
+                (Task<List<EdgeSneakPeak>>[])
+                Array.CreateInstance(typeof (Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
             var edgeTodo = new ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>>();
 
             //create the major part of the graph elements
@@ -420,56 +388,130 @@ namespace Fallen8.API.Persistency
             }
 
             var continuationTask = f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks,
-                finishedTasks => Parallel.ForEach(finishedTasks, 
-                    aFinishedTask =>
-                        {
-                            foreach (var aSneakPeak in aFinishedTask.Result)
-                            {
-                                graphElements[aSneakPeak.Id] = new EdgeModel(
-                                    aSneakPeak.Id,
-                                    aSneakPeak.CreationDate,
-                                    aSneakPeak.ModificationDate,
-                                    (VertexModel)graphElements[aSneakPeak.TargetVertexId],
-                                    (VertexModel)graphElements[aSneakPeak.SourceVertexId],
-                                    aSneakPeak.Properties);
-                            }
-                        })).ContinueWith(
-                        task =>
-                            {
-                                //add the remaining edges to vertices
-                                Parallel.ForEach(edgeTodo, aKV =>
-                                {
-                                    var edge = (EdgeModel)graphElements[aKV.Key];
-                                    foreach (var aTodo in aKV.Value)
-                                    {
-                                        var interestingVertex = (VertexModel)graphElements[aTodo.VertexId];
-                                        if (aTodo.IsIncomingEdge)
-                                        {
-                                            interestingVertex.AddIncomingEdge(aTodo.EdgePropertyId, edge);
-                                        }
-                                        else
-                                        {
-                                            interestingVertex.AddOutEdge(aTodo.EdgePropertyId, edge);
-                                        }
-                                    }
-                                });
-                            });
+                                                                          finishedTasks =>
+                                                                          Parallel.ForEach(finishedTasks,
+                                                                                           aFinishedTask =>
+                                                                                               {
+                                                                                                   foreach (
+                                                                                                       var aSneakPeak in
+                                                                                                           aFinishedTask
+                                                                                                               .Result)
+                                                                                                   {
+                                                                                                       graphElements[
+                                                                                                           aSneakPeak.Id
+                                                                                                           ] = new EdgeModel
+                                                                                                               (
+                                                                                                               aSneakPeak
+                                                                                                                   .Id,
+                                                                                                               aSneakPeak
+                                                                                                                   .
+                                                                                                                   CreationDate,
+                                                                                                               aSneakPeak
+                                                                                                                   .
+                                                                                                                   ModificationDate,
+                                                                                                               (
+                                                                                                               VertexModel
+                                                                                                               )
+                                                                                                               graphElements
+                                                                                                                   [
+                                                                                                                       aSneakPeak
+                                                                                                                           .
+                                                                                                                           TargetVertexId
+                                                                                                                   ],
+                                                                                                               (
+                                                                                                               VertexModel
+                                                                                                               )
+                                                                                                               graphElements
+                                                                                                                   [
+                                                                                                                       aSneakPeak
+                                                                                                                           .
+                                                                                                                           SourceVertexId
+                                                                                                                   ],
+                                                                                                               aSneakPeak
+                                                                                                                   .
+                                                                                                                   Properties);
+                                                                                                   }
+                                                                                               })).ContinueWith(
+                                                                                                   task =>
+                                                                                                       {
+                                                                                                           //add the remaining edges to vertices
+                                                                                                           Parallel.
+                                                                                                               ForEach(
+                                                                                                                   edgeTodo,
+                                                                                                                   aKV
+                                                                                                                   =>
+                                                                                                                       {
+                                                                                                                           var
+                                                                                                                               edge
+                                                                                                                                   =
+                                                                                                                                   (
+                                                                                                                                   EdgeModel
+                                                                                                                                   )
+                                                                                                                                   graphElements
+                                                                                                                                       [
+                                                                                                                                           aKV
+                                                                                                                                               .
+                                                                                                                                               Key
+                                                                                                                                       ];
+                                                                                                                           foreach
+                                                                                                                               (
+                                                                                                                               var
+                                                                                                                                   aTodo
+                                                                                                                                   in
+                                                                                                                                   aKV
+                                                                                                                                       .
+                                                                                                                                       Value
+                                                                                                                               )
+                                                                                                                           {
+                                                                                                                               var
+                                                                                                                                   interestingVertex
+                                                                                                                                       =
+                                                                                                                                       (
+                                                                                                                                       VertexModel
+                                                                                                                                       )
+                                                                                                                                       graphElements
+                                                                                                                                           [
+                                                                                                                                               aTodo
+                                                                                                                                                   .
+                                                                                                                                                   VertexId
+                                                                                                                                           ];
+                                                                                                                               if
+                                                                                                                                   (
+                                                                                                                                   aTodo
+                                                                                                                                       .
+                                                                                                                                       IsIncomingEdge)
+                                                                                                                               {
+                                                                                                                                   interestingVertex
+                                                                                                                                       .
+                                                                                                                                       AddIncomingEdge
+                                                                                                                                       (aTodo
+                                                                                                                                            .
+                                                                                                                                            EdgePropertyId,
+                                                                                                                                        edge);
+                                                                                                                               }
+                                                                                                                               else
+                                                                                                                               {
+                                                                                                                                   interestingVertex
+                                                                                                                                       .
+                                                                                                                                       AddOutEdge
+                                                                                                                                       (aTodo
+                                                                                                                                            .
+                                                                                                                                            EdgePropertyId,
+                                                                                                                                        edge);
+                                                                                                                               }
+                                                                                                                           }
+                                                                                                                       });
+                                                                                                       });
 
             continuationTask.Wait();
         }
-  
+
         /// <summary>
-        /// Creates the partitions.
+        ///   Creates the partitions.
         /// </summary>
-        /// <returns>
-        /// The partitions.
-        /// </returns>
-        /// <param name='totalCount'>
-        /// Total count.
-        /// </param>
-        /// <param name='savePartitions'>
-        /// Save partitions.
-        /// </param>
+        /// <returns> The partitions. </returns>
+        /// <param name='totalCount'> Total count. </param>
+        /// <param name='savePartitions'> Save partitions. </param>
         private static List<Tuple<Int32, Int32>> CreatePartitions(int totalCount, int savePartitions)
         {
             var result = new List<Tuple<Int32, Int32>>();
@@ -488,7 +530,7 @@ namespace Fallen8.API.Persistency
 
             for (var i = 0; i < savePartitions; i++)
             {
-                result.Add(new Tuple<int, int>(i * size, (i * size) + size));
+                result.Add(new Tuple<int, int>(i*size, (i*size) + size));
             }
 
             result[savePartitions - 1] = new Tuple<int, int>(result[savePartitions - 1].Item1, totalCount);
@@ -497,15 +539,11 @@ namespace Fallen8.API.Persistency
         }
 
         /// <summary>
-        /// Writes A graph element.
+        ///   Writes A graph element.
         /// </summary>
-        /// <param name='graphElement'>
-        /// Graph element.
-        /// </param>
-        /// <param name='writer'>
-        /// Writer.
-        /// </param>
-        private static void WriteAGraphElement (AGraphElement graphElement, SerializationWriter writer)
+        /// <param name='graphElement'> Graph element. </param>
+        /// <param name='writer'> Writer. </param>
+        private static void WriteAGraphElement(AGraphElement graphElement, SerializationWriter writer)
         {
             writer.WriteOptimized(graphElement.Id);
             writer.Write(graphElement.CreationDate);
@@ -513,271 +551,272 @@ namespace Fallen8.API.Persistency
 
             var properties = graphElement.GetAllProperties();
             writer.WriteOptimized(properties.Count);
-            foreach (var aProperty in properties) 
+            foreach (var aProperty in properties)
             {
                 writer.WriteOptimized(aProperty.PropertyId);
                 writer.WriteObject(aProperty.Value);
             }
         }
-        
+
         /// <summary>
-        /// Loads the vertex.
+        ///   Loads the vertex.
         /// </summary>
-        /// <param name='reader'>
-        /// Reader.
-        /// </param>
-        /// <param name='graphElements'>
-        /// Graph elements.
-        /// </param>
-        /// <param name='edgeTodo'>
-        /// Edge todo.
-        /// </param>
-        private static void LoadVertex (SerializationReader reader, AGraphElement[] graphElements, ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
+        /// <param name='reader'> Reader. </param>
+        /// <param name='graphElements'> Graph elements. </param>
+        /// <param name='edgeTodo'> Edge todo. </param>
+        private static void LoadVertex(SerializationReader reader, AGraphElement[] graphElements,
+                                       ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             var id = reader.ReadOptimizedInt32();
             var creationDate = reader.ReadUInt32();
             var modificationDate = reader.ReadUInt32();
-            
+
             #region properties
-            
+
             var propertyCount = reader.ReadOptimizedInt32();
             PropertyContainer[] properties = null;
 
-            if (propertyCount > 0) 
+            if (propertyCount > 0)
             {
                 properties = new PropertyContainer[propertyCount];
-                for (var i = 0; i < propertyCount; i++) 
+                for (var i = 0; i < propertyCount; i++)
                 {
                     var propertyIdentifier = reader.ReadOptimizedUInt16();
                     var propertyValue = reader.ReadObject();
-                    
-                    properties[i] = new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue };   
+
+                    properties[i] = new PropertyContainer {PropertyId = propertyIdentifier, Value = propertyValue};
                 }
             }
-            
+
             #endregion
-            
+
             #region edges
-            
+
             #region outgoing edges
-            
+
             List<EdgeContainer> outEdgeProperties = null;
             var outEdgeCount = reader.ReadOptimizedInt32();
-            
-            if (outEdgeCount > 0) 
+
+            if (outEdgeCount > 0)
             {
                 outEdgeProperties = new List<EdgeContainer>(outEdgeCount);
-                for (var i = 0; i < outEdgeCount; i++) 
+                for (var i = 0; i < outEdgeCount; i++)
                 {
                     var outEdgePropertyId = reader.ReadOptimizedUInt16();
                     var outEdgePropertyCount = reader.ReadOptimizedInt32();
                     var outEdges = new List<EdgeModel>();
-                    for (var j = 0; j < outEdgePropertyCount; j++) 
+                    for (var j = 0; j < outEdgePropertyCount; j++)
                     {
                         var edgeId = reader.ReadOptimizedInt32();
-                        if (graphElements[edgeId] != null) 
+                        if (graphElements[edgeId] != null)
                         {
-                            outEdges.Add((EdgeModel)graphElements[edgeId]);
+                            outEdges.Add((EdgeModel) graphElements[edgeId]);
                         }
-                        else 
+                        else
                         {
-                            var aEdgeTodo = new EdgeOnVertexToDo { VertexId = id, EdgePropertyId = outEdgePropertyId, IsIncomingEdge = false};
-                            
+                            var aEdgeTodo = new EdgeOnVertexToDo
+                                                {
+                                                    VertexId = id,
+                                                    EdgePropertyId = outEdgePropertyId,
+                                                    IsIncomingEdge = false
+                                                };
+
                             edgeTodo.AddOrUpdate(
-                            edgeId, 
-                            new List<EdgeOnVertexToDo> 
-                            { 
-                                aEdgeTodo
-                            },
-                            (interestingId, todos) =>
-                            {
-                                todos.Add(aEdgeTodo);
-                                return todos;
-                            });
+                                edgeId,
+                                new List<EdgeOnVertexToDo>
+                                    {
+                                        aEdgeTodo
+                                    },
+                                (interestingId, todos) =>
+                                    {
+                                        todos.Add(aEdgeTodo);
+                                        return todos;
+                                    });
                         }
                     }
-                    outEdgeProperties.Add(new EdgeContainer (outEdgePropertyId, outEdges));
+                    outEdgeProperties.Add(new EdgeContainer(outEdgePropertyId, outEdges));
                 }
             }
-            
+
             #endregion
-            
+
             #region incoming edges
-            
+
             List<EdgeContainer> incEdgeProperties = null;
             var incEdgeCount = reader.ReadOptimizedInt32();
-            
-            if (incEdgeCount > 0) 
+
+            if (incEdgeCount > 0)
             {
                 incEdgeProperties = new List<EdgeContainer>(incEdgeCount);
-                for (var i = 0; i < incEdgeCount; i++) 
+                for (var i = 0; i < incEdgeCount; i++)
                 {
                     var incEdgePropertyId = reader.ReadOptimizedUInt16();
                     var incEdgePropertyCount = reader.ReadOptimizedInt32();
                     var incEdges = new List<EdgeModel>();
-                    for (var j = 0; j < incEdgePropertyCount; j++) 
+                    for (var j = 0; j < incEdgePropertyCount; j++)
                     {
                         var edgeId = reader.ReadOptimizedInt32();
-                        if (graphElements[edgeId] != null) 
+                        if (graphElements[edgeId] != null)
                         {
-                            incEdges.Add((EdgeModel)graphElements[edgeId]);
+                            incEdges.Add((EdgeModel) graphElements[edgeId]);
                         }
-                        else 
+                        else
                         {
-                            var aEdgeTodo = new EdgeOnVertexToDo { VertexId = id, EdgePropertyId = incEdgePropertyId, IsIncomingEdge = true};
-                            
+                            var aEdgeTodo = new EdgeOnVertexToDo
+                                                {
+                                                    VertexId = id,
+                                                    EdgePropertyId = incEdgePropertyId,
+                                                    IsIncomingEdge = true
+                                                };
+
                             edgeTodo.AddOrUpdate(
-                            edgeId, 
-                            new List<EdgeOnVertexToDo> 
-                            { 
-                                aEdgeTodo
-                            },
-                            (interestingId, todos) =>
-                            {
-                                todos.Add(aEdgeTodo);
-                                return todos;
-                            });
+                                edgeId,
+                                new List<EdgeOnVertexToDo>
+                                    {
+                                        aEdgeTodo
+                                    },
+                                (interestingId, todos) =>
+                                    {
+                                        todos.Add(aEdgeTodo);
+                                        return todos;
+                                    });
                         }
                     }
                     incEdgeProperties.Add(new EdgeContainer(incEdgePropertyId, incEdges));
                 }
             }
-            
+
             #endregion
-            
+
             #endregion
-            
-            graphElements[id] = new VertexModel(id, creationDate, modificationDate, properties, outEdgeProperties, incEdgeProperties);
+
+            graphElements[id] = new VertexModel(id, creationDate, modificationDate, properties, outEdgeProperties,
+                                                incEdgeProperties);
         }
-        
+
         /// <summary>
-        /// Writes the vertex.
+        ///   Writes the vertex.
         /// </summary>
-        /// <param name='vertex'>
-        /// Vertex.
-        /// </param>
-        /// <param name='writer'>
-        /// Writer.
-        /// </param>
-        private static void WriteVertex (VertexModel vertex, SerializationWriter writer)
+        /// <param name='vertex'> Vertex. </param>
+        /// <param name='writer'> Writer. </param>
+        private static void WriteVertex(VertexModel vertex, SerializationWriter writer)
         {
             writer.WriteOptimized(SerializedVertex);
             WriteAGraphElement(vertex, writer);
-            
+
             #region edges
-            
+
             var outgoingEdges = vertex.GetOutgoingEdges();
-            if(outgoingEdges == null)
+            if (outgoingEdges == null)
             {
                 writer.WriteOptimized(0);
             }
-            else 
+            else
             {
                 writer.WriteOptimized(outgoingEdges.Count);
-                foreach(var aOutEdgeProperty in outgoingEdges)
+                foreach (var aOutEdgeProperty in outgoingEdges)
                 {
                     writer.WriteOptimized(aOutEdgeProperty.EdgePropertyId);
                     writer.WriteOptimized(aOutEdgeProperty.Edges.Count);
-                    foreach(var aOutEdge in aOutEdgeProperty.Edges)
+                    foreach (var aOutEdge in aOutEdgeProperty.Edges)
                     {
                         writer.WriteOptimized(aOutEdge.Id);
                     }
                 }
             }
-            
+
             var incomingEdges = vertex.GetIncomingEdges();
-            if(incomingEdges == null)
+            if (incomingEdges == null)
             {
                 writer.WriteOptimized(0);
             }
-            else 
+            else
             {
                 writer.WriteOptimized(incomingEdges.Count);
-                foreach(var aIncEdgeProperty in incomingEdges)
+                foreach (var aIncEdgeProperty in incomingEdges)
                 {
                     writer.WriteOptimized(aIncEdgeProperty.EdgePropertyId);
                     writer.WriteOptimized(aIncEdgeProperty.Edges.Count);
-                    foreach(var aIncEdge in aIncEdgeProperty.Edges)
+                    foreach (var aIncEdge in aIncEdgeProperty.Edges)
                     {
                         writer.WriteOptimized(aIncEdge.Id);
                     }
                 }
             }
-            
+
             #endregion
         }
 
         /// <summary>
-        /// Loads the edge.
+        ///   Loads the edge.
         /// </summary>
-        /// <param name='reader'>
-        /// Reader.
-        /// </param>
-        /// <param name='graphElements'>
-        /// Graph elements.
-        /// </param>
-        /// <param name='sneakPeaks'>
-        /// Sneak peaks.
-        /// </param>
-        private static void LoadEdge (SerializationReader reader, AGraphElement[] graphElements, List<EdgeSneakPeak> sneakPeaks)
+        /// <param name='reader'> Reader. </param>
+        /// <param name='graphElements'> Graph elements. </param>
+        /// <param name='sneakPeaks'> Sneak peaks. </param>
+        private static void LoadEdge(SerializationReader reader, AGraphElement[] graphElements,
+                                     List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadOptimizedInt32();
             var creationDate = reader.ReadUInt32();
             var modificationDate = reader.ReadUInt32();
-            
+
             #region properties
-            
+
             PropertyContainer[] properties = null;
             var propertyCount = reader.ReadOptimizedInt32();
-            
-            if (propertyCount > 0) 
+
+            if (propertyCount > 0)
             {
                 properties = new PropertyContainer[propertyCount];
-                for (var i = 0; i < propertyCount; i++) 
+                for (var i = 0; i < propertyCount; i++)
                 {
                     var propertyIdentifier = reader.ReadOptimizedUInt16();
                     var propertyValue = reader.ReadObject();
-                    
-                    properties[i] = new PropertyContainer { PropertyId = propertyIdentifier, Value = propertyValue };   
+
+                    properties[i] = new PropertyContainer {PropertyId = propertyIdentifier, Value = propertyValue};
                 }
             }
-            
+
             #endregion
-            
+
             var sourceVertexId = reader.ReadOptimizedInt32();
             var targetVertexId = reader.ReadOptimizedInt32();
-            
+
             var sourceVertex = graphElements[sourceVertexId];
             var targetVertex = graphElements[targetVertexId];
-            
-            if (sourceVertex != null && targetVertex != null) 
+
+            if (sourceVertex != null && targetVertex != null)
             {
-                graphElements[id] = new EdgeModel(id, creationDate, modificationDate, (VertexModel)targetVertex, (VertexModel)sourceVertex, properties);
+                graphElements[id] = new EdgeModel(id, creationDate, modificationDate, (VertexModel) targetVertex,
+                                                  (VertexModel) sourceVertex, properties);
             }
-            else 
+            else
             {
-                sneakPeaks.Add(new EdgeSneakPeak { CreationDate = creationDate, Id = id, ModificationDate = modificationDate, Properties = properties, SourceVertexId = sourceVertexId, TargetVertexId = targetVertexId});
+                sneakPeaks.Add(new EdgeSneakPeak
+                                   {
+                                       CreationDate = creationDate,
+                                       Id = id,
+                                       ModificationDate = modificationDate,
+                                       Properties = properties,
+                                       SourceVertexId = sourceVertexId,
+                                       TargetVertexId = targetVertexId
+                                   });
             }
         }
-  
+
         /// <summary>
-        /// Writes the edge.
+        ///   Writes the edge.
         /// </summary>
-        /// <param name='edge'>
-        /// Edge.
-        /// </param>
-        /// <param name='writer'>
-        /// Writer.
-        /// </param>
-        private static void WriteEdge (EdgeModel edge, SerializationWriter writer)
+        /// <param name='edge'> Edge. </param>
+        /// <param name='writer'> Writer. </param>
+        private static void WriteEdge(EdgeModel edge, SerializationWriter writer)
         {
             writer.WriteOptimized(SerializedEdge);
             WriteAGraphElement(edge, writer);
             writer.WriteOptimized(edge.SourceVertex.Id);
             writer.WriteOptimized(edge.TargetVertex.Id);
         }
-        
+
         #endregion
     }
 }
-

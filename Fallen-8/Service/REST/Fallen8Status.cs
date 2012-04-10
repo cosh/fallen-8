@@ -23,13 +23,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
-	/// <summary>
+    /// <summary>
     ///   The Fallen-8 status
     /// </summary>
     [DataContract]
@@ -40,39 +41,39 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         [DataMember]
         public Int64 FreeMemory { get; set; }
-		
-		/// <summary>
+
+        /// <summary>
         ///   The used memory
         /// </summary>
         [DataMember]
         public Int64 UsedMemory { get; set; }
-		
-		/// <summary>
-        /// Vertex count
+
+        /// <summary>
+        ///   Vertex count
         /// </summary>
         [DataMember]
         public Int32 VertexCount { get; set; }
-		
-		/// <summary>
-        /// Edge count
+
+        /// <summary>
+        ///   Edge count
         /// </summary>
         [DataMember]
         public Int32 EdgeCount { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
+
+        /// <summary>
+        ///   Available index plugins
         /// </summary>
         [DataMember]
         public List<String> AvailableIndexPlugins { get; set; }
-		
-		/// <summary>
-        /// Available path plugins
+
+        /// <summary>
+        ///   Available path plugins
         /// </summary>
         [DataMember]
         public List<String> AvailablePathPlugins { get; set; }
-		
-		/// <summary>
-        /// Available index plugins
+
+        /// <summary>
+        ///   Available index plugins
         /// </summary>
         [DataMember]
         public List<String> AvailableServicePlugins { get; set; }

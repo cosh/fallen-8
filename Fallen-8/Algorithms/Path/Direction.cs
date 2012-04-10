@@ -27,7 +27,7 @@
 namespace Fallen8.API.Algorithms.Path
 {
     /// <summary>
-    /// The direction enum
+    ///   The direction enum
     /// </summary>
     public enum Direction : byte
     {

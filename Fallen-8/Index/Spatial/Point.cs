@@ -28,35 +28,30 @@ using System;
 
 namespace Fallen8.API.Index.Spatial
 {
-	/// <summary>
-	/// Point.
-	/// </summary>
-	public sealed class Point : IGeometry
-	{
-		/// <summary>
-		/// Gets or sets the longitude.
-		/// </summary>
-		/// <value>
-		/// The longitude.
-		/// </value>
-		public Double Longitude { get; private set; }
-		
-		/// <summary>
-		/// Gets or sets the latitude.
-		/// </summary>
-		/// <value>
-		/// The latitude.
-		/// </value>
-		public Double Latitude {get; private set;}
+    /// <summary>
+    ///   Point.
+    /// </summary>
+    public sealed class Point : IGeometry
+    {
+        /// <summary>
+        ///   Gets or sets the longitude.
+        /// </summary>
+        /// <value> The longitude. </value>
+        public Double Longitude { get; private set; }
 
-		#region IComparable implementation
-		
-		public int CompareTo (object obj)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		#endregion
-	}
+        /// <summary>
+        ///   Gets or sets the latitude.
+        /// </summary>
+        /// <value> The latitude. </value>
+        public Double Latitude { get; private set; }
+
+        #region IComparable implementation
+
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }
-

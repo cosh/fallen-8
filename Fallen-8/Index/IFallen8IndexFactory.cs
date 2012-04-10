@@ -23,83 +23,58 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 
 namespace Fallen8.API.Index
 {
-	/// <summary>
-	/// Index factory.
-	/// </summary>
-	public interface IFallen8IndexFactory
-	{
-		/// <summary>
-		/// Gets the indices.
-		/// </summary>
-		/// <value>
-		/// The indices.
-		/// </value>
-		IDictionary<String, IIndex> Indices { get; }
-		
-		/// <summary>
-		/// Gets the available index plugins.
-		/// </summary>
-		/// <returns>
-		/// The available index plugins.
-		/// </returns>
-		IEnumerable<String> GetAvailableIndexPlugins();
-		
-		/// <summary>
-		/// Tries to create an index.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the index was created; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='index'>
-		/// The created index.
-		/// </param>
-        /// <param name='indexName'>
-        /// Index name.
-        /// </param> 
-		/// <param name='indexTypeName'>
-		/// Index type.
-        /// Default is DictionaryIndex
-		/// </param>
-		/// <param name='parameter'>
-		/// Parameter for the index.
-        /// Default is Null
-		/// </param>
-        Boolean TryCreateIndex(out IIndex index, String indexName, String indexTypeName = "DictionaryIndex", IDictionary<String, Object> parameter = null);
-		
-		/// <summary>
-		/// Tries to delete the index.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the index was deleted; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='indexName'>
-		/// Index name.
-		/// </param>
-		Boolean TryDeleteIndex(String indexName);
-		
-		/// <summary>
-		/// Tries the index of the get.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the index was found; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='index'>
-		/// Index.
-		/// </param>
-		/// <param name='indexName'>
-		/// Index name.
-		/// </param>
-		Boolean TryGetIndex(out IIndex index, String indexName);
+    /// <summary>
+    ///   Index factory.
+    /// </summary>
+    public interface IFallen8IndexFactory
+    {
+        /// <summary>
+        ///   Gets the indices.
+        /// </summary>
+        /// <value> The indices. </value>
+        IDictionary<String, IIndex> Indices { get; }
 
         /// <summary>
-        /// Deletes all indices
+        ///   Gets the available index plugins.
+        /// </summary>
+        /// <returns> The available index plugins. </returns>
+        IEnumerable<String> GetAvailableIndexPlugins();
+
+        /// <summary>
+        ///   Tries to create an index.
+        /// </summary>
+        /// <returns> <c>true</c> if the index was created; otherwise, <c>false</c> . </returns>
+        /// <param name='index'> The created index. </param>
+        /// <param name='indexName'> Index name. </param>
+        /// <param name='indexTypeName'> Index type. Default is DictionaryIndex </param>
+        /// <param name='parameter'> Parameter for the index. Default is Null </param>
+        Boolean TryCreateIndex(out IIndex index, String indexName, String indexTypeName = "DictionaryIndex",
+                               IDictionary<String, Object> parameter = null);
+
+        /// <summary>
+        ///   Tries to delete the index.
+        /// </summary>
+        /// <returns> <c>true</c> if the index was deleted; otherwise, <c>false</c> . </returns>
+        /// <param name='indexName'> Index name. </param>
+        Boolean TryDeleteIndex(String indexName);
+
+        /// <summary>
+        ///   Tries the index of the get.
+        /// </summary>
+        /// <returns> <c>true</c> if the index was found; otherwise, <c>false</c> . </returns>
+        /// <param name='index'> Index. </param>
+        /// <param name='indexName'> Index name. </param>
+        Boolean TryGetIndex(out IIndex index, String indexName);
+
+        /// <summary>
+        ///   Deletes all indices
         /// </summary>
         void DeleteAllIndices();
     }
 }
-

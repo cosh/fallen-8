@@ -23,102 +23,86 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Fallen8.API.Plugin
 {
     /// <summary>
-    /// Fallen8 plugin factory.
+    ///   Fallen8 plugin factory.
     /// </summary>
     public static class Fallen8PluginFactory
     {
         /// <summary>
-        /// Tries to find a plugin.
+        ///   Tries to find a plugin.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <param name='name'>
-        /// The unique name of the pluginN.
-        /// </param>
-        /// <typeparam name='T'>
-        /// The interface type of the plugin.
-        /// </typeparam>
-        public static Boolean TryFindPlugin<T> (out T result, String name)
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='name'> The unique name of the pluginN. </param>
+        /// <typeparam name='T'> The interface type of the plugin. </typeparam>
+        public static Boolean TryFindPlugin<T>(out T result, String name)
         {
-            foreach (var aPluginTypeOfT in GetAllTypes<T>()) {
-                var aPluginInstance = Activate (aPluginTypeOfT);
-                if (aPluginInstance != null) {
-                    if (aPluginInstance.PluginName == name) {
-                        result = (T)aPluginInstance;
+            foreach (var aPluginTypeOfT in GetAllTypes<T>())
+            {
+                var aPluginInstance = Activate(aPluginTypeOfT);
+                if (aPluginInstance != null)
+                {
+                    if (aPluginInstance.PluginName == name)
+                    {
+                        result = (T) aPluginInstance;
                         return true;
                     }
                 }
             }
-            
+
             result = default(T);
             return false;
         }
-        
+
         /// <summary>
-        /// Tries to get available plugin descriptions.
+        ///   Tries to get available plugin descriptions.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <typeparam name='T'>
-        /// The interface type of the plugin.
-        /// </typeparam>
-        public static Boolean TryGetAvailablePluginsWithDescriptions<T> (out Dictionary<String,String> result)
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <typeparam name='T'> The interface type of the plugin. </typeparam>
+        public static Boolean TryGetAvailablePluginsWithDescriptions<T>(out Dictionary<String, String> result)
         {
             result = (from aPluginTypeOfT in GetAllTypes<T>()
                       select Activate(aPluginTypeOfT)
                       into aPluginInstance
                       where aPluginInstance != null
-                          select aPluginInstance).ToDictionary(key => key.PluginName, value => GenerateDescription(value));
+                      select aPluginInstance).ToDictionary(key => key.PluginName, value => GenerateDescription(value));
             return result.Any();
         }
 
         /// <summary>
-        /// Tries to get available plugin descriptions.
+        ///   Tries to get available plugin descriptions.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <typeparam name='T'>
-        /// The interface type of the plugin.
-        /// </typeparam>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <typeparam name='T'> The interface type of the plugin. </typeparam>
         public static Boolean TryGetAvailablePlugins<T>(out IEnumerable<String> result)
         {
             result = (from aPluginTypeOfT in GetAllTypes<T>()
                       select Activate(aPluginTypeOfT)
-                          into aPluginInstance
-                          where aPluginInstance != null
-                          select aPluginInstance.PluginName);
+                      into aPluginInstance
+                      where aPluginInstance != null
+                      select aPluginInstance.PluginName);
             return result.Any();
         }
 
         #region private helper
 
         /// <summary>
-        /// Generates the description for a plugin
+        ///   Generates the description for a plugin
         /// </summary>
-        /// <param name="aPluginInstance">A plugin instance</param>
-        /// <returns></returns>
+        /// <param name="aPluginInstance"> A plugin instance </param>
+        /// <returns> </returns>
         private static string GenerateDescription(IFallen8Plugin aPluginInstance)
         {
             var sb = new StringBuilder();
@@ -133,20 +117,16 @@ namespace Fallen8.API.Plugin
         }
 
         /// <summary>
-        /// Gets all types.
+        ///   Gets all types.
         /// </summary>
-        /// <returns>
-        /// The all types.
-        /// </returns>
-        /// <typeparam name='T'>
-        /// The type of the plugin.
-        /// </typeparam>
-        private static IEnumerable<Type> GetAllTypes<T> ()
+        /// <returns> The all types. </returns>
+        /// <typeparam name='T'> The type of the plugin. </typeparam>
+        private static IEnumerable<Type> GetAllTypes<T>()
         {
-            var result = new List<Type> ();
-            
-            var files = Directory.EnumerateFiles (Environment.CurrentDirectory, "*.dll")
-                .Union (Directory.EnumerateFiles (Environment.CurrentDirectory, "*.exe"));
+            var result = new List<Type>();
+
+            var files = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll")
+                .Union(Directory.EnumerateFiles(Environment.CurrentDirectory, "*.exe"));
 
             foreach (var file in files)
             {
@@ -155,7 +135,6 @@ namespace Fallen8.API.Plugin
 
                 foreach (var aType in types)
                 {
-
                     if (!aType.IsClass || aType.IsAbstract)
                     {
                         continue;
@@ -186,47 +165,39 @@ namespace Fallen8.API.Plugin
             }
 
             return result;
-            
         }
-        
+
         /// <summary>
-        /// Determines whether a type is interface of the specified type.
+        ///   Determines whether a type is interface of the specified type.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if this instance is interface of the specified type; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='type'>
-        /// Type.
-        /// </param>
-        /// <typeparam name='T'>
-        /// The interface type.
-        /// </typeparam>
-        private static Boolean IsInterfaceOf<T> (Type type)
+        /// <returns> <c>true</c> if this instance is interface of the specified type; otherwise, <c>false</c> . </returns>
+        /// <param name='type'> Type. </param>
+        /// <typeparam name='T'> The interface type. </typeparam>
+        private static Boolean IsInterfaceOf<T>(Type type)
         {
-            return typeof(T).IsAssignableFrom (type);
+            return typeof (T).IsAssignableFrom(type);
         }
-        
+
         /// <summary>
-        /// Activate the specified currentPluginType.
+        ///   Activate the specified currentPluginType.
         /// </summary>
-        /// <param name='currentPluginType'>
-        /// Current plugin type.
-        /// </param>
-        private static IFallen8Plugin Activate (Type currentPluginType)
+        /// <param name='currentPluginType'> Current plugin type. </param>
+        private static IFallen8Plugin Activate(Type currentPluginType)
         {
             Object instance;
-                        
-            try {
-                instance = Activator.CreateInstance (currentPluginType);
 
-            } catch (TypeLoadException) {
-                return null;                   
+            try
+            {
+                instance = Activator.CreateInstance(currentPluginType);
             }
-            
+            catch (TypeLoadException)
+            {
+                return null;
+            }
+
             return instance as IFallen8Plugin;
         }
-        
+
         #endregion
     }
 }
-

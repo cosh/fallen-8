@@ -23,24 +23,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
-	/// <summary>
+    /// <summary>
     ///   The result type specification
     /// </summary>
     [DataContract]
     public enum ResultTypeSpecification : byte
     {
-        [EnumMember(Value = "V")]
-        Vertices,
+        [EnumMember(Value = "V")] Vertices,
 
-        [EnumMember(Value = "E")]
-        Edges,
+        [EnumMember(Value = "E")] Edges,
 
-        [EnumMember(Value = "Both")]
-        Both,
+        [EnumMember(Value = "Both")] Both,
     }
 }
-

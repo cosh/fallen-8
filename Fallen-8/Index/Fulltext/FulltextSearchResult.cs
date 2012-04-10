@@ -29,26 +29,21 @@ using System.Collections.ObjectModel;
 
 namespace Fallen8.API.Index.Fulltext
 {
-	/// <summary>
-	/// Fulltext search result.
-	/// </summary>
-	public sealed class FulltextSearchResult
-	{
-		/// <summary>
-		/// Gets or sets the maximum score.
-		/// </summary>
-		/// <value>
-		/// The maximum score.
-		/// </value>
-		public Double MaximumScore { get; private set; }
-		
-		/// <summary>
-		/// Gets or sets the elements.
-		/// </summary>
-		/// <value>
-		/// The elements.
-		/// </value>
-		public ReadOnlyCollection<FulltextSearchResultElement> Elements { get; private set;}
-	}
-}
+    /// <summary>
+    ///   Fulltext search result.
+    /// </summary>
+    public sealed class FulltextSearchResult
+    {
+        /// <summary>
+        ///   Gets or sets the maximum score.
+        /// </summary>
+        /// <value> The maximum score. </value>
+        public Double MaximumScore { get; private set; }
 
+        /// <summary>
+        ///   Gets or sets the elements.
+        /// </summary>
+        /// <value> The elements. </value>
+        public ReadOnlyCollection<FulltextSearchResultElement> Elements { get; private set; }
+    }
+}

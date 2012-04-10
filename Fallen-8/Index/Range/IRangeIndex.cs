@@ -30,67 +30,39 @@ using Fallen8.API.Model;
 
 namespace Fallen8.API.Index.Range
 {
-	/// <summary>
-	/// Fallen8 range index.
-	/// </summary>
-	public interface IRangeIndex
-	{
-		/// <summary>
-		/// Searches for graph elements lower than the the key.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if something was found; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='result'>
-		/// Result.
-		/// </param>
-		/// <param name='key'>
-		/// Key.
-		/// </param>
-		/// <param name='includeKey'>
-		/// Include the key.
-		/// </param>
+    /// <summary>
+    ///   Fallen8 range index.
+    /// </summary>
+    public interface IRangeIndex
+    {
+        /// <summary>
+        ///   Searches for graph elements lower than the the key.
+        /// </summary>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='key'> Key. </param>
+        /// <param name='includeKey'> Include the key. </param>
         Boolean LowerThan(out ReadOnlyCollection<AGraphElement> result, IComparable key, bool includeKey = true);
-		
-		/// <summary>
-		/// Searches for graph elements greater than the the key.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if something was found; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='result'>
-		/// Result.
-		/// </param>
-		/// <param name='key'>
-		/// Key.
-		/// </param>
-		/// <param name='includeKey'>
-		/// Include the key.
-		/// </param>
-        Boolean GreaterThan(out ReadOnlyCollection<AGraphElement> result, IComparable key, bool includeKey = true);
-		
-		/// <summary>
-		/// Searches for graph elements between a specified range
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if something was found; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='result'>
-		/// Result.
-		/// </param>
-		/// <param name='leftLimit'>
-		/// Left limit.
-		/// </param>
-		/// <param name='rightLimit'>
-		/// Right limit.
-		/// </param>
-		/// <param name='includeleftLimit'>
-		/// Include the left limit.
-		/// </param>
-		/// <param name='includerightLimit'>
-		/// Include the right limit.
-		/// </param>
-        Boolean Between(out ReadOnlyCollection<AGraphElement> result, IComparable leftLimit, IComparable rightLimit, bool includeleftLimit = true, bool includerightLimit = true);
-	}
-}
 
+        /// <summary>
+        ///   Searches for graph elements greater than the the key.
+        /// </summary>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='key'> Key. </param>
+        /// <param name='includeKey'> Include the key. </param>
+        Boolean GreaterThan(out ReadOnlyCollection<AGraphElement> result, IComparable key, bool includeKey = true);
+
+        /// <summary>
+        ///   Searches for graph elements between a specified range
+        /// </summary>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='leftLimit'> Left limit. </param>
+        /// <param name='rightLimit'> Right limit. </param>
+        /// <param name='includeleftLimit'> Include the left limit. </param>
+        /// <param name='includerightLimit'> Include the right limit. </param>
+        Boolean Between(out ReadOnlyCollection<AGraphElement> result, IComparable leftLimit, IComparable rightLimit,
+                        bool includeleftLimit = true, bool includerightLimit = true);
+    }
+}

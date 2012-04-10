@@ -23,55 +23,57 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Plugin;
 using System.Threading;
+using Fallen8.API.Plugin;
 using Framework.Serialization;
 
 namespace Fallen8.API.Index
 {
     /// <summary>
-    /// Fallen8 index factory.
+    ///   Fallen8 index factory.
     /// </summary>
     public sealed class Fallen8IndexFactory : IFallen8IndexFactory
     {
         #region Data
-        
+
         /// <summary>
-        /// The created indices.
+        ///   The created indices.
         /// </summary>
         private IDictionary<String, IIndex> _indices;
-        
+
         #endregion
-        
+
         #region constructor
-        
+
         /// <summary>
-        /// Initializes a new instance of the Fallen8IndexFactory class.
+        ///   Initializes a new instance of the Fallen8IndexFactory class.
         /// </summary>
-        public Fallen8IndexFactory ()
+        public Fallen8IndexFactory()
         {
-            _indices = new Dictionary<String, IIndex> ();
+            _indices = new Dictionary<String, IIndex>();
         }
-        
+
         #endregion
-        
+
         #region IFallen8IndexFactory implementation
-        public IEnumerable<String> GetAvailableIndexPlugins ()
+
+        public IEnumerable<String> GetAvailableIndexPlugins()
         {
             IEnumerable<String> result;
-            
-            Fallen8PluginFactory.TryGetAvailablePlugins<IIndex> (out result);
-            
+
+            Fallen8PluginFactory.TryGetAvailablePlugins<IIndex>(out result);
+
             return result;
         }
 
-        public bool TryCreateIndex(out IIndex index, string indexName, string indexTypeName, IDictionary<string, object> parameter)
+        public bool TryCreateIndex(out IIndex index, string indexName, string indexTypeName,
+                                   IDictionary<string, object> parameter)
         {
-            if (Fallen8PluginFactory.TryFindPlugin<IIndex>(out index, indexTypeName))
+            if (Fallen8PluginFactory.TryFindPlugin(out index, indexTypeName))
             {
-
                 try
                 {
                     index.Initialize(null, parameter);
@@ -93,7 +95,7 @@ namespace Fallen8.API.Index
             return false;
         }
 
-        public bool TryDeleteIndex (string indexName)
+        public bool TryDeleteIndex(string indexName)
         {
             var newIndices = new Dictionary<string, IIndex>(_indices);
 
@@ -104,15 +106,14 @@ namespace Fallen8.API.Index
             return sthRemoved;
         }
 
-        public bool TryGetIndex (out IIndex index, string indexName)
+        public bool TryGetIndex(out IIndex index, string indexName)
         {
-            return _indices.TryGetValue (indexName, out index);
+            return _indices.TryGetValue(indexName, out index);
         }
 
-        public IDictionary<string, IIndex> Indices {
-            get {
-                return _indices;
-            }
+        public IDictionary<string, IIndex> Indices
+        {
+            get { return _indices; }
         }
 
         public void DeleteAllIndices()
@@ -120,21 +121,22 @@ namespace Fallen8.API.Index
             var newIndices = new Dictionary<string, IIndex>();
             Interlocked.Exchange(ref _indices, newIndices);
         }
-        #endregion   
-    
+
+        #endregion
+
         #region internal methods
-        
+
         /// <summary>
-        /// Opens and deserializes an index
+        ///   Opens and deserializes an index
         /// </summary>
-        /// <param name="indexName">The index name</param>
-        /// <param name="indexPluginName">The index plugin name</param>
-        /// <param name="reader">Serialization reader</param>
-        /// <param name="fallen8">Fallen-8</param>
+        /// <param name="indexName"> The index name </param>
+        /// <param name="indexPluginName"> The index plugin name </param>
+        /// <param name="reader"> Serialization reader </param>
+        /// <param name="fallen8"> Fallen-8 </param>
         internal void OpenIndex(string indexName, string indexPluginName, SerializationReader reader, Fallen8 fallen8)
         {
             IIndex index;
-            if (Fallen8PluginFactory.TryFindPlugin<IIndex>(out index, indexPluginName))
+            if (Fallen8PluginFactory.TryFindPlugin(out index, indexPluginName))
             {
                 index.Open(reader, fallen8);
 
@@ -148,4 +150,3 @@ namespace Fallen8.API.Index
         #endregion
     }
 }
-

@@ -31,25 +31,25 @@ using Fallen8.API.Plugin;
 namespace Fallen8.API.Algorithms.Path
 {
     /// <summary>
-    /// The interface for path algorithms
+    ///   The interface for path algorithms
     /// </summary>
     public interface IShortestPathAlgorithm : IFallen8Plugin
     {
         /// <summary>
-        /// Calculates shortest paths
+        ///   Calculates shortest paths
         /// </summary>
-        /// <param name="sourceVertexId">The source vertex identifier.</param>
-        /// <param name="destinationVertexId">The destination vertex identifier.</param>
-        /// <param name="maxDepth">The maximum depth.</param>
-        /// <param name="maxPathWeight">The maximum path weight.</param>
-        /// <param name="maxResults">The maximum number of results.</param>
-        /// <param name="edgePropertyFilter">Edge property filter delegate.</param>
-        /// <param name="edgeFilter">Edge filter delegate.</param>
-        /// <param name="edgeCost">The edge cost delegate.</param>
-        /// <param name="vertexCost">The vertex cost delegate.</param>
-        /// <returns>Paths</returns>
+        /// <param name="sourceVertexId"> The source vertex identifier. </param>
+        /// <param name="destinationVertexId"> The destination vertex identifier. </param>
+        /// <param name="maxDepth"> The maximum depth. </param>
+        /// <param name="maxPathWeight"> The maximum path weight. </param>
+        /// <param name="maxResults"> The maximum number of results. </param>
+        /// <param name="edgePropertyFilter"> Edge property filter delegate. </param>
+        /// <param name="edgeFilter"> Edge filter delegate. </param>
+        /// <param name="edgeCost"> The edge cost delegate. </param>
+        /// <param name="vertexCost"> The vertex cost delegate. </param>
+        /// <returns> Paths </returns>
         List<Path> Calculate(
-            Int32 sourceVertexId, 
+            Int32 sourceVertexId,
             Int32 destinationVertexId,
             Int32 maxDepth = 1,
             Double maxPathWeight = Double.MaxValue,

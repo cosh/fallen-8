@@ -26,35 +26,30 @@
 
 namespace Fallen8.API.Index.Spatial
 {
-	/// <summary>
-	/// Rectangle.
-	/// </summary>
-	public sealed class Rectangle : IGeometry
-	{
-		/// <summary>
-		/// Gets or sets the lower left corner.
-		/// </summary>
-		/// <value>
-		/// The lower left corner.
-		/// </value>
-		public Point LowerLeft { get; private set; }
-		
-		/// <summary>
-		/// Gets or sets the upper right corner.
-		/// </summary>
-		/// <value>
-		/// The upper right corner.
-		/// </value>
-		public Point UpperRight { get; private set; }
-		
-		#region IComparable implementation
-		
-		public int CompareTo (object obj)
-		{
-			throw new System.NotImplementedException ();
-		}
-		
-		#endregion
-	}
-}
+    /// <summary>
+    ///   Rectangle.
+    /// </summary>
+    public sealed class Rectangle : IGeometry
+    {
+        /// <summary>
+        ///   Gets or sets the lower left corner.
+        /// </summary>
+        /// <value> The lower left corner. </value>
+        public Point LowerLeft { get; private set; }
 
+        /// <summary>
+        ///   Gets or sets the upper right corner.
+        /// </summary>
+        /// <value> The upper right corner. </value>
+        public Point UpperRight { get; private set; }
+
+        #region IComparable implementation
+
+        public int CompareTo(object obj)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
+    }
+}

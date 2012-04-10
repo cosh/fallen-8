@@ -31,21 +31,26 @@ using Fallen8.API.Model;
 namespace Fallen8.API.Algorithms.Path
 {
     /// <summary>
-    /// A static helper class for path algorithms
+    ///   A static helper class for path algorithms
     /// </summary>
     public static class PathHelper
     {
         /// <summary>
-        /// Get the valid edges of a vertex
+        ///   Get the valid edges of a vertex
         /// </summary>
-        /// <param name="vertex">The vertex.</param>
-        /// <param name="direction">The direction.</param>
-        /// <param name="edgepropertyFilter">The edge property filter.</param>
-        /// <param name="edgeFilter">The edge filter.</param>
-        /// <returns>Valid edges</returns>
-        public static List<Tuple<UInt16, IEnumerable<EdgeModel>>> GetValidEdges(VertexModel vertex, Direction direction, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter)
+        /// <param name="vertex"> The vertex. </param>
+        /// <param name="direction"> The direction. </param>
+        /// <param name="edgepropertyFilter"> The edge property filter. </param>
+        /// <param name="edgeFilter"> The edge filter. </param>
+        /// <returns> Valid edges </returns>
+        public static List<Tuple<UInt16, IEnumerable<EdgeModel>>> GetValidEdges(VertexModel vertex, Direction direction,
+                                                                                PathDelegates.EdgePropertyFilter
+                                                                                    edgepropertyFilter,
+                                                                                PathDelegates.EdgeFilter edgeFilter)
         {
-            var edgeProperties = direction == Direction.IncomingEdge ? vertex.GetIncomingEdges() : vertex.GetOutgoingEdges();
+            var edgeProperties = direction == Direction.IncomingEdge
+                                     ? vertex.GetIncomingEdges()
+                                     : vertex.GetOutgoingEdges();
             var result = new List<Tuple<ushort, IEnumerable<EdgeModel>>>();
 
             if (edgeProperties != null)
@@ -72,7 +77,8 @@ namespace Fallen8.API.Algorithms.Path
                     }
                     else
                     {
-                        result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, edgeContainer.Edges));
+                        result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId,
+                                                                             edgeContainer.Edges));
                     }
                 }
             }

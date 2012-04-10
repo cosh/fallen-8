@@ -23,211 +23,211 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
+using Fallen8.API.Error;
+using Fallen8.API.Helper;
 using Fallen8.API.Model;
 using Framework.Serialization;
-using Fallen8.API.Helper;
-using Fallen8.API.Error;
 
 namespace Fallen8.API.Index
 {
     /// <summary>
-    /// Single value index.
+    ///   Single value index.
     /// </summary>
     public sealed class SingleValueIndex : AThreadSafeElement, IIndex
     {
         #region Data
-        
+
         /// <summary>
-        /// The index dictionary.
+        ///   The index dictionary.
         /// </summary>
         private Dictionary<IComparable, AGraphElement> _idx;
 
         /// <summary>
-        /// The description of the plugin
+        ///   The description of the plugin
         /// </summary>
         private String _description = "A very simple single value index.";
 
         #endregion
-  
+
         #region Constructor
-        
-        /// <summary>
-        /// Initializes a new instance of the SingleValueIndex class.
-        /// </summary>
-        public SingleValueIndex()
-        {
-        }
-        
+
         #endregion
-        
+
         #region IIndex implementation
-        
-        public Int32 CountOfKeys ()
+
+        public Int32 CountOfKeys()
         {
-			if (ReadResource()) 
-			{
-				var count = _idx.Count;
-				
-				FinishReadResource();
-				
-				return count;
-			}
-			
-			throw new CollisionException();
+            if (ReadResource())
+            {
+                var count = _idx.Count;
+
+                FinishReadResource();
+
+                return count;
+            }
+
+            throw new CollisionException();
         }
 
         public Int32 CountOfValues()
         {
-			if (ReadResource()) 
-			{
-				var count = _idx.Count;
-				
-				FinishReadResource();
-				
-				return count;
-			}
-			
-			throw new CollisionException();
+            if (ReadResource())
+            {
+                var count = _idx.Count;
+
+                FinishReadResource();
+
+                return count;
+            }
+
+            throw new CollisionException();
         }
 
         public void AddOrUpdate(IComparable key, AGraphElement graphElement)
         {
-			if (WriteResource()) 
-			{
-				_idx[key] = graphElement;
-				
-				FinishWriteResource();
-				
-				return;
-			}
-			
-			throw new CollisionException();
+            if (WriteResource())
+            {
+                _idx[key] = graphElement;
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
         }
 
-        public bool TryRemoveKey (IComparable key)
+        public bool TryRemoveKey(IComparable key)
         {
-			if (WriteResource()) 
-			{
-				var removed = _idx.Remove(key);
-				
-				FinishWriteResource();
-				
-				return removed;
-			}
-			
-			throw new CollisionException();
+            if (WriteResource())
+            {
+                var removed = _idx.Remove(key);
+
+                FinishWriteResource();
+
+                return removed;
+            }
+
+            throw new CollisionException();
         }
 
         public void RemoveValue(AGraphElement graphElement)
         {
-			if (WriteResource()) 
-			{
-				var toBeRemovedKeys = (from aKv in _idx where ReferenceEquals(aKv.Value, graphElement) select aKv.Key).ToList();
+            if (WriteResource())
+            {
+                var toBeRemovedKeys =
+                    (from aKv in _idx where ReferenceEquals(aKv.Value, graphElement) select aKv.Key).ToList();
 
                 toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
-				
-				FinishWriteResource();
-				
-				return;
-			}
-			
-			throw new CollisionException();
-        }
-        
-        public void Wipe ()
-        {
-			if (WriteResource()) 
-			{
-                _idx.Clear();
-				
-				FinishWriteResource();
-				
-				return;
-			}
-			
-			throw new CollisionException();
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
         }
 
-        public IEnumerable<IComparable> GetKeys ()
+        public void Wipe()
         {
-			if (ReadResource()) 
-			{
+            if (WriteResource())
+            {
+                _idx.Clear();
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
+        }
+
+        public IEnumerable<IComparable> GetKeys()
+        {
+            if (ReadResource())
+            {
                 var keys = new List<IComparable>(_idx.Keys);
-				
-				FinishReadResource();
-				
-				return keys;
-			}
-			
-			throw new CollisionException();
+
+                FinishReadResource();
+
+                return keys;
+            }
+
+            throw new CollisionException();
         }
 
 
         public IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
         {
-			if (ReadResource()) 
-			{
+            if (ReadResource())
+            {
                 foreach (var aKv in _idx)
-                    yield return new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(new List<AGraphElement> { aKv.Value }));
-				
-				FinishReadResource();
-				
-				yield break;
-			}
-			
-			throw new CollisionException();
+                    yield return
+                        new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>(aKv.Key,
+                                                                                         new ReadOnlyCollection
+                                                                                             <AGraphElement>(
+                                                                                             new List<AGraphElement>
+                                                                                                 {aKv.Value}));
+
+                FinishReadResource();
+
+                yield break;
+            }
+
+            throw new CollisionException();
         }
 
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key)
         {
-			if (ReadResource()) 
-			{
+            if (ReadResource())
+            {
                 AGraphElement element;
                 var foundSth = _idx.TryGetValue(key, out element);
 
-                result = foundSth ? new ReadOnlyCollection<AGraphElement>(new List<AGraphElement> { element }) : null;
+                result = foundSth ? new ReadOnlyCollection<AGraphElement>(new List<AGraphElement> {element}) : null;
 
-				FinishReadResource();
-				
+                FinishReadResource();
+
                 return foundSth;
-			}
-			
-			throw new CollisionException();
+            }
+
+            throw new CollisionException();
         }
+
         #endregion
 
         #region IFallen8Serializable
 
         public void Save(SerializationWriter writer)
         {
-			if (ReadResource()) 
-			{
-                writer.WriteOptimized(0);//parameter
+            if (ReadResource())
+            {
+                writer.WriteOptimized(0); //parameter
                 writer.WriteOptimized(_idx.Count);
                 foreach (var aKV in _idx)
                 {
                     writer.WriteObject(aKV.Key);
                     writer.WriteOptimized(aKV.Value.Id);
                 }
-				
-				FinishReadResource();
-				
+
+                FinishReadResource();
+
                 return;
-			}
-			
-			throw new CollisionException();
+            }
+
+            throw new CollisionException();
         }
 
         public void Open(SerializationReader reader, Fallen8 fallen8)
         {
-			if (WriteResource()) 
-			{
-                reader.ReadOptimizedInt32();//parameter
+            if (WriteResource())
+            {
+                reader.ReadOptimizedInt32(); //parameter
 
                 var keyCount = reader.ReadOptimizedInt32();
 
@@ -241,23 +241,23 @@ namespace Fallen8.API.Index
                     fallen8.TryGetGraphElement(out graphElement, graphElementId);
                     if (graphElement != null)
                     {
-                        _idx.Add((IComparable)key, graphElement);
+                        _idx.Add((IComparable) key, graphElement);
                     }
                 }
-				
-				FinishWriteResource();
-				
+
+                FinishWriteResource();
+
                 return;
-			}
-			
-			throw new CollisionException();
+            }
+
+            throw new CollisionException();
         }
 
         #endregion
 
         #region IFallen8Plugin implementation
 
-        public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, AGraphElement>();
         }
@@ -269,20 +269,17 @@ namespace Fallen8.API.Index
 
         public Type PluginType
         {
-            get { return typeof(SingleValueIndex); }
+            get { return typeof (SingleValueIndex); }
         }
 
         public Type PluginCategory
         {
-            get { return typeof(IIndex); }
+            get { return typeof (IIndex); }
         }
 
         public string Description
         {
-            get
-            {
-                return _description;
-            }
+            get { return _description; }
         }
 
         public string Manufacturer
@@ -305,45 +302,42 @@ namespace Fallen8.API.Index
         #region public methods
 
         /// <summary>
-        /// Gets a value from the index
+        ///   Gets a value from the index
         /// </summary>
-        /// <param name="result">Result</param>
-        /// <param name="key">Key</param>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="result"> Result </param>
+        /// <param name="key"> Key </param>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         public bool TryGetValue(out AGraphElement result, IComparable key)
         {
-			if (ReadResource()) 
-			{
-				var value = _idx.TryGetValue(key, out result);
-					
-				FinishReadResource();
-				
-				return value;
-			}
-			
-			throw new CollisionException();
+            if (ReadResource())
+            {
+                var value = _idx.TryGetValue(key, out result);
+
+                FinishReadResource();
+
+                return value;
+            }
+
+            throw new CollisionException();
         }
-		
-		/// <summary>
-		/// The values.
-		/// </summary>
+
+        /// <summary>
+        ///   The values.
+        /// </summary>
         public List<AGraphElement> Values()
         {
-			if (ReadResource()) 
-			{
-				var values = new List<AGraphElement>(_idx.Values);
-					
-				FinishReadResource();
-				
-				return values;
-			}
-			
-			throw new CollisionException();
+            if (ReadResource())
+            {
+                var values = new List<AGraphElement>(_idx.Values);
+
+                FinishReadResource();
+
+                return values;
+            }
+
+            throw new CollisionException();
         }
 
         #endregion
     }
 }
-

@@ -23,24 +23,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using Framework.Serialization;
-using System.ServiceModel;
 using System.Net;
+using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Xml;
+using Framework.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
-	/// <summary>
-	/// Fallen-8 REST service.
-	/// </summary>
-	public sealed class Fallen8RESTServicePlugin : IFallen8Service
-	{
-		#region data
-		
-		 /// <summary>
+    /// <summary>
+    ///   Fallen-8 REST service.
+    /// </summary>
+    public sealed class Fallen8RESTServicePlugin : IFallen8Service
+    {
+        #region data
+
+        /// <summary>
         ///   The starting time of the service
         /// </summary>
         private DateTime _startTime;
@@ -69,19 +70,16 @@ namespace Fallen8.API.Service.REST
         ///   Service description
         /// </summary>
         private String _description = "The Fallen-8 plugin that starts the REST service";
-		
-		#endregion
-		
-		#region Constructor
-		
-		public Fallen8RESTServicePlugin ()
-		{
-		}
-		
-		#endregion
 
-		#region IFallen8Service implementation
-		public DateTime StartTime
+        #endregion
+
+        #region Constructor
+
+        #endregion
+
+        #region IFallen8Service implementation
+
+        public DateTime StartTime
         {
             get { return _startTime; }
         }
@@ -102,24 +100,28 @@ namespace Fallen8.API.Service.REST
 
             return true;
         }
-		#endregion
 
-		#region IFallen8Serializable implementation
-		public void Save (SerializationWriter writer)
-		{
-			throw new NotImplementedException ();
-		}
+        #endregion
 
-		public void Open (SerializationReader reader, Fallen8 fallen8)
-		{
-			throw new NotImplementedException ();
-		}
-		#endregion
+        #region IFallen8Serializable implementation
 
-		#region IFallen8Plugin implementation
-		public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
-		{
-			var uriPattern = "Fallen8";
+        public void Save(SerializationWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Open(SerializationReader reader, Fallen8 fallen8)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IFallen8Plugin implementation
+
+        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
+        {
+            var uriPattern = "Fallen8";
             if (parameter != null && parameter.ContainsKey("URIPattern"))
                 uriPattern = (String) Convert.ChangeType(parameter["URIPattern"], typeof (String));
 
@@ -132,57 +134,52 @@ namespace Fallen8.API.Service.REST
                 port = (ushort) Convert.ChangeType(parameter["Port"], typeof (ushort));
 
             StartService(fallen8, address, port, uriPattern);
-		}
+        }
 
-		public string PluginName {
-			get 
-			{
-				return "Fallen-8_REST_Service";
-			}
-		}
+        public string PluginName
+        {
+            get { return "Fallen-8_REST_Service"; }
+        }
 
-		public Type PluginCategory {
-			get 
-			{
-				return typeof(IFallen8Service);
-			}
-		}
+        public Type PluginCategory
+        {
+            get { return typeof (IFallen8Service); }
+        }
 
-		public string Description {
-			get 
-			{
-				return _description;
-			}
-		}
+        public string Description
+        {
+            get { return _description; }
+        }
 
-		public string Manufacturer {
-			get 
-			{
-				return "Henning Rauch";
-			}
-		}
-		#endregion
+        public string Manufacturer
+        {
+            get { return "Henning Rauch"; }
+        }
 
-		#region IDisposable implementation
-		public void Dispose ()
-		{
-			TryStop();
+        #endregion
+
+        #region IDisposable implementation
+
+        public void Dispose()
+        {
+            TryStop();
             _service.Dispose();
-		}
-		#endregion
+        }
+
+        #endregion
 
         #region private helper
 
         /// <summary>
-        /// Starts the actual service
+        ///   Starts the actual service
         /// </summary>
-        /// <param name="fallen8">Fallen-8.</param>
-        /// <param name="ipAddress">IP address.</param>
-        /// <param name="port">Port.</param>
-        /// <param name="uriPattern">URI pattern</param>
-        private void StartService (Fallen8 fallen8, IPAddress ipAddress, ushort port, string uriPattern)
-		{
-			var uri = new Uri("http://" + ipAddress + ":" + port + "/" + uriPattern);
+        /// <param name="fallen8"> Fallen-8. </param>
+        /// <param name="ipAddress"> IP address. </param>
+        /// <param name="port"> Port. </param>
+        /// <param name="uriPattern"> URI pattern </param>
+        private void StartService(Fallen8 fallen8, IPAddress ipAddress, ushort port, string uriPattern)
+        {
+            var uri = new Uri("http://" + ipAddress + ":" + port + "/" + uriPattern);
 
             if (!uri.IsWellFormedOriginalString())
                 throw new Exception("The URI Pattern is not well formed!");
@@ -190,9 +187,9 @@ namespace Fallen8.API.Service.REST
             _service = new Fallen8RESTService(fallen8);
 
             _host = new ServiceHost(_service, uri);
-			
-           	const string restServiceAddress = "REST";
-			
+
+            const string restServiceAddress = "REST";
+
             try
             {
                 var binding = new WebHttpBinding
@@ -213,7 +210,7 @@ namespace Fallen8.API.Service.REST
                                        };
 
                 binding.ReaderQuotas = readerQuotas;
-				
+
                 var se = _host.AddServiceEndpoint(typeof (IFallen8RESTService), binding, restServiceAddress);
                 var webBehav = new WebHttpBehavior
                                    {
@@ -235,10 +232,8 @@ namespace Fallen8.API.Service.REST
             _isRunning = true;
             _startTime = DateTime.Now;
             _description += Environment.NewLine + "   -> Service is started at " + uri + "/" + restServiceAddress;
-
         }
 
         #endregion
     }
 }
-

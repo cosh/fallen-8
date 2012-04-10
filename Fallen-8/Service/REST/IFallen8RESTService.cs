@@ -23,23 +23,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using System.IO;
 
 namespace Fallen8.API.Service.REST
 {
-	/// <summary>
-	/// The Fallen-8 REST service.
-	/// </summary>
+    /// <summary>
+    ///   The Fallen-8 REST service.
+    /// </summary>
     [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8RESTService")]
-	public interface IFallen8RESTService
-	{
-		#region Import
-       
-		/// <summary>
+    public interface IFallen8RESTService
+    {
+        #region Import
+
+        /// <summary>
         ///   Adds a vertex to the Fallen-8
         /// </summary>
         /// <param name="definition"> The vertex specification </param>
@@ -59,136 +60,133 @@ namespace Fallen8.API.Service.REST
             ResponseFormat = WebMessageFormat.Json)]
         Int32 AddEdge(EdgeSpecification definition);
 
-		#endregion
-		
-		#region Selection
-		
-		/// <summary>
-        /// Returns all vertex properties
+        #endregion
+
+        #region Selection
+
+        /// <summary>
+        ///   Returns all vertex properties
         /// </summary>
-        /// <param name="vertexIdentifier">The vertex identifier</param>
-        /// <returns>PropertyName -> PropertyValue</returns>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <returns> PropertyName -> PropertyValue </returns>
         [OperationContract(Name = "VertexProperties")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-		Fallen8RESTProperties GetAllVertexProperties(String vertexIdentifier);
-        
-		/// <summary>
-        /// Returns all edge properties
+        Fallen8RESTProperties GetAllVertexProperties(String vertexIdentifier);
+
+        /// <summary>
+        ///   Returns all edge properties
         /// </summary>
-        /// <param name="edgeIdentifier">The edge identifier</param>
-        /// <returns>PropertyId -> PropertyValue</returns>
+        /// <param name="edgeIdentifier"> The edge identifier </param>
+        /// <returns> PropertyId -> PropertyValue </returns>
         [OperationContract(Name = "EdgeProperties")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
         Fallen8RESTProperties GetAllEdgeProperties(String edgeIdentifier);
-		
+
         /// <summary>
-        /// Returns all available outgoing edges for a given vertex
+        ///   Returns all available outgoing edges for a given vertex
         /// </summary>
-        /// <param name="vertexIdentifier">The vertex identifier</param>
-        /// <returns>List of available incoming edge property ids</returns>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <returns> List of available incoming edge property ids </returns>
         [OperationContract(Name = "AvailableOutEdges")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/AvailableOutEdges", ResponseFormat = WebMessageFormat.Json)]
         List<UInt16> GetAllAvailableOutEdgesOnVertex(String vertexIdentifier);
-		
-		/// <summary>
-        /// Returns all available incoming edges for a given vertex
+
+        /// <summary>
+        ///   Returns all available incoming edges for a given vertex
         /// </summary>
-        /// <param name="vertexIdentifier">The vertex identifier</param>
-        /// <returns>List of available incoming edge property ids</returns>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <returns> List of available incoming edge property ids </returns>
         [OperationContract(Name = "AvailableInEdges")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/AvailableInEdges", ResponseFormat = WebMessageFormat.Json)]
         List<UInt16> GetAllAvailableIncEdgesOnVertex(String vertexIdentifier);
-		
+
         /// <summary>
-        /// Returns all outgoing edges for a given edge property
+        ///   Returns all outgoing edges for a given edge property
         /// </summary>
-        /// <param name="vertexIdentifier">The vertex identifier</param>
-        /// <param name="edgePropertyIdentifier">The edge property identifier</param>
-        /// <returns>List of edge ids</returns>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
+        /// <returns> List of edge ids </returns>
         [OperationContract(Name = "OutEdges")]
-        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutEdges/{edgePropertyIdentifier}", ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutEdges/{edgePropertyIdentifier}",
+            ResponseFormat = WebMessageFormat.Json)]
         List<Int32> GetOutgoingEdges(String vertexIdentifier, String edgePropertyIdentifier);
 
         /// <summary>
-        /// Returns all incoming edges for a given edge property
+        ///   Returns all incoming edges for a given edge property
         /// </summary>
-        /// <param name="vertexIdentifier">The vertex identifier</param>
-        /// <param name="edgePropertyIdentifier">The edge property identifier</param>
-        /// <returns>List of edge ids</returns>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
+        /// <returns> List of edge ids </returns>
         [OperationContract(Name = "IncEdges")]
-        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/IncEdges/{edgePropertyIdentifier}", ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/IncEdges/{edgePropertyIdentifier}",
+            ResponseFormat = WebMessageFormat.Json)]
         List<Int32> GetIncomingEdges(String vertexIdentifier, String edgePropertyIdentifier);
 
-		#endregion
-		
+        #endregion
+
         #region misc
 
         /// <summary>
-        /// Trims the database
+        ///   Trims the database
         /// </summary>
         [OperationContract(Name = "Trim")]
         [WebGet(UriTemplate = "/Trim", ResponseFormat = WebMessageFormat.Json)]
         void Trim();
-		
-		/// <summary>
-        /// Status of the database
+
+        /// <summary>
+        ///   Status of the database
         /// </summary>
-        /// <returns>The status</returns>
+        /// <returns> The status </returns>
         [OperationContract(Name = "Status")]
         [WebGet(UriTemplate = "/Status", ResponseFormat = WebMessageFormat.Json)]
         Fallen8Status Status();
 
         #endregion
-		
-		#region frontend
-		
-		/// <summary>
-		/// Gets the frontend.
-		/// </summary>
-		/// <returns>
-		/// The frontend.
-		/// </returns>
-		[OperationContract(Name = "Frontend")]
+
+        #region frontend
+
+        /// <summary>
+        ///   Gets the frontend.
+        /// </summary>
+        /// <returns> The frontend. </returns>
+        [OperationContract(Name = "Frontend")]
         [WebGet(UriTemplate = "/Frontend")]
         Stream GetFrontend();
 
         /// <summary>
-        /// Reload the frontend.
+        ///   Reload the frontend.
         /// </summary>
         [OperationContract(Name = "ReloadFrontend")]
         [WebGet(UriTemplate = "/ReloadFrontend")]
         void ReloadFrontend();
-		
-		/// <summary>
-        /// Gets the frontend ressources.
+
+        /// <summary>
+        ///   Gets the frontend ressources.
         /// </summary>
-        /// <returns>
-        /// The frontend ressources.
-        /// </returns>
-        /// <param name='ressourceName'>
-        /// Ressource name.
-        /// </param>
-		[OperationContract(Name = "FrontendRessource")]
+        /// <returns> The frontend ressources. </returns>
+        /// <param name='ressourceName'> Ressource name. </param>
+        [OperationContract(Name = "FrontendRessource")]
         [WebGet(UriTemplate = "/Frontend/Ressource/{ressourceName}")]
-		Stream GetFrontendRessources(String ressourceName);
-		
-		#endregion
+        Stream GetFrontendRessources(String ressourceName);
+
+        #endregion
 
         #region scan
 
         /// <summary>
-        /// Full graph scan for graph elements
+        ///   Full graph scan for graph elements
         /// </summary>
         /// <param name="propertyId"> The property identifier </param>
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "GraphScan")]
-        [WebInvoke(UriTemplate = "/GraphScan?propertyId={propertyId}", Method = "POST", RequestFormat = WebMessageFormat.Json,
+        [WebInvoke(UriTemplate = "/GraphScan?propertyId={propertyId}", Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> GraphScan(String propertyId, ScanSpecification definition);
 
         /// <summary>
-        /// Index scan for graph elements
+        ///   Index scan for graph elements
         /// </summary>
         /// <param name="indexId"> The index identifier </param>
         /// <param name="definition"> The scan specification </param>
@@ -199,13 +197,14 @@ namespace Fallen8.API.Service.REST
         IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
 
         /// <summary>
-        /// Scan for graph elements by a specified property range.
+        ///   Scan for graph elements by a specified property range.
         /// </summary>
         /// <param name="indexId"> The index identifier </param>
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "RangeIndexScan")]
-        [WebInvoke(UriTemplate = "/RangeIndexScan?indexId={indexId}", Method = "POST", RequestFormat = WebMessageFormat.Json,
+        [WebInvoke(UriTemplate = "/RangeIndexScan?indexId={indexId}", Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
 
@@ -214,24 +213,23 @@ namespace Fallen8.API.Service.REST
         #region persistence
 
         /// <summary>
-        /// Loads a Fallen-8
+        ///   Loads a Fallen-8
         /// </summary>
         /// <param name="saveGame"> The Fallen-8 save game </param>
         [OperationContract(Name = "Load")]
         [WebInvoke(UriTemplate = "/Load", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         void Load(Stream saveGame);
-        
+
         /// <summary>
-        /// Saves the Fallen-8
+        ///   Saves the Fallen-8
         /// </summary>
-        /// <returns>Stream</returns>
+        /// <returns> Stream </returns>
         [OperationContract(Name = "Save")]
-        [WebGet(UriTemplate = "/Save?numberOfPartitions={numberOfPartitions}", RequestFormat = WebMessageFormat.Json, 
+        [WebGet(UriTemplate = "/Save?numberOfPartitions={numberOfPartitions}", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Stream Save(String numberOfPartitions);
 
         #endregion
     }
 }
-

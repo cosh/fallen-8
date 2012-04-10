@@ -23,13 +23,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
-	/// <summary>
+    /// <summary>
     ///   The edge specification
     /// </summary>
     [DataContract]
@@ -40,25 +41,25 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         [DataMember]
         public UInt32 CreationDate { get; set; }
-		
-		/// <summary>
+
+        /// <summary>
         ///   The source vertex
         /// </summary>
         [DataMember]
         public Int32 SourceVertex { get; set; }
-		
-		/// <summary>
+
+        /// <summary>
         ///   The target vertex
         /// </summary>
         [DataMember]
         public Int32 TargetVertex { get; set; }
-	
-		/// <summary>
+
+        /// <summary>
         ///   The edge property identifier
         /// </summary>
         [DataMember]
         public UInt16 EdgePropertyId { get; set; }
-		
+
         /// <summary>
         ///   The properties of the vertex
         /// </summary>
@@ -66,4 +67,3 @@ namespace Fallen8.API.Service.REST
         public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
     }
 }
-

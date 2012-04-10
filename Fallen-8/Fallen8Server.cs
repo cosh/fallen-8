@@ -23,9 +23,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Fallen8.API.Log;
 using Fallen8.API.Plugin;
 using Fallen8.API.Service;
@@ -33,43 +34,43 @@ using Fallen8.API.Service;
 namespace Fallen8.API
 {
     /// <summary>
-    /// Fallen8 server.
+    ///   Fallen8 server.
     /// </summary>
     public sealed class Fallen8Server : IDisposable
     {
         #region Data
-        
+
         /// <summary>
-        /// The services.
+        ///   The services.
         /// </summary>
-        public List<IFallen8Service> Services; 
-        
+        public List<IFallen8Service> Services;
+
         /// <summary>
-        /// The Fallen-8.
+        ///   The Fallen-8.
         /// </summary>
         public Fallen8 Fallen8;
-        
+
         #endregion
-        
+
         #region Constructor
-        
+
         /// <summary>
-        /// Initializes a new instance of the Fallen8Server class.
+        ///   Initializes a new instance of the Fallen8Server class.
         /// </summary>
-        public Fallen8Server ()
+        public Fallen8Server()
         {
             Services = new List<IFallen8Service>();
             Fallen8 = new Fallen8();
         }
-        
+
         #endregion
-        
+
         #region public methods
 
         /// <summary>
-        /// Shutdown this Fallen-8 server.
+        ///   Shutdown this Fallen-8 server.
         /// </summary>
-        public void Shutdown ()
+        public void Shutdown()
         {
             for (var i = 0; i < Services.Count; i++)
             {
@@ -78,39 +79,32 @@ namespace Fallen8.API
         }
 
         /// <summary>
-        /// Gets the available service plugins.
+        ///   Gets the available service plugins.
         /// </summary>
-        /// <returns>
-        /// The available service plugins.
-        /// </returns>
-        public IEnumerable<String> GetAvailableServicePlugins ()
+        /// <returns> The available service plugins. </returns>
+        public IEnumerable<String> GetAvailableServicePlugins()
         {
             Dictionary<String, string> result;
 
             Fallen8PluginFactory.TryGetAvailablePluginsWithDescriptions<IFallen8Service>(out result);
-            
+
             return result.Select(_ => _.Value);
         }
 
         /// <summary>
-        /// Tries to start a service.
+        ///   Tries to start a service.
         /// </summary>
-        /// <returns>
-        /// True for success.
-        /// </returns>
-        /// <param name='service'>
-        /// The launched service.
-        /// </param>
-        /// <param name='servicePluginName'>
-        /// The name of this service.
-        /// </param>
-        /// <param name='parameter'>
-        /// The parameters of this service.
-        /// </param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Fallen8.API.Log.Logger.LogError(System.String)")]
-        public bool TryStartService(out IFallen8Service service, string servicePluginName, IDictionary<string, object> parameter)
+        /// <returns> True for success. </returns>
+        /// <param name='service'> The launched service. </param>
+        /// <param name='servicePluginName'> The name of this service. </param>
+        /// <param name='parameter'> The parameters of this service. </param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization",
+            "CA1303:Do not pass literals as localized parameters",
+            MessageId = "Fallen8.API.Log.Logger.LogError(System.String)")]
+        public bool TryStartService(out IFallen8Service service, string servicePluginName,
+                                    IDictionary<string, object> parameter)
         {
-            if (Fallen8PluginFactory.TryFindPlugin<IFallen8Service>(out service, servicePluginName))
+            if (Fallen8PluginFactory.TryFindPlugin(out service, servicePluginName))
             {
                 try
                 {
@@ -122,7 +116,9 @@ namespace Fallen8.API
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError(String.Format("The Fallen-8 server was not able to start the {0} service plugin. Message: {1}", servicePluginName, e.Message));
+                    Logger.LogError(
+                        String.Format("The Fallen-8 server was not able to start the {0} service plugin. Message: {1}",
+                                      servicePluginName, e.Message));
                     service = null;
                     return false;
                 }
@@ -148,4 +144,3 @@ namespace Fallen8.API
         #endregion
     }
 }
-

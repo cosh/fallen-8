@@ -28,11 +28,10 @@ using System;
 
 namespace Fallen8.API.Index.Spatial
 {
-	/// <summary>
-	/// Geometry interface.
-	/// </summary>
-	public interface IGeometry : IComparable
-	{
-	}
+    /// <summary>
+    ///   Geometry interface.
+    /// </summary>
+    public interface IGeometry : IComparable
+    {
+    }
 }
-

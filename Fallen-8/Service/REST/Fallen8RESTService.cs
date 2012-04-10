@@ -23,26 +23,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using Fallen8.API.Model;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using Fallen8.API.Plugin;
-using Fallen8.API.Index;
+using System.IO;
+using System.Linq;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
 using Fallen8.API.Algorithms.Path;
 using Fallen8.API.Helper;
-using System.IO;
-using System.ServiceModel.Web;
+using Fallen8.API.Index;
+using Fallen8.API.Model;
+using Fallen8.API.Plugin;
 using Fallen8.API.Service.REST.Ressource;
-using System.Text;
 
 namespace Fallen8.API.Service.REST
 {
     /// <summary>
-    /// Fallen-8 REST service.
+    ///   Fallen-8 REST service.
     /// </summary>
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
     public sealed class Fallen8RESTService : IFallen8RESTService, IDisposable
     {
         #region Data
@@ -51,32 +54,30 @@ namespace Fallen8.API.Service.REST
         ///   The internal Fallen-8 instance
         /// </summary>
         private readonly Fallen8 _fallen8;
-        
+
         /// <summary>
-        /// The ressources.
+        ///   The ressources.
         /// </summary>
         private Dictionary<String, MemoryStream> _ressources;
 
         /// <summary>
-        /// The html befor the code injection
+        ///   The html befor the code injection
         /// </summary>
         private String _frontEndPre;
 
         /// <summary>
-        /// The html after the code injection
+        ///   The html after the code injection
         /// </summary>
         private String _frontEndPost;
-        
+
         #endregion
-        
+
         #region Constructor
-        
+
         /// <summary>
-        /// Initializes a new instance of the Fallen8RESTService class.
+        ///   Initializes a new instance of the Fallen8RESTService class.
         /// </summary>
-        /// <param name='fallen8'>
-        /// Fallen-8.
-        /// </param>
+        /// <param name='fallen8'> Fallen-8. </param>
         public Fallen8RESTService(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
@@ -84,7 +85,7 @@ namespace Fallen8.API.Service.REST
         }
 
         #endregion
-        
+
         #region IDisposable Members
 
         public void Dispose()
@@ -95,8 +96,8 @@ namespace Fallen8.API.Service.REST
         #endregion
 
         #region IFallen8RESTService implementation
-        
-        public int AddVertex (VertexSpecification definition)
+
+        public int AddVertex(VertexSpecification definition)
         {
             #region initial checks
 
@@ -106,11 +107,11 @@ namespace Fallen8.API.Service.REST
             }
 
             #endregion
-            
+
             return _fallen8.CreateVertex(definition.CreationDate, GenerateProperties(definition.Properties)).Id;
         }
 
-        public int AddEdge (EdgeSpecification definition)
+        public int AddEdge(EdgeSpecification definition)
         {
             #region initial checks
 
@@ -118,41 +119,47 @@ namespace Fallen8.API.Service.REST
             {
                 throw new ArgumentNullException("definition");
             }
-        
+
             #endregion
 
-            return _fallen8.CreateEdge(definition.SourceVertex, definition.EdgePropertyId, definition.TargetVertex, definition.CreationDate, GenerateProperties(definition.Properties)).Id;
+            return
+                _fallen8.CreateEdge(definition.SourceVertex, definition.EdgePropertyId, definition.TargetVertex,
+                                    definition.CreationDate, GenerateProperties(definition.Properties)).Id;
         }
 
-        public Fallen8RESTProperties GetAllVertexProperties (string vertexIdentifier)
+        public Fallen8RESTProperties GetAllVertexProperties(string vertexIdentifier)
         {
-            return GetGraphElementProperties (vertexIdentifier);
+            return GetGraphElementProperties(vertexIdentifier);
         }
 
-        public Fallen8RESTProperties GetAllEdgeProperties (string edgeIdentifier)
+        public Fallen8RESTProperties GetAllEdgeProperties(string edgeIdentifier)
         {
-            return GetGraphElementProperties (edgeIdentifier);
+            return GetGraphElementProperties(edgeIdentifier);
         }
 
-        public List<ushort> GetAllAvailableOutEdgesOnVertex (string vertexIdentifier)
-        {
-            VertexModel vertex;
-            return _fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)) ? vertex.GetOutgoingEdgeIds() : null;
-        }
-
-        public List<ushort> GetAllAvailableIncEdgesOnVertex (string vertexIdentifier)
+        public List<ushort> GetAllAvailableOutEdgesOnVertex(string vertexIdentifier)
         {
             VertexModel vertex;
-            return _fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)) ? vertex.GetIncomingEdgeIds() : null;
+            return _fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))
+                       ? vertex.GetOutgoingEdgeIds()
+                       : null;
         }
 
-        public List<int> GetOutgoingEdges (string vertexIdentifier, string edgePropertyIdentifier)
+        public List<ushort> GetAllAvailableIncEdgesOnVertex(string vertexIdentifier)
         {
             VertexModel vertex;
-            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))) 
+            return _fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))
+                       ? vertex.GetIncomingEdgeIds()
+                       : null;
+        }
+
+        public List<int> GetOutgoingEdges(string vertexIdentifier, string edgePropertyIdentifier)
+        {
+            VertexModel vertex;
+            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
-                if (vertex.TryGetOutEdge(out edges, Convert.ToInt32(edgePropertyIdentifier))) 
+                if (vertex.TryGetOutEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
                 {
                     return edges.Select(_ => _.Id).ToList();
                 }
@@ -160,13 +167,13 @@ namespace Fallen8.API.Service.REST
             return null;
         }
 
-        public List<int> GetIncomingEdges (string vertexIdentifier, string edgePropertyIdentifier)
+        public List<int> GetIncomingEdges(string vertexIdentifier, string edgePropertyIdentifier)
         {
             VertexModel vertex;
-            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier))) 
+            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
-                if (vertex.TryGetInEdges(out edges, Convert.ToInt32(edgePropertyIdentifier))) 
+                if (vertex.TryGetInEdges(out edges, Convert.ToInt32(edgePropertyIdentifier)))
                 {
                     return edges.Select(_ => _.Id).ToList();
                 }
@@ -174,43 +181,43 @@ namespace Fallen8.API.Service.REST
             return null;
         }
 
-        public void Trim ()
+        public void Trim()
         {
             _fallen8.Trim();
         }
 
-        public Fallen8Status Status ()
+        public Fallen8Status Status()
         {
             var currentProcess = Process.GetCurrentProcess();
             var totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
-            
+
             var freeMem = new PerformanceCounter("Memory", "Available Bytes");
             var freeBytesOfMemory = Convert.ToInt64(freeMem.NextValue());
-            
+
             var vertexCount = _fallen8.GetVertices().Count;
             var edgeCount = _fallen8.GetEdges().Count;
-            
+
             IEnumerable<String> availableIndices;
             Fallen8PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);
-            
+
             IEnumerable<String> availablePathAlgos;
             Fallen8PluginFactory.TryGetAvailablePlugins<IShortestPathAlgorithm>(out availablePathAlgos);
-            
+
             IEnumerable<String> availableServices;
             Fallen8PluginFactory.TryGetAvailablePlugins<IFallen8Service>(out availableServices);
-            
+
             return new Fallen8Status
-            {
-                AvailableIndexPlugins = new List<String>(availableIndices),
-                AvailablePathPlugins = new List<String>(availablePathAlgos),
-                AvailableServicePlugins = new List<String>(availableServices),
-                EdgeCount = edgeCount,
-                VertexCount = vertexCount,
-                UsedMemory = totalBytesOfMemoryUsed,
-                FreeMemory = freeBytesOfMemory
-            };
+                       {
+                           AvailableIndexPlugins = new List<String>(availableIndices),
+                           AvailablePathPlugins = new List<String>(availablePathAlgos),
+                           AvailableServicePlugins = new List<String>(availableServices),
+                           EdgeCount = edgeCount,
+                           VertexCount = vertexCount,
+                           UsedMemory = totalBytesOfMemoryUsed,
+                           FreeMemory = freeBytesOfMemory
+                       };
         }
-        
+
         public Stream GetFrontend()
         {
             if (WebOperationContext.Current != null)
@@ -223,7 +230,7 @@ namespace Fallen8.API.Service.REST
 
                 sb.Append(_frontEndPre);
                 sb.Append(Environment.NewLine);
-                sb.AppendLine("var baseUri = \"" + baseUri.ToString() + "\";" + Environment.NewLine);
+                sb.AppendLine("var baseUri = \"" + baseUri + "\";" + Environment.NewLine);
                 sb.Append(_frontEndPost);
 
                 return new MemoryStream(Encoding.UTF8.GetBytes(sb.ToString()));
@@ -240,7 +247,7 @@ namespace Fallen8.API.Service.REST
         public Stream GetFrontendRessources(String ressourceName)
         {
             MemoryStream ressourceStream;
-            if (_ressources.TryGetValue(ressourceName, out ressourceStream)) 
+            if (_ressources.TryGetValue(ressourceName, out ressourceStream))
             {
                 var result = new MemoryStream();
                 var buffer = new byte[32768];
@@ -287,7 +294,7 @@ namespace Fallen8.API.Service.REST
 
                 return result;
             }
-            
+
             return null;
         }
 
@@ -304,11 +311,14 @@ namespace Fallen8.API.Service.REST
 
             var propertyId = Convert.ToUInt16(propertyIdString);
 
-            var value = (IComparable)Convert.ChangeType(definition.Literal.Value,
-                                           Type.GetType(definition.Literal.FullQualifiedTypeName, true, true));
+            var value = (IComparable) Convert.ChangeType(definition.Literal.Value,
+                                                         Type.GetType(definition.Literal.FullQualifiedTypeName, true,
+                                                                      true));
 
             List<AGraphElement> graphElements;
-            return _fallen8.GraphScan(out graphElements, propertyId, value, definition.Operator) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();
+            return _fallen8.GraphScan(out graphElements, propertyId, value, definition.Operator)
+                       ? CreateResult(graphElements, definition.ResultType)
+                       : Enumerable.Empty<Int32>();
         }
 
         public IEnumerable<int> IndexScan(string indexId, ScanSpecification definition)
@@ -322,11 +332,14 @@ namespace Fallen8.API.Service.REST
 
             #endregion
 
-            var value = (IComparable)Convert.ChangeType(definition.Literal.Value,
-                                          Type.GetType(definition.Literal.FullQualifiedTypeName, true, true));
+            var value = (IComparable) Convert.ChangeType(definition.Literal.Value,
+                                                         Type.GetType(definition.Literal.FullQualifiedTypeName, true,
+                                                                      true));
 
             ReadOnlyCollection<AGraphElement> graphElements;
-            return _fallen8.IndexScan(out graphElements, indexId, value, definition.Operator) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();
+            return _fallen8.IndexScan(out graphElements, indexId, value, definition.Operator)
+                       ? CreateResult(graphElements, definition.ResultType)
+                       : Enumerable.Empty<Int32>();
         }
 
         public IEnumerable<int> RangeIndexScan(string indexId, RangeScanSpecification definition)
@@ -340,14 +353,17 @@ namespace Fallen8.API.Service.REST
 
             #endregion
 
-            var left = (IComparable)Convert.ChangeType(definition.LeftLimit,
-                                          Type.GetType(definition.FullQualifiedTypeName, true, true));
+            var left = (IComparable) Convert.ChangeType(definition.LeftLimit,
+                                                        Type.GetType(definition.FullQualifiedTypeName, true, true));
 
-            var right = (IComparable)Convert.ChangeType(definition.RightLimit,
-                                          Type.GetType(definition.FullQualifiedTypeName, true, true));
+            var right = (IComparable) Convert.ChangeType(definition.RightLimit,
+                                                         Type.GetType(definition.FullQualifiedTypeName, true, true));
 
             ReadOnlyCollection<AGraphElement> graphElements;
-            return _fallen8.RangeIndexScan(out graphElements, indexId, left, right, definition.IncludeLeft, definition.IncludeRight) ? CreateResult(graphElements, definition.ResultType) : Enumerable.Empty<Int32>();            
+            return _fallen8.RangeIndexScan(out graphElements, indexId, left, right, definition.IncludeLeft,
+                                           definition.IncludeRight)
+                       ? CreateResult(graphElements, definition.ResultType)
+                       : Enumerable.Empty<Int32>();
         }
 
         public void Load(Stream saveGame)
@@ -361,16 +377,17 @@ namespace Fallen8.API.Service.REST
         }
 
         #endregion
-        
+
         #region private helper
 
         /// <summary>
-        /// Creats the result
+        ///   Creats the result
         /// </summary>
-        /// <param name="graphElements">The graph elements</param>
-        /// <param name="resultTypeSpecification">The result specification</param>
-        /// <returns></returns>
-        private static IEnumerable<int> CreateResult(IEnumerable<AGraphElement> graphElements, ResultTypeSpecification resultTypeSpecification)
+        /// <param name="graphElements"> The graph elements </param>
+        /// <param name="resultTypeSpecification"> The result specification </param>
+        /// <returns> </returns>
+        private static IEnumerable<int> CreateResult(IEnumerable<AGraphElement> graphElements,
+                                                     ResultTypeSpecification resultTypeSpecification)
         {
             switch (resultTypeSpecification)
             {
@@ -389,7 +406,7 @@ namespace Fallen8.API.Service.REST
         }
 
         /// <summary>
-        /// Load the frontend
+        ///   Load the frontend
         /// </summary>
         private void LoadFrontend()
         {
@@ -407,9 +424,9 @@ namespace Fallen8.API.Service.REST
         }
 
         /// <summary>
-        /// Find all ressources
+        ///   Find all ressources
         /// </summary>
-        /// <returns>Ressources</returns>
+        /// <returns> Ressources </returns>
         private static Dictionary<string, MemoryStream> FindRessources()
         {
             var ressourceDirectory = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + "Service" +
@@ -424,10 +441,10 @@ namespace Fallen8.API.Service.REST
         }
 
         /// <summary>
-        /// Creates a memory stream from a file
+        ///   Creates a memory stream from a file
         /// </summary>
-        /// <param name="value">The path of the file</param>
-        /// <returns>MemoryStream</returns>
+        /// <param name="value"> The path of the file </param>
+        /// <returns> MemoryStream </returns>
         private static MemoryStream CreateMemoryStreamFromFile(string value)
         {
             MemoryStream result;
@@ -435,71 +452,70 @@ namespace Fallen8.API.Service.REST
             using (var file = File.OpenRead(value))
             {
                 var reader = new BinaryReader(file);
-                result = new MemoryStream(reader.ReadBytes((Int32)file.Length));
+                result = new MemoryStream(reader.ReadBytes((Int32) file.Length));
             }
 
             return result;
         }
 
         /// <summary>
-        /// Generates the properties.
+        ///   Generates the properties.
         /// </summary>
-        /// <returns>
-        /// The properties.
-        /// </returns>
-        /// <param name='propertySpecification'>
-        /// Property specification.
-        /// </param>
-        private static PropertyContainer[] GenerateProperties (Dictionary<UInt16, PropertySpecification> propertySpecification)
+        /// <returns> The properties. </returns>
+        /// <param name='propertySpecification'> Property specification. </param>
+        private static PropertyContainer[] GenerateProperties(
+            Dictionary<UInt16, PropertySpecification> propertySpecification)
         {
             PropertyContainer[] properties = null;
-            
+
             if (propertySpecification != null)
             {
                 var propCounter = 0;
                 properties = new PropertyContainer[propertySpecification.Count];
-                
+
                 foreach (var aPropertyDefinition in propertySpecification)
                 {
-                    properties[propCounter] = new PropertyContainer 
-                    { 
-                        PropertyId = aPropertyDefinition.Key, 
-                        Value = Convert.ChangeType(aPropertyDefinition.Value.Property, Type.GetType(aPropertyDefinition.Value.TypeName, true, true)) 
-                    };
+                    properties[propCounter] = new PropertyContainer
+                                                  {
+                                                      PropertyId = aPropertyDefinition.Key,
+                                                      Value =
+                                                          Convert.ChangeType(aPropertyDefinition.Value.Property,
+                                                                             Type.GetType(
+                                                                                 aPropertyDefinition.Value.TypeName,
+                                                                                 true, true))
+                                                  };
                     propCounter++;
                 }
             }
-        
+
             return properties;
         }
-        
+
         /// <summary>
-        /// Gets the graph element properties.
+        ///   Gets the graph element properties.
         /// </summary>
-        /// <returns>
-        /// The graph element properties.
-        /// </returns>
-        /// <param name='vertexIdentifier'>
-        /// Vertex identifier.
-        /// </param>
-        private Fallen8RESTProperties GetGraphElementProperties (string vertexIdentifier)
+        /// <returns> The graph element properties. </returns>
+        /// <param name='vertexIdentifier'> Vertex identifier. </param>
+        private Fallen8RESTProperties GetGraphElementProperties(string vertexIdentifier)
         {
             AGraphElement vertex;
-            if (_fallen8.TryGetGraphElement(out vertex, Convert.ToInt32(vertexIdentifier))) 
+            if (_fallen8.TryGetGraphElement(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
-                return new Fallen8RESTProperties 
-                {
-                    Id = vertex.Id,
-                    CreationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),
-                    ModificationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate + vertex.ModificationDate),
-                    Properties = vertex.GetAllProperties().ToDictionary(key => key.PropertyId, value => value.Value.ToString())
-                };
+                return new Fallen8RESTProperties
+                           {
+                               Id = vertex.Id,
+                               CreationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),
+                               ModificationDate =
+                                   Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate + vertex.ModificationDate),
+                               Properties =
+                                   vertex.GetAllProperties().ToDictionary(key => key.PropertyId,
+                                                                          value => value.Value.ToString())
+                           };
             }
-            
+
             return null;
         }
-        
+
         #endregion
     }
 }
-

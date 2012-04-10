@@ -23,46 +23,45 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
 using Fallen8.API.Model;
 
 namespace Fallen8.API.Persistency
 {
     /// <summary>
-    /// Edge sneak peak.
+    ///   Edge sneak peak.
     /// </summary>
     public struct EdgeSneakPeak
     {
         /// <summary>
-        /// The identifier of the edge.
+        ///   The identifier of the edge.
         /// </summary>
         public Int32 Id;
-        
+
         /// <summary>
-        /// The creation date.
+        ///   The creation date.
         /// </summary>
         public UInt32 CreationDate;
-        
+
         /// <summary>
-        /// The modification date.
+        ///   The modification date.
         /// </summary>
         public UInt32 ModificationDate;
-        
+
         /// <summary>
-        /// The properties.
+        ///   The properties.
         /// </summary>
         public PropertyContainer[] Properties;
-        
+
         /// <summary>
-        /// The source vertex identifier.
+        ///   The source vertex identifier.
         /// </summary>
         public Int32 SourceVertexId;
-        
+
         /// <summary>
-        /// The target vertex identifier.
+        ///   The target vertex identifier.
         /// </summary>
         public Int32 TargetVertexId;
     }
 }
-

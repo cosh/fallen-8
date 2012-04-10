@@ -28,29 +28,22 @@ using System.Runtime.Serialization;
 
 namespace Fallen8.API.Expression
 {
-	/// <summary>
-	/// Binary operator.
-	/// </summary>
+    /// <summary>
+    ///   Binary operator.
+    /// </summary>
     [DataContract]
-	public enum BinaryOperator
-	{
-        [EnumMember(Value = "==")]
-		Equals,
-        
-        [EnumMember(Value = ">")]
-        Greater,
-        
-        [EnumMember(Value = ">=")]
-		GreaterOrEquals,
+    public enum BinaryOperator
+    {
+        [EnumMember(Value = "==")] Equals,
 
-        [EnumMember(Value = "<")]
-        Lower,
+        [EnumMember(Value = ">")] Greater,
 
-        [EnumMember(Value = "<=")]
-		LowerOrEquals,
+        [EnumMember(Value = ">=")] GreaterOrEquals,
 
-        [EnumMember(Value = "!=")]
-        NotEquals
-	}
+        [EnumMember(Value = "<")] Lower,
+
+        [EnumMember(Value = "<=")] LowerOrEquals,
+
+        [EnumMember(Value = "!=")] NotEquals
+    }
 }
-
