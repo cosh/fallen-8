@@ -144,6 +144,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Service\REST\Ressource\style_explore.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Service\REST\Ressource\style.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -156,6 +159,9 @@
     <Content Include="Service\REST\Ressource\Explore.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Service\REST\Ressource\f8Helper.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Service\REST\Ressource\graphics.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -44,7 +44,8 @@
 </div>
 
 <script type="text/javascript">
-var statusUri = "http://localhost:2323/Fallen8/REST/Status";
+    var statusUri = "http://localhost:2323/Fallen8/REST/Status";
+    var f8Uri = "http://localhost:2323/Fallen8/REST/";
 //production
     $("#server_url").text(baseUri);
     d3.json(statusUri, function (json) {

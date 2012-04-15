@@ -82,8 +82,9 @@ rect {
   padding-right: 20px;
 }
 #misc {
-	padding-left:90px;
+	padding-left:93px;
 	padding-right:50px;
+	margin-top: 5px;
 }
 .container {
 margin: 30px auto;

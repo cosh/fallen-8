@@ -1,6 +1,5 @@
-<!--
-// 
-// Explore.htm
+﻿// 
+// f8Helper.js
 //  
 // Author:
 //       Sebastian Dechant <s3bbi@fallen-8.com>
@@ -24,19 +23,46 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
--->
-<link rel="stylesheet" type="text/css" href="Frontend/Ressource/style_explore.css">
-<div id="searchBox">
-    <input id="searchval" type="search" placeholder="Search a Node ( Only ID acutally ) to start Explorer...  ( and please Click 'Submit' ... Enter dont works :-P )" />
-    <input id="submitsearch" type="submit" value="Submit" />
-</div>
 
-      <canvas id="viewport" height="750" width="1200"></canvas>
-      <script language="javascript" type="text/javascript">
-          $("#submitsearch").click(function () {
-              getVertex($("#searchval").val());
-          });
-              var sys = arbor.ParticleSystem(1000, 100, 0.5, true, 30, 0.015, 0.5);
-              sys.renderer = Renderer("#viewport");
 
-      </script>
+function getVertex(id)
+{
+    $.get(f8Uri + "Vertices/" + id + "/Properties",
+        function (data) {
+            if (data != "") {
+                var newNodes = {};
+                newNodes.nodes = {};
+                newNodes.edges = {};
+                newNodes.nodes[data.Id] = { alone: true, 'label': "Id: " + data.Id };
+                //
+                expandNode(id, newNodes);
+                sys.graft();
+            }
+        });
+}
+
+function expandNode(id, toAdd) {
+    var tempEdges = [];
+    $.get(f8Uri + "Vertices/" + id + "/AvailableOutEdges", function (data) { getAllEdges(data); });
+
+    function getAllEdges(data) {
+        for (var count in data) {
+            $.get(f8Uri + "Vertices/" + id + "/OutEdges/"+data[count], function (data) { addEdges(data); });
+        }
+        sys.graft(toAdd);
+    }
+
+    function addEdges(data) {
+        for (var count in data) {
+            sys.addEdge(id, data[count]);
+            $.get(f8Uri + "Vertices/" + data[count] + "/Properties",
+             function (data) {
+                 sys.addNode(data.Id, { 'label': "Id: "+data.Id });
+             });
+        }
+        
+    }
+        
+
+
+}

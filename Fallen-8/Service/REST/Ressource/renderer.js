@@ -1,7 +1,7 @@
 (function () {
 
     Renderer = function (canvas) {
-        var canvas = $(canvas).get(0)
+        var canvas = $(canvas).get(0);
         var ctx = canvas.getContext("2d");
         var gfx = arbor.Graphics(canvas)
         var particleSystem = null
@@ -18,7 +18,7 @@
             redraw: function () {
                 if (!particleSystem) return
 
-                gfx.clear() // convenience ƒ: clears the whole canvas rect
+                gfx.clear(); // convenience ƒ: clears the whole canvas rect
 
                 // draw the nodes & save their bounds for edge drawing
                 var nodeBoxes = {}
@@ -160,17 +160,28 @@
 
                     dropped: function (e) {
                         if (dragged === null || dragged.node === undefined) return
-                        if (dragged.node !== null) dragged.node.fixed = false
+
                         dragged.node.tempMass = 1000
+                        dragged.node.fixed = true
                         dragged = null
                         selected = null
                         $(canvas).unbind('mousemove', handler.dragged)
                         $(window).unbind('mouseup', handler.dropped)
                         _mouseP = null
                         return false
+                    },
+                    doubleclicked: function (e) {
+                        var pos = $(canvas).offset();
+                        _mouseP = arbor.Point(e.pageX - pos.left, e.pageY - pos.top)
+                        selected = particleSystem.nearest(_mouseP);
+                        if (selected.distance < 25) {
+                            expandNode(selected.node.name);
+                            alert("doubleclick");
+                        }
                     }
                 }
                 $(canvas).mousedown(handler.clicked);
+                $(canvas).dblclick(handler.doubleclicked);
 
             }
 

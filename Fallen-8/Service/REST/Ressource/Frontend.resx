@@ -163,6 +163,7 @@
 	&lt;script type="text/javascript" src="Frontend/Ressource/arbor.js" &gt;&lt;/script&gt;
 	&lt;script type="text/javascript" src="Frontend/Ressource/graphics.js" &gt;&lt;/script&gt;
 	&lt;script type="text/javascript" src="Frontend/Ressource/renderer.js" &gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="Frontend/Ressource/f8Helper.js" &gt;&lt;/script&gt;
 	&lt;link rel="stylesheet" type="text/css" href="Frontend/Ressource/style.css" /&gt;
   &lt;/head&gt;
   &lt;body&gt;
@@ -180,6 +181,8 @@
 					&lt;li&gt;&lt;a href="#"&gt;Help&lt;/a&gt;&lt;/li&gt;
 					&lt;li&gt;&lt;a href="https://github.com/cosh/fallen-8/issues"&gt;Issues&lt;/a&gt;&lt;/li&gt;
 					&lt;li&gt;&lt;a href="https://github.com/cosh/fallen-8/wiki"&gt;Wiki&lt;/a&gt;&lt;/li&gt;
+					&lt;li&gt;&lt;a href="http://groups.google.com/group/fallen-8"&gt;Google Group&lt;/a&gt;&lt;/li&gt;
+					
 				&lt;/ul&gt;
 			
 		&lt;/div&gt;	
@@ -197,7 +200,7 @@
 		$("li").click(function(){
 			$('li.active').removeClass('active');
 			$(this).addClass('active');
-			$('#status').load('Frontend/Ressource/'+this.innerText+'.htm');
+			$('#status').load('Frontend/Ressource/'+this.textContent+'.htm');
 		});
 	});</value>
   </data>
