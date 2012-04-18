@@ -117,9 +117,10 @@ namespace Fallen8.API.Algorithms.Path
         public void CalculateWeight(PathDelegates.VertexCost vertexCost, PathDelegates.EdgeCost edgeCost)
         {
             Weight = 0;
+
             if (vertexCost != null)
             {
-                Weight = vertexCost(Edge.TargetVertex);
+                Weight = vertexCost(TargetVertex);
             }
 
             if (edgeCost != null)
