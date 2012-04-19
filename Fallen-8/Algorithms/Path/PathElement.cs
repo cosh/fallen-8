@@ -32,7 +32,7 @@ namespace Fallen8.API.Algorithms.Path
     /// <summary>
     ///   The element of a path
     /// </summary>
-    public sealed class PathElement
+    public class PathElement
     {
         #region Data
 
