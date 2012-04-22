@@ -1,5 +1,5 @@
 ﻿// 
-// IPoint.cs
+// IRTreeContainer.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -26,25 +26,15 @@
 using System;
 using System.Linq;
 using System.Text;
-using System.Collections.Generic;
+using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
-    /// Geometry point
+    /// for nodes of the tree
     /// </summary>
-    public interface IPoint:IGeometry
+    public interface IRTreeContainer : ISpatialContainer
     {
-        /// <summary>
-        /// gets coordinates of point 
-        /// </summary>
-        List<Object> Coordinates { get; }
-        /// <summary>
-        /// reflection point from any space in to n-dimensional real space
-        /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        Double[] PointToSpaceR();
+        ARTreeContainer Parent { get; set; }
     }
 }

@@ -24,11 +24,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Fallen8.API.Index.Spatial.Implementation.RTree;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
+
 
 namespace Fallen8.API.Index.Spatial.Implementation.Metric
 {
@@ -58,15 +56,13 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
             if (point1.Coordinates.Count() != 2 && point2.Coordinates.Count() != 2)
                 throw new Exception("The points are not in geo space");
 
-            var currentRPointStart = point1.Coordinates.GetEnumerator();
-            var currentRPointEnd = point2.Coordinates.GetEnumerator();
+            var currentRPointStart = point1.Coordinates;
+            var currentRPointEnd = point2.Coordinates;
 
-            var longiutudeStart = currentRPointStart.Current;
-            currentRPointStart.MoveNext();
-            var lontidueStart = currentRPointStart.Current;
-            var longitudeEnd = currentRPointEnd.Current;
-            currentRPointEnd.MoveNext();
-            var lontidudeEnd = currentRPointEnd.Current;
+            var longiutudeStart = currentRPointStart[0];
+            var lontidueStart = currentRPointStart[1];
+            var longitudeEnd = currentRPointEnd[0];
+            var lontidudeEnd = currentRPointEnd[1];
 
             currentDistance = RadiusOfEarth * Math.Atan(
                 Math.Sqrt(
@@ -78,6 +74,14 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
                 Math.Cos(lontidudeEnd) * Math.Cos(lontidueStart) * Math.Cos(longiutudeStart - longitudeEnd)));
 
             return currentDistance;
+        }
+
+
+        public Double[] TransformationOfDistance(double distance, int countOfAxis)
+        {
+            if (countOfAxis != 2)
+                throw new Exception("The points are not in geo space");
+            throw new NotImplementedException();
         }
     }
 

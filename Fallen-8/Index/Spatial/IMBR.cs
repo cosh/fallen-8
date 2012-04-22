@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -39,10 +38,10 @@ namespace Fallen8.API.Index.Spatial
         /// <summary>
         /// gets lowest point of the rechtangle
         /// </summary>
-        IEnumerable<Double> LowerPoint { get; }
+        Double[] LowerPoint { get; }
         /// <summary>
         /// gets upperst point of the rechtangle
         /// </summary>
-        IEnumerable<Double> UpperPoint { get; }
+        Double[] UpperPoint { get; }
     }
 }

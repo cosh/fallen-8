@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Fallen8.API.Model;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial.Implementation.RTree
@@ -37,19 +36,43 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
     /// </summary>
     public class RTreeLeaf : ARTreeContainer
     {
-        public RTreeLeaf(IMBR myMBR, ARTreeContainer parent)
+        public RTreeLeaf()
         {
-            this.LowerPoint = new List<double>(myMBR.LowerPoint);
-            this.UpperPoint = new List<double>(myMBR.UpperPoint);
-            this.Parent = parent;
+            this.Data = new List<IRTreeDataContainer>();
+        }
+        public RTreeLeaf(IMBR myMBR, ARTreeContainer parent = null)
+        {
+            this.LowerPoint = myMBR.LowerPoint;
+            this.UpperPoint = myMBR.UpperPoint;
+            if (parent != null)
+                this.Parent = parent;
+            this.Data = new List<IRTreeDataContainer>();
+        }
+
+        public RTreeLeaf(Double[] lower, Double[] upper, ARTreeContainer parent = null)
+        {
+            this.LowerPoint = lower;
+            this.UpperPoint = upper;
+            if (parent != null)
+                this.Parent = parent;
+            this.Data = new List<IRTreeDataContainer>();
         }
 
         public override bool IsLeaf
         {
             get { return true; }
         }
-        public List<Tuple<ARTreeContainer, AGraphElement>> Data { get; set; }
+        public List<IRTreeDataContainer> Data { get; set; }
 
+
+        public override void Dispose()
+        {
+            this.Data.Clear();
+            Data = null;
+            Parent = null;
+            this.LowerPoint = null;
+            this.UpperPoint = null;
+        }
     }
 }
 

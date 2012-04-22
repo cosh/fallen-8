@@ -27,19 +27,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial.Implementation.RTree
 {
     /// <summary>
     /// the point from n-dimensional real space
     /// </summary>
-   public class RTreePoint:IMBP
+    public class RTreePoint : IMBP
     {
-       public RTreePoint(IEnumerable<double> coordinates)
-       {
-           this.Coordinates = new List<double>(coordinates);
-       }
-      public IEnumerable<double> Coordinates { get; private set; }
+        public RTreePoint(Double[] coordinates)
+        {
+            this.Coordinates = coordinates;
+        }
+        public Double[] Coordinates { get; private set; }
     }
+   
 }

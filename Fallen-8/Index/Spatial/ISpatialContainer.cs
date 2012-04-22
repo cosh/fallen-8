@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
@@ -32,7 +31,7 @@ using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
-    /// 
+    /// The container for spatial objects 
     /// </summary>
     public interface ISpatialContainer
     {

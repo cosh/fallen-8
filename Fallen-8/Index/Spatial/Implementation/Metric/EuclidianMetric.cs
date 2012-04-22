@@ -24,39 +24,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Fallen8.API.Index.Spatial.Implementation.RTree;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial.Implementation.Metric
 {
     /// <summary>
     /// Metric for n-dimensinal real space
     /// </summary>
-   public class EuclidianMetric:IMetric
+    public class EuclidianMetric : IMetric
     {
-     public  Double Distance(IMBP point1, IMBP point2)
-       {
-           Double currentDistance=0.0;
-           
-           if (point1.Coordinates.Count()==point2.Coordinates.Count()&&point1.Coordinates.Count()!=0)
+        public Double Distance(IMBP point1, IMBP point2)
+        {
+            Double currentDistance = 0.0;
+
+            if (point1.Coordinates.Count() != point2.Coordinates.Count() && point1.Coordinates.Count() != 0)
                 throw new Exception("The points are in different space or space not exist ");
 
-           var currentRPointStart = point1.Coordinates.GetEnumerator();
-           var currentRPointEnd = point2.Coordinates.GetEnumerator();
+            var currentRPointStart = point1.Coordinates;
+            var currentRPointEnd = point2.Coordinates;
 
-           do
-           {
-               currentDistance = (currentRPointStart.Current - currentRPointEnd.Current) *
-                   (currentRPointStart.Current - currentRPointEnd.Current);
-           }
-           while (currentRPointEnd.MoveNext()&&currentRPointStart.MoveNext());
+            for (int i = 0; i < point1.Coordinates.Length; i++)
+            {
+                currentDistance += (currentRPointStart[i] - currentRPointEnd[i]) *
+                       (currentRPointStart[i] - currentRPointEnd[i]);
+            }
 
-           currentDistance = Math.Sqrt(currentDistance);
 
-           return currentDistance; 
-       }
+            currentDistance = Math.Sqrt(currentDistance);
+
+            return currentDistance;
+        }
+
+
+
+
+        public Double[] TransformationOfDistance(double distance, int countOfAxis)
+        {
+            Double[] transformation = new Double[countOfAxis];
+            for (int i = 0; i < countOfAxis; i++)
+                transformation[i] = distance;
+            return transformation;
+        }
     }
 }

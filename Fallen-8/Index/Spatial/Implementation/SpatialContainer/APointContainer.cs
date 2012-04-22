@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -33,126 +32,113 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
     /// <summary>
     /// Container for point data
     /// </summary>
-  abstract public class APointContainer:ISpatialContainer, IMBP
+    abstract public class APointContainer : IRTreeContainer, IMBP
     {
-      /// <summary>
-      /// type of container
-      /// </summary>
-      public TypeOfContainer Container { get { return TypeOfContainer.POINTCONTAINER; } }
-      /// <summary>
-      /// coordination of container
-      /// </summary>
-      virtual public IEnumerable<Double> Coordinates { get; protected set; }
+        /// <summary>
+        /// type of container
+        /// </summary>
+        public TypeOfContainer Container { get { return TypeOfContainer.POINTCONTAINER; } }
+        /// <summary>
+        /// coordination of container
+        /// </summary>
+        virtual public Double[] Coordinates { get; protected set; }
 
-      #region Inclusion of MBR and Point
-      virtual public bool Inclusion(ISpatialContainer container)
-      {
-          return this.EqualTo(container);
-      }
-      #endregion
-      #region Intersection of MBR and Point
-      virtual public bool Intersection(ISpatialContainer container)
-      {
-          #region MBR
-          if (container.Container == TypeOfContainer.MBRCONTAINER)
-          {
-              var currentContainer = container as ASpatialContainer;
-              var currentPointEnumerator = this.Coordinates.GetEnumerator();
+        #region Inclusion of MBR and Point
+        virtual public bool Inclusion(ISpatialContainer container)
+        {
+            return this.EqualTo(container);
+        }
+        #endregion
+        #region Intersection of MBR and Point
+        virtual public bool Intersection(ISpatialContainer container)
+        {
+            #region MBR
+            if (container is ASpatialContainer)
+            {
+                var currentContainer = (ASpatialContainer)container;
+                for (int i = 0; i < this.Coordinates.Length; i++)
+                {
+                    if (currentContainer.LowerPoint[i] > this.Coordinates[i] || currentContainer.UpperPoint[i] < this.Coordinates[i])
+                        return false;
+                }
 
-              foreach (Double value in currentContainer.LowerPoint)
-              {
-                  if (value > currentPointEnumerator.Current)
-                      return false;
-                  currentPointEnumerator.MoveNext();
-              }
-              currentPointEnumerator.Reset();
-              foreach (Double value in currentContainer.UpperPoint)
-              {
-                  if (value < currentPointEnumerator.Current)
-                      return false;
-                  currentPointEnumerator.MoveNext();
-              }
+                return true;
+            }
+            #endregion
+            #region Point
+            else
+            {
+                return this.EqualTo(container);
+            }
 
-              return true;
-          }
-          #endregion
-          #region Point
-          else
-              if (container.Container == TypeOfContainer.POINTCONTAINER)
-              {
-                  return this.EqualTo(container);
-              }
-          return false;
-          #endregion
+            #endregion
 
-      }
-      #endregion
-      #region Equal
-      virtual public bool EqualTo(ISpatialContainer container)
-      {
-          if (container.Container == TypeOfContainer.POINTCONTAINER)
-          {
+        }
+        #endregion
+        #region Equal
+        virtual public bool EqualTo(ISpatialContainer container)
+        {
+            if (container is APointContainer)
+            {
 
-              var currentPointEnumerator = (container as APointContainer).Coordinates.GetEnumerator();
-              foreach(double value in this.Coordinates)
-              {
-                  if (value!=currentPointEnumerator.Current)
-                      return false;
-                  currentPointEnumerator.MoveNext();
-              }
+                var currentPoint = ((APointContainer)container).Coordinates;
 
-              return true;
-          }
-          else
-              if (container.Container == TypeOfContainer.MBRCONTAINER)
-              {
-                  var currentLowerEnumerator = (container as ASpatialContainer).LowerPoint.GetEnumerator();
-                  var currentUpperEnumerator = (container as ASpatialContainer).UpperPoint.GetEnumerator();
+                for (int i = 0; i < this.Coordinates.Length; i++)
+                {
+                    if (this.Coordinates[i] != currentPoint[i])
+                        return false;
+                }
 
-                  foreach(Double value in this.Coordinates)
-                  {
-                      if (currentLowerEnumerator.Current!=value&&currentUpperEnumerator.Current!=value)
-                          return false;
+                return true;
+            }
+            else
+            {
+                var currentLower = (container as ASpatialContainer).LowerPoint;
+                var currentUpper = (container as ASpatialContainer).UpperPoint;
 
-                      currentLowerEnumerator.MoveNext();
-                      currentUpperEnumerator.MoveNext();
-                  }
-              }
-              else
-                  return false;
-          return false;
-      }
-      #endregion
-      #region Adjacency
-      virtual public bool Adjacency(ISpatialContainer container)
-      {
-          #region Point
-          if (container.Container == TypeOfContainer.POINTCONTAINER)
-          {
-              return this.EqualTo(container);
-          }
-          #endregion
-          #region MBR
-          else
-              if (container.Container == TypeOfContainer.MBRCONTAINER)
-              {
-                  var currentLowerEnumerator = (container as ASpatialContainer).LowerPoint.GetEnumerator();
-                  var currentUpperEnumerator = (container as ASpatialContainer).UpperPoint.GetEnumerator();
+                for (int i = 0; i < this.Coordinates.Length; i++)
+                {
+                    if (currentLower[i] != this.Coordinates[i] || currentUpper[i] != this.Coordinates[i])
+                        return false;
+                }
+                return true;
+            }
 
-                  foreach (Double value in this.Coordinates)
-                  {
-                      if (currentLowerEnumerator.Current != value || currentUpperEnumerator.Current != value)
-                          return false;
+        }
+        #endregion
+        #region Adjacency
+        virtual public bool Adjacency(ISpatialContainer container)
+        {
+            #region Point
+            if (container is APointContainer)
+            {
+                return this.EqualTo(container);
+            }
+            #endregion
+            #region MBR
+            else
+            {
+                var currentLower = ((ASpatialContainer)container).LowerPoint;
+                var currentUpper = ((ASpatialContainer)container).UpperPoint;
+                for (int i = 0; i < this.Coordinates.Length; i++)
+                {
+                    if (currentLower[i] != this.Coordinates[i] || currentUpper[i] != this.Coordinates[i])
+                        return false;
+                }
 
-                      currentLowerEnumerator.MoveNext();
-                      currentUpperEnumerator.MoveNext();
-                  }
-                  return true;
-              }
-              else
-                  return false;
-      }
-          #endregion
-      #endregion
+                return true;
+            }
+
+        }
+            #endregion
+        #endregion
+
+
+        public ARTreeContainer Parent
+        {
+            get;
+            set;
+        }
+
     }
 }

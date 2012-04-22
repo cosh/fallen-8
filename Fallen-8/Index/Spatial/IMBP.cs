@@ -24,11 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
+namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
     /// IMBP is the interface for representation of point from n-dimensional real space
@@ -38,6 +37,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         /// <summary>
         /// gets coordinates of point
         /// </summary>
-        IEnumerable<Double> Coordinates { get; }
+       Double[] Coordinates { get; }
     }
 }

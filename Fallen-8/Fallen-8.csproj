@@ -79,11 +79,16 @@
     <Compile Include="Index\Spatial\Implementation\RTree\RTreeLeaf.cs" />
     <Compile Include="Index\Spatial\Implementation\RTree\RTreeNode.cs" />
     <Compile Include="Index\Spatial\Implementation\RTree\RTreePoint.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\SpatialDataContainer.cs" />
     <Compile Include="Index\Spatial\Implementation\SpatialContainer\APointContainer.cs" />
     <Compile Include="Index\Spatial\Implementation\SpatialContainer\ARTreeContainer.cs" />
     <Compile Include="Index\Spatial\Implementation\SpatialContainer\ASpatialContainer.cs" />
+    <Compile Include="Index\Spatial\Implementation\SpatialContainer\MBR.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\PointDataContainer.cs" />
     <Compile Include="Index\Spatial\Implementation\SpatialContainer\TypeOfContainer.cs" />
     <Compile Include="Index\Spatial\IPoint.cs" />
+    <Compile Include="Index\Spatial\IRTreeContainer.cs" />
+    <Compile Include="Index\Spatial\IRTreeDataContainer.cs" />
     <Compile Include="Index\Spatial\ISpatialContainer.cs" />
     <Compile Include="Index\Spatial\ISpatialIndex.cs" />
     <Compile Include="Index\Spatial\Point.cs" />

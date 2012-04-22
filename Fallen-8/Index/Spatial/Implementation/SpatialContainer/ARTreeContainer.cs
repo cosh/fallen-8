@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -40,8 +39,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         /// </summary>
         abstract public Boolean IsLeaf { get; }
         /// <summary>
-        /// parent node
+        /// Level of Node
         /// </summary>
-        public ARTreeContainer Parent { get; set; }
+        //  public int Level { get; set; }
+
+        abstract public void Dispose();
     }
 }

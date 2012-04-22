@@ -1,5 +1,5 @@
 ﻿// 
-// IPoint.cs
+// MBR.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -26,25 +26,29 @@
 using System;
 using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 
-namespace Fallen8.API.Index.Spatial
+namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 {
     /// <summary>
-    /// Geometry point
+    /// The realisation of minimal bounded rechtangle
     /// </summary>
-    public interface IPoint:IGeometry
+    public class MBR : IMBR
     {
-        /// <summary>
-        /// gets coordinates of point 
-        /// </summary>
-        List<Object> Coordinates { get; }
-        /// <summary>
-        /// reflection point from any space in to n-dimensional real space
-        /// </summary>
-        /// <returns>
-        /// coordinates of point from n-dimensional real space 
-        /// </returns>
-        Double[] PointToSpaceR();
+        public MBR(Double[] lower, Double[] upper)
+        {
+            this.LowerPoint = lower;
+            this.UpperPoint = upper;
+        }
+        public Double[] LowerPoint
+        {
+            get;
+            private set;
+        }
+
+        public Double[] UpperPoint
+        {
+            get;
+            private set;
+        }
     }
 }

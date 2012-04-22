@@ -1,5 +1,5 @@
 ﻿// 
-// RTreeNode.cs
+// SpatialDataContainer.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -24,57 +24,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
+using Fallen8.API.Model;
 
 namespace Fallen8.API.Index.Spatial.Implementation.RTree
 {
     /// <summary>
-    /// internal node of r-tree
+    /// The implementation of spatial container for container with spatial data
     /// </summary>
-    public class RTreeNode : ARTreeContainer
+    public class SpatialDataContainer : ASpatialContainer, IRTreeDataContainer
     {
-        public RTreeNode()
-        {
-            this.Children = new List<ARTreeContainer>();
-        }
-        public RTreeNode(IMBR myMBR, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
-        {
-            if (parent != null)
-                this.Parent = parent;
-            this.LowerPoint = myMBR.LowerPoint;
-            this.UpperPoint = myMBR.UpperPoint;
-            if (children != null)
-                this.Children = new List<ARTreeContainer>(children);
-            else
-                this.Children = new List<ARTreeContainer>();
-        }
-
-        public RTreeNode(Double[] lower,
-                        Double[] upper, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
+        public SpatialDataContainer(Double[] lower,
+                        Double[] upper,
+                         ARTreeContainer parent = null)
         {
             if (parent != null)
                 this.Parent = parent;
             this.LowerPoint = lower;
             this.UpperPoint = upper;
-            if (children != null)
-                this.Children = new List<ARTreeContainer>(children);
-            else
-                this.Children = new List<ARTreeContainer>();
         }
-        override public Boolean IsLeaf { get { return false; } }
-        public List<ARTreeContainer> Children { get; set; }
-
-
-        public override void Dispose()
+        public SpatialDataContainer(IMBR mbr,
+                         ARTreeContainer parent = null)
         {
-            this.Children.Clear();
-            Children = null;
-            Parent = null;
-            this.LowerPoint = null;
-            this.UpperPoint = null;
+            if (parent != null)
+                this.Parent = parent;
+            this.LowerPoint = mbr.LowerPoint;
+            this.UpperPoint = mbr.UpperPoint;
         }
+        public AGraphElement GraphElement
+        {
+            get;
+            set;
+        }
+
     }
 }

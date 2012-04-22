@@ -24,9 +24,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Index.Spatial
 {

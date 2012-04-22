@@ -1,5 +1,5 @@
 ﻿// 
-// RTreeNode.cs
+// PointDataContainer.cs
 //  
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
@@ -24,57 +24,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Fallen8.API.Model;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial.Implementation.RTree
 {
     /// <summary>
-    /// internal node of r-tree
+    /// the realisation of point-container for the container with element of graph 
     /// </summary>
-    public class RTreeNode : ARTreeContainer
+    public class PointDataContainer : APointContainer, IRTreeDataContainer
     {
-        public RTreeNode()
-        {
-            this.Children = new List<ARTreeContainer>();
-        }
-        public RTreeNode(IMBR myMBR, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
+        public PointDataContainer(Double[] point,
+                          ARTreeContainer parent = null)
         {
             if (parent != null)
                 this.Parent = parent;
-            this.LowerPoint = myMBR.LowerPoint;
-            this.UpperPoint = myMBR.UpperPoint;
-            if (children != null)
-                this.Children = new List<ARTreeContainer>(children);
-            else
-                this.Children = new List<ARTreeContainer>();
+            this.Coordinates = point;
         }
-
-        public RTreeNode(Double[] lower,
-                        Double[] upper, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
+        public AGraphElement GraphElement
         {
-            if (parent != null)
-                this.Parent = parent;
-            this.LowerPoint = lower;
-            this.UpperPoint = upper;
-            if (children != null)
-                this.Children = new List<ARTreeContainer>(children);
-            else
-                this.Children = new List<ARTreeContainer>();
+            get;
+            set;
         }
-        override public Boolean IsLeaf { get { return false; } }
-        public List<ARTreeContainer> Children { get; set; }
 
-
-        public override void Dispose()
-        {
-            this.Children.Clear();
-            Children = null;
-            Parent = null;
-            this.LowerPoint = null;
-            this.UpperPoint = null;
-        }
     }
 }

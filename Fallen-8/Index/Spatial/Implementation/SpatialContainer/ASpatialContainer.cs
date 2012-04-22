@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -33,62 +32,59 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
     /// <summary>
     /// container for spatial data
     /// </summary>
-    public abstract class ASpatialContainer:ISpatialContainer,IMBR
+    public abstract class ASpatialContainer : IRTreeContainer, IMBR
     {
+        public Double Area;
         public TypeOfContainer Container { get { return TypeOfContainer.MBRCONTAINER; } }
         #region Inclusion of MBR and Point
         virtual public bool Inclusion(ISpatialContainer container)
         {
-            if (container.Container == TypeOfContainer.MBRCONTAINER)
+            if (container is ASpatialContainer)
             {
-                var currentContainer = container as ASpatialContainer;
-                var currentLowerEnumerator = currentContainer.LowerPoint.GetEnumerator();
-                var currentUpperEnumerator = currentContainer.UpperPoint.GetEnumerator();
-                foreach (Double value in this.LowerPoint)
+                var currentLower = ((ASpatialContainer)container).LowerPoint;
+                var currentUpper = ((ASpatialContainer)container).UpperPoint;
+
+
+                for (int i = 0; i < this.LowerPoint.Length; i++)
                 {
-                    if (value > currentLowerEnumerator.Current)
+                    if (this.LowerPoint[i] > currentLower[i] || this.UpperPoint[i] < currentUpper[i])
                         return false;
-                    currentLowerEnumerator.MoveNext();
-                }
-                foreach (Double value in this.UpperPoint)
-                {
-                    if (value < currentUpperEnumerator.Current)
-                        return false;
-                    currentUpperEnumerator.MoveNext();
                 }
 
                 return true;
             }
             else
             {
-                if (container.Container == TypeOfContainer.POINTCONTAINER)
                 {
-                    return IsPointInclusion(container as APointContainer);
+                    return IsPointInclusion((APointContainer)container);
                 }
-                else
-                    return false;
             }
         }
+        public bool Inclusion(IMBR container)
+        {
+            var currentLower = container.LowerPoint;
+            var currentUpper = container.UpperPoint;
+
+            for (int i = 0; i < this.LowerPoint.Length; i++)
+            {
+
+                if (this.LowerPoint[i] > currentLower[i] || this.UpperPoint[i] < currentUpper[i])
+                    return false;
+            }
+
+            return true;
+        }
+
         #endregion
         #region Point Inclusion
         private bool IsPointInclusion(APointContainer aPointContainer)
         {
-            var currentEnumerator = aPointContainer.Coordinates.GetEnumerator();
+            var currentEnumerator = aPointContainer.Coordinates;
 
-            foreach (Double value in this.LowerPoint)
+            for (int i = 0; i < this.LowerPoint.Length; i++)
             {
-                if (value > currentEnumerator.Current)
+                if (this.LowerPoint[i] > currentEnumerator[i] || this.UpperPoint[i] < currentEnumerator[i])
                     return false;
-                currentEnumerator.MoveNext();
-            }
-
-            currentEnumerator.Reset();
-
-            foreach (Double value in this.UpperPoint)
-            {
-                if (value < currentEnumerator.Current)
-                    return false;
-                currentEnumerator.MoveNext();
             }
 
             return true;
@@ -97,152 +93,135 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         #region Intersection of internal space
         private bool InternalIntersection(ASpatialContainer spatialContainer)
         {
-            var currentLowerEnumerator = spatialContainer.LowerPoint.GetEnumerator();
-            var currentUpperEnumerator = spatialContainer.UpperPoint.GetEnumerator();
+            var currentLower = spatialContainer.LowerPoint;
+            var currentUpper = spatialContainer.UpperPoint;
+            for (int i = 0; i < this.LowerPoint.Length; i++)
+            {
+                if (this.LowerPoint[i] >= currentUpper[i] || this.UpperPoint[i] <= currentLower[i])
+                    return false;
+            }
 
-            foreach (Double value in this.LowerPoint)
-            {
-                if (value >= currentUpperEnumerator.Current)
-                    return false;
-                currentUpperEnumerator.MoveNext();
-            }
-            foreach (Double value in this.UpperPoint)
-            {
-                if (value <= currentLowerEnumerator.Current)
-                    return false;
-                currentLowerEnumerator.MoveNext();
-            }
             return true;
         }
         #endregion
         #region Intersection of MBR and Point
         virtual public bool Intersection(ISpatialContainer container)
         {
-            if (container.Container == TypeOfContainer.MBRCONTAINER)
+            if (container is ASpatialContainer)
             {
-                var currentContainer = container as ASpatialContainer;
-                var currentLowerEnumerator = currentContainer.LowerPoint.GetEnumerator();
-                var currentUpperEnumerator = currentContainer.UpperPoint.GetEnumerator();
+                var currentLower = ((ASpatialContainer)container).LowerPoint;
+                var currentUpper = ((ASpatialContainer)container).UpperPoint;
+                for (int i = 0; i < this.LowerPoint.Length; i++)
+                {
+                    if (this.LowerPoint[i] > currentUpper[i] || this.UpperPoint[i] < currentLower[i])
+                        return false;
+                }
 
-                foreach (Double value in this.LowerPoint)
-                {
-                    if (value > currentUpperEnumerator.Current)
-                        return false;
-                    currentUpperEnumerator.MoveNext();
-                }
-                foreach (Double value in this.UpperPoint)
-                {
-                    if (value < currentLowerEnumerator.Current)
-                        return false;
-                    currentLowerEnumerator.MoveNext();
-                }
                 return true;
             }
             else
-                if (container.Container == TypeOfContainer.POINTCONTAINER)
+            {
                 {
                     return this.Inclusion(container);
                 }
-            return false;
+            }
         }
         #endregion
         #region Adjacency
-        virtual  public bool Adjacency(ISpatialContainer container)
+        virtual public bool Adjacency(ISpatialContainer container)
         {
-            if (container.Container == TypeOfContainer.POINTCONTAINER)
+            if (container is APointContainer)
             {
-                var currentPointContainer = container as APointContainer;
-                var currentLowerEnumerator = this.LowerPoint.GetEnumerator();
-                var currentUpperEnumerator = this.UpperPoint.GetEnumerator();
+                var currentPointContainer = (APointContainer)container;
 
-                foreach (Double value in currentPointContainer.Coordinates)
+                for (int i = 0; i < this.LowerPoint.Length; i++)
                 {
-                    if (currentLowerEnumerator.Current != value || currentUpperEnumerator.Current != value)
+                    if (this.LowerPoint[i] != currentPointContainer.Coordinates[i]
+                        || this.UpperPoint[i] != currentPointContainer.Coordinates[i])
                         return false;
-
-                    currentLowerEnumerator.MoveNext();
-                    currentUpperEnumerator.MoveNext();
                 }
+
+
                 return true;
             }
             else
-                if (container.Container == TypeOfContainer.MBRCONTAINER)
-                {
-                    if (this.Intersection(container) && !this.InternalIntersection(container as ASpatialContainer))
-                        return true;
-                    else
-                        return false;
-                }
+            {
+                if (this.Intersection(container) && !this.InternalIntersection((ASpatialContainer)container))
+                    return true;
                 else
                     return false;
+            }
+
         }
         #endregion
         #region Equal
         virtual public bool EqualTo(ISpatialContainer myContainer)
         {
-            if (myContainer.Container == TypeOfContainer.POINTCONTAINER)
+            if (myContainer is APointContainer)
             {
 
-                var currentPointEnumerator = (myContainer as APointContainer).Coordinates.GetEnumerator();
+                var currentPoint = ((APointContainer)myContainer).Coordinates;
 
-                foreach (double value in this.LowerPoint)
+                for (int i = 0; i < this.LowerPoint.Length; i++)
                 {
-                    if (value != currentPointEnumerator.Current)
+                    if (this.LowerPoint[i] != currentPoint[i] || this.UpperPoint[i] != currentPoint[i])
                         return false;
-                    currentPointEnumerator.MoveNext();
-                }
-                currentPointEnumerator.Reset();
-                foreach (double value in this.UpperPoint)
-                {
-                    if (value != currentPointEnumerator.Current)
-                        return false;
-                    currentPointEnumerator.MoveNext();
                 }
 
                 return true;
             }
             else
-                if (myContainer.Container == TypeOfContainer.MBRCONTAINER)
+            {
+                var currentLower = ((ASpatialContainer)myContainer).LowerPoint;
+                var currentUpper = ((ASpatialContainer)myContainer).UpperPoint;
+
+
+                for (int i = 0; i < this.LowerPoint.Length; i++)
                 {
-                    var currentLowerEnumerator = (myContainer as ASpatialContainer).LowerPoint.GetEnumerator();
-                    var currentUpperEnumerator = (myContainer as ASpatialContainer).UpperPoint.GetEnumerator();
-
-                    foreach (Double value in this.LowerPoint)
-                    {
-                        if (currentLowerEnumerator.Current != value)
-                            return false;
-
-                        currentLowerEnumerator.MoveNext();
-                    }
-
-                    foreach (Double value in this.UpperPoint)
-                    {
-                        if (currentUpperEnumerator.Current != value)
-                            return false;
-
-                        currentUpperEnumerator.MoveNext();
-                    }
-
-                    return true;
+                    if (currentLower[i] != this.LowerPoint[i] || currentUpper[i] != this.UpperPoint[i])
+                        return false;
                 }
-                else
-                    return false;
+
+                return true;
+            }
+
         }
         #endregion
         #region Point get,set
-        virtual public IEnumerable<double> LowerPoint
-      {
-          get;
-          protected set;
+        virtual public Double[] LowerPoint
+        {
+            get;
+            set;
 
-      }
+        }
 
-      virtual public IEnumerable<double> UpperPoint
-      {
-          get;
-          protected set;
-      }
+        virtual public Double[] UpperPoint
+        {
+            get;
+            set;
+        }
         #endregion
+
+
+        public Double GetArea()
+        {
+            var currentArea = 1.0;
+            for (int i = 0; i < UpperPoint.Length; i++)
+            {
+                currentArea *= UpperPoint[i] - LowerPoint[i];
+
+            }
+            return currentArea;
+        }
+
+
+        public ARTreeContainer Parent
+        {
+            get;
+            set;
+        }
+
+
     }
 
 }

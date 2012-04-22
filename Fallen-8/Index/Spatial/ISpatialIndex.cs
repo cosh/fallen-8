@@ -48,7 +48,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name='geometry'>
         /// Geometry.
         /// </param>
-        Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat = null);
+        Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
         /// <summary>
         /// Tries to get the values.
         /// </summary>
@@ -61,8 +61,9 @@ namespace Fallen8.API.Index.Spatial
         /// <param name='graphElement'>
         /// Element of graph.
         /// </param>
-        Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat = null);
+        Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate = null);
         #endregion
+
         #region AddOrUpdate
         /// <summary>
         /// add or update neu element of grpah to spatial index
@@ -75,6 +76,7 @@ namespace Fallen8.API.Index.Spatial
         /// </param>
         void AddOrUpdate(IGeometry key, AGraphElement graphElement);
         #endregion
+
         #region TryRemoveKey
         /// <summary>
         /// Tries to remove a key.
@@ -87,6 +89,7 @@ namespace Fallen8.API.Index.Spatial
         /// </param>
         Boolean TryRemoveKey(IGeometry key);
         #endregion
+
         #region Distance
         /// <summary>
         /// find distance between two geometric objects
@@ -115,6 +118,7 @@ namespace Fallen8.API.Index.Spatial
         /// </returns>
         Double Distance(AGraphElement graphElement1, AGraphElement graphElement2);
         #endregion
+
         #region SearchRegion
         /// <summary>
         /// find all objects that have at least one point in this region
@@ -131,8 +135,9 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean SearchRegion(out ReadOnlyCollection<AGraphElement> result, IMBR minimalBoundedRechtangle, Predicate<AGraphElement> predicat = null);
+        Boolean SearchRegion(out ReadOnlyCollection<AGraphElement> result, IMBR minimalBoundedRechtangle, Predicate<AGraphElement> predicate = null);
         #endregion
+
         #region Overlap
         /// <summary>
         /// find all objects that have at least one point in common with this geometry
@@ -149,7 +154,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat = null);
+        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
         /// <summary>
         /// find all objects that have at least one point in common with this element of graph
         /// </summary>
@@ -165,8 +170,9 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat=null);
+        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
         #endregion
+
         #region Enclosure
         /// <summary>
         /// find all objects (if they exist), which this element of graph included.
@@ -183,7 +189,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat=null);
+        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
         /// <summary>
         /// find all objects (if they exist), which this geometry included.
         /// </summary>
@@ -199,8 +205,9 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat = null);
+        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
         #endregion
+
         #region Containment
         /// <summary>
         /// find all objects, which this geometry contains. 
@@ -217,7 +224,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat=null);
+        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null);
         /// <summary>
         /// find all objects, which this element of graph contains. 
         /// </summary>
@@ -233,8 +240,9 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat=null);
+        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
         #endregion
+
         #region GetAllNeighbors
         /// <summary>
         /// find all neighbors for this element of graph
@@ -251,7 +259,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicat=null);
+        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
         /// <summary>
         /// find all neighbors for this geometry
         /// </summary>
@@ -267,8 +275,9 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry graphElement, Predicate<AGraphElement> predicat=null);
+        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry graphElement, Predicate<AGraphElement> predicate=null);
         #endregion
+
         #region GetNextNeighbors
         /// <summary>
         /// find k next neighbors for this element of graph
@@ -289,7 +298,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors, Predicate<AGraphElement> predicat=null);
+        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null);
         /// <summary>
         /// find k next neighbors for this geometry
         /// </summary>
@@ -309,8 +318,9 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors, Predicate<AGraphElement> predicat=null);
+        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null);
         #endregion
+
         #region SearchDistance
         /// <summary>
         /// find all object which distance less or equal d from this element of graph have
@@ -333,7 +343,7 @@ namespace Fallen8.API.Index.Spatial
         Boolean SearchDistance(out ReadOnlyCollection<AGraphElement> result,
             Double distance,
             AGraphElement graphElement,
-            Predicate<AGraphElement> predicat=null);
+            Predicate<AGraphElement> predicate=null);
         /// <summary>
         /// find all object which distance less or equal d from this geometry have
         /// </summary>
@@ -352,11 +362,12 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean SerchDistance(out ReadOnlyCollection<AGraphElement> result,
+        Boolean SearchDistance(out ReadOnlyCollection<AGraphElement> result,
             Double distance,
             IGeometry geometry,
-            Predicate<AGraphElement> predicat=null);
+            Predicate<AGraphElement> predicate=null);
         #endregion
+
         #region SearchPoint
         /// <summary>
         /// find all objects which this point have
@@ -373,7 +384,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point, Predicate<AGraphElement> predicat=null);
+        Boolean SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point, Predicate<AGraphElement> predicate=null);
         #endregion
     }
 }

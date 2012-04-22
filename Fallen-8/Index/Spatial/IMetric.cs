@@ -24,11 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
-using Fallen8.API.Model;
 
 namespace Fallen8.API.Index.Spatial
 {
@@ -50,5 +47,18 @@ namespace Fallen8.API.Index.Spatial
         /// distance between two point-objects
         /// </returns>
         Double Distance(IMBP myPoint1, IMBP myPoint2);
+        /// <summary>
+        /// transformation for all axis to find minimal bounded rechtangle
+        /// </summary>
+        /// <param name="distance">
+        /// distance
+        /// </param>
+        /// <param name="countOfAxis">
+        /// count of axis
+        /// </param>
+        /// <returns>
+        /// distance for all axis
+        /// </returns>
+        Double[] TransformationOfDistance(Double distance, int countOfAxis);
     }
 }
