@@ -389,7 +389,7 @@ namespace Fallen8.API.Model
                 {
                     for (int i = 0; i < _outEdges.Count; i++)
                     {
-                        neighbors.AddRange(_outEdges[i].Edges.Select(_ => _.TargetVertex));
+                        neighbors.AddRange(_outEdges[i].Edges.Select(TargetVertexExtractor));
                     }
                 }
 
@@ -397,7 +397,7 @@ namespace Fallen8.API.Model
                 {
                     for (var i = 0; i < _inEdges.Count; i++)
                     {
-                        neighbors.AddRange(_inEdges[i].Edges.Select(_ => _.SourceVertex));
+                        neighbors.AddRange(_inEdges[i].Edges.Select(SourceVertexExtractor));
                     }
                 }
                 FinishReadResource();
@@ -561,5 +561,37 @@ namespace Fallen8.API.Model
         }
 
         #endregion
+		
+		#region private helper
+		
+		/// <summary>
+		/// Target vertex extractor.
+		/// </summary>
+		/// <returns>
+		/// The target vertex.
+		/// </returns>
+		/// <param name='edge'>
+		/// Edge.
+		/// </param>
+		private static VertexModel TargetVertexExtractor(EdgeModel edge)
+		{
+			return edge.TargetVertex;
+		}
+		
+		/// <summary>
+		/// Source vertex extractor.
+		/// </summary>
+		/// <returns>
+		/// The source vertex.
+		/// </returns>
+		/// <param name='edge'>
+		/// Edge.
+		/// </param>
+		private static VertexModel SourceVertexExtractor(EdgeModel edge)
+		{
+			return edge.SourceVertex;
+		}
+		
+		#endregion
     }
 }
