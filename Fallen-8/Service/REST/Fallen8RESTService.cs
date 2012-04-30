@@ -504,9 +504,9 @@ namespace Fallen8.API.Service.REST
                 return new Fallen8RESTProperties
                            {
                                Id = vertex.Id,
-                               CreationDate = Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),
+                               CreationDate = DateHelper.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),
                                ModificationDate =
-                                   Constants.GetDateTimeFromUnixTimeStamp(vertex.CreationDate + vertex.ModificationDate),
+                                   DateHelper.GetDateTimeFromUnixTimeStamp(vertex.CreationDate + vertex.ModificationDate),
                                Properties =
                                    vertex.GetAllProperties().ToDictionary(key => key.PropertyId,
                                                                           value => value.Value.ToString())

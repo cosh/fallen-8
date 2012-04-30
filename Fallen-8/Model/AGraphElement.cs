@@ -222,7 +222,7 @@ namespace Fallen8.API.Model
                 }
 
                 //set the modificationdate
-                ModificationDate = Constants.GetModificationDate(CreationDate);
+                ModificationDate = DateHelper.GetModificationDate(CreationDate);
 
                 FinishWriteResource();
 
@@ -278,7 +278,7 @@ namespace Fallen8.API.Model
                         }
 
                         //set the modificationdate
-                        ModificationDate = Constants.GetModificationDate(CreationDate);
+                        ModificationDate = DateHelper.GetModificationDate(CreationDate);
                     }
                 }
                 FinishWriteResource();

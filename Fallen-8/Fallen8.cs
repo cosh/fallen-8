@@ -54,7 +54,7 @@ namespace Fallen8.API
         /// <summary>
         ///   The graph elements
         /// </summary>
-        private List<AGraphElement> _graphElements;
+        private BigList<AGraphElement> _graphElements;
 
         /// <summary>
         ///   The index factory.
@@ -62,9 +62,19 @@ namespace Fallen8.API
         public IFallen8IndexFactory IndexFactory;
 
         /// <summary>
+        /// The count of edges
+        /// </summary>
+        public UInt32 EdgeCount { get; private set; }
+
+        /// <summary>
+        /// The count of vertices
+        /// </summary>
+        public UInt32 VertexCount { get; private set; }
+
+        /// <summary>
         ///   The current identifier.
         /// </summary>
-        private Int32 _currentId = -1;
+        private Int32 _currentId = Constants.MinId;
 
         /// <summary>
         ///   Binary operator delegate.
@@ -78,11 +88,10 @@ namespace Fallen8.API
         /// <summary>
         ///   Initializes a new instance of the Fallen-8 class.
         /// </summary>
-        /// <param name='startCapacity'> Start capacity. </param>
-        public Fallen8(Int32 startCapacity = 0)
+        public Fallen8()
         {
             IndexFactory = new Fallen8IndexFactory();
-            _graphElements = new List<AGraphElement>(startCapacity);
+            _graphElements = new BigList<AGraphElement>();
             IndexFactory.Indices.Clear();
         }
 
@@ -104,7 +113,7 @@ namespace Fallen8.API
             if (WriteResource())
             {
                 IndexFactory = new Fallen8IndexFactory();
-                _graphElements = new List<AGraphElement>();
+                _graphElements = new BigList<AGraphElement>();
                 IndexFactory.Indices.Clear();
 
 #if __MonoCS__
@@ -145,9 +154,11 @@ namespace Fallen8.API
         {
             if (WriteResource())
             {
-                _currentId = -1;
-                _graphElements = new List<AGraphElement>();
+                _currentId = Constants.MinId;
+                _graphElements = new BigList<AGraphElement>();
                 IndexFactory.DeleteAllIndices();
+                VertexCount = 0;
+                EdgeCount = 0;
 
                 FinishWriteResource();
 
@@ -162,9 +173,16 @@ namespace Fallen8.API
             if (WriteResource())
             {
                 //create the new vertex
-                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
+                var newVertex = new VertexModel(_currentId, creationDate, properties);
 
-                _graphElements.Add(newVertex);
+                //insert it
+                _graphElements.SetValue(_currentId, newVertex);
+
+                //increment the id
+                Interlocked.Increment(ref _currentId);
+
+                //Increase the vertex count
+                VertexCount++;
 
                 FinishWriteResource();
 
@@ -179,22 +197,32 @@ namespace Fallen8.API
         {
             if (WriteResource())
             {
+                EdgeModel outgoingEdge = null;
+
+                VertexModel sourceVertex;
+                VertexModel targetVertex;
+                
                 //get the related vertices
-                var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
-                var targetVertex = (VertexModel) _graphElements[targetVertexId];
+                if (_graphElements.TryGetElementOrDefault<VertexModel>(out sourceVertex, sourceVertexId) &&
+                    _graphElements.TryGetElementOrDefault<VertexModel>(out targetVertex, targetVertexId))
+                {
+                    outgoingEdge = new EdgeModel(_currentId, creationDate, targetVertex, sourceVertex, properties);
 
-                var id = Interlocked.Increment(ref _currentId);
+                    //add the edge to the graph elements
+                    _graphElements.SetValue(_currentId, outgoingEdge);
 
-                var outgoingEdge = new EdgeModel(id, creationDate, targetVertex, sourceVertex, properties);
+                    //increment the ids
+                    Interlocked.Increment(ref _currentId);
 
-                //add the edge to the graph elements
-                _graphElements.Add(outgoingEdge);
+                    //add the edge to the source vertex
+                    sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
 
-                //add the edge to the source vertex
-                sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+                    //link the vertices
+                    targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
 
-                //link the vertices
-                targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
+                    //increase the edgeCount
+                    EdgeCount++;
+                }
 
                 FinishWriteResource();
 
@@ -208,9 +236,12 @@ namespace Fallen8.API
         {
             if (WriteResource())
             {
-                var graphElement = _graphElements.ElementAtOrDefault(graphElementId);
-
-                var success = graphElement != null && graphElement.TryAddProperty(propertyId, property);
+                var success = false;
+                AGraphElement graphElement;
+                if (_graphElements.TryGetElementOrDefault<AGraphElement>(out graphElement, graphElementId))
+                {
+                    success = graphElement != null && graphElement.TryAddProperty(propertyId, property);
+                }
 
                 FinishWriteResource();
 
@@ -224,9 +255,9 @@ namespace Fallen8.API
         {
             if (WriteResource())
             {
-                var graphElement = _graphElements.ElementAtOrDefault(graphElementId);
+                AGraphElement graphElement;
 
-                var success = graphElement != null && graphElement.TryRemoveProperty(propertyId);
+                var success = _graphElements.TryGetElementOrDefault(out graphElement, graphElementId) && graphElement.TryRemoveProperty(propertyId);
 
                 FinishWriteResource();
 
@@ -240,9 +271,9 @@ namespace Fallen8.API
         {
             if (WriteResource())
             {
-                var graphElement = _graphElements.ElementAtOrDefault(graphElementId);
+                AGraphElement graphElement;
 
-                if (graphElement == null)
+                if (!_graphElements.TryGetElementOrDefault(out graphElement, graphElementId))
                 {
                     FinishWriteResource();
 
@@ -257,7 +288,7 @@ namespace Fallen8.API
                 {
                     #region remove element
 
-                    _graphElements[graphElementId] = null;
+                    _graphElements.SetDefault(graphElementId);
 
                     if (graphElement is VertexModel)
                     {
@@ -279,7 +310,7 @@ namespace Fallen8.API
                                 aOutEdge.TargetVertex.RemoveIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
 
                                 //remove the edge itself
-                                _graphElements[aOutEdge.Id] = null;
+                                _graphElements.SetDefault(aOutEdge.Id);
                             }
                         }
 
@@ -300,11 +331,14 @@ namespace Fallen8.API
                                 aInEdge.SourceVertex.RemoveOutGoingEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
 
                                 //remove the edge itself
-                                _graphElements[aInEdge.Id] = null;
+                                _graphElements.SetDefault(aInEdge.Id);
                             }
                         }
 
                         #endregion
+
+                        //update the EdgeCount --> hard way
+                        RecalculateGraphElementCounter();
 
                         #endregion
                     }
@@ -320,6 +354,9 @@ namespace Fallen8.API
                         //remove from outgoing edges of source vertex
                         outEdgeRemovals = edge.SourceVertex.RemoveOutGoingEdge(edge);
 
+                        //update the EdgeCount --> easy way
+                        EdgeCount--;
+
                         #endregion
                     }
 
@@ -329,7 +366,7 @@ namespace Fallen8.API
                 {
                     #region restore
 
-                    _graphElements[graphElementId] = graphElement;
+                    _graphElements.SetValue(graphElementId, graphElement);
 
                     if (graphElement is VertexModel)
                     {
@@ -351,7 +388,7 @@ namespace Fallen8.API
                                 aOutEdge.TargetVertex.AddIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
 
                                 //reset the edge
-                                _graphElements[aOutEdge.Id] = aOutEdge;
+                                _graphElements.SetValue(aOutEdge.Id, aOutEdge);
                             }
                         }
 
@@ -371,8 +408,8 @@ namespace Fallen8.API
                                 //remove from outgoing edges of source vertex
                                 aInEdge.SourceVertex.AddOutEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
 
-                                //remove the edge itself
-                                _graphElements[aInEdge.Id] = aInEdge;
+                                //reset the edge
+                                _graphElements.SetValue(aInEdge.Id, aInEdge);
                             }
                         }
 
@@ -398,6 +435,9 @@ namespace Fallen8.API
 
                         #endregion
                     }
+
+                    //recalculate the counter
+                    RecalculateGraphElementCounter();
 
                     #endregion
 
@@ -610,11 +650,11 @@ namespace Fallen8.API
             return false;
         }
 
-        public void Save(String path, Int32 savePartitions = 5)
+        public void Save(String path, UInt32 savePartitions = 5)
         {
             if (ReadResource())
             {
-                Fallen8PersistencyFactory.Save(_currentId, _graphElements, IndexFactory.Indices, path, savePartitions);
+                Fallen8PersistencyFactory.Save(_currentId, _graphElements, IndexFactory.Indices, path, savePartitions, EdgeCount + VertexCount);
 
                 FinishReadResource();
 
@@ -638,18 +678,11 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var graphElement = _graphElements.ElementAtOrDefault(id);
+                var success = _graphElements.TryGetElementOrDefault(out result, id);
+                
                 FinishReadResource();
 
-                if (graphElement != null)
-                {
-                    result = graphElement as VertexModel;
-
-                    return result != null;
-                }
-
-                result = null;
-                return false;
+                return success;
             }
 
             throw new CollisionException();
@@ -659,11 +692,11 @@ namespace Fallen8.API
         ///   Gets the vertices.
         /// </summary>
         /// <returns> The vertices. </returns>
-        public ReadOnlyCollection<VertexModel> GetVertices()
+        public List<VertexModel> GetVertices()
         {
             if (ReadResource())
             {
-                var vertices = new ReadOnlyCollection<VertexModel>(_graphElements.OfType<VertexModel>().ToList());
+                var vertices = _graphElements.GetAllOfType<VertexModel>();
                 FinishReadResource();
 
                 return vertices;
@@ -682,17 +715,11 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var graphElement = _graphElements[id];
+                var success = _graphElements.TryGetElementOrDefault<EdgeModel>(out result, id);
+
                 FinishReadResource();
-                if (graphElement != null)
-                {
-                    result = graphElement as EdgeModel;
-
-                    return result != null;
-                }
-
-                result = null;
-                return false;
+                
+                return success;
             }
 
             throw new CollisionException();
@@ -702,11 +729,11 @@ namespace Fallen8.API
         ///   Gets the edges.
         /// </summary>
         /// <returns> The edges. </returns>
-        public ReadOnlyCollection<EdgeModel> GetEdges()
+        public List<EdgeModel> GetEdges()
         {
             if (ReadResource())
             {
-                var edges = new ReadOnlyCollection<EdgeModel>(_graphElements.OfType<EdgeModel>().ToList());
+                var edges = _graphElements.GetAllOfType<EdgeModel>();
                 FinishReadResource();
 
                 return edges;
@@ -725,7 +752,8 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                result = _graphElements.ElementAtOrDefault(id);
+                _graphElements.TryGetElementOrDefault(out result, id);
+                
                 FinishReadResource();
 
                 return result != null;
@@ -749,15 +777,13 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var result = _graphElements
-                    .AsParallel()
-                    .Where(aGraphElement =>
-                               {
-                                   Object property;
-                                   return aGraphElement.TryGetProperty(out property, propertyId) &&
-                                          finder(property as IComparable, literal);
-                               })
-                    .ToList();
+                List<AGraphElement> result = _graphElements.FindElements(
+                    aGraphElement =>
+                        {
+                            Object property;
+                            return aGraphElement.TryGetProperty(out property, propertyId) &&
+                                   finder(property as IComparable, literal);
+                        });
                 FinishReadResource();
 
                 return result;
@@ -856,11 +882,13 @@ namespace Fallen8.API
         /// </summary>
         private void TrimPrivate()
         {
-            _graphElements.TrimExcess();
-            for (var i = 0; i < _graphElements.Count; i++)
+            AGraphElement graphElement;
+            for (var i = Constants.MinId; i <= _currentId; i++)
             {
-                var graphElement = _graphElements[i];
-                graphElement.Trim();
+                if (_graphElements.TryGetElementOrDefault(out graphElement, i))
+                {
+                    graphElement.Trim();   
+                }
             }
 
 #if __MonoCS__
@@ -877,6 +905,18 @@ namespace Fallen8.API
 			#else
             var errorCode = SaveNativeMethods.EmptyWorkingSet(Process.GetCurrentProcess().Handle);
 #endif
+
+            RecalculateGraphElementCounter();
+
+        }
+
+        /// <summary>
+        /// Recalculates the count of the graph elements
+        /// </summary>
+        private void RecalculateGraphElementCounter()
+        {
+            EdgeCount = _graphElements.GetCountOf<EdgeModel>();
+            VertexCount = _graphElements.GetCountOf<VertexModel>();
         }
 
         #endregion

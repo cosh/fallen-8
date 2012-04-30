@@ -54,7 +54,7 @@ namespace Fallen8.API.Persistency
         /// <param name='indexFactoryOfFallen8'> Index factory of Fallen-8. </param>
         /// <param name="fallen8"> Fallen-8 </param>
         public static void Load(string pathToSavePoint, ref int currentIdOfFallen8,
-                                ref List<AGraphElement> graphElementsOfFallen8,
+                                ref BigList<AGraphElement> graphElementsOfFallen8,
                                 ref IFallen8IndexFactory indexFactoryOfFallen8, Fallen8 fallen8)
         {
             //if there is no savepoint file... do nothing
@@ -67,15 +67,10 @@ namespace Fallen8.API.Persistency
             {
                 var reader = new SerializationReader(file);
 
-                //get the maximum id
-                currentIdOfFallen8 = reader.ReadOptimizedInt32();
-
-                var numberOfGraphElements = currentIdOfFallen8 + 1;
-
                 #region graph elements
 
                 //initialize the list of graph elements
-                var graphElements = new AGraphElement[numberOfGraphElements];
+                var graphElements = new BigList<AGraphElement>();
                 var graphElementStreams = new List<String>();
                 var numberOfGraphElemementStreams = reader.ReadOptimizedInt32();
                 for (var i = 0; i < numberOfGraphElemementStreams; i++)
@@ -84,7 +79,7 @@ namespace Fallen8.API.Persistency
                 }
 
                 LoadGraphElements(graphElements, graphElementStreams);
-                graphElementsOfFallen8 = new List<AGraphElement>(graphElements);
+                graphElementsOfFallen8 = new BigList<AGraphElement>(graphElements);
                     //we'll see how much memory this action takes
 
                 #endregion
@@ -113,8 +108,8 @@ namespace Fallen8.API.Persistency
         /// <param name='indices'> Indices. </param>
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
-        public static void Save(Int32 currentId, List<AGraphElement> graphElements, IDictionary<String, IIndex> indices,
-                                String path, int savePartitions)
+        public static void Save(Int32 currentId, BigList<AGraphElement> graphElements, IDictionary<String, IIndex> indices,
+                                String path, UInt32 savePartitions, UInt32 graphElementCount)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
@@ -131,13 +126,9 @@ namespace Fallen8.API.Persistency
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
                 var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None,
                                         TaskScheduler.Default);
-
-                //the maximum id
-                writer.WriteOptimized(currentId);
-
                 #region graph elements
 
-                var graphElementPartitions = CreatePartitions(graphElements.Count, savePartitions);
+                var graphElementPartitions = CreatePartitions(graphElementCount, savePartitions);
                 var graphElementSaver =
                     (Task<String>[]) Array.CreateInstance(typeof (Task<String>), graphElementPartitions.Count);
 
@@ -238,7 +229,7 @@ namespace Fallen8.API.Persistency
         /// <param name="edgeTodoOnVertex"> The edges that have to be added to this vertex </param>
         private static List<EdgeSneakPeak> LoadAGraphElementBunch(
             string graphElementBunchPath,
-            AGraphElement[] graphElementsOfFallen8,
+            BigList<AGraphElement> graphElementsOfFallen8,
             ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodoOnVertex)
         {
             //if there is no savepoint file... do nothing
@@ -323,7 +314,7 @@ namespace Fallen8.API.Persistency
         /// <param name='range'> Range. </param>
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='pathToSavePoint'> Path to save point basis. </param>
-        private static String SaveBunch(Tuple<Int32, Int32> range, List<AGraphElement> graphElements,
+        private static String SaveBunch(Tuple<Int32, Int32> range, BigList<AGraphElement> graphElements,
                                         String pathToSavePoint)
         {
             var partitionFileName = pathToSavePoint + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
@@ -337,10 +328,9 @@ namespace Fallen8.API.Persistency
 
                 for (var i = range.Item1; i < range.Item2; i++)
                 {
-                    var aGraphElement = graphElements[i];
-
+                    AGraphElement aGraphElement;
                     //there can be nulls
-                    if (aGraphElement == null)
+                    if (!graphElements.TryGetElementOrDefault(out aGraphElement, i))
                     {
                         partitionWriter.WriteOptimized(SerializedNull); // 2 for null
                         continue;
@@ -370,7 +360,7 @@ namespace Fallen8.API.Persistency
         /// </summary>
         /// <param name='graphElements'> Graph elements of Fallen-8. </param>
         /// <param name='graphElementStreams'> Graph element streams. </param>
-        private static void LoadGraphElements(AGraphElement[] graphElements, List<String> graphElementStreams)
+        private static void LoadGraphElements(BigList<AGraphElement> graphElements, List<String> graphElementStreams)
         {
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
@@ -387,121 +377,68 @@ namespace Fallen8.API.Persistency
                 tasks[i] = f.StartNew(() => LoadAGraphElementBunch(streamLocation, graphElements, edgeTodo));
             }
 
-            var continuationTask = f.ContinueWhenAll<List<EdgeSneakPeak>>(tasks,
-                                                                          finishedTasks =>
-                                                                          Parallel.ForEach(finishedTasks,
-                                                                                           aFinishedTask =>
-                                                                                               {
-                                                                                                   foreach (
-                                                                                                       var aSneakPeak in
-                                                                                                           aFinishedTask
-                                                                                                               .Result)
-                                                                                                   {
-                                                                                                       graphElements[
-                                                                                                           aSneakPeak.Id
-                                                                                                           ] = new EdgeModel
-                                                                                                               (
-                                                                                                               aSneakPeak
-                                                                                                                   .Id,
-                                                                                                               aSneakPeak
-                                                                                                                   .
-                                                                                                                   CreationDate,
-                                                                                                               aSneakPeak
-                                                                                                                   .
-                                                                                                                   ModificationDate,
-                                                                                                               (
-                                                                                                               VertexModel
-                                                                                                               )
-                                                                                                               graphElements
-                                                                                                                   [
-                                                                                                                       aSneakPeak
-                                                                                                                           .
-                                                                                                                           TargetVertexId
-                                                                                                                   ],
-                                                                                                               (
-                                                                                                               VertexModel
-                                                                                                               )
-                                                                                                               graphElements
-                                                                                                                   [
-                                                                                                                       aSneakPeak
-                                                                                                                           .
-                                                                                                                           SourceVertexId
-                                                                                                                   ],
-                                                                                                               aSneakPeak
-                                                                                                                   .
-                                                                                                                   Properties);
-                                                                                                   }
-                                                                                               })).ContinueWith(
-                                                                                                   task =>
-                                                                                                       {
-                                                                                                           //add the remaining edges to vertices
-                                                                                                           Parallel.
-                                                                                                               ForEach(
-                                                                                                                   edgeTodo,
-                                                                                                                   aKV
-                                                                                                                   =>
-                                                                                                                       {
-                                                                                                                           var
-                                                                                                                               edge
-                                                                                                                                   =
-                                                                                                                                   (
-                                                                                                                                   EdgeModel
-                                                                                                                                   )
-                                                                                                                                   graphElements
-                                                                                                                                       [
-                                                                                                                                           aKV
-                                                                                                                                               .
-                                                                                                                                               Key
-                                                                                                                                       ];
-                                                                                                                           foreach
-                                                                                                                               (
-                                                                                                                               var
-                                                                                                                                   aTodo
-                                                                                                                                   in
-                                                                                                                                   aKV
-                                                                                                                                       .
-                                                                                                                                       Value
-                                                                                                                               )
-                                                                                                                           {
-                                                                                                                               var
-                                                                                                                                   interestingVertex
-                                                                                                                                       =
-                                                                                                                                       (
-                                                                                                                                       VertexModel
-                                                                                                                                       )
-                                                                                                                                       graphElements
-                                                                                                                                           [
-                                                                                                                                               aTodo
-                                                                                                                                                   .
-                                                                                                                                                   VertexId
-                                                                                                                                           ];
-                                                                                                                               if
-                                                                                                                                   (
-                                                                                                                                   aTodo
-                                                                                                                                       .
-                                                                                                                                       IsIncomingEdge)
-                                                                                                                               {
-                                                                                                                                   interestingVertex
-                                                                                                                                       .
-                                                                                                                                       AddIncomingEdge
-                                                                                                                                       (aTodo
-                                                                                                                                            .
-                                                                                                                                            EdgePropertyId,
-                                                                                                                                        edge);
-                                                                                                                               }
-                                                                                                                               else
-                                                                                                                               {
-                                                                                                                                   interestingVertex
-                                                                                                                                       .
-                                                                                                                                       AddOutEdge
-                                                                                                                                       (aTodo
-                                                                                                                                            .
-                                                                                                                                            EdgePropertyId,
-                                                                                                                                        edge);
-                                                                                                                               }
-                                                                                                                           }
-                                                                                                                       });
-                                                                                                       });
+            var continuationTask = f
+                .ContinueWhenAll<List<EdgeSneakPeak>>(
+                    tasks,
+                    finishedTasks =>
+                    Parallel.ForEach(
+                        finishedTasks,
+                        aFinishedTask =>
+                            {
+                                foreach (var aSneakPeak in aFinishedTask.Result)
+                                {
+                                    VertexModel sourceVertex;
+                                    VertexModel targetVertex;
+                                    graphElements.TryGetElementOrDefault(out sourceVertex, aSneakPeak.SourceVertexId);
+                                    graphElements.TryGetElementOrDefault(out targetVertex, aSneakPeak.TargetVertexId);
+
+                                    graphElements.SetValue(aSneakPeak.Id, 
+                                        new EdgeModel(
+                                            aSneakPeak.Id,
+                                            aSneakPeak.CreationDate,
+                                            aSneakPeak.ModificationDate,
+                                            targetVertex,
+                                            sourceVertex,
+                                            aSneakPeak.Properties));
+                                }
+                            })).ContinueWith(
+                                task =>
+                                    {
+                                        //add the remaining edges to vertices
+                                        Parallel.ForEach(
+                                                edgeTodo,
+                                                aKV
+                                                =>
+                                                    {
+                                                        EdgeModel edge;
+                                                        if (graphElements.TryGetElementOrDefault<EdgeModel>(out edge, aKV.Key))
+                                                        {
+                                                            foreach (var aTodo in aKV.Value)
+                                                            {
+                                                                VertexModel interestingVertex;
+                                                                if (graphElements.TryGetElementOrDefault<VertexModel>(out interestingVertex, aTodo.VertexId))
+                                                                {
+                                                                    if (aTodo.IsIncomingEdge)
+                                                                    {
+                                                                        interestingVertex.AddIncomingEdge(aTodo.EdgePropertyId, edge);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        interestingVertex.AddOutEdge(aTodo.EdgePropertyId, edge);
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    throw new Exception(String.Format("Corrupt savegame... could not get the vertex {0}", aTodo.VertexId));
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            throw new Exception(String.Format("Corrupt savegame... could not get the edge {0}", aKV.Key));
+                                                        }
+                                                    });
+                                    });
 
             continuationTask.Wait();
         }
@@ -512,13 +449,13 @@ namespace Fallen8.API.Persistency
         /// <returns> The partitions. </returns>
         /// <param name='totalCount'> Total count. </param>
         /// <param name='savePartitions'> Save partitions. </param>
-        private static List<Tuple<Int32, Int32>> CreatePartitions(int totalCount, int savePartitions)
+        private static List<Tuple<Int32, Int32>> CreatePartitions(UInt32 totalCount, UInt32 savePartitions)
         {
             var result = new List<Tuple<Int32, Int32>>();
 
             if (totalCount < savePartitions)
             {
-                for (var i = 0; i < totalCount; i++)
+                for (Int32 i = Constants.MinId; i < totalCount; i++)
                 {
                     result.Add(new Tuple<Int32, Int32>(i, i + 1));
                 }
@@ -526,14 +463,19 @@ namespace Fallen8.API.Persistency
                 return result;
             }
 
-            var size = (totalCount/savePartitions);
+            UInt32 size = totalCount/savePartitions;
 
-            for (var i = 0; i < savePartitions; i++)
+            for (Int32 i = 0; i < savePartitions; i++)
             {
-                result.Add(new Tuple<int, int>(i*size, (i*size) + size));
+                var lowerLimit = Constants.MinId + i * size;
+                var upperLimit = Constants.MinId + (i * size) + size;
+                result.Add(new Tuple<Int32, Int32>(Convert.ToInt32(lowerLimit), Convert.ToInt32(upperLimit)));
             }
 
-            result[savePartitions - 1] = new Tuple<int, int>(result[savePartitions - 1].Item1, totalCount);
+            //trim the last partition
+            var lastPartition = Convert.ToInt32(savePartitions - 1);
+            var lastElement = Convert.ToInt32(Constants.MinId + totalCount);
+            result[lastPartition] = new Tuple<Int32, Int32>(result[lastPartition].Item1, lastElement);
 
             return result;
         }
@@ -564,7 +506,7 @@ namespace Fallen8.API.Persistency
         /// <param name='reader'> Reader. </param>
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='edgeTodo'> Edge todo. </param>
-        private static void LoadVertex(SerializationReader reader, AGraphElement[] graphElements,
+        private static void LoadVertex(SerializationReader reader, BigList<AGraphElement> graphElements,
                                        ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             var id = reader.ReadOptimizedInt32();
@@ -608,9 +550,11 @@ namespace Fallen8.API.Persistency
                     for (var j = 0; j < outEdgePropertyCount; j++)
                     {
                         var edgeId = reader.ReadOptimizedInt32();
-                        if (graphElements[edgeId] != null)
+
+                        EdgeModel edge;
+                        if (graphElements.TryGetElementOrDefault(out edge, edgeId))
                         {
-                            outEdges.Add((EdgeModel) graphElements[edgeId]);
+                            outEdges.Add(edge);
                         }
                         else
                         {
@@ -656,9 +600,12 @@ namespace Fallen8.API.Persistency
                     for (var j = 0; j < incEdgePropertyCount; j++)
                     {
                         var edgeId = reader.ReadOptimizedInt32();
-                        if (graphElements[edgeId] != null)
+
+                        EdgeModel edge;
+
+                        if (graphElements.TryGetElementOrDefault(out edge, edgeId))
                         {
-                            incEdges.Add((EdgeModel) graphElements[edgeId]);
+                            incEdges.Add(edge);
                         }
                         else
                         {
@@ -690,8 +637,8 @@ namespace Fallen8.API.Persistency
 
             #endregion
 
-            graphElements[id] = new VertexModel(id, creationDate, modificationDate, properties, outEdgeProperties,
-                                                incEdgeProperties);
+            graphElements.SetValue(id, new VertexModel(id, creationDate, modificationDate, properties, outEdgeProperties,
+                                                     incEdgeProperties));
         }
 
         /// <summary>
@@ -753,7 +700,7 @@ namespace Fallen8.API.Persistency
         /// <param name='reader'> Reader. </param>
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='sneakPeaks'> Sneak peaks. </param>
-        private static void LoadEdge(SerializationReader reader, AGraphElement[] graphElements,
+        private static void LoadEdge(SerializationReader reader, BigList<AGraphElement> graphElements,
                                      List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadOptimizedInt32();
@@ -782,13 +729,12 @@ namespace Fallen8.API.Persistency
             var sourceVertexId = reader.ReadOptimizedInt32();
             var targetVertexId = reader.ReadOptimizedInt32();
 
-            var sourceVertex = graphElements[sourceVertexId];
-            var targetVertex = graphElements[targetVertexId];
+            VertexModel sourceVertex;
+            VertexModel targetVertex;
 
-            if (sourceVertex != null && targetVertex != null)
+            if (graphElements.TryGetElementOrDefault(out sourceVertex, sourceVertexId) && graphElements.TryGetElementOrDefault(out targetVertex, targetVertexId))
             {
-                graphElements[id] = new EdgeModel(id, creationDate, modificationDate, (VertexModel) targetVertex,
-                                                  (VertexModel) sourceVertex, properties);
+                graphElements.SetValue(id,new EdgeModel(id, creationDate, modificationDate, targetVertex,sourceVertex, properties));
             }
             else
             {

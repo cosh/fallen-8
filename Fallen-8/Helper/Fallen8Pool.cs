@@ -51,11 +51,6 @@ namespace Fallen8.API.Helper
         /// </summary>
         private readonly UInt32 _minValue;
 
-        /// <summary>
-        ///   The start capacity of the Fallen-8s.
-        /// </summary>
-        private readonly Int32 _startCapacity;
-
         #endregion
 
         #region Constructor
@@ -65,8 +60,7 @@ namespace Fallen8.API.Helper
         /// </summary>
         /// <param name='minValue'> The min count of instances. </param>
         /// <param name='maxValue'> The max count of instances. </param>
-        /// <param name='startCapacity'> The start capacity of the Fallen-8s. </param>
-        public Fallen8Pool(UInt32 minValue = 1, UInt32 maxValue = 2, Int32 startCapacity = 0)
+        public Fallen8Pool(UInt32 minValue = 1, UInt32 maxValue = 2)
         {
             if (maxValue < minValue)
             {
@@ -77,7 +71,6 @@ namespace Fallen8.API.Helper
 
             _minValue = minValue;
             _maxValue = maxValue;
-            _startCapacity = startCapacity;
             _instances = new ConcurrentQueue<Fallen8>();
             FillQueue();
         }
@@ -140,7 +133,7 @@ namespace Fallen8.API.Helper
 
             for (int i = 0; i < countOfNewInstances; i++)
             {
-                _instances.Enqueue(new Fallen8(_startCapacity));
+                _instances.Enqueue(new Fallen8());
             }
         }
 
