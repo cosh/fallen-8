@@ -553,7 +553,64 @@ namespace Fallen8.API.Model
 
         #endregion
 
-        #region overrides
+        #region Equals Overrides
+
+        public override Boolean Equals(Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to PathElement return false.
+            var p = obj as VertexModel;
+
+            return p != null && Equals(p);
+        }
+
+        public Boolean Equals(VertexModel p)
+        {
+            // If parameter is null return false:
+            if ((object)p == null)
+            {
+                return false;
+            }
+
+            return ReferenceEquals(this, p);
+        }
+
+        public static Boolean operator ==(VertexModel a, VertexModel b)
+        {
+            // If both are null, or both are same instance, return true.
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (((object)a == null) || ((object)b == null))
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return a.Equals(b);
+        }
+
+        public static Boolean operator !=(VertexModel a, VertexModel b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
+
+        #endregion
+
+        #region misc overrides
 
         public override string ToString()
         {
