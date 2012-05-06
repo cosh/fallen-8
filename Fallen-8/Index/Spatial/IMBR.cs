@@ -24,9 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using System.Linq;
-using System.Text;
 
 namespace Fallen8.API.Index.Spatial
 {
@@ -38,10 +35,10 @@ namespace Fallen8.API.Index.Spatial
         /// <summary>
         /// gets lowest point of the rechtangle
         /// </summary>
-        Double[] LowerPoint { get; }
+        float[] LowerPoint { get; }
         /// <summary>
         /// gets upperst point of the rechtangle
         /// </summary>
-        Double[] UpperPoint { get; }
+        float[] UpperPoint { get; }
     }
 }

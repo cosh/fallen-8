@@ -23,23 +23,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Fallen8.API.Index.Spatial.Implementation.RTree
 {
     /// <summary>
     /// the point from n-dimensional real space
     /// </summary>
-    public class RTreePoint : IMBP
+    public sealed class RTreePoint : IMBP
     {
-        public RTreePoint(Double[] coordinates)
+        public RTreePoint(float[] coordinates)
         {
             this.Coordinates = coordinates;
         }
-        public Double[] Coordinates { get; private set; }
+        public float[] Coordinates { get; private set; }
     }
    
 }

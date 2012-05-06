@@ -23,10 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial.Implementation.RTree
@@ -34,7 +31,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
     /// <summary>
     /// leaf node of r-tree
     /// </summary>
-    public class RTreeLeaf : ARTreeContainer
+    public sealed class RTreeLeaf : ARTreeContainer
     {
         public RTreeLeaf()
         {
@@ -42,17 +39,17 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         }
         public RTreeLeaf(IMBR myMBR, ARTreeContainer parent = null)
         {
-            this.LowerPoint = myMBR.LowerPoint;
-            this.UpperPoint = myMBR.UpperPoint;
+            this.lower = myMBR.LowerPoint;
+            this.upper = myMBR.UpperPoint;
             if (parent != null)
                 this.Parent = parent;
             this.Data = new List<IRTreeDataContainer>();
         }
 
-        public RTreeLeaf(Double[] lower, Double[] upper, ARTreeContainer parent = null)
+        public RTreeLeaf(float[] clower, float[] cupper, ARTreeContainer parent = null)
         {
-            this.LowerPoint = lower;
-            this.UpperPoint = upper;
+            this.lower = clower;
+            this.upper = cupper;
             if (parent != null)
                 this.Parent = parent;
             this.Data = new List<IRTreeDataContainer>();
@@ -62,7 +59,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             get { return true; }
         }
-        public List<IRTreeDataContainer> Data { get; set; }
+        public List<IRTreeDataContainer> Data;
 
 
         public override void Dispose()
@@ -70,8 +67,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             this.Data.Clear();
             Data = null;
             Parent = null;
-            this.LowerPoint = null;
-            this.UpperPoint = null;
+            this.lower = null;
+            this.upper = null;
         }
     }
 }

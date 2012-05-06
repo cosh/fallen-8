@@ -23,29 +23,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Linq;
-using System.Text;
 
 namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 {
     /// <summary>
     /// The realisation of minimal bounded rechtangle
     /// </summary>
-    public class MBR : IMBR
+    public sealed class MBR : IMBR
     {
-        public MBR(Double[] lower, Double[] upper)
+        public MBR(float[] lower, float[] upper)
         {
             this.LowerPoint = lower;
             this.UpperPoint = upper;
         }
-        public Double[] LowerPoint
+        public float[] LowerPoint
         {
             get;
             private set;
         }
 
-        public Double[] UpperPoint
+        public float[] UpperPoint
         {
             get;
             private set;

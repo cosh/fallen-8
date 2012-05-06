@@ -103,7 +103,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// value of distance
         /// </returns>
-        Double Distance(IGeometry geometry1, IGeometry geometry2);
+        float Distance(IGeometry geometry1, IGeometry geometry2);
         /// <summary>
         /// find distance between two geometric elements of graph
         /// </summary>
@@ -116,7 +116,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// value of distance
         /// </returns>
-        Double Distance(AGraphElement graphElement1, AGraphElement graphElement2);
+        float Distance(AGraphElement graphElement1, AGraphElement graphElement2);
         #endregion
 
         #region SearchRegion
@@ -341,7 +341,7 @@ namespace Fallen8.API.Index.Spatial
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
         Boolean SearchDistance(out ReadOnlyCollection<AGraphElement> result,
-            Double distance,
+            float distance,
             AGraphElement graphElement,
             Predicate<AGraphElement> predicate=null);
         /// <summary>
@@ -363,7 +363,7 @@ namespace Fallen8.API.Index.Spatial
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
         Boolean SearchDistance(out ReadOnlyCollection<AGraphElement> result,
-            Double distance,
+            float distance,
             IGeometry geometry,
             Predicate<AGraphElement> predicate=null);
         #endregion

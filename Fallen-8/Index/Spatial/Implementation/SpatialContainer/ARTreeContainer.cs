@@ -23,9 +23,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Linq;
-using System.Text;
 
 namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 {
@@ -37,7 +34,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         /// <summary>
         /// is leaf or not
         /// </summary>
-        abstract public Boolean IsLeaf { get; }
+        abstract public bool IsLeaf { get; }
         /// <summary>
         /// Level of Node
         /// </summary>

@@ -23,10 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial.Implementation.RTree
@@ -34,7 +31,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
     /// <summary>
     /// internal node of r-tree
     /// </summary>
-    public class RTreeNode : ARTreeContainer
+    /// <summary>
+    /// internal node of r-tree
+    /// </summary>
+    public sealed class RTreeNode : ARTreeContainer
     {
         public RTreeNode()
         {
@@ -44,28 +44,28 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             if (parent != null)
                 this.Parent = parent;
-            this.LowerPoint = myMBR.LowerPoint;
-            this.UpperPoint = myMBR.UpperPoint;
+            this.lower = myMBR.LowerPoint;
+            this.upper = myMBR.UpperPoint;
             if (children != null)
                 this.Children = new List<ARTreeContainer>(children);
             else
                 this.Children = new List<ARTreeContainer>();
         }
 
-        public RTreeNode(Double[] lower,
-                        Double[] upper, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
+        public RTreeNode(float[] clower,
+                        float[] cupper, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
         {
             if (parent != null)
                 this.Parent = parent;
-            this.LowerPoint = lower;
-            this.UpperPoint = upper;
+            this.lower = clower;
+            this.upper = cupper;
             if (children != null)
                 this.Children = new List<ARTreeContainer>(children);
             else
                 this.Children = new List<ARTreeContainer>();
         }
-        override public Boolean IsLeaf { get { return false; } }
-        public List<ARTreeContainer> Children { get; set; }
+        override public bool IsLeaf { get { return false; } }
+        public List<ARTreeContainer> Children;
 
 
         public override void Dispose()
@@ -73,8 +73,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             this.Children.Clear();
             Children = null;
             Parent = null;
-            this.LowerPoint = null;
-            this.UpperPoint = null;
+            this.lower = null;
+            this.upper = null;
         }
+
     }
 }
+

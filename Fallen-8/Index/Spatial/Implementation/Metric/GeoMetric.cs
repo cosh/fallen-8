@@ -24,64 +24,85 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Linq;
-using System.Text;
-
 
 namespace Fallen8.API.Index.Spatial.Implementation.Metric
 {
     /// <summary>
     /// Metric for geo data with lantidude and longiutude
     /// </summary>
-    public class GeoMetric : IMetric
+    public sealed class GeoMetric : IMetric
     {
         /// <summary>
         /// the readius of earth
         /// </summary>
-        public Double RadiusOfEarth { get; private set; }
+        public float RadiusOfEarth { get; private set; }
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="radiusOfEarth">
         /// radius
         /// </param>
-        public GeoMetric(Double radiusOfEarth)
+        public GeoMetric(float radiusOfEarth)
         {
             RadiusOfEarth = radiusOfEarth;
         }
-        public Double Distance(IMBP point1, IMBP point2)
+        public float Distance(IMBP point1, IMBP point2)
         {
-            Double currentDistance = 0.0;
+            float currentDistance = 0.0f;
 
-            if (point1.Coordinates.Count() != 2 && point2.Coordinates.Count() != 2)
+            if (point1.Coordinates.Length != 2 && point2.Coordinates.Length != 2)
                 throw new Exception("The points are not in geo space");
 
             var currentRPointStart = point1.Coordinates;
             var currentRPointEnd = point2.Coordinates;
 
-            var longiutudeStart = currentRPointStart[0];
-            var lontidueStart = currentRPointStart[1];
-            var longitudeEnd = currentRPointEnd[0];
-            var lontidudeEnd = currentRPointEnd[1];
 
-            currentDistance = RadiusOfEarth * Math.Atan(
-                Math.Sqrt(
-                    Math.Pow(Math.Cos(lontidudeEnd) * Math.Sin(longiutudeStart - longitudeEnd), 2) +
-                    Math.Pow(Math.Cos(lontidueStart) * Math.Sin(lontidudeEnd) -
-                            Math.Sin(lontidueStart) * Math.Cos(lontidudeEnd) *
-                            Math.Cos(longiutudeStart - longitudeEnd), 2)) /
-                (Math.Sin(lontidueStart) * Math.Sin(lontidudeEnd) +
-                Math.Cos(lontidudeEnd) * Math.Cos(lontidueStart) * Math.Cos(longiutudeStart - longitudeEnd)));
+            var longitudeStart = currentRPointStart[1] * Math.PI / 180;
+            var latitudueStart = currentRPointStart[0] * Math.PI / 180;
+            var longitudeEnd = currentRPointEnd[1] * Math.PI / 180;
+            var latitudeEnd = currentRPointEnd[0] * Math.PI / 180;
+
+            var cl1 = Math.Cos(latitudueStart);
+            var cl2 = Math.Cos(latitudeEnd);
+            var sl1 = Math.Sin(latitudueStart);
+            var sl2 = Math.Sin(latitudeEnd);
+            var delta = longitudeEnd - longitudeStart;
+            var cdelta = Math.Cos(delta);
+            var sdelta = Math.Sin(delta);
+
+            
+            var y = Math.Sqrt(Math.Pow(cl2 * sdelta, 2) + Math.Pow(cl1 * sl2 - sl1 * cl2 * cdelta, 2));
+            var x = sl1 * sl2 + cl1 * cl2 * cdelta;
+            var angelDifference = Math.Atan2(y, x);
+
+            currentDistance = (float)angelDifference * this.RadiusOfEarth;
+
 
             return currentDistance;
         }
 
 
-        public Double[] TransformationOfDistance(double distance, int countOfAxis)
+        public float[] TransformationOfDistance(float distance, IMBR mbr)
         {
-            if (countOfAxis != 2)
-                throw new Exception("The points are not in geo space");
-            throw new NotImplementedException();
+            {
+                if (mbr.LowerPoint.Length != 2)
+                    throw new Exception("The points are not in geo space");
+
+                float[] result = new float[2];
+                var latidtude = mbr.LowerPoint[0] * Math.PI / 180;
+                result[0] = 180 * distance / ((float)Math.PI * this.RadiusOfEarth);
+                var dist = (float)(180 * distance / (Math.PI * this.RadiusOfEarth * Math.Cos(latidtude)));
+                if (dist > 360)
+                {
+
+                    result[1] = 360;
+                }
+                else
+                {
+                    result[1] = dist;
+                }
+                return result;
+            }
         }
     }
 

@@ -23,10 +23,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Linq;
-using System.Text;
 using System.Collections.Generic;
+using System;
 
 namespace Fallen8.API.Index.Spatial
 {
@@ -38,13 +36,13 @@ namespace Fallen8.API.Index.Spatial
         /// <summary>
         /// gets coordinates of point 
         /// </summary>
-        List<Object> Coordinates { get; }
+        IEnumerable<Object> Coordinates { get; }
         /// <summary>
         /// reflection point from any space in to n-dimensional real space
         /// </summary>
         /// <returns>
         /// coordinates of point from n-dimensional real space 
         /// </returns>
-        Double[] PointToSpaceR();
+        float[] PointToSpaceR();
     }
 }

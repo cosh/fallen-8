@@ -23,9 +23,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Linq;
-using System.Text;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial
@@ -40,7 +37,7 @@ namespace Fallen8.API.Index.Spatial
         /// </summary>
         /// <param name="container"></param>
         /// <returns></returns>
-        Boolean Inclusion(ISpatialContainer container);
+        bool Inclusion(ISpatialContainer container);
         /// <summary>
         /// check whether the containers overlap
         /// </summary>
@@ -50,7 +47,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// result
         /// </returns>
-        Boolean Intersection(ISpatialContainer container);
+        bool Intersection(ISpatialContainer container);
         /// <summary>
         /// check whether the containers border
         /// </summary>
@@ -60,7 +57,7 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// result
         /// </returns>
-        Boolean Adjacency(ISpatialContainer container);
+        bool Adjacency(ISpatialContainer container);
         /// <summary>
         /// check whether the objects have the same geometric shapes
         /// </summary>
@@ -70,12 +67,20 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// result
         /// </returns>
-        Boolean EqualTo(ISpatialContainer container);
+        bool EqualTo(ISpatialContainer container);
         /// <summary>
         /// The type of container: 
         /// point container for point objects or
         /// spatial container for spatial objects
         /// </summary>
         TypeOfContainer Container { get; }
+        /// <summary>
+        /// Lower point of minimal bounded rectangel
+        /// </summary>
+        float[] LowerPoint { get; }
+        /// <summary>
+        /// Upper point of minimal bunded rectangel
+        /// </summary>
+        float[] UpperPoint { get; }
     }
 }

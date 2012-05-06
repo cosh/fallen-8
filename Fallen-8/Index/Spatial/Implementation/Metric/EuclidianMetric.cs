@@ -24,21 +24,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Linq;
-using System.Text;
-
 namespace Fallen8.API.Index.Spatial.Implementation.Metric
 {
     /// <summary>
     /// Metric for n-dimensinal real space
     /// </summary>
-    public class EuclidianMetric : IMetric
+    public sealed class EuclidianMetric : IMetric
     {
-        public Double Distance(IMBP point1, IMBP point2)
+        public float Distance(IMBP point1, IMBP point2)
         {
-            Double currentDistance = 0.0;
+            float currentDistance = 0.0f;
 
-            if (point1.Coordinates.Count() != point2.Coordinates.Count() && point1.Coordinates.Count() != 0)
+            if (point1.Coordinates.Length != point2.Coordinates.Length && point1.Coordinates.Length != 0)
                 throw new Exception("The points are in different space or space not exist ");
 
             var currentRPointStart = point1.Coordinates;
@@ -51,7 +48,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
             }
 
 
-            currentDistance = Math.Sqrt(currentDistance);
+            currentDistance = (float)Math.Sqrt(currentDistance);
 
             return currentDistance;
         }
@@ -59,10 +56,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
 
 
 
-        public Double[] TransformationOfDistance(double distance, int countOfAxis)
+        public float[] TransformationOfDistance(float distance, IMBR mbr)
         {
-            Double[] transformation = new Double[countOfAxis];
-            for (int i = 0; i < countOfAxis; i++)
+            float[] transformation = new float[mbr.LowerPoint.Length];
+            for (int i = 0; i < mbr.LowerPoint.Length; i++)
                 transformation[i] = distance;
             return transformation;
         }

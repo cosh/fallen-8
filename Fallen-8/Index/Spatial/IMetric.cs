@@ -23,9 +23,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Linq;
-using System.Text;
 
 namespace Fallen8.API.Index.Spatial
 {
@@ -46,19 +43,19 @@ namespace Fallen8.API.Index.Spatial
         /// <returns>
         /// distance between two point-objects
         /// </returns>
-        Double Distance(IMBP myPoint1, IMBP myPoint2);
+        float Distance(IMBP myPoint1, IMBP myPoint2);
         /// <summary>
         /// transformation for all axis to find minimal bounded rechtangle
         /// </summary>
         /// <param name="distance">
         /// distance
         /// </param>
-        /// <param name="countOfAxis">
-        /// count of axis
+        /// <param name="mbr">
+        /// minimal bounded rectangel
         /// </param>
         /// <returns>
         /// distance for all axis
         /// </returns>
-        Double[] TransformationOfDistance(Double distance, int countOfAxis);
+        float[] TransformationOfDistance(float distance, IMBR mbr);
     }
 }

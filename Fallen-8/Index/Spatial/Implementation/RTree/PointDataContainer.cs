@@ -23,9 +23,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Linq;
-using System.Text;
 using Fallen8.API.Model;
 using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
@@ -34,9 +31,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
     /// <summary>
     /// the realisation of point-container for the container with element of graph 
     /// </summary>
-    public class PointDataContainer : APointContainer, IRTreeDataContainer
+    public sealed class PointDataContainer : APointContainer, IRTreeDataContainer
     {
-        public PointDataContainer(Double[] point,
+        public PointDataContainer(float[] point,
                           ARTreeContainer parent = null)
         {
             if (parent != null)

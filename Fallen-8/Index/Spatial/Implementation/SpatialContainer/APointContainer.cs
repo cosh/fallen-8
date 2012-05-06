@@ -23,13 +23,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Linq;
-using System.Text;
 
 namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 {
-    /// <summary>
+        /// <summary>
     /// Container for point data
     /// </summary>
     abstract public class APointContainer : IRTreeContainer, IMBP
@@ -41,7 +38,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         /// <summary>
         /// coordination of container
         /// </summary>
-        virtual public Double[] Coordinates { get; protected set; }
+        protected float[] coordinates;
 
         #region Inclusion of MBR and Point
         virtual public bool Inclusion(ISpatialContainer container)
@@ -58,7 +55,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
                 var currentContainer = (ASpatialContainer)container;
                 for (int i = 0; i < this.Coordinates.Length; i++)
                 {
-                    if (currentContainer.LowerPoint[i] > this.Coordinates[i] || currentContainer.UpperPoint[i] < this.Coordinates[i])
+                    if (currentContainer.LowerPoint[i] > this.coordinates[i] || currentContainer.UpperPoint[i] < this.coordinates[i])
                         return false;
                 }
 
@@ -85,7 +82,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 
                 for (int i = 0; i < this.Coordinates.Length; i++)
                 {
-                    if (this.Coordinates[i] != currentPoint[i])
+                    if (this.coordinates[i] != currentPoint[i])
                         return false;
                 }
 
@@ -96,9 +93,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
                 var currentLower = (container as ASpatialContainer).LowerPoint;
                 var currentUpper = (container as ASpatialContainer).UpperPoint;
 
-                for (int i = 0; i < this.Coordinates.Length; i++)
+                for (int i = 0; i < this.coordinates.Length; i++)
                 {
-                    if (currentLower[i] != this.Coordinates[i] || currentUpper[i] != this.Coordinates[i])
+                    if (currentLower[i] != this.coordinates[i] || currentUpper[i] != this.coordinates[i])
                         return false;
                 }
                 return true;
@@ -120,9 +117,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
             {
                 var currentLower = ((ASpatialContainer)container).LowerPoint;
                 var currentUpper = ((ASpatialContainer)container).UpperPoint;
-                for (int i = 0; i < this.Coordinates.Length; i++)
+                for (int i = 0; i < this.coordinates.Length; i++)
                 {
-                    if (currentLower[i] != this.Coordinates[i] || currentUpper[i] != this.Coordinates[i])
+                    if (currentLower[i] != this.coordinates[i] || currentUpper[i] != this.coordinates[i])
                         return false;
                 }
 
@@ -133,12 +130,35 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
             #endregion
         #endregion
 
+        #region Point get,set
+        virtual public float[] Coordinates
+        {
+            get { return this.coordinates; }
+            set { this.coordinates = value; }
+        }
 
+        virtual public float[] LowerPoint
+        {
+            get { return this.coordinates; }
+
+
+        }
+
+        virtual public float[] UpperPoint
+        {
+            get { return this.coordinates; }
+
+        }
+        #endregion
         public ARTreeContainer Parent
         {
             get;
             set;
         }
 
+
+
+
     }
+    
 }
