@@ -114,7 +114,7 @@ namespace Fallen8.API.Algorithms.Path
         /// </summary>
         /// <param name="vertexCost"> The vertex cost delegate. </param>
         /// <param name="edgeCost"> The edge cost delegate </param>
-        public void CalculateWeight(PathDelegates.VertexCost vertexCost, PathDelegates.EdgeCost edgeCost)
+        public virtual void CalculateWeight(PathDelegates.VertexCost vertexCost, PathDelegates.EdgeCost edgeCost)
         {
             Weight = 0;
 
