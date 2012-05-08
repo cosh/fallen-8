@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using Fallen8.API.Error;
 
@@ -165,7 +166,7 @@ namespace Fallen8.API.Model
 
                 var foundSth = false;
 
-                for (int i = 0; i < _inEdges.Count; i++)
+                for (var i = 0; i < _inEdges.Count; i++)
                 {
                     var aInEdge = _inEdges[i];
                     if (aInEdge.EdgePropertyId == edgePropertyId)
@@ -387,7 +388,7 @@ namespace Fallen8.API.Model
 
                 if (_outEdges != null)
                 {
-                    for (int i = 0; i < _outEdges.Count; i++)
+                    for (var i = 0; i < _outEdges.Count; i++)
                     {
                         neighbors.AddRange(_outEdges[i].Edges.Select(TargetVertexExtractor));
                     }
@@ -572,12 +573,7 @@ namespace Fallen8.API.Model
         public Boolean Equals(VertexModel p)
         {
             // If parameter is null return false:
-            if ((object)p == null)
-            {
-                return false;
-            }
-
-            return ReferenceEquals(this, p);
+            return (object)p != null && ReferenceEquals(this, p);
         }
 
         public static Boolean operator ==(VertexModel a, VertexModel b)
@@ -614,7 +610,7 @@ namespace Fallen8.API.Model
 
         public override string ToString()
         {
-            return Id.ToString();
+            return Id.ToString(CultureInfo.InvariantCulture);
         }
 
         #endregion

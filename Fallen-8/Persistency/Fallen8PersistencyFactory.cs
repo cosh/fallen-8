@@ -108,6 +108,7 @@ namespace Fallen8.API.Persistency
         /// <param name='indices'> Indices. </param>
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
+        /// <param name="graphElementCount">Number of graph elements</param>
         public static void Save(Int32 currentId, BigList<AGraphElement> graphElements, IDictionary<String, IIndex> indices,
                                 String path, UInt32 savePartitions, UInt32 graphElementCount)
         {
@@ -129,10 +130,9 @@ namespace Fallen8.API.Persistency
                 #region graph elements
 
                 var graphElementPartitions = CreatePartitions(graphElementCount, savePartitions);
-                var graphElementSaver =
-                    (Task<String>[]) Array.CreateInstance(typeof (Task<String>), graphElementPartitions.Count);
+                var graphElementSaver = new Task<string>[graphElementPartitions.Count];
 
-                for (int i = 0; i < graphElementPartitions.Count; i++)
+                for (var i = 0; i < graphElementPartitions.Count; i++)
                 {
                     var partition = graphElementPartitions[i];
                     graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, path));
@@ -142,7 +142,7 @@ namespace Fallen8.API.Persistency
 
                 #region indices
 
-                var indexSaver = (Task<String>[]) Array.CreateInstance(typeof (Task<String>), indices.Count);
+                var indexSaver = new Task<string>[indices.Count];
 
                 var counter = 0;
                 foreach (var aIndex in indices)
@@ -278,7 +278,7 @@ namespace Fallen8.API.Persistency
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
             var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
-            var tasks = (Task[]) Array.CreateInstance(typeof (Task), indexStreams.Count);
+            var tasks = new Task[indexStreams.Count];
 
             //load the indices
             for (var i = 0; i < indexStreams.Count; i++)
@@ -365,9 +365,7 @@ namespace Fallen8.API.Persistency
             //create some futures to load as much as possible in parallel
             const TaskCreationOptions options = TaskCreationOptions.LongRunning;
             var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
-            var tasks =
-                (Task<List<EdgeSneakPeak>>[])
-                Array.CreateInstance(typeof (Task<List<EdgeSneakPeak>>), graphElementStreams.Count);
+            var tasks = new Task<List<EdgeSneakPeak>>[graphElementStreams.Count];
             var edgeTodo = new ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>>();
 
             //create the major part of the graph elements
@@ -411,12 +409,12 @@ namespace Fallen8.API.Persistency
                                                 =>
                                                     {
                                                         EdgeModel edge;
-                                                        if (graphElements.TryGetElementOrDefault<EdgeModel>(out edge, aKV.Key))
+                                                        if (graphElements.TryGetElementOrDefault(out edge, aKV.Key))
                                                         {
                                                             foreach (var aTodo in aKV.Value)
                                                             {
                                                                 VertexModel interestingVertex;
-                                                                if (graphElements.TryGetElementOrDefault<VertexModel>(out interestingVertex, aTodo.VertexId))
+                                                                if (graphElements.TryGetElementOrDefault(out interestingVertex, aTodo.VertexId))
                                                                 {
                                                                     if (aTodo.IsIncomingEdge)
                                                                     {
@@ -455,7 +453,7 @@ namespace Fallen8.API.Persistency
 
             if (totalCount < savePartitions)
             {
-                for (Int32 i = Constants.MinId; i < totalCount; i++)
+                for (var i = Constants.MinId; i < totalCount; i++)
                 {
                     result.Add(new Tuple<Int32, Int32>(i, i + 1));
                 }
@@ -465,7 +463,7 @@ namespace Fallen8.API.Persistency
 
             UInt32 size = totalCount/savePartitions;
 
-            for (Int32 i = 0; i < savePartitions; i++)
+            for (var i = 0; i < savePartitions; i++)
             {
                 var lowerLimit = Constants.MinId + i * size;
                 var upperLimit = Constants.MinId + (i * size) + size;

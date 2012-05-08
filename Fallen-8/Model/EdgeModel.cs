@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Globalization;
 
 namespace Fallen8.API.Model
 {
@@ -89,7 +90,7 @@ namespace Fallen8.API.Model
 
         public override string ToString()
         {
-            return Id.ToString();
+            return Id.ToString(CultureInfo.InvariantCulture);
         }
 
         #endregion

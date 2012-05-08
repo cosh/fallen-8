@@ -87,7 +87,7 @@ namespace Fallen8.API.Helper
         {
             _extends = new int[NumberOfShards];
             _data = new T[NumberOfShards][];
-            for (int i = 0; i < NumberOfShards; i++)
+            for (var i = 0; i < NumberOfShards; i++)
             {
                 _data[i] = new T[ShardSizeInitial];
                 _extends[i] = 1;
@@ -112,7 +112,7 @@ namespace Fallen8.API.Helper
         public void SetValue(int index, T item)
         {
             UInt16 shardIndex = 0;
-            for (int i = 0; i < NumberOfShards; i++)
+            for (var i = 0; i < NumberOfShards; i++)
             {
                 var lowerLimit = Int32.MinValue + i*ShardSize;
                 var upperLimit = lowerLimit + ShardSize;
@@ -155,7 +155,7 @@ namespace Fallen8.API.Helper
         public void SetDefault(int index)
         {
             UInt16 shardIndex = 0;
-            for (int i = 0; i < NumberOfShards; i++)
+            for (var i = 0; i < NumberOfShards; i++)
             {
                 var lowerLimit = Int32.MinValue + i * ShardSize;
                 var upperLimit = lowerLimit + ShardSize;
@@ -199,7 +199,7 @@ namespace Fallen8.API.Helper
             where TResult : class 
         {
             UInt16 shardIndex = 0;
-            for (int i = 0; i < NumberOfShards; i++)
+            for (var i = 0; i < NumberOfShards; i++)
             {
                 var lowerLimit = Int32.MinValue + i * ShardSize;
                 var upperLimit = lowerLimit + ShardSize;
@@ -245,7 +245,7 @@ namespace Fallen8.API.Helper
                 () => new List<TResult>(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, List<TResult> arg4)
                 {
-                    for (int i = 0; i < shard.Length; i++)
+                    for (var i = 0; i < shard.Length; i++)
                     {
                         var value = shard[i] as TResult;
 
@@ -278,7 +278,7 @@ namespace Fallen8.API.Helper
                 () => new List<T>(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, List<T> arg4)
                 {
-                    for (int i = 0; i < shard.Length; i++)
+                    for (var i = 0; i < shard.Length; i++)
                     {
                         if (shard[i] != null && delgate(shard[i]))
                         {
@@ -309,7 +309,7 @@ namespace Fallen8.API.Helper
                 () => new uint(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, uint arg4)
                     {
-                        for (int i = 0; i < shard.Length; i++)
+                        for (var i = 0; i < shard.Length; i++)
                         {
                             if (shard[i] != null && shard[i] is TInteresting)
                             {

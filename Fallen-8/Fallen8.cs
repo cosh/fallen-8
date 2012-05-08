@@ -203,8 +203,8 @@ namespace Fallen8.API
                 VertexModel targetVertex;
                 
                 //get the related vertices
-                if (_graphElements.TryGetElementOrDefault<VertexModel>(out sourceVertex, sourceVertexId) &&
-                    _graphElements.TryGetElementOrDefault<VertexModel>(out targetVertex, targetVertexId))
+                if (_graphElements.TryGetElementOrDefault(out sourceVertex, sourceVertexId) &&
+                    _graphElements.TryGetElementOrDefault(out targetVertex, targetVertexId))
                 {
                     outgoingEdge = new EdgeModel(_currentId, creationDate, targetVertex, sourceVertex, properties);
 
@@ -238,7 +238,7 @@ namespace Fallen8.API
             {
                 var success = false;
                 AGraphElement graphElement;
-                if (_graphElements.TryGetElementOrDefault<AGraphElement>(out graphElement, graphElementId))
+                if (_graphElements.TryGetElementOrDefault(out graphElement, graphElementId))
                 {
                     success = graphElement != null && graphElement.TryAddProperty(propertyId, property);
                 }
@@ -423,14 +423,20 @@ namespace Fallen8.API
 
                         var edge = (EdgeModel) graphElement;
 
-                        for (var i = 0; i < inEdgeRemovals.Count; i++)
+                        if (inEdgeRemovals != null)
                         {
-                            edge.TargetVertex.AddIncomingEdge(inEdgeRemovals[i], edge);
+                            for (var i = 0; i < inEdgeRemovals.Count; i++)
+                            {
+                                edge.TargetVertex.AddIncomingEdge(inEdgeRemovals[i], edge);
+                            }
                         }
 
-                        for (var i = 0; i < outEdgeRemovals.Count; i++)
+                        if (outEdgeRemovals != null)
                         {
-                            edge.SourceVertex.AddOutEdge(outEdgeRemovals[i], edge);
+                            for (var i = 0; i < outEdgeRemovals.Count; i++)
+                            {
+                                edge.SourceVertex.AddOutEdge(outEdgeRemovals[i], edge);
+                            }
                         }
 
                         #endregion
@@ -457,7 +463,7 @@ namespace Fallen8.API
         #region IFallen8Read implementation
 
         public bool CalculateShortestPath(
-            out List<Algorithms.Path.Path> result,
+            out List<Path> result,
             string algorithmname,
             Int32 sourceVertexId,
             Int32 destinationVertexId,
@@ -715,7 +721,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                var success = _graphElements.TryGetElementOrDefault<EdgeModel>(out result, id);
+                var success = _graphElements.TryGetElementOrDefault(out result, id);
 
                 FinishReadResource();
                 
@@ -777,7 +783,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                List<AGraphElement> result = _graphElements.FindElements(
+                var result = _graphElements.FindElements(
                     aGraphElement =>
                         {
                             Object property;

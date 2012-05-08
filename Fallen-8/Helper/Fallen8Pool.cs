@@ -131,7 +131,7 @@ namespace Fallen8.API.Helper
                 countOfNewInstances = (countOfNewInstances + _minValue)/2;
             }
 
-            for (int i = 0; i < countOfNewInstances; i++)
+            for (var i = 0; i < countOfNewInstances; i++)
             {
                 _instances.Enqueue(new Fallen8());
             }

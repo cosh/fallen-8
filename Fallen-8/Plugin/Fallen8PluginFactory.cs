@@ -76,7 +76,7 @@ namespace Fallen8.API.Plugin
                       select Activate(aPluginTypeOfT)
                       into aPluginInstance
                       where aPluginInstance != null
-                      select aPluginInstance).ToDictionary(key => key.PluginName, value => GenerateDescription(value));
+                      select aPluginInstance).ToDictionary(key => key.PluginName, GenerateDescription);
             return result.Any();
         }
 

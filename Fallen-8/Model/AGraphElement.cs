@@ -106,16 +106,9 @@ namespace Fallen8.API.Model
         {
             if (ReadResource())
             {
-                ReadOnlyCollection<PropertyContainer> result;
-
-                if (_properties != null)
-                {
-                    result = new ReadOnlyCollection<PropertyContainer>(_properties);
-                }
-                else
-                {
-                    result = new ReadOnlyCollection<PropertyContainer>(new PropertyContainer[0]);
-                }
+                var result = _properties != null 
+                    ? new ReadOnlyCollection<PropertyContainer>(_properties) 
+                    : new ReadOnlyCollection<PropertyContainer>(new PropertyContainer[0]);
 
                 FinishReadResource();
 

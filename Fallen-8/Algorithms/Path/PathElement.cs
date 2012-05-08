@@ -77,7 +77,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <summary>
         ///   Direction.
         /// </summary>
-        public Direction Direction { get; set; }
+        public Direction Direction { get; private set; }
 
         /// <summary>
         ///   The weight of this path element
@@ -155,7 +155,7 @@ namespace Fallen8.API.Algorithms.Path
                 return false;
             }
 
-            return ReferenceEquals(this.Edge, p.Edge) && this.Direction == p.Direction;
+            return ReferenceEquals(Edge, p.Edge) && Direction == p.Direction;
         }
 
         public static Boolean operator ==(PathElement a, PathElement b)
@@ -183,7 +183,7 @@ namespace Fallen8.API.Algorithms.Path
 
         public override int GetHashCode()
         {
-            return this.Edge.GetHashCode();
+            return Edge.GetHashCode();
         }
 
         #endregion
