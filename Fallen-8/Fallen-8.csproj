@@ -61,6 +61,7 @@
     <Compile Include="Helper\Statistics.cs" />
     <Compile Include="IFallen8Read.cs" />
     <Compile Include="IFallen8Write.cs" />
+    <Compile Include="Index\IndexFactory.cs" />
     <Compile Include="Index\SingleValueIndex.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResultElement.cs" />
@@ -82,7 +83,6 @@
     <Compile Include="Model\VertexModel.cs" />
     <Compile Include="Fallen8.cs" />
     <Compile Include="Model\AGraphElement.cs" />
-    <Compile Include="Index\Fallen8IndexFactory.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
     <Compile Include="Service\ServiceFactory.cs" />
