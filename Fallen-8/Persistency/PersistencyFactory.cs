@@ -264,7 +264,7 @@ namespace Fallen8.API.Persistency
         /// <param name="service">Service.</param>
         /// <param name="path">Path.</param>
         /// <returns>The filename of the persisted service.</returns>
-        private static String SaveService(string serviceName, IFallen8Service service, string path)
+        private static String SaveService(string serviceName, IService service, string path)
         {
             var serviceFileName = path + "_service_" + serviceName;
 

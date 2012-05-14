@@ -204,7 +204,7 @@ namespace Fallen8.API.Service.REST
             Fallen8PluginFactory.TryGetAvailablePlugins<IShortestPathAlgorithm>(out availablePathAlgos);
 
             IEnumerable<String> availableServices;
-            Fallen8PluginFactory.TryGetAvailablePlugins<IFallen8Service>(out availableServices);
+            Fallen8PluginFactory.TryGetAvailablePlugins<IService>(out availableServices);
 
             return new Fallen8Status
                        {

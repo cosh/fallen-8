@@ -38,7 +38,7 @@ namespace Fallen8.API.Service.REST
     /// <summary>
     ///   Fallen-8 REST service.
     /// </summary>
-    public sealed class RESTServicePlugin : IFallen8Service
+    public sealed class RESTServicePlugin : IService
     {
         #region data
 
@@ -93,7 +93,7 @@ namespace Fallen8.API.Service.REST
 
         #endregion
 
-        #region IFallen8Service implementation
+        #region IService implementation
 
         public DateTime StartTime
         {
@@ -165,7 +165,7 @@ namespace Fallen8.API.Service.REST
 
         public Type PluginCategory
         {
-            get { return typeof (IFallen8Service); }
+            get { return typeof (IService); }
         }
 
         public string Description

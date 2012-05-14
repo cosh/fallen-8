@@ -1,5 +1,5 @@
 ﻿// 
-// IFallen8Service.cs
+// IService.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -34,7 +34,7 @@ namespace Fallen8.API.Service
     /// <summary>
     ///   Fallen-8 service interface.
     /// </summary>
-    public interface IFallen8Service : IFallen8Plugin, IFallen8Serializable
+    public interface IService : IFallen8Plugin, IFallen8Serializable
     {
         /// <summary>
         ///   Gets the start time.

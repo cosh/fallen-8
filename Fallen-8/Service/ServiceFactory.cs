@@ -51,7 +51,7 @@ namespace Fallen8.API.Service
         /// <summary>
         ///   The created indices.
         /// </summary>
-        public IDictionary<String, IFallen8Service> Services;
+        public IDictionary<String, IService> Services;
 
         #endregion
 
@@ -64,7 +64,7 @@ namespace Fallen8.API.Service
         public ServiceFactory(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
-            Services = new Dictionary<string, IFallen8Service>();
+            Services = new Dictionary<string, IService>();
         }
 
         #endregion
@@ -79,7 +79,7 @@ namespace Fallen8.API.Service
         {
             Dictionary<String, string> result;
 
-            Fallen8PluginFactory.TryGetAvailablePluginsWithDescriptions<IFallen8Service>(out result);
+            Fallen8PluginFactory.TryGetAvailablePluginsWithDescriptions<IService>(out result);
 
             return result.Select(_ => _.Value);
         }
@@ -92,7 +92,7 @@ namespace Fallen8.API.Service
         /// <param name='servicePluginName'> The name of the service plugin. </param>
         /// <param name="serviceName"> The name of the service instance </param>
         /// <param name='parameter'> The parameters of this service. </param>
-        public bool TryStartService(out IFallen8Service service, string servicePluginName, string serviceName,
+        public bool TryStartService(out IService service, string servicePluginName, string serviceName,
                                     IDictionary<string, object> parameter)
         {
             try
@@ -168,12 +168,12 @@ namespace Fallen8.API.Service
         /// <param name="fallen8">Fallen-8</param>
         internal void OpenService(string serviceName, string servicePluginName, SerializationReader reader, Fallen8 fallen8)
         {
-            IFallen8Service service;
+            IService service;
             if (Fallen8PluginFactory.TryFindPlugin(out service, servicePluginName))
             {
                 service.Open(reader, fallen8);
 
-                var newServices = new Dictionary<string, IFallen8Service>(Services);
+                var newServices = new Dictionary<string, IService>(Services);
                 newServices.Add(serviceName, service);
 
                 Interlocked.Exchange(ref Services, newServices);
