@@ -108,7 +108,7 @@ namespace Fallen8.API
         /// <param name='path'> Path to the save point. </param>
         public Fallen8(String path)
         {
-            _graphElements = Fallen8PersistencyFactory.Load(this, path, ref _currentId);
+            _graphElements = PersistencyFactory.Load(this, path, ref _currentId);
         }
 
         #endregion
@@ -132,7 +132,7 @@ namespace Fallen8.API
                 GC.WaitForPendingFinalizers();
 #endif
 
-                _graphElements = Fallen8PersistencyFactory.Load(this, path, ref _currentId);
+                _graphElements = PersistencyFactory.Load(this, path, ref _currentId);
                 TrimPrivate();
 
                 FinishWriteResource();
@@ -667,7 +667,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                Fallen8PersistencyFactory.Save(this, _graphElements, path, savePartitions);
+                PersistencyFactory.Save(this, _graphElements, path, savePartitions);
 
                 FinishReadResource();
 

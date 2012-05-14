@@ -1,5 +1,5 @@
 // 
-// Fallen8PersistencyFactory.cs
+// PersistencyFactory.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -41,9 +41,9 @@ using Fallen8.API.Log;
 namespace Fallen8.API.Persistency
 {
     /// <summary>
-    ///   Fallen8 persistency factory.
+    ///   Persistency factory.
     /// </summary>
-    internal static class Fallen8PersistencyFactory
+    internal static class PersistencyFactory
     {
         #region public methods
 
