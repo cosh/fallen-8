@@ -86,20 +86,20 @@
     <Compile Include="Model\AGraphElement.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
+    <Compile Include="Service\REST\IRESTService.cs" />
+    <Compile Include="Service\REST\RESTService.cs" />
+    <Compile Include="Service\REST\RESTServicePlugin.cs" />
     <Compile Include="Service\ServiceFactory.cs" />
     <Compile Include="Service\IFallen8Service.cs" />
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
-    <Compile Include="Service\REST\Fallen8RESTServicePlugin.cs" />
     <Compile Include="Service\REST\Fallen8Status.cs" />
-    <Compile Include="Service\REST\IFallen8RESTService.cs" />
     <Compile Include="Service\REST\Ressource\Frontend.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Frontend.resx</DependentUpon>
     </Compile>
-    <Compile Include="Service\REST\Fallen8RESTService.cs" />
     <Compile Include="Service\REST\RESTProperties.cs" />
     <Compile Include="Helper\Fallen8Pool.cs" />
     <Compile Include="Service\REST\Specification\EdgeSpecification.cs" />
