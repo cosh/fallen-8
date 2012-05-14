@@ -100,7 +100,7 @@
       <DependentUpon>Frontend.resx</DependentUpon>
     </Compile>
     <Compile Include="Service\REST\Fallen8RESTService.cs" />
-    <Compile Include="Service\REST\Fallen8RESTProperties.cs" />
+    <Compile Include="Service\REST\RESTProperties.cs" />
     <Compile Include="Helper\Fallen8Pool.cs" />
     <Compile Include="Service\REST\Specification\EdgeSpecification.cs" />
     <Compile Include="Service\REST\Specification\LiteralSpecification.cs" />

@@ -1,5 +1,5 @@
 // 
-//  IFallen8RESTService.cs
+//  IRESTService.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -36,7 +36,7 @@ namespace Fallen8.API.Service.REST
     ///   The Fallen-8 REST service.
     /// </summary>
     [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8RESTService")]
-    public interface IFallen8RESTService
+    public interface IRESTService
     {
         #region Import
 
@@ -71,7 +71,7 @@ namespace Fallen8.API.Service.REST
         /// <returns> PropertyName -> PropertyValue </returns>
         [OperationContract(Name = "VertexProperties")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        Fallen8RESTProperties GetAllVertexProperties(String vertexIdentifier);
+        RESTProperties GetAllVertexProperties(String vertexIdentifier);
 
         /// <summary>
         ///   Returns all edge properties
@@ -80,7 +80,7 @@ namespace Fallen8.API.Service.REST
         /// <returns> PropertyId -> PropertyValue </returns>
         [OperationContract(Name = "EdgeProperties")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        Fallen8RESTProperties GetAllEdgeProperties(String edgeIdentifier);
+        RESTProperties GetAllEdgeProperties(String edgeIdentifier);
 
         /// <summary>
         ///   Returns all available outgoing edges for a given vertex

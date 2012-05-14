@@ -1,5 +1,5 @@
 // 
-//  Fallen8RESTService.cs
+//  RESTService.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -46,7 +46,7 @@ namespace Fallen8.API.Service.REST
     ///   Fallen-8 REST service.
     /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public sealed class Fallen8RESTService : IFallen8RESTService, IDisposable
+    public sealed class RESTService : IRESTService, IDisposable
     {
         #region Data
 
@@ -75,10 +75,10 @@ namespace Fallen8.API.Service.REST
         #region Constructor
 
         /// <summary>
-        ///   Initializes a new instance of the Fallen8RESTService class.
+        ///   Initializes a new instance of the RESTService class.
         /// </summary>
         /// <param name='fallen8'> Fallen-8. </param>
-        public Fallen8RESTService(Fallen8 fallen8)
+        public RESTService(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
             LoadFrontend();
@@ -95,7 +95,7 @@ namespace Fallen8.API.Service.REST
 
         #endregion
 
-        #region IFallen8RESTService implementation
+        #region IRESTService implementation
 
         public int AddVertex(VertexSpecification definition)
         {
@@ -127,12 +127,12 @@ namespace Fallen8.API.Service.REST
                                     definition.CreationDate, GenerateProperties(definition.Properties)).Id;
         }
 
-        public Fallen8RESTProperties GetAllVertexProperties(string vertexIdentifier)
+        public RESTProperties GetAllVertexProperties(string vertexIdentifier)
         {
             return GetGraphElementProperties(vertexIdentifier);
         }
 
-        public Fallen8RESTProperties GetAllEdgeProperties(string edgeIdentifier)
+        public RESTProperties GetAllEdgeProperties(string edgeIdentifier)
         {
             return GetGraphElementProperties(edgeIdentifier);
         }
@@ -496,12 +496,12 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         /// <returns> The graph element properties. </returns>
         /// <param name='vertexIdentifier'> Vertex identifier. </param>
-        private Fallen8RESTProperties GetGraphElementProperties(string vertexIdentifier)
+        private RESTProperties GetGraphElementProperties(string vertexIdentifier)
         {
             AGraphElement vertex;
             if (_fallen8.TryGetGraphElement(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
-                return new Fallen8RESTProperties
+                return new RESTProperties
                            {
                                Id = vertex.Id,
                                CreationDate = DateHelper.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),

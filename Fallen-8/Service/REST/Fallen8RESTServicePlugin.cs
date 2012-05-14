@@ -1,5 +1,5 @@
 // 
-//  Fallen8RESTServicePlugin.cs
+//  RESTServicePlugin.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -38,7 +38,7 @@ namespace Fallen8.API.Service.REST
     /// <summary>
     ///   Fallen-8 REST service.
     /// </summary>
-    public sealed class Fallen8RESTServicePlugin : IFallen8Service
+    public sealed class RESTServicePlugin : IFallen8Service
     {
         #region data
 
@@ -60,7 +60,7 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The actual service
         /// </summary>
-        private Fallen8RESTService _service;
+        private RESTService _service;
 
         /// <summary>
         ///   The host that runs the service
@@ -203,7 +203,7 @@ namespace Fallen8.API.Service.REST
             if (!uri.IsWellFormedOriginalString())
                 throw new Exception("The URI Pattern is not well formed!");
 
-            _service = new Fallen8RESTService(fallen8);
+            _service = new RESTService(fallen8);
 
             _host = new ServiceHost(_service, uri);
 
@@ -230,7 +230,7 @@ namespace Fallen8.API.Service.REST
 
                 binding.ReaderQuotas = readerQuotas;
 
-                var se = _host.AddServiceEndpoint(typeof (IFallen8RESTService), binding, restServiceAddress);
+                var se = _host.AddServiceEndpoint(typeof (IRESTService), binding, restServiceAddress);
                 var webBehav = new WebHttpBehavior
                                    {
                                        HelpEnabled = true
