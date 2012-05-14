@@ -1,5 +1,5 @@
 // 
-// IFallen8Write.cs
+// IWrite.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -32,7 +32,7 @@ namespace Fallen8.API
     /// <summary>
     ///   Fallen8 write interface.
     /// </summary>
-    public interface IFallen8Write
+    public interface IWrite
     {
         #region create
 

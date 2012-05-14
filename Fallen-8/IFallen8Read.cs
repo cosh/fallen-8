@@ -1,5 +1,5 @@
 // 
-// IFallen8Read.cs
+// IRead.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -38,7 +38,7 @@ namespace Fallen8.API
     /// <summary>
     ///   Fallen8 read interface.
     /// </summary>
-    public interface IFallen8Read
+    public interface IRead
     {
         #region search
 

@@ -48,7 +48,7 @@ namespace Fallen8.API
     /// <summary>
     ///   Fallen8.
     /// </summary>
-    public sealed class Fallen8 : AThreadSafeElement, IFallen8Read, IFallen8Write, IDisposable
+    public sealed class Fallen8 : AThreadSafeElement, IRead, IWrite, IDisposable
     {
         #region Data
 
@@ -113,7 +113,7 @@ namespace Fallen8.API
 
         #endregion
 
-        #region IFallen8Write implementation
+        #region IWrite implementation
 
         public void Load(String path)
         {
@@ -467,7 +467,7 @@ namespace Fallen8.API
 
         #endregion
 
-        #region IFallen8Read implementation
+        #region IRead implementation
 
         public bool CalculateShortestPath(
             out List<Path> result,
