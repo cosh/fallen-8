@@ -1,5 +1,5 @@
 // 
-// Fallen8PluginFactory.cs
+// PluginFactory.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -36,7 +36,7 @@ namespace Fallen8.API.Plugin
     /// <summary>
     ///   Fallen8 plugin factory.
     /// </summary>
-    public static class Fallen8PluginFactory
+    public static class PluginFactory
     {
         /// <summary>
         ///   Tries to find a plugin.
@@ -103,7 +103,7 @@ namespace Fallen8.API.Plugin
         /// </summary>
         /// <param name="aPluginInstance"> A plugin instance </param>
         /// <returns> </returns>
-        private static string GenerateDescription(IFallen8Plugin aPluginInstance)
+        private static string GenerateDescription(IPlugin aPluginInstance)
         {
             var sb = new StringBuilder();
 
@@ -145,7 +145,7 @@ namespace Fallen8.API.Plugin
                         continue;
                     }
 
-                    if (!IsInterfaceOf<IFallen8Plugin>(aType))
+                    if (!IsInterfaceOf<IPlugin>(aType))
                     {
                         continue;
                     }
@@ -182,7 +182,7 @@ namespace Fallen8.API.Plugin
         ///   Activate the specified currentPluginType.
         /// </summary>
         /// <param name='currentPluginType'> Current plugin type. </param>
-        private static IFallen8Plugin Activate(Type currentPluginType)
+        private static IPlugin Activate(Type currentPluginType)
         {
             Object instance;
 
@@ -195,7 +195,7 @@ namespace Fallen8.API.Plugin
                 return null;
             }
 
-            return instance as IFallen8Plugin;
+            return instance as IPlugin;
         }
 
         #endregion

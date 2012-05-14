@@ -34,7 +34,7 @@ namespace Fallen8.API.Service
     /// <summary>
     ///   Fallen-8 service interface.
     /// </summary>
-    public interface IService : IFallen8Plugin, IFallen8Serializable
+    public interface IService : IPlugin, IFallen8Serializable
     {
         /// <summary>
         ///   Gets the start time.

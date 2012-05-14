@@ -36,7 +36,7 @@ namespace Fallen8.API.Index
     /// <summary>
     ///   The Fallen8 index interface.
     /// </summary>
-    public interface IIndex : IFallen8Plugin, IFallen8Serializable
+    public interface IIndex : IPlugin, IFallen8Serializable
     {
         /// <summary>
         ///   Count of the keys.

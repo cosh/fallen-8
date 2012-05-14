@@ -69,7 +69,7 @@ namespace Fallen8.API.Index
         {
             IEnumerable<String> result;
 
-            Fallen8PluginFactory.TryGetAvailablePlugins<IIndex>(out result);
+            PluginFactory.TryGetAvailablePlugins<IIndex>(out result);
 
             return result;
         }
@@ -85,7 +85,7 @@ namespace Fallen8.API.Index
         public bool TryCreateIndex(out IIndex index, string indexName, string indexTypeName = "DictionaryIndex",
                                    IDictionary<string, object> parameter = null)
         {
-            if (Fallen8PluginFactory.TryFindPlugin(out index, indexTypeName))
+            if (PluginFactory.TryFindPlugin(out index, indexTypeName))
             {
                 try
                 {
@@ -158,7 +158,7 @@ namespace Fallen8.API.Index
         internal void OpenIndex(string indexName, string indexPluginName, SerializationReader reader, Fallen8 fallen8)
         {
             IIndex index;
-            if (Fallen8PluginFactory.TryFindPlugin(out index, indexPluginName))
+            if (PluginFactory.TryFindPlugin(out index, indexPluginName))
             {
                 index.Open(reader, fallen8);
 

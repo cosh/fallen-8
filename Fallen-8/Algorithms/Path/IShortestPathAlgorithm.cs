@@ -33,7 +33,7 @@ namespace Fallen8.API.Algorithms.Path
     /// <summary>
     ///   The interface for path algorithms
     /// </summary>
-    public interface IShortestPathAlgorithm : IFallen8Plugin
+    public interface IShortestPathAlgorithm : IPlugin
     {
         /// <summary>
         ///   Calculates shortest paths

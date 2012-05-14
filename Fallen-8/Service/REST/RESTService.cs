@@ -198,13 +198,13 @@ namespace Fallen8.API.Service.REST
             var edgeCount = _fallen8.GetEdges().Count;
 
             IEnumerable<String> availableIndices;
-            Fallen8PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);
+            PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);
 
             IEnumerable<String> availablePathAlgos;
-            Fallen8PluginFactory.TryGetAvailablePlugins<IShortestPathAlgorithm>(out availablePathAlgos);
+            PluginFactory.TryGetAvailablePlugins<IShortestPathAlgorithm>(out availablePathAlgos);
 
             IEnumerable<String> availableServices;
-            Fallen8PluginFactory.TryGetAvailablePlugins<IService>(out availableServices);
+            PluginFactory.TryGetAvailablePlugins<IService>(out availableServices);
 
             return new Fallen8Status
                        {

@@ -139,7 +139,7 @@ namespace Fallen8.API.Service.REST
 
         #endregion
 
-        #region IFallen8Plugin implementation
+        #region IPlugin implementation
 
         public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
         {

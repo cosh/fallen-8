@@ -483,7 +483,7 @@ namespace Fallen8.API
             PathDelegates.VertexCost vertexCost = null)
         {
             IShortestPathAlgorithm algo;
-            if (Fallen8PluginFactory.TryFindPlugin(out algo, algorithmname))
+            if (PluginFactory.TryFindPlugin(out algo, algorithmname))
             {
                 algo.Initialize(this, null);
 

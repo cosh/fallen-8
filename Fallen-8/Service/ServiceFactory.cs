@@ -79,7 +79,7 @@ namespace Fallen8.API.Service
         {
             Dictionary<String, string> result;
 
-            Fallen8PluginFactory.TryGetAvailablePluginsWithDescriptions<IService>(out result);
+            PluginFactory.TryGetAvailablePluginsWithDescriptions<IService>(out result);
 
             return result.Select(_ => _.Value);
         }
@@ -97,7 +97,7 @@ namespace Fallen8.API.Service
         {
             try
             {
-                if (Fallen8PluginFactory.TryFindPlugin(out service, servicePluginName))
+                if (PluginFactory.TryFindPlugin(out service, servicePluginName))
                 {
                     if (WriteResource())
                     {
@@ -169,7 +169,7 @@ namespace Fallen8.API.Service
         internal void OpenService(string serviceName, string servicePluginName, SerializationReader reader, Fallen8 fallen8)
         {
             IService service;
-            if (Fallen8PluginFactory.TryFindPlugin(out service, servicePluginName))
+            if (PluginFactory.TryFindPlugin(out service, servicePluginName))
             {
                 service.Open(reader, fallen8);
 

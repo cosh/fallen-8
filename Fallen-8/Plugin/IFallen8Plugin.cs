@@ -1,5 +1,5 @@
 // 
-// IFallen8Plugin.cs
+// IPlugin.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 namespace Fallen8.API.Plugin
 {
-    public interface IFallen8Plugin : IDisposable
+    public interface IPlugin : IDisposable
     {
         /// <summary>
         ///   Gets the name.
