@@ -86,11 +86,11 @@
     <Compile Include="Model\AGraphElement.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
+    <Compile Include="Service\IService.cs" />
     <Compile Include="Service\REST\IRESTService.cs" />
     <Compile Include="Service\REST\RESTService.cs" />
     <Compile Include="Service\REST\RESTServicePlugin.cs" />
     <Compile Include="Service\ServiceFactory.cs" />
-    <Compile Include="Service\IFallen8Service.cs" />
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
