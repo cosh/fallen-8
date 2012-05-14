@@ -469,6 +469,74 @@ namespace Fallen8.API
 
         #region IRead implementation
 
+        public Boolean TryGetVertex(out VertexModel result, Int32 id)
+        {
+            if (ReadResource())
+            {
+                var success = _graphElements.TryGetElementOrDefault(out result, id);
+
+                FinishReadResource();
+
+                return success;
+            }
+
+            throw new CollisionException();
+        }
+
+        public List<VertexModel> GetVertices()
+        {
+            if (ReadResource())
+            {
+                var vertices = _graphElements.GetAllOfType<VertexModel>();
+                FinishReadResource();
+
+                return vertices;
+            }
+
+            throw new CollisionException();
+        }
+
+        public Boolean TryGetEdge(out EdgeModel result, Int32 id)
+        {
+            if (ReadResource())
+            {
+                var success = _graphElements.TryGetElementOrDefault(out result, id);
+
+                FinishReadResource();
+
+                return success;
+            }
+
+            throw new CollisionException();
+        }
+
+        public List<EdgeModel> GetEdges()
+        {
+            if (ReadResource())
+            {
+                var edges = _graphElements.GetAllOfType<EdgeModel>();
+                FinishReadResource();
+
+                return edges;
+            }
+
+            throw new CollisionException();
+        }
+
+        public Boolean TryGetGraphElement(out AGraphElement result, Int32 id)
+        {
+            if (ReadResource())
+            {
+                _graphElements.TryGetElementOrDefault(out result, id);
+
+                FinishReadResource();
+
+                return result != null;
+            }
+
+            throw new CollisionException();
+        }
+
         public bool CalculateShortestPath(
             out List<Path> result,
             string algorithmname,
@@ -687,100 +755,6 @@ namespace Fallen8.API
         public void Shutdown()
         {
             ServiceFactory.ShutdownAllServices();
-        }
-
-        /// <summary>
-        ///   Gets a vertex by its identifier.
-        /// </summary>
-        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
-        /// <param name='result'> The vertex. </param>
-        /// <param name='id'> System wide unique identifier. </param>
-        public Boolean TryGetVertex(out VertexModel result, Int32 id)
-        {
-            if (ReadResource())
-            {
-                var success = _graphElements.TryGetElementOrDefault(out result, id);
-                
-                FinishReadResource();
-
-                return success;
-            }
-
-            throw new CollisionException();
-        }
-
-        /// <summary>
-        ///   Gets the vertices.
-        /// </summary>
-        /// <returns> The vertices. </returns>
-        public List<VertexModel> GetVertices()
-        {
-            if (ReadResource())
-            {
-                var vertices = _graphElements.GetAllOfType<VertexModel>();
-                FinishReadResource();
-
-                return vertices;
-            }
-
-            throw new CollisionException();
-        }
-
-        /// <summary>
-        ///   Gets an edge by its identifier.
-        /// </summary>
-        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
-        /// <param name='result'> The edge. </param>
-        /// <param name='id'> System wide unique identifier. </param>
-        public Boolean TryGetEdge(out EdgeModel result, Int32 id)
-        {
-            if (ReadResource())
-            {
-                var success = _graphElements.TryGetElementOrDefault(out result, id);
-
-                FinishReadResource();
-                
-                return success;
-            }
-
-            throw new CollisionException();
-        }
-
-        /// <summary>
-        ///   Gets the edges.
-        /// </summary>
-        /// <returns> The edges. </returns>
-        public List<EdgeModel> GetEdges()
-        {
-            if (ReadResource())
-            {
-                var edges = _graphElements.GetAllOfType<EdgeModel>();
-                FinishReadResource();
-
-                return edges;
-            }
-
-            throw new CollisionException();
-        }
-
-        /// <summary>
-        ///   Gets an graph element by its identifier.
-        /// </summary>
-        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
-        /// <param name='result'> The graph element. </param>
-        /// <param name='id'> System wide unique identifier. </param>
-        public Boolean TryGetGraphElement(out AGraphElement result, Int32 id)
-        {
-            if (ReadResource())
-            {
-                _graphElements.TryGetElementOrDefault(out result, id);
-                
-                FinishReadResource();
-
-                return result != null;
-            }
-
-            throw new CollisionException();
         }
 
         #endregion
