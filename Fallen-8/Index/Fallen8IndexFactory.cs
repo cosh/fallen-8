@@ -82,7 +82,7 @@ namespace Fallen8.API.Index
         /// <param name='indexName'> Index name. </param>
         /// <param name='indexTypeName'> Index type. Default is DictionaryIndex </param>
         /// <param name='parameter'> Parameter for the index. Default is Null </param>
-        public bool TryCreateIndex(out IIndex index, string indexName, string indexTypeName,
+        public bool TryCreateIndex(out IIndex index, string indexName, string indexTypeName = "DictionaryIndex",
                                    IDictionary<string, object> parameter = null)
         {
             if (Fallen8PluginFactory.TryFindPlugin(out index, indexTypeName))
