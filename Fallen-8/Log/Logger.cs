@@ -34,9 +34,19 @@ namespace Fallen8.API.Log
     public static class Logger
     {
         /// <summary>
-        ///   Log an error
+        /// Log an error
         /// </summary>
+        /// <param name="message">Error message</param>
         public static void LogError(String message)
+        {
+            Console.WriteLine(message);
+        }
+
+        /// <summary>
+        /// Log an info
+        /// </summary>
+        /// <param name="message">Info message</param>
+        public static void LogInfo(string message)
         {
             Console.WriteLine(message);
         }

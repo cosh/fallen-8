@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Fallen8.API.Log;
 using Fallen8.API.Plugin;
 using Framework.Serialization;
 
@@ -165,6 +166,10 @@ namespace Fallen8.API.Index
                 newIndices.Add(indexName, index);
 
                 Interlocked.Exchange(ref Indices, newIndices);
+            }
+            else
+            {
+                Logger.LogError(String.Format("Could not find index plugin with name \"{0}\".", indexPluginName));
             }
         }
 

@@ -63,6 +63,10 @@ namespace Fallen8.API.Persistency
                 return null;
             }
 
+            //create some futures to load as much as possible in parallel
+            const TaskCreationOptions options = TaskCreationOptions.LongRunning;
+            var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
+
             using (var file = File.Open(pathToSavePoint, FileMode.Open, FileAccess.Read))
             {
                 var reader = new SerializationReader(file);
@@ -78,7 +82,7 @@ namespace Fallen8.API.Persistency
                     graphElementStreams.Add(reader.ReadOptimizedString());
                 }
 
-                LoadGraphElements(graphElements, graphElementStreams);
+                LoadGraphElements(graphElements, graphElementStreams, f);
 
                 #endregion
 
@@ -91,7 +95,7 @@ namespace Fallen8.API.Persistency
                     indexStreams.Add(reader.ReadOptimizedString());
                 }
                 var newIndexFactory = new Fallen8IndexFactory();
-                LoadIndices(fallen8, newIndexFactory, indexStreams);
+                LoadIndices(fallen8, newIndexFactory, indexStreams, f);
                 fallen8.IndexFactory = newIndexFactory;
 
                 #endregion
@@ -105,7 +109,7 @@ namespace Fallen8.API.Persistency
                     serviceStreams.Add(reader.ReadOptimizedString());
                 }
                 var newServiceFactory = new ServiceFactory(fallen8);
-                LoadServices(fallen8, newServiceFactory, serviceStreams);
+                LoadServices(fallen8, newServiceFactory, serviceStreams, f);
                 fallen8.ServiceFactory = newServiceFactory;
 
                 #endregion
@@ -262,8 +266,22 @@ namespace Fallen8.API.Persistency
         /// <returns>The filename of the persisted service.</returns>
         private static String SaveService(string serviceName, IFallen8Service service, string path)
         {
-            //do nothing at the moment
-            return string.Empty;
+            var serviceFileName = path + "_service_" + serviceName;
+
+            using (var serviceFile = File.Create(serviceFileName, Constants.BufferSize, FileOptions.SequentialScan))
+            {
+                var serviceWriter = new SerializationWriter(serviceFile);
+
+                serviceWriter.WriteOptimized(serviceName);
+                serviceWriter.WriteOptimized(service.PluginName);
+                service.Save(serviceWriter);
+
+                serviceWriter.UpdateHeader();
+                serviceWriter.Flush();
+                serviceFile.Flush();
+            }
+
+            return serviceFileName;
         }
 
         /// <summary>
@@ -318,24 +336,47 @@ namespace Fallen8.API.Persistency
             return result;
         }
 
-        private static void LoadIndices(Fallen8 fallen8, Fallen8IndexFactory indexFactory, List<String> indexStreams)
+        private static void LoadIndices(Fallen8 fallen8, Fallen8IndexFactory indexFactory, List<String> indexStreams, TaskFactory factory)
         {
-            //create some futures to load as much as possible in parallel
-            const TaskCreationOptions options = TaskCreationOptions.LongRunning;
-            var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
             var tasks = new Task[indexStreams.Count];
 
             //load the indices
             for (var i = 0; i < indexStreams.Count; i++)
             {
                 var indexStreamLocation = indexStreams[i];
-                tasks[i] = f.StartNew(() => LoadAnIndex(indexStreamLocation, fallen8, indexFactory));
+                tasks[i] = factory.StartNew(() => LoadAnIndex(indexStreamLocation, fallen8, indexFactory));
             }
         }
 
-        private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams)
+        private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, TaskFactory factory)
         {
-            //do nothing
+            var tasks = new Task[serviceStreams.Count];
+
+            //load the indices
+            for (var i = 0; i < serviceStreams.Count; i++)
+            {
+                var serviceStreamLocation = serviceStreams[i];
+                tasks[i] = factory.StartNew(() => LoadAService(serviceStreamLocation, fallen8, newServiceFactory));
+            }
+        }
+
+        private static void LoadAService(string serviceLocaion, Fallen8 fallen8, ServiceFactory serviceFactory)
+        {
+            //if there is no savepoint file... do nothing
+            if (!File.Exists(serviceLocaion))
+            {
+                return;
+            }
+
+            using (var file = File.Open(serviceLocaion, FileMode.Open, FileAccess.Read))
+            {
+                var reader = new SerializationReader(file);
+
+                var indexName = reader.ReadOptimizedString();
+                var indexPluginName = reader.ReadOptimizedString();
+
+                serviceFactory.OpenService(indexName, indexPluginName, reader, fallen8);
+            }
         }
 
         private static void LoadAnIndex(string indexLocaion, Fallen8 fallen8, Fallen8IndexFactory indexFactory)
@@ -410,11 +451,8 @@ namespace Fallen8.API.Persistency
         /// </summary>
         /// <param name='graphElements'> Graph elements of Fallen-8. </param>
         /// <param name='graphElementStreams'> Graph element streams. </param>
-        private static void LoadGraphElements(BigList<AGraphElement> graphElements, List<String> graphElementStreams)
+        private static void LoadGraphElements(BigList<AGraphElement> graphElements, List<String> graphElementStreams, TaskFactory factory)
         {
-            //create some futures to load as much as possible in parallel
-            const TaskCreationOptions options = TaskCreationOptions.LongRunning;
-            var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None, TaskScheduler.Default);
             var tasks = new Task<List<EdgeSneakPeak>>[graphElementStreams.Count];
             var edgeTodo = new ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>>();
 
@@ -422,10 +460,10 @@ namespace Fallen8.API.Persistency
             for (var i = 0; i < graphElementStreams.Count; i++)
             {
                 var streamLocation = graphElementStreams[i];
-                tasks[i] = f.StartNew(() => LoadAGraphElementBunch(streamLocation, graphElements, edgeTodo));
+                tasks[i] = factory.StartNew(() => LoadAGraphElementBunch(streamLocation, graphElements, edgeTodo));
             }
 
-            var continuationTask = f
+            var continuationTask = factory
                 .ContinueWhenAll<List<EdgeSneakPeak>>(
                     tasks,
                     finishedTasks =>

@@ -27,10 +27,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Fallen8.API.Error;
 using Fallen8.API.Log;
 using Fallen8.API.Plugin;
 using Fallen8.API.Helper;
+using Framework.Serialization;
 
 namespace Fallen8.API.Service
 {
@@ -49,7 +51,7 @@ namespace Fallen8.API.Service
         /// <summary>
         ///   The created indices.
         /// </summary>
-        public readonly IDictionary<String, IFallen8Service> Services;
+        public IDictionary<String, IFallen8Service> Services;
 
         #endregion
 
@@ -151,6 +153,35 @@ namespace Fallen8.API.Service
             }
 
             throw new CollisionException();
+        }
+
+        #endregion
+
+        #region internal methods
+
+        /// <summary>
+        /// Opens a serialized service
+        /// </summary>
+        /// <param name="serviceName">Service name</param>
+        /// <param name="servicePluginName">Service plugin name</param>
+        /// <param name="reader">Serialization reader</param>
+        /// <param name="fallen8">Fallen-8</param>
+        internal void OpenService(string serviceName, string servicePluginName, SerializationReader reader, Fallen8 fallen8)
+        {
+            IFallen8Service service;
+            if (Fallen8PluginFactory.TryFindPlugin(out service, servicePluginName))
+            {
+                service.Open(reader, fallen8);
+
+                var newServices = new Dictionary<string, IFallen8Service>(Services);
+                newServices.Add(serviceName, service);
+
+                Interlocked.Exchange(ref Services, newServices);
+            }
+            else
+            {
+                Logger.LogError(String.Format("Could not find service plugin with name \"{0}\".", servicePluginName));
+            }
         }
 
         #endregion

@@ -31,6 +31,7 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Xml;
 using Framework.Serialization;
+using Fallen8.API.Log;
 
 namespace Fallen8.API.Service.REST
 {
@@ -69,7 +70,22 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   Service description
         /// </summary>
-        private String _description = "The Fallen-8 plugin that starts the REST service";
+        private const String _description = "The Fallen-8 plugin that starts the REST service";
+
+        /// <summary>
+        /// The URI-Pattern of the service
+        /// </summary>
+        private String _uriPattern;
+
+        /// <summary>
+        /// The IP-Address of the service
+        /// </summary>
+        private IPAddress _address;
+
+        /// <summary>
+        /// The port of the service
+        /// </summary>
+        private UInt16 _port;
 
         #endregion
 
@@ -107,12 +123,18 @@ namespace Fallen8.API.Service.REST
 
         public void Save(SerializationWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(_uriPattern);
+            writer.Write(_address.ToString());
+            writer.Write(_port);
         }
 
         public void Open(SerializationReader reader, Fallen8 fallen8)
         {
-            throw new NotImplementedException();
+            _uriPattern = reader.ReadString();
+            _address = IPAddress.Parse(reader.ReadString());
+            _port = reader.ReadUInt16();
+
+            StartService(fallen8);
         }
 
         #endregion
@@ -121,19 +143,19 @@ namespace Fallen8.API.Service.REST
 
         public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
         {
-            var uriPattern = "Fallen8";
+            _uriPattern = "Fallen8";
             if (parameter != null && parameter.ContainsKey("URIPattern"))
-                uriPattern = (String) Convert.ChangeType(parameter["URIPattern"], typeof (String));
+                _uriPattern = (String)Convert.ChangeType(parameter["URIPattern"], typeof(String));
 
-            var address = IPAddress.Any;
+            _address = IPAddress.Any;
             if (parameter != null && parameter.ContainsKey("IPAddress"))
-                address = (IPAddress) Convert.ChangeType(parameter["IPAddress"], typeof (IPAddress));
+                _address = (IPAddress)Convert.ChangeType(parameter["IPAddress"], typeof(IPAddress));
 
-            ushort port = 2357;
+            _port = 2357;
             if (parameter != null && parameter.ContainsKey("Port"))
-                port = (ushort) Convert.ChangeType(parameter["Port"], typeof (ushort));
+                _port = (ushort)Convert.ChangeType(parameter["Port"], typeof(ushort));
 
-            StartService(fallen8, address, port, uriPattern);
+            StartService(fallen8);
         }
 
         public string PluginName
@@ -174,12 +196,9 @@ namespace Fallen8.API.Service.REST
         ///   Starts the actual service
         /// </summary>
         /// <param name="fallen8"> Fallen-8. </param>
-        /// <param name="ipAddress"> IP address. </param>
-        /// <param name="port"> Port. </param>
-        /// <param name="uriPattern"> URI pattern </param>
-        private void StartService(Fallen8 fallen8, IPAddress ipAddress, ushort port, string uriPattern)
+        private void StartService(Fallen8 fallen8)
         {
-            var uri = new Uri("http://" + ipAddress + ":" + port + "/" + uriPattern);
+            var uri = new Uri("http://" + _address + ":" + _port + "/" + _uriPattern);
 
             if (!uri.IsWellFormedOriginalString())
                 throw new Exception("The URI Pattern is not well formed!");
@@ -231,7 +250,7 @@ namespace Fallen8.API.Service.REST
 
             _isRunning = true;
             _startTime = DateTime.Now;
-            _description += Environment.NewLine + "   -> Service is started at " + uri + "/" + restServiceAddress;
+            Logger.LogInfo(_description + Environment.NewLine + "   -> Service is started at " + uri + "/" + restServiceAddress);
         }
 
         #endregion
