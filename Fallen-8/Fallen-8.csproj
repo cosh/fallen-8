@@ -59,8 +59,6 @@
     <Compile Include="Helper\DateHelper.cs" />
     <Compile Include="Helper\SaveNativeMethods.cs" />
     <Compile Include="Helper\Statistics.cs" />
-    <Compile Include="IFallen8Read.cs" />
-    <Compile Include="IFallen8Write.cs" />
     <Compile Include="Index\IndexFactory.cs" />
     <Compile Include="Index\SingleValueIndex.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
@@ -73,6 +71,8 @@
     <Compile Include="Index\Spatial\ISpatialIndex.cs" />
     <Compile Include="Index\Spatial\Point.cs" />
     <Compile Include="Index\Spatial\Rectangle.cs" />
+    <Compile Include="IRead.cs" />
+    <Compile Include="IWrite.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Model\EdgeContainer.cs" />
     <Compile Include="Model\PropertyContainer.cs" />
