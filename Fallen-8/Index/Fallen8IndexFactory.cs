@@ -35,14 +35,14 @@ namespace Fallen8.API.Index
     /// <summary>
     ///   Fallen8 index factory.
     /// </summary>
-    public sealed class Fallen8IndexFactory : IFallen8IndexFactory
+    public sealed class Fallen8IndexFactory
     {
         #region Data
 
         /// <summary>
         ///   The created indices.
         /// </summary>
-        private IDictionary<String, IIndex> _indices;
+        public IDictionary<String, IIndex> Indices;
 
         #endregion
 
@@ -53,13 +53,17 @@ namespace Fallen8.API.Index
         /// </summary>
         public Fallen8IndexFactory()
         {
-            _indices = new Dictionary<String, IIndex>();
+            Indices = new Dictionary<String, IIndex>();
         }
 
         #endregion
 
         #region IFallen8IndexFactory implementation
 
+        /// <summary>
+        ///   Gets the available index plugins.
+        /// </summary>
+        /// <returns> The available index plugins. </returns>
         public IEnumerable<String> GetAvailableIndexPlugins()
         {
             IEnumerable<String> result;
@@ -69,8 +73,16 @@ namespace Fallen8.API.Index
             return result;
         }
 
+        /// <summary>
+        ///   Tries to create an index.
+        /// </summary>
+        /// <returns> <c>true</c> if the index was created; otherwise, <c>false</c> . </returns>
+        /// <param name='index'> The created index. </param>
+        /// <param name='indexName'> Index name. </param>
+        /// <param name='indexTypeName'> Index type. Default is DictionaryIndex </param>
+        /// <param name='parameter'> Parameter for the index. Default is Null </param>
         public bool TryCreateIndex(out IIndex index, string indexName, string indexTypeName,
-                                   IDictionary<string, object> parameter)
+                                   IDictionary<string, object> parameter = null)
         {
             if (Fallen8PluginFactory.TryFindPlugin(out index, indexTypeName))
             {
@@ -78,10 +90,10 @@ namespace Fallen8.API.Index
                 {
                     index.Initialize(null, parameter);
 
-                    var newIndices = new Dictionary<string, IIndex>(_indices);
+                    var newIndices = new Dictionary<string, IIndex>(Indices);
                     newIndices.Add(indexName, index);
 
-                    Interlocked.Exchange(ref _indices, newIndices);
+                    Interlocked.Exchange(ref Indices, newIndices);
 
                     return true;
                 }
@@ -95,31 +107,40 @@ namespace Fallen8.API.Index
             return false;
         }
 
+        /// <summary>
+        ///   Tries to delete the index.
+        /// </summary>
+        /// <returns> <c>true</c> if the index was deleted; otherwise, <c>false</c> . </returns>
+        /// <param name='indexName'> Index name. </param>
         public bool TryDeleteIndex(string indexName)
         {
-            var newIndices = new Dictionary<string, IIndex>(_indices);
+            var newIndices = new Dictionary<string, IIndex>(Indices);
 
             var sthRemoved = newIndices.Remove(indexName);
 
-            Interlocked.Exchange(ref _indices, newIndices);
+            Interlocked.Exchange(ref Indices, newIndices);
 
             return sthRemoved;
         }
 
+        /// <summary>
+        ///   Tries the index of the get.
+        /// </summary>
+        /// <returns> <c>true</c> if the index was found; otherwise, <c>false</c> . </returns>
+        /// <param name='index'> Index. </param>
+        /// <param name='indexName'> Index name. </param>
         public bool TryGetIndex(out IIndex index, string indexName)
         {
-            return _indices.TryGetValue(indexName, out index);
+            return Indices.TryGetValue(indexName, out index);
         }
 
-        public IDictionary<string, IIndex> Indices
-        {
-            get { return _indices; }
-        }
-
+        /// <summary>
+        /// Deletes all indices
+        /// </summary>
         public void DeleteAllIndices()
         {
             var newIndices = new Dictionary<string, IIndex>();
-            Interlocked.Exchange(ref _indices, newIndices);
+            Interlocked.Exchange(ref Indices, newIndices);
         }
 
         #endregion
@@ -140,10 +161,10 @@ namespace Fallen8.API.Index
             {
                 index.Open(reader, fallen8);
 
-                var newIndices = new Dictionary<string, IIndex>(_indices);
+                var newIndices = new Dictionary<string, IIndex>(Indices);
                 newIndices.Add(indexName, index);
 
-                Interlocked.Exchange(ref _indices, newIndices);
+                Interlocked.Exchange(ref Indices, newIndices);
             }
         }
 

@@ -65,7 +65,6 @@
     <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResultElement.cs" />
     <Compile Include="Index\Fulltext\IFulltextIndex.cs" />
-    <Compile Include="Index\IFallen8IndexFactory.cs" />
     <Compile Include="Index\IIndex.cs" />
     <Compile Include="Index\Range\IRangeIndex.cs" />
     <Compile Include="Index\Spatial\Circle.cs" />
@@ -86,7 +85,7 @@
     <Compile Include="Index\Fallen8IndexFactory.cs" />
     <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
-    <Compile Include="Fallen8Server.cs" />
+    <Compile Include="Service\ServiceFactory.cs" />
     <Compile Include="Service\IFallen8Service.cs" />
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />

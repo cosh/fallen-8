@@ -41,6 +41,7 @@ using Fallen8.API.Index.Spatial;
 using Fallen8.API.Model;
 using Fallen8.API.Persistency;
 using Fallen8.API.Plugin;
+using Fallen8.API.Service;
 
 namespace Fallen8.API
 {
@@ -59,7 +60,12 @@ namespace Fallen8.API
         /// <summary>
         ///   The index factory.
         /// </summary>
-        public IFallen8IndexFactory IndexFactory;
+        public Fallen8IndexFactory IndexFactory { get; internal set; }
+
+        /// <summary>
+        ///   The index factory.
+        /// </summary>
+        public ServiceFactory ServiceFactory { get; internal set; }
 
         /// <summary>
         /// The count of edges
@@ -92,6 +98,7 @@ namespace Fallen8.API
         {
             IndexFactory = new Fallen8IndexFactory();
             _graphElements = new BigList<AGraphElement>();
+            ServiceFactory = new ServiceFactory(this);
             IndexFactory.Indices.Clear();
         }
 
@@ -101,7 +108,7 @@ namespace Fallen8.API
         /// <param name='path'> Path to the save point. </param>
         public Fallen8(String path)
         {
-            Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
+            _graphElements = Fallen8PersistencyFactory.Load(this, path, ref _currentId);
         }
 
         #endregion
@@ -125,7 +132,7 @@ namespace Fallen8.API
                 GC.WaitForPendingFinalizers();
 #endif
 
-                Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
+                _graphElements = Fallen8PersistencyFactory.Load(this, path, ref _currentId);
                 TrimPrivate();
 
                 FinishWriteResource();
@@ -660,7 +667,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                Fallen8PersistencyFactory.Save(_currentId, _graphElements, IndexFactory.Indices, path, savePartitions, EdgeCount + VertexCount);
+                Fallen8PersistencyFactory.Save(this, _graphElements, path, savePartitions);
 
                 FinishReadResource();
 
@@ -673,6 +680,14 @@ namespace Fallen8.API
         #endregion
 
         #region public methods
+
+        /// <summary>
+        ///   Shutdown this Fallen-8 server.
+        /// </summary>
+        public void Shutdown()
+        {
+            ServiceFactory.ShutdownAllServices();
+        }
 
         /// <summary>
         ///   Gets a vertex by its identifier.
@@ -934,7 +949,12 @@ namespace Fallen8.API
             TabulaRasa();
 
             _graphElements = null;
+
+            IndexFactory.DeleteAllIndices();
             IndexFactory = null;
+
+            ServiceFactory.ShutdownAllServices();
+            ServiceFactory = null;
         }
 
         #endregion

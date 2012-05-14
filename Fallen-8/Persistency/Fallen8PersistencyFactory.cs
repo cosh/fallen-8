@@ -34,33 +34,33 @@ using System.Threading.Tasks;
 using Fallen8.API.Helper;
 using Fallen8.API.Index;
 using Fallen8.API.Model;
+using Fallen8.API.Service;
 using Framework.Serialization;
+using Fallen8.API.Log;
 
 namespace Fallen8.API.Persistency
 {
     /// <summary>
     ///   Fallen8 persistency factory.
     /// </summary>
-    public static class Fallen8PersistencyFactory
+    internal static class Fallen8PersistencyFactory
     {
         #region public methods
 
         /// <summary>
         ///   Load Fallen-8 from a save point
         /// </summary>
-        /// <param name='pathToSavePoint'> Path to save point. </param>
-        /// <param name='currentIdOfFallen8'> Current identifier of Fallen-8. </param>
-        /// <param name='graphElementsOfFallen8'> Graph elements of Fallen-8. </param>
-        /// <param name='indexFactoryOfFallen8'> Index factory of Fallen-8. </param>
-        /// <param name="fallen8"> Fallen-8 </param>
-        public static void Load(string pathToSavePoint, ref int currentIdOfFallen8,
-                                ref BigList<AGraphElement> graphElementsOfFallen8,
-                                ref IFallen8IndexFactory indexFactoryOfFallen8, Fallen8 fallen8)
+        /// <param name="fallen8">Fallen-8</param>
+        /// <param name="pathToSavePoint">The path to the save point.</param>
+        /// <param name="maxId">The maximum graph element id</param>
+        internal static BigList<AGraphElement> Load(Fallen8 fallen8, string pathToSavePoint, ref Int32 maxId)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
             {
-                return;
+                Logger.LogError(String.Format("Fallen-8 could not be loaded because the path \"{0}\" does not exist.", pathToSavePoint));
+
+                return null;
             }
 
             using (var file = File.Open(pathToSavePoint, FileMode.Open, FileAccess.Read))
@@ -79,8 +79,6 @@ namespace Fallen8.API.Persistency
                 }
 
                 LoadGraphElements(graphElements, graphElementStreams);
-                graphElementsOfFallen8 = new BigList<AGraphElement>(graphElements);
-                    //we'll see how much memory this action takes
 
                 #endregion
 
@@ -94,23 +92,36 @@ namespace Fallen8.API.Persistency
                 }
                 var newIndexFactory = new Fallen8IndexFactory();
                 LoadIndices(fallen8, newIndexFactory, indexStreams);
-                indexFactoryOfFallen8 = newIndexFactory;
+                fallen8.IndexFactory = newIndexFactory;
 
                 #endregion
+
+                #region services
+
+                var serviceStreams = new List<String>();
+                var numberOfServiceStreams = reader.ReadOptimizedInt32();
+                for (var i = 0; i < numberOfServiceStreams; i++)
+                {
+                    serviceStreams.Add(reader.ReadOptimizedString());
+                }
+                var newServiceFactory = new ServiceFactory(fallen8);
+                LoadServices(fallen8, newServiceFactory, serviceStreams);
+                fallen8.ServiceFactory = newServiceFactory;
+
+                #endregion
+
+                return graphElements;
             }
         }
 
         /// <summary>
         ///   Save the specified graphElements, indices and pathToSavePoint.
         /// </summary>
-        /// <param name="currentId"> The current graph element id </param>
+        /// <param name='fallen8'> Fallen-8. </param>
         /// <param name='graphElements'> Graph elements. </param>
-        /// <param name='indices'> Indices. </param>
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
-        /// <param name="graphElementCount">Number of graph elements</param>
-        public static void Save(Int32 currentId, BigList<AGraphElement> graphElements, IDictionary<String, IIndex> indices,
-                                String path, UInt32 savePartitions, UInt32 graphElementCount)
+        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
@@ -129,7 +140,7 @@ namespace Fallen8.API.Persistency
                                         TaskScheduler.Default);
                 #region graph elements
 
-                var graphElementPartitions = CreatePartitions(graphElementCount, savePartitions);
+                var graphElementPartitions = CreatePartitions(fallen8.VertexCount + fallen8.EdgeCount, savePartitions);
                 var graphElementSaver = new Task<string>[graphElementPartitions.Count];
 
                 for (var i = 0; i < graphElementPartitions.Count; i++)
@@ -142,15 +153,31 @@ namespace Fallen8.API.Persistency
 
                 #region indices
 
-                var indexSaver = new Task<string>[indices.Count];
+                var indexSaver = new Task<string>[fallen8.IndexFactory.Indices.Count];
 
                 var counter = 0;
-                foreach (var aIndex in indices)
+                foreach (var aIndex in fallen8.IndexFactory.Indices)
                 {
                     var indexName = aIndex.Key;
                     var index = aIndex.Value;
 
                     indexSaver[counter] = f.StartNew(() => SaveIndex(indexName, index, path));
+                    counter++;
+                }
+
+                #endregion
+
+                #region services
+
+                var serviceSaver = new Task<string>[fallen8.ServiceFactory.Services.Count];
+
+                counter = 0;
+                foreach (var aService in fallen8.ServiceFactory.Services)
+                {
+                    var serviceName = aService.Key;
+                    var service = aService.Value;
+
+                    serviceSaver[counter] = f.StartNew(() => SaveService(serviceName, service, path));
                     counter++;
                 }
 
@@ -166,6 +193,12 @@ namespace Fallen8.API.Persistency
                 foreach (var aIndexFileName in indexSaver)
                 {
                     writer.WriteOptimized(aIndexFileName.Result);
+                }
+
+                writer.WriteOptimized(serviceSaver.Length);
+                foreach (var aServiceFileName in serviceSaver)
+                {
+                    writer.WriteOptimized(aServiceFileName.Result);
                 }
 
                 writer.UpdateHeader();
@@ -221,6 +254,19 @@ namespace Fallen8.API.Persistency
         }
 
         /// <summary>
+        /// Saves the service
+        /// </summary>
+        /// <param name="serviceName">Service name.</param>
+        /// <param name="service">Service.</param>
+        /// <param name="path">Path.</param>
+        /// <returns>The filename of the persisted service.</returns>
+        private static String SaveService(string serviceName, IFallen8Service service, string path)
+        {
+            //do nothing at the moment
+            return string.Empty;
+        }
+
+        /// <summary>
         ///   Loads a graph element bunch.
         /// </summary>
         /// <returns> The edges that point to vertices that are not within this bunch. </returns>
@@ -272,7 +318,6 @@ namespace Fallen8.API.Persistency
             return result;
         }
 
-
         private static void LoadIndices(Fallen8 fallen8, Fallen8IndexFactory indexFactory, List<String> indexStreams)
         {
             //create some futures to load as much as possible in parallel
@@ -286,6 +331,11 @@ namespace Fallen8.API.Persistency
                 var indexStreamLocation = indexStreams[i];
                 tasks[i] = f.StartNew(() => LoadAnIndex(indexStreamLocation, fallen8, indexFactory));
             }
+        }
+
+        private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams)
+        {
+            //do nothing
         }
 
         private static void LoadAnIndex(string indexLocaion, Fallen8 fallen8, Fallen8IndexFactory indexFactory)
