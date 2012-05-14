@@ -60,7 +60,7 @@ namespace Fallen8.API
         /// <summary>
         ///   The index factory.
         /// </summary>
-        public Fallen8IndexFactory IndexFactory { get; internal set; }
+        public IndexFactory IndexFactory { get; internal set; }
 
         /// <summary>
         ///   The index factory.
@@ -96,7 +96,7 @@ namespace Fallen8.API
         /// </summary>
         public Fallen8()
         {
-            IndexFactory = new Fallen8IndexFactory();
+            IndexFactory = new IndexFactory();
             _graphElements = new BigList<AGraphElement>();
             ServiceFactory = new ServiceFactory(this);
             IndexFactory.Indices.Clear();
@@ -119,7 +119,7 @@ namespace Fallen8.API
         {
             if (WriteResource())
             {
-                IndexFactory = new Fallen8IndexFactory();
+                IndexFactory = new IndexFactory();
                 _graphElements = new BigList<AGraphElement>();
                 IndexFactory.Indices.Clear();
 

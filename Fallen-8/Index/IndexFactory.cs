@@ -1,5 +1,5 @@
 // 
-// Fallen8IndexFactory.cs
+// IndexFactory.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -34,9 +34,9 @@ using Framework.Serialization;
 namespace Fallen8.API.Index
 {
     /// <summary>
-    ///   Fallen8 index factory.
+    ///   Index factory.
     /// </summary>
-    public sealed class Fallen8IndexFactory
+    public sealed class IndexFactory
     {
         #region Data
 
@@ -50,9 +50,9 @@ namespace Fallen8.API.Index
         #region constructor
 
         /// <summary>
-        ///   Initializes a new instance of the Fallen8IndexFactory class.
+        ///   Initializes a new instance of the IndexFactory class.
         /// </summary>
-        public Fallen8IndexFactory()
+        public IndexFactory()
         {
             Indices = new Dictionary<String, IIndex>();
         }

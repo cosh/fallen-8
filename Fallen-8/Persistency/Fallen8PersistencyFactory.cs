@@ -94,7 +94,7 @@ namespace Fallen8.API.Persistency
                 {
                     indexStreams.Add(reader.ReadOptimizedString());
                 }
-                var newIndexFactory = new Fallen8IndexFactory();
+                var newIndexFactory = new IndexFactory();
                 LoadIndices(fallen8, newIndexFactory, indexStreams, f);
                 fallen8.IndexFactory = newIndexFactory;
 
@@ -336,7 +336,7 @@ namespace Fallen8.API.Persistency
             return result;
         }
 
-        private static void LoadIndices(Fallen8 fallen8, Fallen8IndexFactory indexFactory, List<String> indexStreams, TaskFactory factory)
+        private static void LoadIndices(Fallen8 fallen8, IndexFactory indexFactory, List<String> indexStreams, TaskFactory factory)
         {
             var tasks = new Task[indexStreams.Count];
 
@@ -379,7 +379,7 @@ namespace Fallen8.API.Persistency
             }
         }
 
-        private static void LoadAnIndex(string indexLocaion, Fallen8 fallen8, Fallen8IndexFactory indexFactory)
+        private static void LoadAnIndex(string indexLocaion, Fallen8 fallen8, IndexFactory indexFactory)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(indexLocaion))
