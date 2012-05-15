@@ -108,21 +108,20 @@ namespace Fallen8.API
         /// <param name='path'> Path to the save point. </param>
         public Fallen8(String path)
         {
-            _graphElements = PersistencyFactory.Load(this, path, ref _currentId);
+            _graphElements = PersistencyFactory.Load(this, path, ref _currentId, true);
         }
 
         #endregion
 
         #region IWrite implementation
 
-        public void Load(String path)
+        public void Load(String path, Boolean startServices = false)
         {
             if (WriteResource())
             {
-                IndexFactory = new IndexFactory();
-                _graphElements = new BigList<AGraphElement>();
-                IndexFactory.Indices.Clear();
-
+                var oldIndexFactory = IndexFactory;
+                var oldServiceFactory = ServiceFactory;
+                oldServiceFactory.ShutdownAllServices();
 #if __MonoCS__
     //mono specific code
 				#else
@@ -131,8 +130,22 @@ namespace Fallen8.API
                 GC.WaitForFullGCComplete();
                 GC.WaitForPendingFinalizers();
 #endif
+                var graphElements = PersistencyFactory.Load(this, path, ref _currentId, startServices);
 
-                _graphElements = PersistencyFactory.Load(this, path, ref _currentId);
+                if (graphElements != null)
+                {
+                    _graphElements = graphElements;
+                    oldIndexFactory.DeleteAllIndices();
+                    oldIndexFactory = null;
+                    oldServiceFactory = null;
+                }
+                else
+                {
+                    IndexFactory = oldIndexFactory;
+                    ServiceFactory = oldServiceFactory;
+                    ServiceFactory.StartAllServices();
+                }
+
                 TrimPrivate();
 
                 FinishWriteResource();
@@ -735,7 +748,7 @@ namespace Fallen8.API
         {
             if (ReadResource())
             {
-                PersistencyFactory.Save(this, _graphElements, path, savePartitions);
+                PersistencyFactory.Save(this, _graphElements, path, savePartitions, _currentId);
 
                 FinishReadResource();
 

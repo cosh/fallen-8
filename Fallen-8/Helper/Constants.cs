@@ -42,5 +42,25 @@ namespace Fallen8.API.Helper
         /// The minimum id
         /// </summary>
         public const int MinId = Int32.MinValue;
+
+        /// <summary>
+        /// The version separator in save files
+        /// </summary>
+        public const char VersionSeparator = '#';
+
+        /// <summary>
+        /// Graph element files contain this string
+        /// </summary>
+        public const string GraphElementsSaveString = "_graphElements_";
+
+        /// <summary>
+        /// Index files contain this string
+        /// </summary>
+        public const string IndexSaveString = "_index_";
+
+        /// <summary>
+        /// Service files contain this string
+        /// </summary>
+        public const string ServiceSaveString = "_service_";
     }
 }

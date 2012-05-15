@@ -45,15 +45,16 @@ namespace Fallen8.API.Persistency
     /// </summary>
     internal static class PersistencyFactory
     {
-        #region public methods
+        #region internal methods
 
         /// <summary>
         ///   Load Fallen-8 from a save point
         /// </summary>
         /// <param name="fallen8">Fallen-8</param>
         /// <param name="pathToSavePoint">The path to the save point.</param>
-        /// <param name="maxId">The maximum graph element id</param>
-        internal static BigList<AGraphElement> Load(Fallen8 fallen8, string pathToSavePoint, ref Int32 maxId)
+        /// <param name="currentId">The maximum graph element id</param>
+        /// <param name="startServices">Start the services</param>
+        internal static BigList<AGraphElement> Load(Fallen8 fallen8, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
@@ -70,6 +71,7 @@ namespace Fallen8.API.Persistency
             using (var file = File.Open(pathToSavePoint, FileMode.Open, FileAccess.Read))
             {
                 var reader = new SerializationReader(file);
+                currentId = reader.ReadInt32();
 
                 #region graph elements
 
@@ -109,7 +111,7 @@ namespace Fallen8.API.Persistency
                     serviceStreams.Add(reader.ReadOptimizedString());
                 }
                 var newServiceFactory = new ServiceFactory(fallen8);
-                LoadServices(fallen8, newServiceFactory, serviceStreams, f);
+                LoadServices(fallen8, newServiceFactory, serviceStreams, f, startServices);                    
                 fallen8.ServiceFactory = newServiceFactory;
 
                 #endregion
@@ -125,18 +127,20 @@ namespace Fallen8.API.Persistency
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
-        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions)
+        /// <param name="currentId">The current graph elemement identifier.</param>
+        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
             {
                 //the newer save gets an timestamp
-                path = path + DateTime.Now.ToBinary().ToString(CultureInfo.InvariantCulture);
+                path = path + Constants.VersionSeparator + DateTime.Now.ToBinary().ToString(CultureInfo.InvariantCulture);
             }
 
             using (var file = File.Create(path, Constants.BufferSize, FileOptions.SequentialScan))
             {
                 var writer = new SerializationWriter(file, true);
+                writer.Write(currentId);
 
                 //create some futures to save as much as possible in parallel
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
@@ -144,13 +148,23 @@ namespace Fallen8.API.Persistency
                                         TaskScheduler.Default);
                 #region graph elements
 
-                var graphElementPartitions = CreatePartitions(fallen8.VertexCount + fallen8.EdgeCount, savePartitions);
-                var graphElementSaver = new Task<string>[graphElementPartitions.Count];
+                var graphElementCount = fallen8.VertexCount + fallen8.EdgeCount;
+                Task<string>[] graphElementSaver;
 
-                for (var i = 0; i < graphElementPartitions.Count; i++)
+                if (graphElementCount > 0)
                 {
-                    var partition = graphElementPartitions[i];
-                    graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, path));
+                    var graphElementPartitions = CreatePartitions(graphElementCount, savePartitions);
+                    graphElementSaver = new Task<string>[graphElementPartitions.Count];
+
+                    for (var i = 0; i < graphElementPartitions.Count; i++)
+                    {
+                        var partition = graphElementPartitions[i];
+                        graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, path));
+                    }    
+                }
+                else
+                {
+                    graphElementSaver = new Task<string>[0];
                 }
 
                 #endregion
@@ -239,7 +253,7 @@ namespace Fallen8.API.Persistency
         /// <param name='path'> Path. </param>
         private static String SaveIndex(string indexName, IIndex index, string path)
         {
-            var indexFileName = path + "_index_" + indexName;
+            var indexFileName = path + Constants.IndexSaveString + indexName;
 
             using (var indexFile = File.Create(indexFileName, Constants.BufferSize, FileOptions.SequentialScan))
             {
@@ -266,7 +280,7 @@ namespace Fallen8.API.Persistency
         /// <returns>The filename of the persisted service.</returns>
         private static String SaveService(string serviceName, IService service, string path)
         {
-            var serviceFileName = path + "_service_" + serviceName;
+            var serviceFileName = path + Constants.ServiceSaveString + serviceName;
 
             using (var serviceFile = File.Create(serviceFileName, Constants.BufferSize, FileOptions.SequentialScan))
             {
@@ -307,8 +321,8 @@ namespace Fallen8.API.Persistency
             using (var file = File.Open(graphElementBunchPath, FileMode.Open, FileAccess.Read))
             {
                 var reader = new SerializationReader(file);
-                var minimumId = reader.ReadOptimizedInt32();
-                var maximumId = reader.ReadOptimizedInt32();
+                var minimumId = reader.ReadInt32();
+                var maximumId = reader.ReadInt32();
                 var countOfElements = maximumId - minimumId;
 
                 for (var i = 0; i < countOfElements; i++)
@@ -318,7 +332,7 @@ namespace Fallen8.API.Persistency
                     {
                         case SerializedEdge:
                             //edge
-                            LoadEdge(reader, graphElementsOfFallen8, result);
+                            LoadEdge(reader, graphElementsOfFallen8, ref result);
                             break;
 
                         case SerializedVertex:
@@ -346,9 +360,11 @@ namespace Fallen8.API.Persistency
                 var indexStreamLocation = indexStreams[i];
                 tasks[i] = factory.StartNew(() => LoadAnIndex(indexStreamLocation, fallen8, indexFactory));
             }
+
+            Task.WaitAll(tasks);
         }
 
-        private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, TaskFactory factory)
+        private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, TaskFactory factory, Boolean startServices)
         {
             var tasks = new Task[serviceStreams.Count];
 
@@ -356,11 +372,13 @@ namespace Fallen8.API.Persistency
             for (var i = 0; i < serviceStreams.Count; i++)
             {
                 var serviceStreamLocation = serviceStreams[i];
-                tasks[i] = factory.StartNew(() => LoadAService(serviceStreamLocation, fallen8, newServiceFactory));
+                tasks[i] = factory.StartNew(() => LoadAService(serviceStreamLocation, fallen8, newServiceFactory, startServices));
             }
+
+            Task.WaitAll(tasks);
         }
 
-        private static void LoadAService(string serviceLocaion, Fallen8 fallen8, ServiceFactory serviceFactory)
+        private static void LoadAService(string serviceLocaion, Fallen8 fallen8, ServiceFactory serviceFactory, Boolean startService)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(serviceLocaion))
@@ -375,7 +393,7 @@ namespace Fallen8.API.Persistency
                 var indexName = reader.ReadOptimizedString();
                 var indexPluginName = reader.ReadOptimizedString();
 
-                serviceFactory.OpenService(indexName, indexPluginName, reader, fallen8);
+                serviceFactory.OpenService(indexName, indexPluginName, reader, fallen8, startService);
             }
         }
 
@@ -408,14 +426,14 @@ namespace Fallen8.API.Persistency
         private static String SaveBunch(Tuple<Int32, Int32> range, BigList<AGraphElement> graphElements,
                                         String pathToSavePoint)
         {
-            var partitionFileName = pathToSavePoint + "_graphElements_" + range.Item1 + "_to_" + range.Item2;
+            var partitionFileName = pathToSavePoint + Constants.GraphElementsSaveString + range.Item1 + "_to_" + range.Item2;
 
             using (var partitionFile = File.Create(partitionFileName, Constants.BufferSize, FileOptions.SequentialScan))
             {
                 var partitionWriter = new SerializationWriter(partitionFile);
 
-                partitionWriter.WriteOptimized(range.Item1);
-                partitionWriter.WriteOptimized(range.Item2);
+                partitionWriter.Write(range.Item1);
+                partitionWriter.Write(range.Item2);
 
                 for (var i = range.Item1; i < range.Item2; i++)
                 {
@@ -573,7 +591,7 @@ namespace Fallen8.API.Persistency
         /// <param name='writer'> Writer. </param>
         private static void WriteAGraphElement(AGraphElement graphElement, SerializationWriter writer)
         {
-            writer.WriteOptimized(graphElement.Id);
+            writer.Write(graphElement.Id);
             writer.Write(graphElement.CreationDate);
             writer.Write(graphElement.ModificationDate);
 
@@ -595,7 +613,7 @@ namespace Fallen8.API.Persistency
         private static void LoadVertex(SerializationReader reader, BigList<AGraphElement> graphElements,
                                        ConcurrentDictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
-            var id = reader.ReadOptimizedInt32();
+            var id = reader.ReadInt32();
             var creationDate = reader.ReadUInt32();
             var modificationDate = reader.ReadUInt32();
 
@@ -630,12 +648,12 @@ namespace Fallen8.API.Persistency
                 outEdgeProperties = new List<EdgeContainer>(outEdgeCount);
                 for (var i = 0; i < outEdgeCount; i++)
                 {
-                    var outEdgePropertyId = reader.ReadOptimizedUInt16();
+                    var outEdgePropertyId = reader.ReadUInt16();
                     var outEdgePropertyCount = reader.ReadOptimizedInt32();
-                    var outEdges = new List<EdgeModel>();
+                    var outEdges = new List<EdgeModel>(outEdgePropertyCount);
                     for (var j = 0; j < outEdgePropertyCount; j++)
                     {
-                        var edgeId = reader.ReadOptimizedInt32();
+                        var edgeId = reader.ReadInt32();
 
                         EdgeModel edge;
                         if (graphElements.TryGetElementOrDefault(out edge, edgeId))
@@ -680,12 +698,12 @@ namespace Fallen8.API.Persistency
                 incEdgeProperties = new List<EdgeContainer>(incEdgeCount);
                 for (var i = 0; i < incEdgeCount; i++)
                 {
-                    var incEdgePropertyId = reader.ReadOptimizedUInt16();
+                    var incEdgePropertyId = reader.ReadUInt16();
                     var incEdgePropertyCount = reader.ReadOptimizedInt32();
-                    var incEdges = new List<EdgeModel>();
+                    var incEdges = new List<EdgeModel>(incEdgePropertyCount);
                     for (var j = 0; j < incEdgePropertyCount; j++)
                     {
-                        var edgeId = reader.ReadOptimizedInt32();
+                        var edgeId = reader.ReadInt32();
 
                         EdgeModel edge;
 
@@ -749,11 +767,11 @@ namespace Fallen8.API.Persistency
                 writer.WriteOptimized(outgoingEdges.Count);
                 foreach (var aOutEdgeProperty in outgoingEdges)
                 {
-                    writer.WriteOptimized(aOutEdgeProperty.EdgePropertyId);
+                    writer.Write(aOutEdgeProperty.EdgePropertyId);
                     writer.WriteOptimized(aOutEdgeProperty.Edges.Count);
                     foreach (var aOutEdge in aOutEdgeProperty.Edges)
                     {
-                        writer.WriteOptimized(aOutEdge.Id);
+                        writer.Write(aOutEdge.Id);
                     }
                 }
             }
@@ -768,11 +786,11 @@ namespace Fallen8.API.Persistency
                 writer.WriteOptimized(incomingEdges.Count);
                 foreach (var aIncEdgeProperty in incomingEdges)
                 {
-                    writer.WriteOptimized(aIncEdgeProperty.EdgePropertyId);
+                    writer.Write(aIncEdgeProperty.EdgePropertyId);
                     writer.WriteOptimized(aIncEdgeProperty.Edges.Count);
                     foreach (var aIncEdge in aIncEdgeProperty.Edges)
                     {
-                        writer.WriteOptimized(aIncEdge.Id);
+                        writer.Write(aIncEdge.Id);
                     }
                 }
             }
@@ -787,9 +805,9 @@ namespace Fallen8.API.Persistency
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='sneakPeaks'> Sneak peaks. </param>
         private static void LoadEdge(SerializationReader reader, BigList<AGraphElement> graphElements,
-                                     List<EdgeSneakPeak> sneakPeaks)
+                                     ref List<EdgeSneakPeak> sneakPeaks)
         {
-            var id = reader.ReadOptimizedInt32();
+            var id = reader.ReadInt32();
             var creationDate = reader.ReadUInt32();
             var modificationDate = reader.ReadUInt32();
 
@@ -812,8 +830,8 @@ namespace Fallen8.API.Persistency
 
             #endregion
 
-            var sourceVertexId = reader.ReadOptimizedInt32();
-            var targetVertexId = reader.ReadOptimizedInt32();
+            var sourceVertexId = reader.ReadInt32();
+            var targetVertexId = reader.ReadInt32();
 
             VertexModel sourceVertex;
             VertexModel targetVertex;
@@ -845,8 +863,8 @@ namespace Fallen8.API.Persistency
         {
             writer.WriteOptimized(SerializedEdge);
             WriteAGraphElement(edge, writer);
-            writer.WriteOptimized(edge.SourceVertex.Id);
-            writer.WriteOptimized(edge.TargetVertex.Id);
+            writer.Write(edge.SourceVertex.Id);
+            writer.Write(edge.TargetVertex.Id);
         }
 
         #endregion

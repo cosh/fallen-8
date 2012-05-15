@@ -215,20 +215,16 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   Loads a Fallen-8
         /// </summary>
-        /// <param name="saveGame"> The Fallen-8 save game </param>
         [OperationContract(Name = "Load")]
-        [WebInvoke(UriTemplate = "/Load", Method = "POST", RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-        void Load(Stream saveGame);
+        [WebGet(UriTemplate = "/Load")]
+        void Load();
 
         /// <summary>
         ///   Saves the Fallen-8
         /// </summary>
-        /// <returns> Stream </returns>
         [OperationContract(Name = "Save")]
-        [WebGet(UriTemplate = "/Save?numberOfPartitions={numberOfPartitions}", RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-        Stream Save(String numberOfPartitions);
+        [WebGet(UriTemplate = "/Save")]
+        void Save();
 
         #endregion
     }

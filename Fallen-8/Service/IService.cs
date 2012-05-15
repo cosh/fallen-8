@@ -59,5 +59,11 @@ namespace Fallen8.API.Service
         /// </summary>
         /// <returns> <c>true</c> if this instance is stopped; otherwise, <c>false</c> . </returns>
         bool TryStop();
+
+        /// <summary>
+        ///   Tries to start this service.
+        /// </summary>
+        /// <returns> <c>true</c> if this instance is started; otherwise, <c>false</c> . </returns>
+        bool TryStart();
     }
 }

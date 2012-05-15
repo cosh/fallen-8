@@ -111,9 +111,11 @@ namespace Fallen8.API
         #region Load
 
         /// <summary>
-        ///   Loads Fallen-8 from the specified path
+        /// Load a Fallen-8 from a specified path
         /// </summary>
-        void Load(String path);
+        /// <param name="path">The path.</param>
+        /// <param name="startServices">Start the services?</param>
+        void Load(String path, Boolean startServices = false);
 
         #endregion
     }

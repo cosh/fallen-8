@@ -85,14 +85,14 @@ namespace Fallen8.API.Service
         }
 
         /// <summary>
-        ///   Tries to start a service.
+        ///   Tries to add a service.
         /// </summary>
         /// <returns> True for success. </returns>
-        /// <param name='service'> The launched service. </param>
+        /// <param name='service'> The added service. </param>
         /// <param name='servicePluginName'> The name of the service plugin. </param>
         /// <param name="serviceName"> The name of the service instance </param>
         /// <param name='parameter'> The parameters of this service. </param>
-        public bool TryStartService(out IService service, string servicePluginName, string serviceName,
+        public bool TryAddService(out IService service, string servicePluginName, string serviceName,
                                     IDictionary<string, object> parameter)
         {
             try
@@ -124,7 +124,7 @@ namespace Fallen8.API.Service
             catch (Exception e)
             {
                 Logger.LogError(
-                    String.Format("Fallen-8 was not able to start the {0} service plugin. Message: {1}",
+                    String.Format("Fallen-8 was not able to add the {0} service plugin. Message: {1}",
                                   servicePluginName, e.Message));
 
                 FinishWriteResource();
@@ -144,12 +144,45 @@ namespace Fallen8.API.Service
         {
             if (WriteResource())
             {
-                foreach (var service in Services)
+                try
                 {
-                    service.Value.TryStop();
+                    foreach (var service in Services)
+                    {
+                        service.Value.TryStop();
+                    }
+
+                }
+                finally
+                {
+                    FinishWriteResource();
                 }
 
-                FinishWriteResource();
+                return;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
+        /// Starts all the services
+        /// </summary>
+        public void StartAllServices()
+        {
+            if (WriteResource())
+            {
+                try
+                {
+                    foreach (var service in Services)
+                    {
+                        service.Value.TryStart();
+                    }
+                }
+                finally
+                {
+                    FinishWriteResource();
+                }
+
+                return;
             }
 
             throw new CollisionException();
@@ -166,7 +199,8 @@ namespace Fallen8.API.Service
         /// <param name="servicePluginName">Service plugin name</param>
         /// <param name="reader">Serialization reader</param>
         /// <param name="fallen8">Fallen-8</param>
-        internal void OpenService(string serviceName, string servicePluginName, SerializationReader reader, Fallen8 fallen8)
+        /// <param name="startService">Start the service?</param>
+        internal void OpenService(string serviceName, string servicePluginName, SerializationReader reader, Fallen8 fallen8, Boolean startService)
         {
             IService service;
             if (PluginFactory.TryFindPlugin(out service, servicePluginName))
@@ -176,7 +210,10 @@ namespace Fallen8.API.Service
                 var newServices = new Dictionary<string, IService>(Services);
                 newServices.Add(serviceName, service);
 
-                Interlocked.Exchange(ref Services, newServices);
+                if (service.TryStart())
+                {
+                    Interlocked.Exchange(ref Services, newServices);
+                }
             }
             else
             {

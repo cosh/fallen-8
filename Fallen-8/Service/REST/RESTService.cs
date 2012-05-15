@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
@@ -70,6 +71,21 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         private String _frontEndPost;
 
+        /// <summary>
+        /// The Fallen-8 save path
+        /// </summary>
+        private String _savePath;
+
+        /// <summary>
+        /// The Fallen-8 save file
+        /// </summary>
+        private String _saveFile;
+
+        /// <summary>
+        /// The optimal number of partitions
+        /// </summary>
+        private UInt32 _optimalNumberOfPartitions;
+
         #endregion
 
         #region Constructor
@@ -82,6 +98,12 @@ namespace Fallen8.API.Service.REST
         {
             _fallen8 = fallen8;
             LoadFrontend();
+
+            _saveFile = "Temp.f8s";
+            _savePath = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + _saveFile;
+
+            _optimalNumberOfPartitions = Convert.ToUInt32(Environment.ProcessorCount * 3 / 2);
+            _optimalNumberOfPartitions = 1;
         }
 
         #endregion
@@ -366,19 +388,51 @@ namespace Fallen8.API.Service.REST
                        : Enumerable.Empty<Int32>();
         }
 
-        public void Load(Stream saveGame)
+        public void Load()
         {
-            throw new NotImplementedException();
+            _fallen8.Load(FindLatestFallen8());
         }
 
-        public Stream Save(string numberOfPartitions)
+        public void Save()
         {
-            throw new NotImplementedException();
+            _fallen8.Save(_savePath, _optimalNumberOfPartitions);
         }
 
         #endregion
 
         #region private helper
+
+        /// <summary>
+        /// Searches for the latest fallen-8
+        /// </summary>
+        /// <returns></returns>
+        private string FindLatestFallen8()
+        {
+            var versions = System.IO.Directory.EnumerateFiles(Environment.CurrentDirectory,
+                                               _saveFile + Constants.VersionSeparator + "*")
+                                               .ToList();
+
+            if (versions.Count > 0)
+            {
+                var fileToPathMapper = versions
+                    .Select(path => path.Split(System.IO.Path.DirectorySeparatorChar))
+                    .Where(_ => !_.Last().Contains(Constants.GraphElementsSaveString))
+                    .Where(_ => !_.Last().Contains(Constants.IndexSaveString))
+                    .Where(_ => !_.Last().Contains(Constants.ServiceSaveString))
+                    .ToDictionary(key => key.Last(), value => value.Aggregate((a, b) => a + System.IO.Path.DirectorySeparatorChar + b));
+
+                var latestRevision = fileToPathMapper
+                    .Select(file => file.Key.Split(Constants.VersionSeparator)[1])
+                    .Select(revisionString => DateTime.FromBinary(Convert.ToInt64(revisionString)))
+                    .OrderByDescending(revision => revision)
+                    .First()
+                    .ToBinary()
+                    .ToString(CultureInfo.InvariantCulture);
+
+                return fileToPathMapper.First(_ => _.Key.Contains(latestRevision)).Value;
+            }
+            return _savePath;
+        }
 
         /// <summary>
         ///   Creats the result
