@@ -376,6 +376,48 @@ namespace Fallen8.API.Model
 
         #region IVertexModel implementation
 
+		public uint GetInDegree ()
+		{
+			if (ReadResource())
+            {
+				UInt32 degree = 0;
+
+                if (_inEdges != null)
+                {
+                    for (var i = 0; i < _inEdges.Count; i++)
+                    {
+                        degree += Convert.ToUInt32(_inEdges[i].Edges.Count);
+                    }
+                }
+                FinishReadResource();
+
+                return degree;
+            }
+
+            throw new CollisionException();
+		}
+
+		public uint GetOutDegree ()
+		{
+			if (ReadResource())
+            {
+				UInt32 degree = 0;
+
+                if (_outEdges != null)
+                {
+                    for (var i = 0; i < _outEdges.Count; i++)
+                    {
+                        degree += Convert.ToUInt32(_outEdges[i].Edges.Count);
+                    }
+                }
+                FinishReadResource();
+
+                return degree;
+            }
+
+            throw new CollisionException();
+		}
+
         /// <summary>
         ///   Gets all neighbors.
         /// </summary>
@@ -467,7 +509,7 @@ namespace Fallen8.API.Model
                 result = null;
 
                 if (_outEdges != null)
-                {
+				{
                     for (var i = 0; i < _outEdges.Count; i++)
                     {
                         var aOutEdge = _outEdges[i];
@@ -494,7 +536,7 @@ namespace Fallen8.API.Model
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> Result. </param>
         /// <param name='edgePropertyId'> Edge property identifier. </param>
-        public Boolean TryGetInEdges(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
+        public Boolean TryGetInEdge(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
         {
             if (ReadResource())
             {

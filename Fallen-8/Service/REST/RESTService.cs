@@ -195,7 +195,7 @@ namespace Fallen8.API.Service.REST
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
-                if (vertex.TryGetInEdges(out edges, Convert.ToInt32(edgePropertyIdentifier)))
+                if (vertex.TryGetInEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
                 {
                     return edges.Select(_ => _.Id).ToList();
                 }
@@ -440,6 +440,54 @@ namespace Fallen8.API.Service.REST
 		public UInt64 FreeMem ()
 		{
 			return GetFreeMemory();
+		}
+
+		public uint GetInDegree (string vertexIdentifier)
+		{
+			VertexModel vertex;
+            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
+            {
+				return vertex.GetInDegree();
+            }
+            return 0;
+		}
+
+		public uint GetOutDegree (string vertexIdentifier)
+		{
+			VertexModel vertex;
+            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
+            {
+				return vertex.GetOutDegree();
+            }
+            return 0;
+		}
+
+		public uint GetInEdgeDegree (string vertexIdentifier, string edgePropertyIdentifier)
+		{
+			VertexModel vertex;
+            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
+            {
+                ReadOnlyCollection<EdgeModel> edges;
+                if (vertex.TryGetInEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
+                {
+                    return Convert.ToUInt32(edges.Count);
+                }
+            }
+            return 0;
+		}
+
+		public uint GetOutEdgeDegree (string vertexIdentifier, string edgePropertyIdentifier)
+		{
+			VertexModel vertex;
+            if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
+            {
+                ReadOnlyCollection<EdgeModel> edges;
+                if (vertex.TryGetOutEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
+                {
+                    return Convert.ToUInt32(edges.Count);
+                }
+            }
+            return 0;
 		}
 
         #endregion

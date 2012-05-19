@@ -162,6 +162,48 @@ namespace Fallen8.API.Service.REST
             ResponseFormat = WebMessageFormat.Json)]
         List<Int32> GetIncomingEdges(String vertexIdentifier, String edgePropertyIdentifier);
 
+		/// <summary>
+        ///   Returns the in-degree of the vertex
+        /// </summary>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <returns> In-degree </returns>
+        [OperationContract(Name = "InDegree")]
+        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/InDegree",
+            ResponseFormat = WebMessageFormat.Json)]
+        UInt32 GetInDegree(String vertexIdentifier);
+
+		/// <summary>
+        ///   Returns the out-degree of the vertex
+        /// </summary>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <returns> In-degree </returns>
+        [OperationContract(Name = "OutDegree")]
+        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutDegree",
+            ResponseFormat = WebMessageFormat.Json)]
+        UInt32 GetOutDegree(String vertexIdentifier);
+
+		/// <summary>
+        ///   Returns the degree of an incoming edge
+        /// </summary>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
+        /// <returns> Degree of an incoming edge </returns>
+        [OperationContract(Name = "IncEdgesDegree")]
+        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/IncEdges/{edgePropertyIdentifier}/Degree",
+            ResponseFormat = WebMessageFormat.Json)]
+        UInt32 GetInEdgeDegree(String vertexIdentifier, String edgePropertyIdentifier);
+
+		/// <summary>
+        ///   Returns the degree of an outgoing edge
+        /// </summary>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
+        /// <returns> Degree of an incoming edge </returns>
+        [OperationContract(Name = "OutEdgesDegree")]
+        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutEdges/{edgePropertyIdentifier}/Degree",
+            ResponseFormat = WebMessageFormat.Json)]
+        UInt32 GetOutEdgeDegree(String vertexIdentifier, String edgePropertyIdentifier);
+
         #endregion
 
         #region misc
