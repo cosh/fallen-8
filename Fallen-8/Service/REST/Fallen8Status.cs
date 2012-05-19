@@ -40,25 +40,25 @@ namespace Fallen8.API.Service.REST
         ///   The available memory
         /// </summary>
         [DataMember]
-        public Int64 FreeMemory { get; set; }
+        public UInt64 FreeMemory { get; set; }
 
         /// <summary>
         ///   The used memory
         /// </summary>
         [DataMember]
-        public Int64 UsedMemory { get; set; }
+        public UInt64 UsedMemory { get; set; }
 
         /// <summary>
         ///   Vertex count
         /// </summary>
         [DataMember]
-        public Int32 VertexCount { get; set; }
+        public UInt32 VertexCount { get; set; }
 
         /// <summary>
         ///   Edge count
         /// </summary>
         [DataMember]
-        public Int32 EdgeCount { get; set; }
+        public UInt32 EdgeCount { get; set; }
 
         /// <summary>
         ///   Available index plugins

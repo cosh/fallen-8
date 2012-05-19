@@ -39,7 +39,7 @@ namespace Fallen8.API.Service.REST
         ///   The type name
         /// </summary>
         [DataMember]
-        public String TypeName { get; set; }
+        public String FullQualifiedTypeName { get; set; }
 
         /// <summary>
         ///   The property string representation

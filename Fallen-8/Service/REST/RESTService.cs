@@ -40,6 +40,7 @@ using Fallen8.API.Index;
 using Fallen8.API.Model;
 using Fallen8.API.Plugin;
 using Fallen8.API.Service.REST.Ressource;
+using System.IO.Compression;
 
 namespace Fallen8.API.Service.REST
 {
@@ -103,7 +104,6 @@ namespace Fallen8.API.Service.REST
             _savePath = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + _saveFile;
 
             _optimalNumberOfPartitions = Convert.ToUInt32(Environment.ProcessorCount * 3 / 2);
-            _optimalNumberOfPartitions = 1;
         }
 
         #endregion
@@ -210,14 +210,11 @@ namespace Fallen8.API.Service.REST
 
         public Fallen8Status Status()
         {
-            var currentProcess = Process.GetCurrentProcess();
-            var totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
+			var freeBytesOfMemory = GetFreeMemory();
+			var totalBytesOfMemoryUsed = GetTotalMemory();
 
-            var freeMem = new PerformanceCounter("Memory", "Available Bytes");
-            var freeBytesOfMemory = Convert.ToInt64(freeMem.NextValue());
-
-            var vertexCount = _fallen8.GetVertices().Count;
-            var edgeCount = _fallen8.GetEdges().Count;
+            var vertexCount = _fallen8.VertexCount;
+            var edgeCount = _fallen8.EdgeCount;
 
             IEnumerable<String> availableIndices;
             PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);
@@ -388,9 +385,9 @@ namespace Fallen8.API.Service.REST
                        : Enumerable.Empty<Int32>();
         }
 
-        public void Load()
+        public void Load(string startServices)
         {
-            _fallen8.Load(FindLatestFallen8());
+            _fallen8.Load(FindLatestFallen8(), Convert.ToBoolean(startServices));
         }
 
         public void Save()
@@ -398,9 +395,85 @@ namespace Fallen8.API.Service.REST
             _fallen8.Save(_savePath, _optimalNumberOfPartitions);
         }
 
+		public bool TryAddProperty (string graphElementIdString, string propertyIdString, PropertySpecification definition)
+		{
+			var graphElementId = Convert.ToInt32(graphElementIdString);
+			var propertyId = Convert.ToUInt16(propertyIdString);
+
+			var property = Convert.ChangeType(
+				definition.Property, 
+				Type.GetType(definition.FullQualifiedTypeName, true, true));
+
+			return _fallen8.TryAddProperty(graphElementId, propertyId, property);
+		}
+
+		public bool TryRemoveProperty (string graphElementIdString, string propertyIdString)
+		{
+			var graphElementId = Convert.ToInt32(graphElementIdString);
+			var propertyId = Convert.ToUInt16(propertyIdString);
+
+			return _fallen8.TryRemoveProperty(graphElementId, propertyId);
+		}
+
+		public bool TryRemoveGraphElement (string graphElementIdString)
+		{
+			var graphElementId = Convert.ToInt32(graphElementIdString);
+
+			return _fallen8.TryRemoveGraphElement(graphElementId);
+		}
+
+		public void TabulaRasa ()
+		{
+			_fallen8.TabulaRasa();
+		}
+
+		public uint VertexCount ()
+		{
+			return _fallen8.VertexCount;
+		}
+
+		public uint EdgeCount ()
+		{
+			return _fallen8.EdgeCount;
+		}
+
+		public UInt64 FreeMem ()
+		{
+			return GetFreeMemory();
+		}
+
         #endregion
 
         #region private helper
+
+		UInt64 GetFreeMemory ()
+		{
+			#if __MonoCS__
+    			//mono specific code
+				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
+            	var totalMemory = (ulong)pc.RawValue;
+
+				Process.GetCurrentProcess().Refresh();
+            	var usedMemory = (ulong)Process.GetCurrentProcess().WorkingSet64;
+
+				return totalMemory - usedMemory;
+			#else
+                var freeMem = new PerformanceCounter("Memory", "Available Bytes");
+            	return Convert.ToInt64(freeMem.NextValue());
+			#endif
+		}
+
+		UInt64 GetTotalMemory ()
+		{
+			#if __MonoCS__
+    			//mono specific code
+				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
+            	return (ulong)pc.RawValue;
+			#else
+				var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();	
+				return computerInfo.TotalPhysicalMemory;
+			#endif
+		}
 
         /// <summary>
         /// Searches for the latest fallen-8
@@ -535,7 +608,7 @@ namespace Fallen8.API.Service.REST
                                                       Value =
                                                           Convert.ChangeType(aPropertyDefinition.Value.Property,
                                                                              Type.GetType(
-                                                                                 aPropertyDefinition.Value.TypeName,
+                                                                                 aPropertyDefinition.Value.FullQualifiedTypeName,
                                                                                  true, true))
                                                   };
                     propCounter++;

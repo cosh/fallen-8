@@ -38,15 +38,15 @@ namespace Fallen8.API.Service.REST
     [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8RESTService")]
     public interface IRESTService
     {
-        #region Import
+        #region Create/Add/Delete
 
         /// <summary>
         ///   Adds a vertex to the Fallen-8
         /// </summary>
         /// <param name="definition"> The vertex specification </param>
         /// <returns> The new vertex id </returns>
-        [OperationContract(Name = "AddVertex")]
-        [WebInvoke(UriTemplate = "/AddVertex", Method = "POST", RequestFormat = WebMessageFormat.Json,
+        [OperationContract(Name = "CreateVertex")]
+        [WebInvoke(UriTemplate = "/CreateVertex", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Int32 AddVertex(VertexSpecification definition);
 
@@ -55,14 +55,54 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         /// <param name="definition"> The edge specification </param>
         /// <returns> The new edge id </returns>
-        [OperationContract(Name = "AddEdge")]
-        [WebInvoke(UriTemplate = "/AddEdge", Method = "POST", RequestFormat = WebMessageFormat.Json,
+        [OperationContract(Name = "CreateEdge")]
+        [WebInvoke(UriTemplate = "/CreateEdge", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Int32 AddEdge(EdgeSpecification definition);
 
+		/// <summary>
+        /// Tries to add a property to a grap element
+        /// </summary>
+        /// <param name="graphElementId"> The graph element identifier </param>
+        /// <param name="propertyId"> The property identifier </param>
+        /// <param name="definition"> The property specification </param>
+        /// <returns> True for success, otherwise false </returns>
+        [OperationContract(Name = "TryAddProperty")]
+		[WebInvoke(UriTemplate = "/TryAddProperty?graphElementId={graphElementId}&propertyId={propertyId}", Method = "POST", 
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        Boolean TryAddProperty(string graphElementId, string propertyId, PropertySpecification definition);
+
+		/// <summary>
+        /// Tries to remove a property from a graph element
+        /// </summary>
+        /// <param name="graphElementId"> The graph element identifier </param>
+        /// <param name="propertyId"> The property identifier </param>
+        /// <returns> True for success, otherwise false </returns>
+        [OperationContract(Name = "TryRemoveProperty")]
+		[WebInvoke(UriTemplate = "/TryRemoveProperty?graphElementId={graphElementId}&propertyId={propertyId}", Method = "DELETE",
+		           ResponseFormat = WebMessageFormat.Json)]
+        Boolean TryRemoveProperty(string graphElementId, string propertyId);
+
+		/// <summary>
+        /// Tries to remove a graph element
+        /// </summary>
+        /// <param name="graphElementId"> The graph element identifier </param>
+        /// <returns> True for success, otherwise false </returns>
+        [OperationContract(Name = "TryRemoveGraphElement")]
+		[WebInvoke(UriTemplate = "/TryRemoveGraphElement?graphElementId={graphElementId}", Method = "DELETE",
+		           ResponseFormat = WebMessageFormat.Json)]
+        Boolean TryRemoveGraphElement(string graphElementId);
+
+		/// <summary>
+        /// Put the database in its initial state (deletes all vertices and edges).
+        /// </summary>
+        [OperationContract(Name = "TabulaRasa")]
+		[WebInvoke(UriTemplate = "/TabulaRasa", Method = "DELETE")]
+        void TabulaRasa();
+
         #endregion
 
-        #region Selection
+        #region Read
 
         /// <summary>
         ///   Returns all vertex properties
@@ -141,6 +181,30 @@ namespace Fallen8.API.Service.REST
         [WebGet(UriTemplate = "/Status", ResponseFormat = WebMessageFormat.Json)]
         Fallen8Status Status();
 
+		/// <summary>
+        /// Gets the number of vertices
+        /// </summary>
+        /// <returns> Number of vertices </returns>
+        [OperationContract(Name = "VertexCount")]
+        [WebGet(UriTemplate = "/VertexCount", ResponseFormat = WebMessageFormat.Json)]
+        UInt32 VertexCount();
+
+		/// <summary>
+        /// Gets the number of edges
+        /// </summary>
+        /// <returns> Number of edges </returns>
+        [OperationContract(Name = "EdgeCount")]
+        [WebGet(UriTemplate = "/EdgeCount", ResponseFormat = WebMessageFormat.Json)]
+        UInt32 EdgeCount();
+
+		/// <summary>
+        /// Gets the number of free bytes in RAM
+        /// </summary>
+        /// <returns> Number of free bytes </returns>
+        [OperationContract(Name = "FreeMem")]
+        [WebGet(UriTemplate = "/FreeMem", ResponseFormat = WebMessageFormat.Json)]
+        UInt64 FreeMem();
+
         #endregion
 
         #region frontend
@@ -181,8 +245,7 @@ namespace Fallen8.API.Service.REST
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "GraphScan")]
         [WebInvoke(UriTemplate = "/GraphScan?propertyId={propertyId}", Method = "POST",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> GraphScan(String propertyId, ScanSpecification definition);
 
         /// <summary>
@@ -192,8 +255,8 @@ namespace Fallen8.API.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "IndexScan")]
-        [WebInvoke(UriTemplate = "/IndexScan?indexId={indexId}", Method = "POST", RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
+        [WebInvoke(UriTemplate = "/IndexScan?indexId={indexId}", Method = "POST", 
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
 
         /// <summary>
@@ -204,8 +267,7 @@ namespace Fallen8.API.Service.REST
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "RangeIndexScan")]
         [WebInvoke(UriTemplate = "/RangeIndexScan?indexId={indexId}", Method = "POST",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
 
         #endregion
@@ -215,9 +277,10 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   Loads a Fallen-8
         /// </summary>
+        /// <param name="startServices"> Start the services of the loaded save point? </param>
         [OperationContract(Name = "Load")]
-        [WebGet(UriTemplate = "/Load")]
-        void Load();
+		[WebGet(UriTemplate = "/Load?startServices={startServices}")]
+        void Load(string startServices);
 
         /// <summary>
         ///   Saves the Fallen-8
