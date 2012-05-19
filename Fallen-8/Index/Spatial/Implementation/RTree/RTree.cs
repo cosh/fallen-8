@@ -41,7 +41,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
     /// </summary>
     public sealed class RTree : AThreadSafeElement,ISpatialIndex
     {
-        public int searchCounter = 0;
+
         #region public member
         /// <summary>
         /// Metric for R-Tree space
@@ -76,14 +76,107 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #endregion
 
         #region private function
-        #region distance between two spatial containers(not work)
+        #region distance between two spatial containers
         private float Distance(ISpatialContainer container1, ISpatialContainer container2)
         {
-            throw new NotImplementedException();
+            if (container1 is APointContainer && container2 is APointContainer)
+            {
+                return Metric.Distance((APointContainer)container1, (APointContainer)container2);
+            }
+            else
+            {
+                var points = FindNeighborPoints(container1.LowerPoint, container1.UpperPoint, container2.LowerPoint, container2.UpperPoint);
+                return Metric.Distance(points.Item1, points.Item2);
+            }
+        }
+        #endregion
+
+        #region Find neighbor points
+        private Tuple<IMBP, IMBP> FindNeighborPoints(float[] lower1, float[] upper1, float[] lower2, float[] upper2)
+        {
+            float[] point1 = new float[this.countOfR];
+            float[] point2 = new float[this.countOfR];
+
+
+            for (int i = 0; i < this.countOfR; i++)
+            {
+                if (lower2[i] >= lower1[i])
+                {
+                    if (upper1[i] >= lower2[i])
+                    {
+                        point1[i] = 0;
+                        point2[i] = 0;
+                    }
+                    else
+                    {
+                        point1[i] = upper1[i];
+                        point2[i] = lower2[i];
+                    }
+                }
+                else
+                {
+                    if (upper2[i] >= lower1[i])
+                    {
+                        point1[i] = 0;
+                        point2[i] = 0;
+                    }
+                    else
+                    {
+                        point1[i] = lower1[i];
+                        point2[i] = upper2[i];
+                    }
+                }
+
+            }
+
+            return Tuple.Create((IMBP)new RTreePoint(point1), (IMBP)new RTreePoint(point2));
         }
         #endregion
 
         #region methodes for spatial search
+
+        #region universal searching
+        private ReadOnlyCollection<AGraphElement> SEARCHING(IRTreeDataContainer element, Predicate<AGraphElement> predicate, Func<ASpatialContainer, IRTreeDataContainer, bool> spatialPredicate, Func<IRTreeDataContainer, IRTreeDataContainer, bool> dataContainerPredicate)
+        {
+            Stack<ARTreeContainer> stack = new Stack<ARTreeContainer>();
+            List<AGraphElement> currentResult = new List<AGraphElement>();
+            if (spatialPredicate(root, element))
+                stack.Push(root);
+            while (stack.Count > 0)
+            {
+                var currentContainer = stack.Pop();
+
+                if (!currentContainer.IsLeaf)
+                {
+                    foreach (ARTreeContainer value in ((RTreeNode)currentContainer).Children)
+                    {
+                        if (spatialPredicate(value, element))
+                            stack.Push(value);
+                    }
+                }
+                else
+                {
+                    foreach (IRTreeDataContainer value in ((RTreeLeaf)currentContainer).Data)
+                    {
+                        if (dataContainerPredicate(value, element))
+                        {
+
+                            currentResult.Add(value.GraphElement);
+                        }
+
+                    }
+                }
+            }
+
+            if (predicate != null)
+            {
+                return currentResult.FindAll(predicate).AsReadOnly();
+            }
+            else
+                return currentResult.AsReadOnly();
+        }
+        #endregion
+        
         #region EqualsSearch
         private ReadOnlyCollection<AGraphElement> EqualSearch(IRTreeDataContainer element, Predicate<AGraphElement> predicate)
         {
@@ -188,9 +281,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         /// <returns>
         /// list of result
         /// </returns>
-        private ReadOnlyCollection<AGraphElement> searchDistance(SpatialDataContainer searchContainer, Predicate<AGraphElement> predicate = null)
+        private ReadOnlyCollection<AGraphElement> OverlapSearch(IRTreeDataContainer searchContainer, Predicate<AGraphElement> predicate = null)
         {
-            searchCounter = 0;
             Stack<ARTreeContainer> stack = new Stack<ARTreeContainer>();
             List<AGraphElement> currentResult = new List<AGraphElement>();
             if (root.Intersection(searchContainer))
@@ -211,7 +303,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 {
                     foreach (IRTreeDataContainer value in ((RTreeLeaf)currentContainer).Data)
                     {
-                        searchCounter++;
+
                         if (value.Intersection(searchContainer))
                         {
                             currentResult.Add(value.GraphElement);
@@ -234,6 +326,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #endregion
 
         #region methodes for r*-tree
+
         #region Local reorganisation by removing
 
         private void LocalReorganisationByRemoving(ARTreeContainer rTree, int level)
@@ -250,7 +343,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 {
                     foreach (IRTreeDataContainer value in ((RTreeLeaf)rTree).Data)
                     {
-                        InsertData(value);
+                        var newLeafLeavel = this.levelForOverflowStrategy.Count - 1;
+                        Insert(value, level - (leafLevel - newLeafLeavel));
                     }
 
                 }
@@ -299,7 +393,11 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         private void InsertData(IRTreeDataContainer container)
         {
 
+            //  for (int i = 1; i < this.levelForOverflowStrategy.Count; i++)
+            //      levelForOverflowStrategy[i] = true;
             this.Insert(container, this.levelForOverflowStrategy.Count - 1);
+            //      for (int i = 1; i < this.levelForOverflowStrategy.Count; i++)
+            //          levelForOverflowStrategy[i] = false;
 
         }
         #endregion
@@ -332,6 +430,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             }
 
         }
+        #endregion
+
         #region Recalculations of containers
         //recalculation
         private void Recalculation(IRTreeContainer newContainer)
@@ -411,8 +511,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             }
         }
         #endregion
-        #endregion
-
+        
         #region OverflowTreatment
         private void OverflowTreatment(int level, ARTreeContainer container)
         {
@@ -465,11 +564,12 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 ((RTreeNode)container).Children.RemoveAll(_ => reinsertData.Exists(y => y.Item2 == _));
     
             this.RecalculationByRemoving(reinsertData.Select(_ => _.Item2));
-
+            var leafLevel = this.levelForOverflowStrategy.Count - 1;
                 for (int i = 0; i < this.countOfReInsert; i++)
                 {
                     reinsertData[i].Item2.Parent = null;
-                    this.Insert(reinsertData[i].Item2, level);
+                    var newLeafLeavel = this.levelForOverflowStrategy.Count - 1;
+                    this.Insert(reinsertData[i].Item2, level - (leafLevel - newLeafLeavel));
                 }
             
 
@@ -1021,7 +1121,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #region Test of MBR
         private bool TestOfMBR(IMBR mbr)
         {
-            if (mbr.LowerPoint.Length != mbr.UpperPoint.Length)
+            if (mbr.LowerPoint.Length != mbr.UpperPoint.Length && mbr.LowerPoint.Length != this.countOfR)
             {
                 return false;
             }
@@ -1093,7 +1193,17 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         public void Wipe()
         {
-            throw new NotImplementedException();
+            mapOfContainers.Clear();
+            float[] lower = new float[countOfR];
+            float[] upper = new float[countOfR];
+            for (int i = 0; i < this.countOfR; i++)
+            {
+                lower[i] = float.PositiveInfinity;
+                upper[i] = float.NegativeInfinity;
+            }
+            root = new RTreeLeaf(lower, upper);
+            levelForOverflowStrategy.Clear();
+            levelForOverflowStrategy.Add(true);
         }
 
         public IEnumerable<IComparable> GetKeys()
@@ -1117,7 +1227,29 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         public bool TryRemoveKey(IGeometry key)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                if (TestOfGeometry(key) && DimensionTest(key.Dimensions))
+                {
+                    IRTreeDataContainer searchContainer;
+                    if (key is IPoint)
+                        searchContainer = new PointDataContainer(((IPoint)key).PointToSpaceR());
+                    else
+                        searchContainer = new SpatialDataContainer(key.GeometryToMBR());
+
+                    var removeObjects = SEARCHING(searchContainer, null, (x, y) => x.Inclusion(y), (x, y) => x.Inclusion(y));
+                    FinishReadResource();
+                    foreach (AGraphElement value in removeObjects)
+                    {
+                        RemoveValue(value);
+                    }
+
+                    return removeObjects.Count > 0;
+                }
+                else
+                    return false;
+            }
+            throw new CollisionException();
         }
 
         #region TryGetValues
@@ -1189,7 +1321,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 {
                     var currentResult = new List<int>();
                     searchContainer = CreateSearchContainer(geometry.GeometryToMBR(), distance);
-                    result = searchDistance(searchContainer, predicate);
+                    result = OverlapSearch(searchContainer, predicate);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1225,7 +1357,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 {
                     var currentResult = new List<AGraphElement>();
                     searchContainer = CreateSearchContainer(element, distance);
-                    result = searchDistance(searchContainer, predicate);
+                    result = OverlapSearch(searchContainer, predicate);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1279,73 +1411,456 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         public float Distance(IGeometry geometry1, IGeometry geometry2)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                if (geometry1 is IPoint && geometry2 is IPoint)
+                {
+                    FinishReadResource();
+                    return Metric.Distance((IMBP)new RTreePoint(((IPoint)geometry1).PointToSpaceR()),
+                        (IMBP)new RTreePoint(((IPoint)geometry2).PointToSpaceR()));
+                }
+                else
+                {
+                    var mbr1 = geometry1.GeometryToMBR();
+                    var mbr2 = geometry2.GeometryToMBR();
+                    var points = FindNeighborPoints(mbr1.LowerPoint, mbr1.UpperPoint, mbr2.LowerPoint, mbr2.UpperPoint);
+                    
+                    FinishReadResource();
+                    return Metric.Distance(points.Item1, points.Item2);
+                }
+            }
+            throw new CollisionException();
         }
 
         public float Distance(AGraphElement graphElement1, AGraphElement graphElement2)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                IRTreeDataContainer container1;
+                IRTreeDataContainer container2;
+                if (mapOfContainers.TryGetValue(graphElement1.Id, out container1) &&
+                    mapOfContainers.TryGetValue(graphElement2.Id, out container2))
+                {
+                    FinishReadResource();
+                    return Distance(container1, container2);
+                }
+                else
+                {
+                    FinishReadResource();
+                    return float.NaN;
+                }
+            }
+            throw new CollisionException();
+
         }
 
         public bool SearchRegion(out ReadOnlyCollection<AGraphElement> result, IMBR minimalBoundedRechtangle, Predicate<AGraphElement> predicate = null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                if (TestOfMBR(minimalBoundedRechtangle))
+                {
+                    var searchRegion = new SpatialDataContainer(minimalBoundedRechtangle);
+                    result = this.OverlapSearch(searchRegion, predicate);
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
         public bool Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                if (this.TestOfGeometry(geometry) && this.DimensionTest(geometry.Dimensions))
+                {
+                    IRTreeDataContainer searchContainer;
+                    if (geometry is IPoint)
+                        searchContainer = new PointDataContainer(((IPoint)geometry).PointToSpaceR());
+                    else
+                        searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
+
+                    result = this.OverlapSearch(searchContainer, predicate);
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
         public bool Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                IRTreeDataContainer output;
+                if (this.mapOfContainers.TryGetValue(graphElement.Id, out output))
+                {
+                    result = this.OverlapSearch(output, predicate);
+                }
+
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
         public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                IRTreeDataContainer output;
+                if (this.mapOfContainers.TryGetValue(graphElement.Id, out output))
+                {
+                    result = this.SEARCHING(output, predicate, (x, y) => x.Inclusion(y), (x, y) => x.Inclusion(y));
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
-        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat=null)
+        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                if (TestOfGeometry(geometry) && DimensionTest(geometry.Dimensions))
+                {
+                    IRTreeDataContainer searchContainer;
+                    if (geometry is IPoint)
+                        searchContainer = new PointDataContainer(((IPoint)geometry).PointToSpaceR());
+                    else
+                        searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
+
+
+                    result = this.SEARCHING(searchContainer, predicate, (x, y) => x.Inclusion(y), (x, y) => x.Inclusion(y));
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
-        public bool Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicat=null)
+        public bool Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                if (TestOfGeometry(geometry) && DimensionTest(geometry.Dimensions))
+                {
+                    IRTreeDataContainer searchContainer;
+                    if (geometry is IPoint)
+                        searchContainer = new PointDataContainer(((IPoint)geometry).PointToSpaceR());
+                    else
+                        searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
+
+
+                    result = this.SEARCHING(searchContainer, predicate, (x, y) => x.Intersection(y), (x, y) => y.Inclusion(x));
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
         public bool Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                IRTreeDataContainer output;
+                if (this.mapOfContainers.TryGetValue(graphElement.Id, out output))
+                {
+                    result = this.SEARCHING(output, predicate, (x, y) => x.Intersection(y), (x, y) => y.Inclusion(x));
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
         public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                IRTreeDataContainer output;
+                if (this.mapOfContainers.TryGetValue(graphElement.Id, out output))
+                {
+                    result = this.SEARCHING(output, predicate, (x, y) => x.Intersection(y), (x, y) => x.Adjacency(x));
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
-        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry graphElement, Predicate<AGraphElement> predicate=null)
+        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                if (TestOfGeometry(geometry) && DimensionTest(geometry.Dimensions))
+                {
+                    IRTreeDataContainer searchContainer;
+                    if (geometry is IPoint)
+                        searchContainer = new PointDataContainer(((IPoint)geometry).PointToSpaceR());
+                    else
+                        searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
+
+
+                    result = this.SEARCHING(searchContainer, predicate, (x, y) => x.Intersection(y), (x, y) => x.Adjacency(x));
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
 
         public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                IRTreeDataContainer output;
+                if (this.mapOfContainers.TryGetValue(graphElement.Id, out output))
+                {
+                    LinkedList<Tuple<float, IRTreeDataContainer>> containers = new LinkedList<Tuple<float, IRTreeDataContainer>>();
+                    var elements = ((RTreeLeaf)output.Parent).Data;
+                    var parent = (RTreeLeaf)output.Parent;
+                    var maxElement = float.PositiveInfinity;
+                    foreach (IRTreeDataContainer value in elements)
+                    {
+                        var dist = Distance(output, value);
+                        if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value != output && predicate(value.GraphElement))
+                        {
+                            if (containers.Count == 0)
+                            {
+                                containers.AddFirst(new LinkedListNode<Tuple<float, IRTreeDataContainer>>(Tuple.Create(dist, value)));
+                                maxElement = dist;
+                            }
+                            else
+                            {
+                                var end = true;
+                                var start = containers.First;
+                                while (end)
+                                {
+
+                                    if (dist < start.Value.Item1)
+                                    {
+                                        containers.AddBefore(start, Tuple.Create(dist, value));
+                                        if (containers.Count > countOfNextNeighbors)
+                                        {
+                                            containers.RemoveLast();
+                                            maxElement = containers.Last.Value.Item1;
+                                        }
+                                        break;
+                                    }
+                                    if (start == containers.Last)
+                                    {
+                                        end = false;
+                                    }
+                                    else
+                                    {
+                                        start = start.Next;
+                                    }
+                                }
+                                if (!end && containers.Count < countOfNextNeighbors)
+                                {
+                                    maxElement = dist;
+                                    containers.AddLast(Tuple.Create(dist, value));
+                                }
+
+                            }
+                        }
+                    }
+                    Stack<ARTreeContainer> stack = new Stack<ARTreeContainer>();
+                    if (Distance(root, output) < maxElement || containers.Count < countOfNextNeighbors)
+                        stack.Push(root);
+                    while (stack.Count > 0)
+                    {
+                        var currentContainer = stack.Pop();
+
+                        if (!currentContainer.IsLeaf)
+                        {
+                            foreach (ARTreeContainer value2 in ((RTreeNode)currentContainer).Children)
+                            {
+                                if (Distance(value2, output) < maxElement || containers.Count < countOfNextNeighbors)
+                                    stack.Push(value2);
+                            }
+                        }
+                        else
+                        {
+                            if ((RTreeLeaf)currentContainer != parent)
+                                foreach (IRTreeDataContainer value2 in ((RTreeLeaf)currentContainer).Data)
+                                {
+                                    var dist = Distance(value2, output);
+
+                                    if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value2 != output && predicate(value2.GraphElement))
+                                    {
+                                        if (containers.Count == 0)
+                                        {
+                                            containers.AddFirst(new LinkedListNode<Tuple<float, IRTreeDataContainer>>(Tuple.Create(dist, value2)));
+                                            maxElement = dist;
+                                        }
+                                        else
+                                        {
+                                            var end = true;
+                                            var start = containers.First;
+                                            while (end)
+                                            {
+
+                                                if (dist < start.Value.Item1)
+                                                {
+                                                    containers.AddBefore(start, Tuple.Create(dist, value2));
+                                                    if (containers.Count > countOfNextNeighbors)
+                                                    {
+                                                        containers.RemoveLast();
+                                                        maxElement = containers.Last.Value.Item1;
+                                                    }
+                                                    break;
+                                                }
+                                                if (start == containers.Last)
+                                                {
+                                                    end = false;
+                                                }
+                                                else
+                                                {
+                                                    start = start.Next;
+                                                }
+                                            }
+                                            if (!end && containers.Count < countOfNextNeighbors)
+                                            {
+                                                maxElement = dist;
+                                                containers.AddLast(Tuple.Create(dist, value2));
+                                            }
+                                        }
+                                    }
+                                }
+                        }
+
+                    }
+                    result = containers.Select(_ => _.Item2.GraphElement).ToList().AsReadOnly();
+                }
+                FinishReadResource();
+                return result.Count > 0;
+
+            }
+            throw new CollisionException();
         }
 
         public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                if (TestOfGeometry(geometry) && DimensionTest(geometry.Dimensions))
+                {
+                    IRTreeDataContainer output;
+                    if (geometry is IPoint)
+                        output = new PointDataContainer(((IPoint)geometry).PointToSpaceR());
+                    else
+                        output = new SpatialDataContainer(geometry.GeometryToMBR());
+
+
+                    LinkedList<Tuple<float, IRTreeDataContainer>> containers = new LinkedList<Tuple<float, IRTreeDataContainer>>();
+                    var maxElement = float.PositiveInfinity;
+
+                    Stack<ARTreeContainer> stack = new Stack<ARTreeContainer>();
+                    if (Distance(root, output) < maxElement || containers.Count < countOfNextNeighbors)
+                        stack.Push(root);
+                    while (stack.Count > 0)
+                    {
+                        var currentContainer = stack.Pop();
+
+                        if (!currentContainer.IsLeaf)
+                        {
+                            foreach (ARTreeContainer value2 in ((RTreeNode)currentContainer).Children)
+                            {
+                                if (Distance(value2, output) < maxElement || containers.Count < countOfNextNeighbors)
+                                    stack.Push(value2);
+                            }
+                        }
+                        else
+                        {
+                            foreach (IRTreeDataContainer value2 in ((RTreeLeaf)currentContainer).Data)
+                            {
+                                var dist = Distance(value2, output);
+
+                                if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value2 != output && predicate(value2.GraphElement))
+                                {
+                                    if (containers.Count == 0)
+                                    {
+                                        containers.AddFirst(new LinkedListNode<Tuple<float, IRTreeDataContainer>>(Tuple.Create(dist, value2)));
+                                        maxElement = dist;
+                                    }
+                                    else
+                                    {
+                                        var end = true;
+                                        var start = containers.First;
+                                        while (end)
+                                        {
+
+                                            if (dist < start.Value.Item1)
+                                            {
+                                                containers.AddBefore(start, Tuple.Create(dist, value2));
+                                                if (containers.Count > countOfNextNeighbors)
+                                                {
+                                                    containers.RemoveLast();
+                                                    maxElement = containers.Last.Value.Item1;
+                                                }
+                                                break;
+                                            }
+                                            if (start == containers.Last)
+                                            {
+                                                end = false;
+                                            }
+                                            else
+                                            {
+                                                start = start.Next;
+                                            }
+                                        }
+                                        if (!end && containers.Count < countOfNextNeighbors)
+                                        {
+                                            maxElement = dist;
+                                            containers.AddLast(Tuple.Create(dist, value2));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    result = containers.Select(_ => _.Item2.GraphElement).ToList().AsReadOnly();
+                }
+                FinishReadResource();
+                return result.Count > 0;
+
+
+            }
+            throw new CollisionException();
         }
         
 
         public bool SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point, Predicate<AGraphElement> predicate = null)
         {
-            throw new NotImplementedException();
+            if (ReadResource())
+            {
+                result = new List<AGraphElement>().AsReadOnly();
+                if (TestOfGeometry(point) && DimensionTest(point.Dimensions))
+                {
+                    var searchContainer = new PointDataContainer(point.PointToSpaceR());
+                    result = SEARCHING(searchContainer, predicate, (x, y) => x.Intersection(y), (x, y) => x.Intersection(y));
+                }
+                FinishReadResource();
+                return result.Count > 0;
+            }
+            throw new CollisionException();
         }
         #endregion
 
@@ -1401,9 +1916,11 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             
             if (MinCountOfNode*2 > MaxCountOfNode+1)
                 throw new Exception("with this parametrs MinCount and MaxCount is split method inposible");
-   
-            
-            this.countOfReInsert = MaxCountOfNode / 3;
+
+
+            this.countOfReInsert = (MaxCountOfNode - MinCountOfNode) / 3;
+            if (countOfReInsert < 1) countOfReInsert = 1;
+
 
             //set of root
             var lower = new float[this.countOfR];
