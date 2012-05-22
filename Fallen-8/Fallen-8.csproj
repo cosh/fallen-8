@@ -62,13 +62,13 @@
     <Compile Include="Index\Fulltext\IFulltextIndex.cs" />
     <Compile Include="Index\IIndex.cs" />
     <Compile Include="Index\Range\IRangeIndex.cs" />
-    <Compile Include="Index\Spatial\Circle.cs" />
     <Compile Include="Index\Spatial\ICurve.cs" />
     <Compile Include="Index\Spatial\IDimension.cs" />
     <Compile Include="Index\Spatial\IGeometry.cs" />
     <Compile Include="Index\Spatial\IMBP.cs" />
     <Compile Include="Index\Spatial\IMBR.cs" />
     <Compile Include="Index\Spatial\IMetric.cs" />
+    <Compile Include="Index\Spatial\Implementation\Geometry\RealDimension.cs" />
     <Compile Include="Index\Spatial\Implementation\Metric\EuclidianMetric.cs" />
     <Compile Include="Index\Spatial\Implementation\Metric\GeoMetric.cs" />
     <Compile Include="Index\Spatial\Implementation\RTree\RTree.cs" />
@@ -191,7 +191,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Index\Spatial\Implementation\Geometry\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

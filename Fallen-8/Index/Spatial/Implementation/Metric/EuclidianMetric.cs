@@ -58,8 +58,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
 
         public float[] TransformationOfDistance(float distance, IMBR mbr)
         {
-            float[] transformation = new float[mbr.LowerPoint.Length];
-            for (int i = 0; i < mbr.LowerPoint.Length; i++)
+            var transformation = new float[mbr.LowerPoint.Length];
+            for (var i = 0; i < mbr.LowerPoint.Length; i++)
                 transformation[i] = distance;
             return transformation;
         }

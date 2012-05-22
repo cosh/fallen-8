@@ -48,8 +48,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
         }
         public float Distance(IMBP point1, IMBP point2)
         {
-            float currentDistance = 0.0f;
-
             if (point1.Coordinates.Length != 2 && point2.Coordinates.Length != 2)
                 throw new Exception("The points are not in geo space");
 
@@ -75,7 +73,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
             var x = sl1 * sl2 + cl1 * cl2 * cdelta;
             var angelDifference = Math.Atan2(y, x);
 
-            currentDistance = (float)angelDifference * this.RadiusOfEarth;
+            float currentDistance = (float)angelDifference * this.RadiusOfEarth;
 
 
             return currentDistance;
@@ -88,7 +86,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
                 if (mbr.LowerPoint.Length != 2)
                     throw new Exception("The points are not in geo space");
 
-                float[] result = new float[2];
+                var result = new float[2];
                 var latidtude = mbr.LowerPoint[0] * Math.PI / 180;
                 result[0] = 180 * distance / ((float)Math.PI * this.RadiusOfEarth);
                 var dist = (float)(180 * distance / (Math.PI * this.RadiusOfEarth * Math.Cos(latidtude)));

@@ -40,16 +40,13 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             this.Children = new List<ARTreeContainer>();
         }
-        public RTreeNode(IMBR myMBR, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
+        public RTreeNode(IMBR mbr, IEnumerable<ARTreeContainer> children = null, ARTreeContainer parent = null)
         {
             if (parent != null)
                 this.Parent = parent;
-            this.lower = myMBR.LowerPoint;
-            this.upper = myMBR.UpperPoint;
-            if (children != null)
-                this.Children = new List<ARTreeContainer>(children);
-            else
-                this.Children = new List<ARTreeContainer>();
+            this.Lower = mbr.LowerPoint;
+            this.Upper = mbr.UpperPoint;
+            this.Children = children != null ? new List<ARTreeContainer>(children) : new List<ARTreeContainer>();
         }
 
         public RTreeNode(float[] clower,
@@ -57,12 +54,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             if (parent != null)
                 this.Parent = parent;
-            this.lower = clower;
-            this.upper = cupper;
-            if (children != null)
-                this.Children = new List<ARTreeContainer>(children);
-            else
-                this.Children = new List<ARTreeContainer>();
+            this.Lower = clower;
+            this.Upper = cupper;
+            this.Children = children != null ? new List<ARTreeContainer>(children) : new List<ARTreeContainer>();
         }
         override public bool IsLeaf { get { return false; } }
         public List<ARTreeContainer> Children;
@@ -73,8 +67,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             this.Children.Clear();
             Children = null;
             Parent = null;
-            this.lower = null;
-            this.upper = null;
+            this.Lower = null;
+            this.Upper = null;
         }
 
     }

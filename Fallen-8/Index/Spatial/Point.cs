@@ -24,22 +24,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
+using System.Collections.Generic;
+using Fallen8.API.Index.Spatial.Implementation.Geometry;
+using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
 namespace Fallen8.API.Index.Spatial
 {
 	/// <summary>
 	/// Point.
 	/// </summary>
-	public sealed class Point //: IGeometry
-	{
-		/// <summary>
+	public sealed class Point : IPoint
+    {
+
+        #region data
+
+        /// <summary>
 		/// Gets or sets the longitude.
 		/// </summary>
 		/// <value>
 		/// The longitude.
 		/// </value>
-		public Double Longitude { get; private set; }
+        public float Longitude { get; private set; }
 		
 		/// <summary>
 		/// Gets or sets the latitude.
@@ -47,16 +52,42 @@ namespace Fallen8.API.Index.Spatial
 		/// <value>
 		/// The latitude.
 		/// </value>
-		public Double Latitude {get; private set;}
+        public float Latitude { get; private set; }
 
-		#region IComparable implementation
-		
-		public int CompareTo (object obj)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		#endregion
-	}
+        #endregion
+
+        #region constructor
+
+        public Point(float longitude, float latitude)
+        {
+            Longitude = longitude;
+            Latitude = latitude;
+        }
+
+	    #endregion
+
+        public IMBR GeometryToMBR()
+        {
+            var lower = new[]{Longitude,Latitude};
+            var upper = new[] { Longitude, Latitude };
+
+           return new MBR(lower,upper);
+        }
+
+        public List<IDimension> Dimensions
+        {
+            get { return new List<IDimension> { new RealDimension(), new RealDimension() }; }
+        }
+
+        public IEnumerable<object> Coordinates
+        {
+            get { return new[] {new[] {Longitude, Latitude}}; }
+        }
+
+        public float[] PointToSpaceR()
+        {
+           return  new[]{Longitude,Latitude};
+        }
+    }
 }
 

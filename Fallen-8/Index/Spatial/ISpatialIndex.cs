@@ -36,6 +36,7 @@ namespace Fallen8.API.Index.Spatial
     public interface ISpatialIndex : IIndex
     {
         #region TryGetValues
+
         /// <summary>
         /// Tries to get the values.
         /// </summary>
@@ -48,7 +49,9 @@ namespace Fallen8.API.Index.Spatial
         /// <param name='geometry'>
         /// Geometry.
         /// </param>
+        /// <param name="predicate">The predicate </param>
         Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
+
         /// <summary>
         /// Tries to get the values.
         /// </summary>
@@ -61,6 +64,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name='graphElement'>
         /// Element of graph.
         /// </param>
+        /// <param name="predicate">The predicate </param>
         Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate = null);
         #endregion
 
@@ -129,7 +133,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="minimalBoundedRechtangle">
         /// region(minimal bounded rechtangle)
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -148,7 +152,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometric object
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -164,7 +168,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -183,7 +187,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -199,7 +203,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geomtry
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -218,7 +222,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -234,7 +238,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -253,7 +257,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -269,13 +273,13 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry graphElement, Predicate<AGraphElement> predicate=null);
+        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
         #endregion
 
         #region GetNextNeighbors
@@ -288,11 +292,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// /// </param>
         /// <param name="countOfNextNeighbors">
         /// count of neighbors
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -308,11 +311,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// /// </param>
         /// <param name="countOfNextNeighbors">
         /// count of neighbors
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -334,7 +336,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -356,7 +358,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>
@@ -378,7 +380,7 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="point">
         /// point
         /// </param>
-        /// <param name="predicat">
+        /// <param name="predicate">
         /// not geomtric condition, this parameter is optional
         /// </param>
         /// <returns>

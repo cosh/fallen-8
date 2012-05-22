@@ -39,16 +39,16 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             if (parent != null)
                 this.Parent = parent;
-            this.lower = clower;
-            this.upper = cupper;
+            this.Lower = clower;
+            this.Upper = cupper;
         }
         public SpatialDataContainer(IMBR mbr,
                          ARTreeContainer parent = null)
         {
             if (parent != null)
                 this.Parent = parent;
-            this.lower = mbr.LowerPoint;
-            this.upper = mbr.UpperPoint;
+            this.Lower = mbr.LowerPoint;
+            this.Upper = mbr.UpperPoint;
         }
         public AGraphElement GraphElement
         {

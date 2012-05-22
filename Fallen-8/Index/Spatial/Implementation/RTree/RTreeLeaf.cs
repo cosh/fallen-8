@@ -37,10 +37,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             this.Data = new List<IRTreeDataContainer>();
         }
-        public RTreeLeaf(IMBR myMBR, ARTreeContainer parent = null)
+        public RTreeLeaf(IMBR mbr, ARTreeContainer parent = null)
         {
-            this.lower = myMBR.LowerPoint;
-            this.upper = myMBR.UpperPoint;
+            this.Lower = mbr.LowerPoint;
+            this.Upper = mbr.UpperPoint;
             if (parent != null)
                 this.Parent = parent;
             this.Data = new List<IRTreeDataContainer>();
@@ -48,8 +48,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         public RTreeLeaf(float[] clower, float[] cupper, ARTreeContainer parent = null)
         {
-            this.lower = clower;
-            this.upper = cupper;
+            this.Lower = clower;
+            this.Upper = cupper;
             if (parent != null)
                 this.Parent = parent;
             this.Data = new List<IRTreeDataContainer>();
@@ -67,8 +67,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             this.Data.Clear();
             Data = null;
             Parent = null;
-            this.lower = null;
-            this.upper = null;
+            this.Lower = null;
+            this.Upper = null;
         }
     }
 }

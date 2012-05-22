@@ -34,11 +34,11 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         /// <summary>
         /// type of container
         /// </summary>
-        public TypeOfContainer Container { get { return TypeOfContainer.POINTCONTAINER; } }
+        public TypeOfContainer Container { get { return TypeOfContainer.PointContainer; } }
         /// <summary>
         /// coordination of container
         /// </summary>
-        protected float[] coordinates;
+        private float[] _coordinates;
 
         #region Inclusion of MBR and Point
         virtual public bool Inclusion(ISpatialContainer container)
@@ -53,9 +53,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
             if (container is ASpatialContainer)
             {
                 var currentContainer = (ASpatialContainer)container;
-                for (int i = 0; i < this.Coordinates.Length; i++)
+                for (var i = 0; i < this.Coordinates.Length; i++)
                 {
-                    if (currentContainer.LowerPoint[i] > this.coordinates[i] || currentContainer.UpperPoint[i] < this.coordinates[i])
+                    if (currentContainer.LowerPoint[i] > this._coordinates[i] || currentContainer.UpperPoint[i] < this._coordinates[i])
                         return false;
                 }
 
@@ -63,15 +63,13 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
             }
             #endregion
             #region Point
-            else
-            {
-                return this.EqualTo(container);
-            }
+            
+            return this.EqualTo(container);
 
             #endregion
-
         }
-        #endregion
+
+            #endregion
         #region Equal
         virtual public bool EqualTo(ISpatialContainer container)
         {
@@ -82,25 +80,22 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 
                 for (int i = 0; i < this.Coordinates.Length; i++)
                 {
-                    if (this.coordinates[i] != currentPoint[i])
+                    if (this._coordinates[i] != currentPoint[i])
                         return false;
                 }
 
                 return true;
             }
-            else
+            
+            var currentLower = ((ASpatialContainer)container).LowerPoint;
+            var currentUpper = ((ASpatialContainer)container).UpperPoint;
+
+            for (int i = 0; i < this._coordinates.Length; i++)
             {
-                var currentLower = (container as ASpatialContainer).LowerPoint;
-                var currentUpper = (container as ASpatialContainer).UpperPoint;
-
-                for (int i = 0; i < this.coordinates.Length; i++)
-                {
-                    if (currentLower[i] != this.coordinates[i] || currentUpper[i] != this.coordinates[i])
-                        return false;
-                }
-                return true;
+                if (currentLower[i] != this._coordinates[i] || currentUpper[i] != this._coordinates[i])
+                    return false;
             }
-
+            return true;
         }
         #endregion
         #region Adjacency
@@ -113,19 +108,16 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
             }
             #endregion
             #region MBR
-            else
+            
+            var currentLower = ((ASpatialContainer)container).LowerPoint;
+            var currentUpper = ((ASpatialContainer)container).UpperPoint;
+            for (int i = 0; i < this._coordinates.Length; i++)
             {
-                var currentLower = ((ASpatialContainer)container).LowerPoint;
-                var currentUpper = ((ASpatialContainer)container).UpperPoint;
-                for (int i = 0; i < this.coordinates.Length; i++)
-                {
-                    if (currentLower[i] != this.coordinates[i] || currentUpper[i] != this.coordinates[i])
-                        return false;
-                }
-
-                return true;
+                if (currentLower[i] != this._coordinates[i] || currentUpper[i] != this._coordinates[i])
+                    return false;
             }
 
+            return true;
         }
             #endregion
         #endregion
@@ -133,20 +125,20 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         #region Point get,set
         virtual public float[] Coordinates
         {
-            get { return this.coordinates; }
-            set { this.coordinates = value; }
+            get { return this._coordinates; }
+            set { this._coordinates = value; }
         }
 
         virtual public float[] LowerPoint
         {
-            get { return this.coordinates; }
+            get { return this._coordinates; }
 
 
         }
 
         virtual public float[] UpperPoint
         {
-            get { return this.coordinates; }
+            get { return this._coordinates; }
 
         }
         #endregion

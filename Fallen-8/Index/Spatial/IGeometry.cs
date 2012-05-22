@@ -42,7 +42,7 @@ namespace Fallen8.API.Index.Spatial
         /// <summary>
         /// gets Description of an n-dimensional space
         /// </summary>
-        IEnumerable<IDimension> Dimensions { get; }
+        List<IDimension> Dimensions { get; }
     }
 }
 

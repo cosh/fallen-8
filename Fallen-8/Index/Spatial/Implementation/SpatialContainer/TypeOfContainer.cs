@@ -29,5 +29,5 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 /// <summary>
 /// The type of container for data
 /// </summary>
-public enum TypeOfContainer {POINTCONTAINER,MBRCONTAINER};  
+public enum TypeOfContainer {PointContainer,MBRContainer};  
 }
