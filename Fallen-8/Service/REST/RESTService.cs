@@ -40,7 +40,6 @@ using Fallen8.API.Index;
 using Fallen8.API.Model;
 using Fallen8.API.Plugin;
 using Fallen8.API.Service.REST.Ressource;
-using System.IO.Compression;
 
 namespace Fallen8.API.Service.REST
 {
@@ -507,7 +506,7 @@ namespace Fallen8.API.Service.REST
 				return totalMemory - usedMemory;
 			#else
                 var freeMem = new PerformanceCounter("Memory", "Available Bytes");
-            	return Convert.ToInt64(freeMem.NextValue());
+            	return Convert.ToUInt64(freeMem.NextValue());
 			#endif
 		}
 
@@ -518,7 +517,7 @@ namespace Fallen8.API.Service.REST
 				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
             	return (ulong)pc.RawValue;
 			#else
-				var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();	
+            var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();	
 				return computerInfo.TotalPhysicalMemory;
 			#endif
 		}
