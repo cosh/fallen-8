@@ -205,20 +205,34 @@ namespace Fallen8.API.Service
             IService service;
             if (PluginFactory.TryFindPlugin(out service, servicePluginName))
             {
-                service.Open(reader, fallen8);
-
-                var newServices = new Dictionary<string, IService>(Services);
-                newServices.Add(serviceName, service);
-
-                if (service.TryStart())
+                if(WriteResource())
                 {
-                    Interlocked.Exchange(ref Services, newServices);
+                    try
+                    {
+                        if (Services.ContainsKey(serviceName))
+                        {
+                            Logger.LogError(String.Format("A service with the same name \"{0}\" already exists.", serviceName));
+                        }
+
+                        service.Open(reader, fallen8);
+
+                        if (service.TryStart())
+                        {
+                            Services.Add(serviceName, service);
+                        }
+                    }
+                    finally
+                    {
+                        FinishWriteResource();
+                    }
+
+                    return;
                 }
+
+                throw new CollisionException();
             }
-            else
-            {
-                Logger.LogError(String.Format("Could not find service plugin with name \"{0}\".", servicePluginName));
-            }
+
+            Logger.LogError(String.Format("Could not find service plugin with name \"{0}\".", servicePluginName));
         }
 
         #endregion
