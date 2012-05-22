@@ -1,10 +1,10 @@
 // 
-//  Fallen8Status.cs
+// DateHelper.cs
 //  
-//  Author:
+// Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
-//  
-//  Copyright (c) 2012 Henning Rauch
+// 
+// Copyright (c) 2012 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,57 +25,47 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service.REST
+namespace Fallen8.API.Helper
 {
     /// <summary>
-    ///   The Fallen-8 status
+    ///   Constants.
     /// </summary>
-    [DataContract]
-    public sealed class Fallen8Status
+    public static class DateHelper
     {
         /// <summary>
-        ///   The available memory
+        ///   The basic DateTime: 01.01.1970
         /// </summary>
-        [DataMember]
-        public UInt64 FreeMemory { get; set; }
+        private static DateTime _nineTeenSeventy = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
         /// <summary>
-        ///   The used memory
+        ///   Convertes the DateTime format to an Unix-TimeStamp
         /// </summary>
-        [DataMember]
-        public UInt64 UsedMemory { get; set; }
+        /// <param name="date"> The DateTime </param>
+        /// <returns> UInt32 representation </returns>
+        public static UInt32 ConvertDateTime(DateTime date)
+        {
+            return (Convert.ToUInt32((date - _nineTeenSeventy).TotalSeconds));
+        }
 
         /// <summary>
-        ///   Vertex count
+        ///   Returns the modification date as a delta from the creation date representation
         /// </summary>
-        [DataMember]
-        public UInt32 VertexCount { get; set; }
+        /// <param name="creationDate"> The creation date representation </param>
+        /// <returns> The modification date delta </returns>
+        public static UInt32 GetModificationDate(UInt32 creationDate)
+        {
+            return ConvertDateTime(DateTime.Now) - creationDate;
+        }
 
         /// <summary>
-        ///   Edge count
+        ///   Get a DateTime
         /// </summary>
-        [DataMember]
-        public UInt32 EdgeCount { get; set; }
-
-        /// <summary>
-        ///   Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
-
-        /// <summary>
-        ///   Available path plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
-
-        /// <summary>
-        ///   Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        /// <param name="secondsFromNineTeenSeventy"> The seconds from 1970 </param>
+        /// <returns> The DateTime </returns>
+        public static DateTime GetDateTimeFromUnixTimeStamp(uint secondsFromNineTeenSeventy)
+        {
+            return _nineTeenSeventy.AddSeconds(secondsFromNineTeenSeventy);
+        }
     }
 }

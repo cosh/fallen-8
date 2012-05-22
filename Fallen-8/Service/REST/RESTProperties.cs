@@ -1,5 +1,5 @@
 // 
-//  Fallen8RESTProperties.cs
+//  RESTProperties.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -23,17 +23,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
-	/// <summary>
+    /// <summary>
     ///   The Fallen-8 REST properties
     /// </summary>
     [DataContract]
-    public sealed class Fallen8RESTProperties
+    public sealed class RESTProperties
     {
         /// <summary>
         ///   The identifier
@@ -46,13 +47,13 @@ namespace Fallen8.API.Service.REST
         /// </summary>
         [DataMember]
         public DateTime CreationDate { get; set; }
-		
-		/// <summary>
+
+        /// <summary>
         ///   The modification date
         /// </summary>
         [DataMember]
         public DateTime ModificationDate { get; set; }
-		
+
         /// <summary>
         ///   The properties
         /// </summary>

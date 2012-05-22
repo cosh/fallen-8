@@ -1,5 +1,5 @@
 ﻿// 
-// Logger.cs
+// IService.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -25,30 +25,45 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using Fallen8.API.Persistency;
+using Fallen8.API.Plugin;
 
-namespace Fallen8.API.Log
+namespace Fallen8.API.Service
 {
     /// <summary>
-    ///   The Fallen-8 logger
+    ///   Fallen-8 service interface.
     /// </summary>
-    public static class Logger
+    public interface IService : IPlugin, IFallen8Serializable
     {
         /// <summary>
-        /// Log an error
+        ///   Gets the start time.
         /// </summary>
-        /// <param name="message">Error message</param>
-        public static void LogError(String message)
-        {
-        	Console.WriteLine(message);
-        }
+        /// <value> The start time. </value>
+        DateTime StartTime { get; }
 
         /// <summary>
-        /// Log an info
+        ///   Gets a value indicating whether this instance is running.
         /// </summary>
-        /// <param name="message">Info message</param>
-        public static void LogInfo(string message)
-        {
-            Console.WriteLine(message);
-        }
+        /// <value> <c>true</c> if this instance is running; otherwise, <c>false</c> . </value>
+        Boolean IsRunning { get; }
+
+        /// <summary>
+        ///   Gets the metadata.
+        /// </summary>
+        /// <value> The metadata. </value>
+        IDictionary<String, String> Metadata { get; }
+
+        /// <summary>
+        ///   Tries to stop this service.
+        /// </summary>
+        /// <returns> <c>true</c> if this instance is stopped; otherwise, <c>false</c> . </returns>
+        bool TryStop();
+
+        /// <summary>
+        ///   Tries to start this service.
+        /// </summary>
+        /// <returns> <c>true</c> if this instance is started; otherwise, <c>false</c> . </returns>
+        bool TryStart();
     }
 }

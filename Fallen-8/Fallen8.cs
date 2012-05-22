@@ -23,228 +23,277 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Fallen8.API.Algorithms.Path;
+using Fallen8.API.Error;
+using Fallen8.API.Expression;
+using Fallen8.API.Helper;
+using Fallen8.API.Index;
 using Fallen8.API.Index.Fulltext;
+using Fallen8.API.Index.Range;
 using Fallen8.API.Index.Spatial;
 using Fallen8.API.Model;
-using Fallen8.API.Index;
-using Fallen8.API.Helper;
-using Fallen8.API.Expression;
-using System.Collections.Generic;
-using System.Threading;
-using System.Collections.ObjectModel;
-using Fallen8.API.Index.Range;
 using Fallen8.API.Persistency;
 using Fallen8.API.Plugin;
-using Fallen8.API.Error;
+using Fallen8.API.Service;
 
 namespace Fallen8.API
 {
     /// <summary>
-    /// Fallen8.
+    ///   Fallen8.
     /// </summary>
-    public sealed class Fallen8 : AThreadSafeElement, IFallen8Read, IFallen8Write, IDisposable
-	{
+    public sealed class Fallen8 : AThreadSafeElement, IRead, IWrite, IDisposable
+    {
         #region Data
-        
-        /// <summary>
-        /// The graph elements
-        /// </summary>
-        private List<AGraphElement> _graphElements;
 
         /// <summary>
-        /// The index factory.
+        ///   The graph elements
         /// </summary>
-        public IFallen8IndexFactory IndexFactory;
+        private BigList<AGraphElement> _graphElements;
 
         /// <summary>
-        /// The current identifier.
+        ///   The index factory.
         /// </summary>
-        private Int32 _currentId = -1;
+        public IndexFactory IndexFactory { get; internal set; }
 
         /// <summary>
-        /// Binary operator delegate.
+        ///   The index factory.
+        /// </summary>
+        public ServiceFactory ServiceFactory { get; internal set; }
+
+        /// <summary>
+        /// The count of edges
+        /// </summary>
+        public UInt32 EdgeCount { get; private set; }
+
+        /// <summary>
+        /// The count of vertices
+        /// </summary>
+        public UInt32 VertexCount { get; private set; }
+
+        /// <summary>
+        ///   The current identifier.
+        /// </summary>
+        private Int32 _currentId = Constants.MinId;
+
+        /// <summary>
+        ///   Binary operator delegate.
         /// </summary>
         private delegate Boolean BinaryOperatorDelegate(IComparable property, IComparable literal);
 
         #endregion
-        
+
         #region Constructor
-        
+
         /// <summary>
-        /// Initializes a new instance of the Fallen-8 class.
+        ///   Initializes a new instance of the Fallen-8 class.
         /// </summary>
-        /// <param name='startCapacity'>
-        /// Start capacity.
-        /// </param>
-        public Fallen8 (Int32 startCapacity = 0)
+        public Fallen8()
         {
-            IndexFactory = new Fallen8IndexFactory();
-            _graphElements = new List<AGraphElement>(startCapacity);
+            IndexFactory = new IndexFactory();
+            _graphElements = new BigList<AGraphElement>();
+            ServiceFactory = new ServiceFactory(this);
             IndexFactory.Indices.Clear();
         }
-        
+
         /// <summary>
-        /// Initializes a new instance of the Fallen-8 class and loads the vertices from a save point.
+        ///   Initializes a new instance of the Fallen-8 class and loads the vertices from a save point.
         /// </summary>
-        /// <param name='path'>
-        /// Path to the save point.
-        /// </param>
+        /// <param name='path'> Path to the save point. </param>
         public Fallen8(String path)
         {
-            Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
+            _graphElements = PersistencyFactory.Load(this, path, ref _currentId, true);
         }
-        
+
         #endregion
-        
-        #region IFallen8Write implementation
-  
-        public void Load(String path)
+
+        #region IWrite implementation
+
+        public void Load(String path, Boolean startServices = false)
         {
-			if (WriteResource()) 
-			{
-				IndexFactory = new Fallen8IndexFactory();
-                _graphElements = new List<AGraphElement>();
-                IndexFactory.Indices.Clear();
-                
-				#if __MonoCS__
- 				//mono specific code
-				#else 
-				GC.Collect();
+            if (WriteResource())
+            {
+                var oldIndexFactory = IndexFactory;
+                var oldServiceFactory = ServiceFactory;
+                oldServiceFactory.ShutdownAllServices();
+#if __MonoCS__
+    //mono specific code
+				#else
+                GC.Collect();
                 GC.Collect();
                 GC.WaitForFullGCComplete();
                 GC.WaitForPendingFinalizers();
-				#endif
-				
-				Fallen8PersistencyFactory.Load(path, ref _currentId, ref _graphElements, ref IndexFactory, this);
+#endif
+                var graphElements = PersistencyFactory.Load(this, path, ref _currentId, startServices);
+
+                if (graphElements != null)
+                {
+                    _graphElements = graphElements;
+                    oldIndexFactory.DeleteAllIndices();
+                    oldIndexFactory = null;
+                    oldServiceFactory = null;
+                }
+                else
+                {
+                    IndexFactory = oldIndexFactory;
+                    ServiceFactory = oldServiceFactory;
+                    ServiceFactory.StartAllServices();
+                }
+
                 TrimPrivate();
-				
-				FinishWriteResource();
-				
-				return;
-			}
-			
-			throw new CollisionException();
+
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
         }
 
         public void Trim()
         {
-            if (WriteResource()) 
-			{
+            if (WriteResource())
+            {
                 TrimPrivate();
-				
-				FinishWriteResource();
-				
-				return;
+
+                FinishWriteResource();
+
+                return;
             }
-            
-			throw new CollisionException();
+
+            throw new CollisionException();
         }
 
         public void TabulaRasa()
         {
-			if (WriteResource()) 
-			{
-                _currentId = -1;
-                _graphElements = new List<AGraphElement>();
+            if (WriteResource())
+            {
+                _currentId = Constants.MinId;
+                _graphElements = new BigList<AGraphElement>();
                 IndexFactory.DeleteAllIndices();
-				
-				FinishWriteResource();
-				
-				return;
+                VertexCount = 0;
+                EdgeCount = 0;
+
+                FinishWriteResource();
+
+                return;
             }
-            
-			throw new CollisionException();
+
+            throw new CollisionException();
         }
 
         public VertexModel CreateVertex(UInt32 creationDate, PropertyContainer[] properties = null)
         {
-			if (WriteResource())
-			{
+            if (WriteResource())
+            {
                 //create the new vertex
-                var newVertex = new VertexModel(Interlocked.Increment(ref _currentId), creationDate, properties);
+                var newVertex = new VertexModel(_currentId, creationDate, properties);
 
-                _graphElements.Add(newVertex);
-				
-				FinishWriteResource();
-				
+                //insert it
+                _graphElements.SetValue(_currentId, newVertex);
+
+                //increment the id
+                Interlocked.Increment(ref _currentId);
+
+                //Increase the vertex count
+                VertexCount++;
+
+                FinishWriteResource();
+
                 return newVertex;
             }
-            
-			throw new CollisionException();
+
+            throw new CollisionException();
         }
 
-        public EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId, UInt32 creationDate, PropertyContainer[] properties = null)
+        public EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId,
+                                    UInt32 creationDate, PropertyContainer[] properties = null)
         {
-			if (WriteResource()) 
-			{
-                //get the related vertices
-            	var sourceVertex = (VertexModel) _graphElements[sourceVertexId];
-            	var targetVertex = (VertexModel) _graphElements[targetVertexId];
-				
-            	var id = Interlocked.Increment(ref _currentId);
-				
-            	var outgoingEdge = new EdgeModel(id, creationDate, targetVertex, sourceVertex, properties);
-				
-            	//add the edge to the graph elements
-            	_graphElements.Add(outgoingEdge);
-				
-            	//add the edge to the source vertex
-            	sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
-				
-            	//link the vertices
-            	targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
+            if (WriteResource())
+            {
+                EdgeModel outgoingEdge = null;
 
-				FinishWriteResource();
-				
-            	return outgoingEdge;
+                VertexModel sourceVertex;
+                VertexModel targetVertex;
+                
+                //get the related vertices
+                if (_graphElements.TryGetElementOrDefault(out sourceVertex, sourceVertexId) &&
+                    _graphElements.TryGetElementOrDefault(out targetVertex, targetVertexId))
+                {
+                    outgoingEdge = new EdgeModel(_currentId, creationDate, targetVertex, sourceVertex, properties);
+
+                    //add the edge to the graph elements
+                    _graphElements.SetValue(_currentId, outgoingEdge);
+
+                    //increment the ids
+                    Interlocked.Increment(ref _currentId);
+
+                    //add the edge to the source vertex
+                    sourceVertex.AddOutEdge(edgePropertyId, outgoingEdge);
+
+                    //link the vertices
+                    targetVertex.AddIncomingEdge(edgePropertyId, outgoingEdge);
+
+                    //increase the edgeCount
+                    EdgeCount++;
+                }
+
+                FinishWriteResource();
+
+                return outgoingEdge;
             }
-            
-			throw new CollisionException();
+
+            throw new CollisionException();
         }
 
         public bool TryAddProperty(Int32 graphElementId, UInt16 propertyId, Object property)
         {
-			if (WriteResource()) 
-			{
-                var graphElement = Enumerable.ElementAtOrDefault(_graphElements, graphElementId);
-				
-				var success = graphElement != null && graphElement.TryAddProperty(propertyId, property);
-				
-				FinishWriteResource ();
-				
+            if (WriteResource())
+            {
+                var success = false;
+                AGraphElement graphElement;
+                if (_graphElements.TryGetElementOrDefault(out graphElement, graphElementId))
+                {
+                    success = graphElement != null && graphElement.TryAddProperty(propertyId, property);
+                }
+
+                FinishWriteResource();
+
                 return success;
             }
-            
-			throw new CollisionException();
+
+            throw new CollisionException();
         }
 
         public bool TryRemoveProperty(Int32 graphElementId, UInt16 propertyId)
         {
-			if (WriteResource()) 
-			{
-                var graphElement = Enumerable.ElementAtOrDefault(_graphElements, graphElementId);
+            if (WriteResource())
+            {
+                AGraphElement graphElement;
 
-                var success = graphElement != null && graphElement.TryRemoveProperty(propertyId);
-				
-				FinishWriteResource ();
-				
+                var success = _graphElements.TryGetElementOrDefault(out graphElement, graphElementId) && graphElement.TryRemoveProperty(propertyId);
+
+                FinishWriteResource();
+
                 return success;
             }
-            
-			throw new CollisionException();
+
+            throw new CollisionException();
         }
 
         public bool TryRemoveGraphElement(Int32 graphElementId)
         {
             if (WriteResource())
             {
-                var graphElement = Enumerable.ElementAtOrDefault(_graphElements, graphElementId);
+                AGraphElement graphElement;
 
-                if (graphElement == null)
+                if (!_graphElements.TryGetElementOrDefault(out graphElement, graphElementId))
                 {
                     FinishWriteResource();
 
@@ -259,7 +308,7 @@ namespace Fallen8.API
                 {
                     #region remove element
 
-                    _graphElements[graphElementId] = null;
+                    _graphElements.SetDefault(graphElementId);
 
                     if (graphElement is VertexModel)
                     {
@@ -281,7 +330,7 @@ namespace Fallen8.API
                                 aOutEdge.TargetVertex.RemoveIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
 
                                 //remove the edge itself
-                                _graphElements[aOutEdge.Id] = null;
+                                _graphElements.SetDefault(aOutEdge.Id);
                             }
                         }
 
@@ -302,11 +351,14 @@ namespace Fallen8.API
                                 aInEdge.SourceVertex.RemoveOutGoingEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
 
                                 //remove the edge itself
-                                _graphElements[aInEdge.Id] = null;
+                                _graphElements.SetDefault(aInEdge.Id);
                             }
                         }
 
                         #endregion
+
+                        //update the EdgeCount --> hard way
+                        RecalculateGraphElementCounter();
 
                         #endregion
                     }
@@ -322,6 +374,9 @@ namespace Fallen8.API
                         //remove from outgoing edges of source vertex
                         outEdgeRemovals = edge.SourceVertex.RemoveOutGoingEdge(edge);
 
+                        //update the EdgeCount --> easy way
+                        EdgeCount--;
+
                         #endregion
                     }
 
@@ -331,13 +386,13 @@ namespace Fallen8.API
                 {
                     #region restore
 
-                    _graphElements[graphElementId] = graphElement;
+                    _graphElements.SetValue(graphElementId, graphElement);
 
                     if (graphElement is VertexModel)
                     {
                         #region restore vertex
 
-                        var vertex = (VertexModel)graphElement;
+                        var vertex = (VertexModel) graphElement;
 
                         #region out edges
 
@@ -353,7 +408,7 @@ namespace Fallen8.API
                                 aOutEdge.TargetVertex.AddIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
 
                                 //reset the edge
-                                _graphElements[aOutEdge.Id] = aOutEdge;
+                                _graphElements.SetValue(aOutEdge.Id, aOutEdge);
                             }
                         }
 
@@ -373,8 +428,8 @@ namespace Fallen8.API
                                 //remove from outgoing edges of source vertex
                                 aInEdge.SourceVertex.AddOutEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
 
-                                //remove the edge itself
-                                _graphElements[aInEdge.Id] = aInEdge;
+                                //reset the edge
+                                _graphElements.SetValue(aInEdge.Id, aInEdge);
                             }
                         }
 
@@ -386,20 +441,29 @@ namespace Fallen8.API
                     {
                         #region restore edge
 
-                        var edge = (EdgeModel)graphElement;
+                        var edge = (EdgeModel) graphElement;
 
-                        for (var i = 0; i < inEdgeRemovals.Count; i++)
+                        if (inEdgeRemovals != null)
                         {
-                            edge.TargetVertex.AddIncomingEdge(inEdgeRemovals[i], edge);
+                            for (var i = 0; i < inEdgeRemovals.Count; i++)
+                            {
+                                edge.TargetVertex.AddIncomingEdge(inEdgeRemovals[i], edge);
+                            }
                         }
 
-                        for (var i = 0; i < outEdgeRemovals.Count; i++)
+                        if (outEdgeRemovals != null)
                         {
-                            edge.SourceVertex.AddOutEdge(outEdgeRemovals[i], edge);                            
+                            for (var i = 0; i < outEdgeRemovals.Count; i++)
+                            {
+                                edge.SourceVertex.AddOutEdge(outEdgeRemovals[i], edge);
+                            }
                         }
 
                         #endregion
                     }
+
+                    //recalculate the counter
+                    RecalculateGraphElementCounter();
 
                     #endregion
 
@@ -416,10 +480,78 @@ namespace Fallen8.API
 
         #endregion
 
-        #region IFallen8Read implementation
+        #region IRead implementation
+
+        public Boolean TryGetVertex(out VertexModel result, Int32 id)
+        {
+            if (ReadResource())
+            {
+                var success = _graphElements.TryGetElementOrDefault(out result, id);
+
+                FinishReadResource();
+
+                return success;
+            }
+
+            throw new CollisionException();
+        }
+
+        public List<VertexModel> GetVertices()
+        {
+            if (ReadResource())
+            {
+                var vertices = _graphElements.GetAllOfType<VertexModel>();
+                FinishReadResource();
+
+                return vertices;
+            }
+
+            throw new CollisionException();
+        }
+
+        public Boolean TryGetEdge(out EdgeModel result, Int32 id)
+        {
+            if (ReadResource())
+            {
+                var success = _graphElements.TryGetElementOrDefault(out result, id);
+
+                FinishReadResource();
+
+                return success;
+            }
+
+            throw new CollisionException();
+        }
+
+        public List<EdgeModel> GetEdges()
+        {
+            if (ReadResource())
+            {
+                var edges = _graphElements.GetAllOfType<EdgeModel>();
+                FinishReadResource();
+
+                return edges;
+            }
+
+            throw new CollisionException();
+        }
+
+        public Boolean TryGetGraphElement(out AGraphElement result, Int32 id)
+        {
+            if (ReadResource())
+            {
+                _graphElements.TryGetElementOrDefault(out result, id);
+
+                FinishReadResource();
+
+                return result != null;
+            }
+
+            throw new CollisionException();
+        }
 
         public bool CalculateShortestPath(
-            out List<Algorithms.Path.Path> result,
+            out List<Path> result,
             string algorithmname,
             Int32 sourceVertexId,
             Int32 destinationVertexId,
@@ -432,28 +564,30 @@ namespace Fallen8.API
             PathDelegates.VertexCost vertexCost = null)
         {
             IShortestPathAlgorithm algo;
-            if (Fallen8PluginFactory.TryFindPlugin<IShortestPathAlgorithm>(out algo, algorithmname))
+            if (PluginFactory.TryFindPlugin(out algo, algorithmname))
             {
                 algo.Initialize(this, null);
-				
-				if (ReadResource()) 
-				{
-					result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxPathWeight, maxResults, edgePropertyFilter,
-                                        edgeFilter, edgeCost, vertexCost);
-					
-					FinishReadResource();
-					
-					return result != null && result.Count > 0;
-				}
-				
-				throw new CollisionException();
+
+                if (ReadResource())
+                {
+                    result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxPathWeight, maxResults,
+                                            edgePropertyFilter,
+                                            edgeFilter, edgeCost, vertexCost);
+
+                    FinishReadResource();
+
+                    return result != null && result.Count > 0;
+                }
+
+                throw new CollisionException();
             }
 
             result = null;
             return false;
         }
-        
-        public bool GraphScan(out List<AGraphElement> result, UInt16 propertyId, IComparable literal, BinaryOperator binOp)
+
+        public bool GraphScan(out List<AGraphElement> result, UInt16 propertyId, IComparable literal,
+                              BinaryOperator binOp)
         {
             #region binary operation
 
@@ -494,12 +628,12 @@ namespace Fallen8.API
             return result.Count > 0;
         }
 
-        public bool IndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal, BinaryOperator binOp)
+        public bool IndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable literal,
+                              BinaryOperator binOp)
         {
             IIndex index;
             if (!IndexFactory.TryGetIndex(out index, indexId))
             {
-
                 result = null;
                 return false;
             }
@@ -543,46 +677,47 @@ namespace Fallen8.API
             return result.Count > 0;
         }
 
-        public bool RangeIndexScan (out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit, IComparable rightLimit, bool includeLeft, bool includeRight)
+        public bool RangeIndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IComparable leftLimit,
+                                   IComparable rightLimit, bool includeLeft, bool includeRight)
         {
             IIndex index;
-            if (!IndexFactory.TryGetIndex (out index, indexId)) {
-
+            if (!IndexFactory.TryGetIndex(out index, indexId))
+            {
                 result = null;
                 return false;
             }
-            
+
             var rangeIndex = index as IRangeIndex;
-            if (rangeIndex != null) {
-                
+            if (rangeIndex != null)
+            {
                 if (rangeIndex.Between(out result, leftLimit, rightLimit, includeLeft, includeRight))
                 {
                     return true;
                 }
             }
-            
+
             result = null;
             return false;
         }
 
-        public bool FulltextIndexScan (out FulltextSearchResult result, String indexId, string searchQuery)
+        public bool FulltextIndexScan(out FulltextSearchResult result, String indexId, string searchQuery)
         {
             IIndex index;
-            if (!IndexFactory.TryGetIndex (out index, indexId)) {
-
+            if (!IndexFactory.TryGetIndex(out index, indexId))
+            {
                 result = null;
                 return false;
             }
-            
+
             var fulltextIndex = index as IFulltextIndex;
-            if (fulltextIndex != null) {
-                
-                if (fulltextIndex.TryQuery(out result, searchQuery)) {
-                    
+            if (fulltextIndex != null)
+            {
+                if (fulltextIndex.TryQuery(out result, searchQuery))
+                {
                     return true;
                 }
             }
-            
+
             result = null;
             return false;
         }
@@ -590,37 +725,37 @@ namespace Fallen8.API
         public bool SpatialIndexScan(out ReadOnlyCollection<AGraphElement> result, String indexId, IGeometry geometry)
         {
             IIndex index;
-            if (!IndexFactory.TryGetIndex (out index, indexId)) {
-
+            if (!IndexFactory.TryGetIndex(out index, indexId))
+            {
                 result = null;
                 return false;
             }
-            
-            var spatialIndex = index as ISpatialIndex;
-            if (spatialIndex != null) {
 
+            var spatialIndex = index as ISpatialIndex;
+            if (spatialIndex != null)
+            {
                 if (spatialIndex.TryGetValues(out result, geometry))
                 {
                     return true;
                 }
             }
-            
+
             result = null;
             return false;
         }
-        
-        public void Save(String path, Int32 savePartitions = 5)
+
+        public void Save(String path, UInt32 savePartitions = 5)
         {
-			if (ReadResource()) 
-			{
-                Fallen8PersistencyFactory.Save(_currentId, _graphElements, IndexFactory.Indices, path, savePartitions);
-				
-				FinishReadResource();
-				
-				return;
-			}
-			
-			throw new CollisionException();
+            if (ReadResource())
+            {
+                PersistencyFactory.Save(this, _graphElements, path, savePartitions, _currentId);
+
+                FinishReadResource();
+
+                return;
+            }
+
+            throw new CollisionException();
         }
 
         #endregion
@@ -628,131 +763,11 @@ namespace Fallen8.API
         #region public methods
 
         /// <summary>
-        /// Gets a vertex by its identifier.
+        ///   Shutdown this Fallen-8 server.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// The vertex.
-        /// </param>
-        /// <param name='id'>
-        /// System wide unique identifier.
-        /// </param>
-        public Boolean TryGetVertex(out VertexModel result, Int32 id)
+        public void Shutdown()
         {
-			if (ReadResource()) 
-			{
-				var graphElement = _graphElements.ElementAtOrDefault(id);	
-				FinishReadResource();
-				
-				if (graphElement != null)
-            	{
-                	result = graphElement as VertexModel;
-
-                	return result != null;
-            	}
-
-            	result = null;
-            	return false;
-			}
-			
-			throw new CollisionException();
-        }
-
-        /// <summary>
-        /// Gets the vertices.
-        /// </summary>
-        /// <returns>
-        /// The vertices.
-        /// </returns>
-        public ReadOnlyCollection<VertexModel> GetVertices()
-        {
-			if (ReadResource()) 
-			{
-				var vertices = new ReadOnlyCollection<VertexModel>(_graphElements.OfType<VertexModel>().ToList());
-				FinishReadResource();
-				
-            	return vertices;
-			}
-			
-			throw new CollisionException();
-        }
-
-        /// <summary>
-        /// Gets an edge by its identifier.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// The edge.
-        /// </param>
-        /// <param name='id'>
-        /// System wide unique identifier.
-        /// </param>
-        public Boolean TryGetEdge(out EdgeModel result, Int32 id)
-        {
-			if (ReadResource()) 
-			{
-				var graphElement = _graphElements[id];
-				FinishReadResource();
-				if (graphElement != null)
-            	{
-                	result = graphElement as EdgeModel;
-
-                	return result != null;
-            	}
-
-            	result = null;
-            	return false;
-			}
-			
-			throw new CollisionException();
-        }
-
-        /// <summary>
-        /// Gets the edges.
-        /// </summary>
-        /// <returns>
-        /// The edges.
-        /// </returns>
-        public ReadOnlyCollection<EdgeModel> GetEdges()
-        {
-			if (ReadResource()) 
-			{
-				var edges = new ReadOnlyCollection<EdgeModel>(_graphElements.OfType<EdgeModel>().ToList());
-				FinishReadResource();
-				
-            	return edges;
-			}
-			
-			throw new CollisionException();
-        }
-
-        /// <summary>
-        /// Gets an graph element by its identifier.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// The graph element.
-        /// </param>
-        /// <param name='id'>
-        /// System wide unique identifier.
-        /// </param>
-        public Boolean TryGetGraphElement(out AGraphElement result, Int32 id)
-        {
-			if (ReadResource()) 
-			{
-				result = _graphElements.ElementAtOrDefault(id);
-				FinishReadResource();
-				
-            	return result != null;
-			}
-			
-			throw new CollisionException();
+            ServiceFactory.ShutdownAllServices();
         }
 
         #endregion
@@ -760,56 +775,40 @@ namespace Fallen8.API
         #region private helper methods
 
         /// <summary>
-        /// Finds the elements.
+        ///   Finds the elements.
         /// </summary>
-        /// <returns>
-        /// The elements.
-        /// </returns>
-        /// <param name='finder'>
-        /// Finder.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        /// <param name='propertyId'>
-        /// Property identifier.
-        /// </param>
+        /// <returns> The elements. </returns>
+        /// <param name='finder'> Finder. </param>
+        /// <param name='literal'> Literal. </param>
+        /// <param name='propertyId'> Property identifier. </param>
         private List<AGraphElement> FindElements(BinaryOperatorDelegate finder, IComparable literal, UInt16 propertyId)
         {
-			if (ReadResource()) 
-			{
-				var result = _graphElements
-                    .AsParallel()
-                    .Where(aGraphElement =>
-                    {
-                        Object property;
-                        return aGraphElement.TryGetProperty(out property,propertyId) && finder(property as IComparable, literal);
-                    })
-                    .ToList();
-				FinishReadResource();
-				
-            	return result;
-			}
-			
-			throw new CollisionException();
+            if (ReadResource())
+            {
+                var result = _graphElements.FindElements(
+                    aGraphElement =>
+                        {
+                            Object property;
+                            return aGraphElement.TryGetProperty(out property, propertyId) &&
+                                   finder(property as IComparable, literal);
+                        });
+                FinishReadResource();
+
+                return result;
+            }
+
+            throw new CollisionException();
         }
-        
+
         /// <summary>
-        /// Finds elements via an index.
+        ///   Finds elements via an index.
         /// </summary>
-        /// <returns>
-        /// The elements.
-        /// </returns>
-        /// <param name='finder'>
-        /// Finder delegate.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        /// <param name='index'>
-        /// Index.
-        /// </param>
-        private static ReadOnlyCollection<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder, IComparable literal, IIndex index)
+        /// <returns> The elements. </returns>
+        /// <param name='finder'> Finder delegate. </param>
+        /// <param name='literal'> Literal. </param>
+        /// <param name='index'> Index. </param>
+        private static ReadOnlyCollection<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder,
+                                                                           IComparable literal, IIndex index)
         {
             return new ReadOnlyCollection<AGraphElement>(index.GetKeyValues()
                                                              .AsParallel()
@@ -819,137 +818,115 @@ namespace Fallen8.API
                                                              .Distinct()
                                                              .ToList());
         }
-        
+
         /// <summary>
-        /// Method for binary comparism
+        ///   Method for binary comparism
         /// </summary>
-        /// <returns>
-        /// <c>true</c> for equality; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='property'>
-        /// Property.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        private static Boolean BinaryEqualsMethod (IComparable property, IComparable literal)
+        /// <returns> <c>true</c> for equality; otherwise, <c>false</c> . </returns>
+        /// <param name='property'> Property. </param>
+        /// <param name='literal'> Literal. </param>
+        private static Boolean BinaryEqualsMethod(IComparable property, IComparable literal)
         {
-            return property.Equals (literal);
+            return property.Equals(literal);
         }
-        
+
         /// <summary>
-        /// Method for binary comparism
+        ///   Method for binary comparism
         /// </summary>
-        /// <returns>
-        /// <c>true</c> for inequality; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='property'>
-        /// Property.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        private static Boolean BinaryNotEqualsMethod (IComparable property, IComparable literal)
+        /// <returns> <c>true</c> for inequality; otherwise, <c>false</c> . </returns>
+        /// <param name='property'> Property. </param>
+        /// <param name='literal'> Literal. </param>
+        private static Boolean BinaryNotEqualsMethod(IComparable property, IComparable literal)
         {
-            return !property.Equals (literal);
+            return !property.Equals(literal);
         }
-        
+
         /// <summary>
-        /// Method for binary comparism
+        ///   Method for binary comparism
         /// </summary>
-        /// <returns>
-        /// <c>true</c> for greater property; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='property'>
-        /// Property.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        private static Boolean BinaryGreaterMethod (IComparable property, IComparable literal)
+        /// <returns> <c>true</c> for greater property; otherwise, <c>false</c> . </returns>
+        /// <param name='property'> Property. </param>
+        /// <param name='literal'> Literal. </param>
+        private static Boolean BinaryGreaterMethod(IComparable property, IComparable literal)
         {
-            return property.CompareTo (literal) > 0;
+            return property.CompareTo(literal) > 0;
         }
-        
+
         /// <summary>
-        /// Method for binary comparism
+        ///   Method for binary comparism
         /// </summary>
-        /// <returns>
-        /// <c>true</c> for lower property; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='property'>
-        /// Property.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        private static Boolean BinaryLowerMethod (IComparable property, IComparable literal)
+        /// <returns> <c>true</c> for lower property; otherwise, <c>false</c> . </returns>
+        /// <param name='property'> Property. </param>
+        /// <param name='literal'> Literal. </param>
+        private static Boolean BinaryLowerMethod(IComparable property, IComparable literal)
         {
-            return property.CompareTo (literal) < 0;
+            return property.CompareTo(literal) < 0;
         }
-        
+
         /// <summary>
-        /// Method for binary comparism
+        ///   Method for binary comparism
         /// </summary>
-        /// <returns>
-        /// <c>true</c> for lower or equal property; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='property'>
-        /// Property.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        private static Boolean BinaryLowerOrEqualMethod (IComparable property, IComparable literal)
+        /// <returns> <c>true</c> for lower or equal property; otherwise, <c>false</c> . </returns>
+        /// <param name='property'> Property. </param>
+        /// <param name='literal'> Literal. </param>
+        private static Boolean BinaryLowerOrEqualMethod(IComparable property, IComparable literal)
         {
-            return property.CompareTo (literal) <= 0;
+            return property.CompareTo(literal) <= 0;
         }
-        
+
         /// <summary>
-        /// Method for binary comparism
+        ///   Method for binary comparism
         /// </summary>
-        /// <returns>
-        /// <c>true</c> for greater or equal property; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='property'>
-        /// Property.
-        /// </param>
-        /// <param name='literal'>
-        /// Literal.
-        /// </param>
-        private static Boolean BinaryGreaterOrEqualMethod (IComparable property, IComparable literal)
+        /// <returns> <c>true</c> for greater or equal property; otherwise, <c>false</c> . </returns>
+        /// <param name='property'> Property. </param>
+        /// <param name='literal'> Literal. </param>
+        private static Boolean BinaryGreaterOrEqualMethod(IComparable property, IComparable literal)
         {
-            return property.CompareTo (literal) >= 0;
+            return property.CompareTo(literal) >= 0;
         }
-        
-		/// <summary>
-		/// Trims the Fallen-8.
-		/// </summary>
-		private void TrimPrivate()
-		{
-			_graphElements.TrimExcess();
-            for (var i = 0; i < _graphElements.Count; i++)
+
+        /// <summary>
+        ///   Trims the Fallen-8.
+        /// </summary>
+        private void TrimPrivate()
+        {
+            AGraphElement graphElement;
+            for (var i = Constants.MinId; i <= _currentId; i++)
             {
-                var graphElement = _graphElements[i];
-                graphElement.Trim();
+                if (_graphElements.TryGetElementOrDefault(out graphElement, i))
+                {
+                    graphElement.Trim();   
+                }
             }
 
-            #if __MonoCS__
- 			//mono specific code
-			#else 
-			GC.Collect();
+#if __MonoCS__
+    //mono specific code
+			#else
+            GC.Collect();
             GC.Collect();
             GC.WaitForFullGCComplete();
             GC.WaitForPendingFinalizers();
-			#endif
-			
-			#if __MonoCS__
- 			//mono specific code
-			#else 
+#endif
+
+#if __MonoCS__
+    //mono specific code
+			#else
             var errorCode = SaveNativeMethods.EmptyWorkingSet(Process.GetCurrentProcess().Handle);
-			#endif
-		}
-		
+#endif
+
+            RecalculateGraphElementCounter();
+
+        }
+
+        /// <summary>
+        /// Recalculates the count of the graph elements
+        /// </summary>
+        private void RecalculateGraphElementCounter()
+        {
+            EdgeCount = _graphElements.GetCountOf<EdgeModel>();
+            VertexCount = _graphElements.GetCountOf<VertexModel>();
+        }
+
         #endregion
 
         #region IDisposable Members
@@ -959,10 +936,14 @@ namespace Fallen8.API
             TabulaRasa();
 
             _graphElements = null;
+
+            IndexFactory.DeleteAllIndices();
             IndexFactory = null;
+
+            ServiceFactory.ShutdownAllServices();
+            ServiceFactory = null;
         }
 
         #endregion
     }
 }
-

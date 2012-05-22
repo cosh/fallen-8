@@ -1,5 +1,5 @@
-﻿// 
-// Logger.cs
+// 
+// IPlugin.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -25,30 +25,42 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
-namespace Fallen8.API.Log
+namespace Fallen8.API.Plugin
 {
-    /// <summary>
-    ///   The Fallen-8 logger
-    /// </summary>
-    public static class Logger
+    public interface IPlugin : IDisposable
     {
         /// <summary>
-        /// Log an error
+        ///   Gets the name.
         /// </summary>
-        /// <param name="message">Error message</param>
-        public static void LogError(String message)
-        {
-        	Console.WriteLine(message);
-        }
+        /// <value> The name. </value>
+        String PluginName { get; }
 
         /// <summary>
-        /// Log an info
+        ///   Gets or sets the plugin category.
         /// </summary>
-        /// <param name="message">Info message</param>
-        public static void LogInfo(string message)
-        {
-            Console.WriteLine(message);
-        }
+        /// <value> The plugin category. </value>
+        Type PluginCategory { get; }
+
+        /// <summary>
+        ///   Gets the description.
+        /// </summary>
+        /// <value> The description. </value>
+        String Description { get; }
+
+        /// <summary>
+        ///   Gets the manufacturer.
+        /// </summary>
+        /// <value> The manufacturer. </value>
+        String Manufacturer { get; }
+
+        /// <summary>
+        ///   Tries to inititialize the plugin.
+        /// </summary>
+        /// <param name='fallen8'> A fallen-8 session. </param>
+        /// <param name='parameter'> Parameter. </param>
+        /// <returns> The initialized plugin </returns>
+        void Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
     }
 }
