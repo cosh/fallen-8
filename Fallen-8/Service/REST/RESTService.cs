@@ -103,6 +103,7 @@ namespace Fallen8.API.Service.REST
             _savePath = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + _saveFile;
 
             _optimalNumberOfPartitions = Convert.ToUInt32(Environment.ProcessorCount * 3 / 2);
+            _optimalNumberOfPartitions = 1;
         }
 
         #endregion

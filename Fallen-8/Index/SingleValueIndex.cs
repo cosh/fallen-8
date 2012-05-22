@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Fallen8.API.Error;
 using Fallen8.API.Helper;
+using Fallen8.API.Log;
 using Fallen8.API.Model;
 using Framework.Serialization;
 
@@ -212,7 +213,7 @@ namespace Fallen8.API.Index
                 foreach (var aKV in _idx)
                 {
                     writer.WriteObject(aKV.Key);
-                    writer.WriteOptimized(aKV.Value.Id);
+                    writer.Write(aKV.Value.Id);
                 }
 
                 FinishReadResource();
@@ -236,12 +237,15 @@ namespace Fallen8.API.Index
                 for (var i = 0; i < keyCount; i++)
                 {
                     var key = reader.ReadObject();
-                    var graphElementId = reader.ReadOptimizedInt32();
+                    var graphElementId = reader.ReadInt32();
                     AGraphElement graphElement;
-                    fallen8.TryGetGraphElement(out graphElement, graphElementId);
-                    if (graphElement != null)
+                    if(fallen8.TryGetGraphElement(out graphElement, graphElementId))
                     {
                         _idx.Add((IComparable) key, graphElement);
+                    }
+                    else
+                    {
+                        Logger.LogError("Error while deserializing the index.");
                     }
                 }
 

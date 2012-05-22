@@ -30,13 +30,14 @@ using System.Threading;
 using Fallen8.API.Log;
 using Fallen8.API.Plugin;
 using Framework.Serialization;
+using Fallen8.API.Helper;
 
 namespace Fallen8.API.Index
 {
     /// <summary>
     ///   Index factory.
     /// </summary>
-    public sealed class IndexFactory
+    public sealed class IndexFactory : AThreadSafeElement
     {
         #region Data
 

@@ -29,6 +29,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Fallen8.API.Helper;
@@ -481,70 +482,62 @@ namespace Fallen8.API.Persistency
                 tasks[i] = factory.StartNew(() => LoadAGraphElementBunch(streamLocation, graphElements, edgeTodo));
             }
 
-            var continuationTask = factory
-                .ContinueWhenAll<List<EdgeSneakPeak>>(
-                    tasks,
-                    finishedTasks =>
-                    Parallel.ForEach(
-                        finishedTasks,
-                        aFinishedTask =>
+            var result = tasks.Select(task => task.Result).ToList();
+            foreach (var aEdgeSneakPeakList in result)
+            {
+                foreach (var aSneakPeak in aEdgeSneakPeakList)
+                {
+                    VertexModel sourceVertex;
+                    VertexModel targetVertex;
+                    if (graphElements.TryGetElementOrDefault(out sourceVertex, aSneakPeak.SourceVertexId) &&
+                    graphElements.TryGetElementOrDefault(out targetVertex, aSneakPeak.TargetVertexId))
+                    {
+                        graphElements.SetValue(aSneakPeak.Id,
+                            new EdgeModel(
+                                aSneakPeak.Id,
+                                aSneakPeak.CreationDate,
+                                aSneakPeak.ModificationDate,
+                                targetVertex,
+                                sourceVertex,
+                                aSneakPeak.Properties));                        
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+            }
+
+            foreach (var aKV in edgeTodo)
+            {
+                EdgeModel edge;
+                if (graphElements.TryGetElementOrDefault(out edge, aKV.Key))
+                {
+                    foreach (var aTodo in aKV.Value)
+                    {
+                        VertexModel interestingVertex;
+                        if (graphElements.TryGetElementOrDefault(out interestingVertex, aTodo.VertexId))
+                        {
+                            if (aTodo.IsIncomingEdge)
                             {
-                                foreach (var aSneakPeak in aFinishedTask.Result)
-                                {
-                                    VertexModel sourceVertex;
-                                    VertexModel targetVertex;
-                                    graphElements.TryGetElementOrDefault(out sourceVertex, aSneakPeak.SourceVertexId);
-                                    graphElements.TryGetElementOrDefault(out targetVertex, aSneakPeak.TargetVertexId);
-
-                                    graphElements.SetValue(aSneakPeak.Id, 
-                                        new EdgeModel(
-                                            aSneakPeak.Id,
-                                            aSneakPeak.CreationDate,
-                                            aSneakPeak.ModificationDate,
-                                            targetVertex,
-                                            sourceVertex,
-                                            aSneakPeak.Properties));
-                                }
-                            })).ContinueWith(
-                                task =>
-                                    {
-                                        //add the remaining edges to vertices
-                                        Parallel.ForEach(
-                                                edgeTodo,
-                                                aKV
-                                                =>
-                                                    {
-                                                        EdgeModel edge;
-                                                        if (graphElements.TryGetElementOrDefault(out edge, aKV.Key))
-                                                        {
-                                                            foreach (var aTodo in aKV.Value)
-                                                            {
-                                                                VertexModel interestingVertex;
-                                                                if (graphElements.TryGetElementOrDefault(out interestingVertex, aTodo.VertexId))
-                                                                {
-                                                                    if (aTodo.IsIncomingEdge)
-                                                                    {
-                                                                        interestingVertex.AddIncomingEdge(aTodo.EdgePropertyId, edge);
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        interestingVertex.AddOutEdge(aTodo.EdgePropertyId, edge);
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    throw new Exception(String.Format("Corrupt savegame... could not get the vertex {0}", aTodo.VertexId));
-                                                                }
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            throw new Exception(String.Format("Corrupt savegame... could not get the edge {0}", aKV.Key));
-                                                        }
-                                                    });
-                                    });
-
-            continuationTask.Wait();
+                                interestingVertex.AddIncomingEdge(aTodo.EdgePropertyId, edge);
+                            }
+                            else
+                            {
+                                interestingVertex.AddOutEdge(aTodo.EdgePropertyId, edge);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(String.Format("Corrupt savegame... could not get the vertex {0}", aTodo.VertexId));
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception(String.Format("Corrupt savegame... could not get the edge {0}", aKV.Key));
+                }
+            }
         }
 
         /// <summary>
