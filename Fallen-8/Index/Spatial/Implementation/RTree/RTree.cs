@@ -1928,7 +1928,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new NotImplementedException();
         }
 
-        public void Open(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
             throw new NotImplementedException();
         }
