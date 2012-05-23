@@ -25,32 +25,39 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using Fallen8.API.Model;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Index.Fulltext
 {
-    /// <summary>
-    ///   Fulltext search result element.
-    /// </summary>
-    public class FulltextSearchResultElement
-    {
-        /// <summary>
-        ///   Gets or sets the graph element.
-        /// </summary>
-        /// <value> The graph element. </value>
+	/// <summary>
+	/// Fulltext search result element.
+	/// </summary>
+	public class FulltextSearchResultElement
+	{
+		/// <summary>
+		/// Gets or sets the graph element.
+		/// </summary>
+		/// <value>
+		/// The graph element.
+		/// </value>
         public AGraphElement GraphElement { get; private set; }
-
-        /// <summary>
-        ///   Gets or sets the highlights.
-        /// </summary>
-        /// <value> The highlights. </value>
-        public IList<string> Highlights { get; private set; }
-
-        /// <summary>
-        ///   Gets or sets the score.
-        /// </summary>
-        /// <value> The score. </value>
-        public Double Score { get; private set; }
-    }
+		
+		/// <summary>
+		/// Gets or sets the highlights.
+		/// </summary>
+		/// <value>
+		/// The highlights.
+		/// </value>
+		public IList<string> Highlights { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the score.
+		/// </summary>
+		/// <value>
+		/// The score.
+		/// </value>
+		public Double Score { get; private set; }
+	}
 }
+

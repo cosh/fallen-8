@@ -1,8 +1,8 @@
-// 
-// Circle.cs
+﻿// 
+// IRTreeDataContainer.cs
 //  
 // Author:
-//       Henning Rauch <Henning@RauchEntwicklung.biz>
+//       Andriy Kupershmidt <kuper133@googlemail.com>
 // 
 // Copyright (c) 2011 Henning Rauch
 // 
@@ -23,35 +23,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-using System;
+using Fallen8.API.Model;
 
 namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
-    ///   Circle.
+    /// for container of data with element of graph
     /// </summary>
-    public sealed class Circle : IGeometry
+    public interface IRTreeDataContainer : IRTreeContainer
     {
-        /// <summary>
-        ///   Gets or sets the center.
-        /// </summary>
-        /// <value> The center. </value>
-        public Point Center { get; private set; }
-
-        /// <summary>
-        ///   Gets or sets the radius.
-        /// </summary>
-        /// <value> The radius. </value>
-        public Double Radius { get; private set; }
-
-        #region IComparable implementation
-
-        public int CompareTo(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
+        AGraphElement GraphElement { get; set; }
     }
 }

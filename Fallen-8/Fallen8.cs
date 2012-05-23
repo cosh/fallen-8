@@ -734,7 +734,7 @@ namespace Fallen8.API
             var spatialIndex = index as ISpatialIndex;
             if (spatialIndex != null)
             {
-                if (spatialIndex.TryGetValues(out result, geometry))
+                if (spatialIndex.TryGetValue(out result, geometry))
                 {
                     return true;
                 }
@@ -810,7 +810,7 @@ namespace Fallen8.API
         private static ReadOnlyCollection<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder,
                                                                            IComparable literal, IIndex index)
         {
-            return new ReadOnlyCollection<AGraphElement>(index.GetKeyValues()
+            return new ReadOnlyCollection<AGraphElement>(index.GetKeyValues<IComparable>()
                                                              .AsParallel()
                                                              .Where(aIndexElement => finder(aIndexElement.Key, literal))
                                                              .Select(_ => _.Value)

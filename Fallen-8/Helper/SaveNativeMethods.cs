@@ -30,15 +30,15 @@ using System.Runtime.InteropServices;
 namespace Fallen8.API.Helper
 {
     /// <summary>
-    ///   A place for save native methods
+    /// A place for save native methods
     /// </summary>
     public static class SaveNativeMethods
     {
         /// <summary>
-        ///   Dark magic
+        /// Dark magic
         /// </summary>
-        /// <param name="hwProc"> The process handle </param>
-        /// <returns> Error code </returns>
+        /// <param name="hwProc">The process handle</param>
+        /// <returns>Error code</returns>
         [DllImport("psapi.dll")]
         internal static extern int EmptyWorkingSet(IntPtr hwProc);
     }

@@ -55,14 +55,14 @@ namespace Fallen8.API.Index
         /// </summary>
         /// <param name='key'> Key. </param>
         /// <param name='graphElement'> Graph element. </param>
-        void AddOrUpdate(IComparable key, AGraphElement graphElement);
+        void AddOrUpdate(Object key, AGraphElement graphElement);
 
         /// <summary>
         ///   Tries to remove a key.
         /// </summary>
         /// <returns> <c>true</c> if something was removed; otherwise, <c>false</c> . </returns>
         /// <param name='key'> Key. </param>
-        Boolean TryRemoveKey(IComparable key);
+        Boolean TryRemoveKey(Object key);
 
         /// <summary>
         ///   Remove a value.
@@ -79,13 +79,13 @@ namespace Fallen8.API.Index
         ///   Gets the keys.
         /// </summary>
         /// <returns> The keys. </returns>
-        IEnumerable<IComparable> GetKeys();
+        IEnumerable<Object> GetKeys();
 
         /// <summary>
         ///   Gets the key values.
         /// </summary>
         /// <returns> The key values. </returns>
-        IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues();
+        IEnumerable<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>> GetKeyValues<T>();
 
         /// <summary>
         ///   Gets the value.
@@ -93,6 +93,6 @@ namespace Fallen8.API.Index
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> Result. </param>
         /// <param name='key'> Key. </param>
-        Boolean TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key);
+        Boolean TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object key);
     }
 }

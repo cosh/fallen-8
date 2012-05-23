@@ -8,39 +8,12 @@
 // "In Project Suppression File".
 // You do not need to add suppressions to this file manually.
 
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Fallen8Server.#Fallen8")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Model.EdgeModel.#TargetVertex")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Model.EdgePropertyModel.#SourceVertex")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Fallen8.#IndexFactory")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Fallen8Server.#Services")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Model.EdgeModel.#SourceEdgeProperty")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
-        "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Scope = "type",
-        Target = "Fallen8.API.Model.AGraphElement")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Model.EdgeModel.#SourceVertex")]
-[assembly:
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security",
-        "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member",
-        Target = "Fallen8.API.Helper.EdgeModelDefinition.#Properties")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Fallen8Server.#Fallen8")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Model.EdgeModel.#TargetVertex")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Model.EdgePropertyModel.#SourceVertex")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Fallen8.#IndexFactory")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Fallen8Server.#Services")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Model.EdgeModel.#SourceEdgeProperty")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Scope = "type", Target = "Fallen8.API.Model.AGraphElement")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Model.EdgeModel.#SourceVertex")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Scope = "member", Target = "Fallen8.API.Helper.EdgeModelDefinition.#Properties")]

@@ -29,7 +29,7 @@ using System.Runtime.Serialization;
 
 namespace Fallen8.API.Service.REST
 {
-    /// <summary>
+	/// <summary>
     ///   The range scan specification
     /// </summary>
     [DataContract]
@@ -72,3 +72,4 @@ namespace Fallen8.API.Service.REST
         public ResultTypeSpecification ResultType { get; set; }
     }
 }
+

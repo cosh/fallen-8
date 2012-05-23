@@ -24,32 +24,60 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System.Collections.Generic;
+using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
+
 namespace Fallen8.API.Index.Spatial
 {
-    /// <summary>
-    ///   Rectangle.
-    /// </summary>
-    public sealed class Rectangle : IGeometry
+	/// <summary>
+	/// Rectangle.
+	/// </summary>
+	public sealed class Rectangle : IGeometry
     {
-        /// <summary>
-        ///   Gets or sets the lower left corner.
-        /// </summary>
-        /// <value> The lower left corner. </value>
-        public Point LowerLeft { get; private set; }
+        #region constructor
 
-        /// <summary>
-        ///   Gets or sets the upper right corner.
-        /// </summary>
-        /// <value> The upper right corner. </value>
-        public Point UpperRight { get; private set; }
-
-        #region IComparable implementation
-
-        public int CompareTo(object obj)
+        public Rectangle(IPoint lowerLeft, IPoint upperRight)
         {
-            throw new System.NotImplementedException();
+            LowerLeft = lowerLeft;
+            UpperRight = upperRight;
         }
 
         #endregion
+
+        #region
+
+        /// <summary>
+		/// Gets or sets the lower left corner.
+		/// </summary>
+		/// <value>
+		/// The lower left corner.
+		/// </value>
+		public IPoint LowerLeft { get; private set; }
+		
+		/// <summary>
+		/// Gets or sets the upper right corner.
+		/// </summary>
+		/// <value>
+		/// The upper right corner.
+		/// </value>
+		public IPoint UpperRight { get; private set; }
+
+        #endregion
+
+        #region IGeometry
+
+        public IMBR GeometryToMBR()
+        {
+            return new MBR(LowerLeft.PointToSpaceR(),UpperRight.PointToSpaceR());
+        }
+
+        public List<IDimension> Dimensions
+        {
+            get { return LowerLeft.Dimensions; }
+        }
+
+        #endregion
+
     }
 }
+

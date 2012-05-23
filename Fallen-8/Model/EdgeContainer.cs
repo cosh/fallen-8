@@ -30,24 +30,28 @@ using System.Collections.Generic;
 namespace Fallen8.API.Model
 {
     /// <summary>
-    ///   edge container.
+    /// edge container.
     /// </summary>
     public struct EdgeContainer
     {
         #region Data
-
+        
         /// <summary>
-        ///   Gets or sets the edge property identifier.
+        /// Gets or sets the edge property identifier.
         /// </summary>
-        /// <value> The edge property identifier. </value>
+        /// <value>
+        /// The edge property identifier.
+        /// </value>
         public UInt16 EdgePropertyId { get; private set; }
-
+        
         /// <summary>
-        ///   Gets or sets the value.
+        /// Gets or sets the value.
         /// </summary>
-        /// <value> The value. </value>
+        /// <value>
+        /// The value.
+        /// </value>
         public List<EdgeModel> Edges { get; private set; }
-
+        
         #endregion
 
         #region constructor
@@ -61,3 +65,4 @@ namespace Fallen8.API.Model
         #endregion
     }
 }
+

@@ -23,26 +23,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Threading;
 
 namespace Fallen8.API.Helper
 {
     /// <summary>
-    ///   A thread safe element.
+    /// A thread safe element.
     /// </summary>
     public abstract class AThreadSafeElement
     {
         /// <summary>
-        ///   The using resource. 0 for false, 1 for true.
+        /// The using resource.
+        /// 0 for false, 1 for true.
         /// </summary>
         private Int32 _usingResource;
 
         /// <summary>
-        ///   Reads the resource. Blocks if reading is currently not allowed
+        /// Reads the resource.
+        /// Blocks if reading is currently not allowed
         /// </summary>
-        /// <returns> <c>true</c> if reading is allowed; otherwise, <c>false</c> . </returns>
+        /// <returns>
+        /// <c>true</c> if reading is allowed; otherwise, <c>false</c>.
+        /// </returns>
         protected bool ReadResource()
         {
             //>=0 indicates that the method is not in use.
@@ -53,15 +56,15 @@ namespace Fallen8.API.Helper
             }
 
             //another thread writes something, so lets wait
-
-            for (var i = 0; i < int.MaxValue; i++)
+			
+			for (var i = 0; i < int.MaxValue; i++)
             {
                 //usingResource was incremented in the if clause, so lets decrement it again
                 Interlocked.Decrement(ref _usingResource);
 
                 if (i%10000 == 9999)
                 {
-                    Thread.Sleep(1);
+                    Thread.Sleep(1);                    
                 }
 
                 if (Interlocked.Increment(ref _usingResource) > 0)
@@ -72,20 +75,23 @@ namespace Fallen8.API.Helper
 
             return false;
         }
-
+        
         /// <summary>
-        ///   Reading this resource is finished.
+        /// Reading this resource is finished.
         /// </summary>
-        protected void FinishReadResource()
+        protected void FinishReadResource ()
         {
             //Release the lock
-            Interlocked.Decrement(ref _usingResource);
+            Interlocked.Decrement (ref _usingResource);
         }
-
+        
         /// <summary>
-        ///   Writes the resource. Blocks if another thread reads or writes this resource
+        /// Writes the resource.
+        /// Blocks if another thread reads or writes this resource
         /// </summary>
-        /// <returns> <c>true</c> if writing is allowed; otherwise, <c>false</c> . </returns>
+        /// <returns>
+        /// <c>true</c> if writing is allowed; otherwise, <c>false</c>.
+        /// </returns>
         protected bool WriteResource()
         {
             if (0 == Interlocked.CompareExchange(ref _usingResource, -200000000, 0))
@@ -97,7 +103,7 @@ namespace Fallen8.API.Helper
             {
                 if (i%10000 == 9999)
                 {
-                    Thread.Sleep(1);
+                    Thread.Sleep(1);                    
                 }
 
                 if (0 == Interlocked.CompareExchange(ref _usingResource, -200000000, 0))
@@ -108,14 +114,15 @@ namespace Fallen8.API.Helper
 
             return false;
         }
-
+  
         /// <summary>
-        ///   Writing this resource is finished
+        /// Writing this resource is finished
         /// </summary>
-        protected void FinishWriteResource()
+        protected void FinishWriteResource ()
         {
             //Release the lock
             Interlocked.Exchange(ref _usingResource, 0);
         }
     }
 }
+

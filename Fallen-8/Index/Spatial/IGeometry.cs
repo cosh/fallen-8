@@ -2,7 +2,7 @@
 // IGeometry.cs
 //  
 // Author:
-//       Henning Rauch <Henning@RauchEntwicklung.biz>
+//       Andriy Kupershmidt <kuper133@googlemail.com>
 // 
 // Copyright (c) 2011 Henning Rauch
 // 
@@ -23,15 +23,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-using System;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
-    ///   Geometry interface.
+    /// Geometry interface for representation of objects as geometry object.
     /// </summary>
-    public interface IGeometry : IComparable
+    public interface IGeometry
     {
+        /// <summary>
+        /// convertion of geometry object to minimal bounded rechtangle
+        /// </summary>
+        /// <returns>
+        /// minimal bounded rechtangle
+        /// </returns>
+        IMBR GeometryToMBR();
+        /// <summary>
+        /// gets Description of an n-dimensional space
+        /// </summary>
+        List<IDimension> Dimensions { get; }
     }
 }
+
