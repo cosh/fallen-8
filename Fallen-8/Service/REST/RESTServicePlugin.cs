@@ -242,7 +242,10 @@ namespace Fallen8.API.Service.REST
 
             _service = new RESTService(fallen8);
 
-            _host = new ServiceHost(_service, _uri);
+            _host = new ServiceHost(_service, _uri)
+                        {
+                            CloseTimeout = new TimeSpan(0, 0, 0, 0, 50)
+                        };
 
             _restServiceAddress = "REST";
 
