@@ -176,7 +176,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #endregion
         
         #region EqualsSearch
-        private ReadOnlyCollection<AGraphElement> EqualSearch(IRTreeDataContainer element, Predicate<AGraphElement> predicate)
+        private ReadOnlyCollection<AGraphElement> EqualSearch(IRTreeDataContainer element)
         {
             var stack = new Stack<ARTreeContainer>();
             var currentResult = new List<AGraphElement>();
@@ -207,11 +207,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         }
                     }
                 }
-            }
-
-            if (predicate != null)
-            {
-                return currentResult.FindAll(predicate).AsReadOnly();
             }
             
             return currentResult.AsReadOnly();
@@ -1137,7 +1132,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         public int CountOfKeys()
         {
-            throw new NotImplementedException();
+            return -1;
         }
 
         public int CountOfValues()
@@ -1151,16 +1146,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 return count;
             }
             throw new CollisionException();
-        }
-
-        public void AddOrUpdate(IComparable key, AGraphElement graphElement)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryRemoveKey(IComparable key)
-        {
-            throw new NotImplementedException();
         }
 
         public void RemoveValue(AGraphElement graphElement)
@@ -1202,27 +1187,28 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             _levelForOverflowStrategy.Add(true);
         }
 
-        public IEnumerable<IComparable> GetKeys()
+        public IEnumerable<Object> GetKeys()
         {
-            throw new NotImplementedException();
+            return Enumerable.Empty<Object>();
         }
 
-        public IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
+        public IEnumerable<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>> GetKeyValues<T>()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key)
-        {
-            throw new NotImplementedException();
+            return Enumerable.Empty<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>>();
         }
 
         #endregion
 
         #region ISpatialIndex Implementation
 
-        public bool TryRemoveKey(IGeometry key)
+        public bool TryRemoveKey(Object keyObject)
         {
+            IGeometry key;
+            if (!IndexHelper.CheckObject<IGeometry>(out key, keyObject))
+            {
+                return false;
+            }
+
             if (ReadResource())
             {
                 if (TestOfGeometry(key) && DimensionTest(key.Dimensions))
@@ -1247,9 +1233,16 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        #region TryGetValues
-        public bool TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null)
+        #region TryGetValue
+        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object geometryObject)
         {
+            IGeometry geometry;
+            if (!IndexHelper.CheckObject<IGeometry>(out geometry, geometryObject))
+            {
+                result = null;
+                return false;
+            }
+
             if (ReadResource())
             {
                 result = new List<AGraphElement>().AsReadOnly();
@@ -1261,26 +1254,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                     else
                         element = new SpatialDataContainer(geometry.GeometryToMBR());
 
-                    result = EqualSearch(element, predicate);
+                    result = EqualSearch(element);
                 }
                 FinishReadResource();
 
-                return result.Count > 0;
-            }
-            throw new CollisionException();
-        }
-
-        public bool TryGetValues(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate = null)
-        {
-            if (ReadResource())
-            {
-                result = new List<AGraphElement>().AsReadOnly();
-                IRTreeDataContainer element;
-                if (_mapOfContainers.TryGetValue(graphElement.Id, out element))
-                {
-                    result = EqualSearch(element, predicate);
-                }
-                FinishReadResource();
                 return result.Count > 0;
             }
             throw new CollisionException();
@@ -1357,8 +1334,14 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         }
 
 
-        public void AddOrUpdate(IGeometry key, AGraphElement graphElement)
+        public void AddOrUpdate(Object keyObject, AGraphElement graphElement)
         {
+            IGeometry key;
+            if (!IndexHelper.CheckObject<IGeometry>(out key, keyObject))
+            {
+                return;
+            }
+
             if (WriteResource())
             {
                 if (DimensionTest(key.Dimensions) && TestOfGeometry(key))

@@ -36,16 +36,5 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
             this.LowerPoint = lower;
             this.UpperPoint = upper;
         }
-        public float[] LowerPoint
-        {
-            get;
-            private set;
-        }
-
-        public float[] UpperPoint
-        {
-            get;
-            private set;
-        }
     }
 }

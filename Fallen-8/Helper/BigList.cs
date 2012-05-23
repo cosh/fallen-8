@@ -95,16 +95,7 @@ namespace Fallen8.API.Helper
             
            SetValue(1, null);
         }
-
-        /// <summary>
-        /// Creates a new big list
-        /// </summary>
-        public BigList(BigList<T> elements)
-            : this()
-        {
-            throw new NotImplementedException();
-        }
-
+       
         #endregion
 
         #region public methods

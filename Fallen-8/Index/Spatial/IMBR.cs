@@ -30,15 +30,16 @@ namespace Fallen8.API.Index.Spatial
     /// <summary>
     /// Minimum Bounding Rectangle (MBR)
     /// </summary>
-    public interface IMBR
+    public abstract class IMBR
     {
         /// <summary>
         /// gets lowest point of the rechtangle
         /// </summary>
-        float[] LowerPoint { get; }
+        public float[] LowerPoint;
+
         /// <summary>
         /// gets upperst point of the rechtangle
         /// </summary>
-        float[] UpperPoint { get; }
+        public float[] UpperPoint;
     }
 }

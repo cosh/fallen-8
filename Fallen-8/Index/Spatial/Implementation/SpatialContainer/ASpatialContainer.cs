@@ -29,7 +29,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
     /// <summary>
     /// container for spatial data
     /// </summary>
-    public abstract class ASpatialContainer : IRTreeContainer, IMBR
+    public abstract class ASpatialContainer : IMBR, IRTreeContainer 
     {
         public float Area;
         public TypeOfContainer Container { get { return TypeOfContainer.MBRContainer; } }

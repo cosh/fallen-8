@@ -52,6 +52,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper\AThreadSafeElement.cs" />
     <Compile Include="Helper\BigList.cs" />
+    <Compile Include="Helper\IndexHelper.cs" />
     <Compile Include="Helper\DateHelper.cs" />
     <Compile Include="Helper\SaveNativeMethods.cs" />
     <Compile Include="Helper\Statistics.cs" />

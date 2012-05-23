@@ -94,8 +94,14 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public void AddOrUpdate(IComparable key, AGraphElement graphElement)
+        public void AddOrUpdate(Object keyObject, AGraphElement graphElement)
         {
+            IComparable key;
+            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            {
+                return;
+            }
+
 			if (WriteResource()) 
 			{
 				List<AGraphElement> values;
@@ -117,8 +123,14 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public bool TryRemoveKey (IComparable key)
+        public bool TryRemoveKey (Object keyObject)
         {
+            IComparable key;
+            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            {
+                return false;
+            }
+
 			if (WriteResource()) 
 			{
 				var foundSth = _idx.Remove(key);
@@ -170,7 +182,7 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public IEnumerable<IComparable> GetKeys ()
+        public IEnumerable<Object> GetKeys ()
         {
 			if (ReadResource()) 
 			{
@@ -185,14 +197,19 @@ namespace Fallen8.API.Index
         }
 
 
-        public IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
+        public IEnumerable<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>> GetKeyValues<T>()
         {
 			if (ReadResource()) 
 			{
-				foreach (var aKv in _idx)
-                    yield return new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(aKv.Value));
-				
-				FinishReadResource();
+                try
+                {
+                    foreach (var aKv in _idx)
+                        yield return new KeyValuePair<T, ReadOnlyCollection<AGraphElement>>((T)aKv.Key, new ReadOnlyCollection<AGraphElement>(aKv.Value));
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 				
 				yield break;
 			}
@@ -200,8 +217,15 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key)
+        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object keyObject)
         {
+            IComparable key;
+            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            {
+                result = null;
+                return false;
+            }
+
 			if (ReadResource()) 
 			{
 				List<AGraphElement> graphElements;

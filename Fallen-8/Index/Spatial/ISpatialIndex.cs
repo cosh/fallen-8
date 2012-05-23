@@ -35,65 +35,6 @@ namespace Fallen8.API.Index.Spatial
     /// </summary>
     public interface ISpatialIndex : IIndex
     {
-        #region TryGetValues
-
-        /// <summary>
-        /// Tries to get the values.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <param name='geometry'>
-        /// Geometry.
-        /// </param>
-        /// <param name="predicate">The predicate </param>
-        Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
-
-        /// <summary>
-        /// Tries to get the values.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was found; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='result'>
-        /// Result.
-        /// </param>
-        /// <param name='graphElement'>
-        /// Element of graph.
-        /// </param>
-        /// <param name="predicate">The predicate </param>
-        Boolean TryGetValues(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate = null);
-        #endregion
-
-        #region AddOrUpdate
-        /// <summary>
-        /// add or update neu element of grpah to spatial index
-        /// </summary>
-        /// <param name="key">
-        /// geometry for neu element of graph
-        /// </param>
-        /// <param name="graphElement">
-        /// neu element of graph
-        /// </param>
-        void AddOrUpdate(IGeometry key, AGraphElement graphElement);
-        #endregion
-
-        #region TryRemoveKey
-        /// <summary>
-        /// Tries to remove a key.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if something was removed; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='key'>
-        /// Key.
-        /// </param>
-        Boolean TryRemoveKey(IGeometry key);
-        #endregion
-
         #region Distance
         /// <summary>
         /// find distance between two geometric objects
