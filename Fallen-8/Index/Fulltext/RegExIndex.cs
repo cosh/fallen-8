@@ -386,7 +386,7 @@ namespace Fallen8.API.Index.Fulltext
                         }
                         else
                         {
-                            Logger.LogError("Error while deserializing the index.");
+                            Logger.LogError(String.Format("Error while deserializing the index. Could not find the graph element \"{0}\"", graphElementId));
                         }
                     }
                     _idx.Add(key, value);

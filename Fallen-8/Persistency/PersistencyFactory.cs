@@ -52,17 +52,18 @@ namespace Fallen8.API.Persistency
         ///   Load Fallen-8 from a save point
         /// </summary>
         /// <param name="fallen8">Fallen-8</param>
+        /// <param name="graphElements">The graph elements </param>
         /// <param name="pathToSavePoint">The path to the save point.</param>
         /// <param name="currentId">The maximum graph element id</param>
         /// <param name="startServices">Start the services</param>
-        internal static BigList<AGraphElement> Load(Fallen8 fallen8, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
+        internal static Boolean Load(Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
             {
                 Logger.LogError(String.Format("Fallen-8 could not be loaded because the path \"{0}\" does not exist.", pathToSavePoint));
 
-                return null;
+                return false;
             }
 
             //create some futures to load as much as possible in parallel
@@ -77,7 +78,6 @@ namespace Fallen8.API.Persistency
                 #region graph elements
 
                 //initialize the list of graph elements
-                var graphElements = new BigList<AGraphElement>();
                 var graphElementStreams = new List<String>();
                 var numberOfGraphElemementStreams = reader.ReadOptimizedInt32();
                 for (var i = 0; i < numberOfGraphElemementStreams; i++)
@@ -117,7 +117,7 @@ namespace Fallen8.API.Persistency
 
                 #endregion
 
-                return graphElements;
+                return true;
             }
         }
 

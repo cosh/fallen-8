@@ -107,8 +107,9 @@ namespace Fallen8.API
         /// </summary>
         /// <param name='path'> Path to the save point. </param>
         public Fallen8(String path)
+            :this()
         {
-            _graphElements = PersistencyFactory.Load(this, path, ref _currentId, true);
+            Load(path, true);
         }
 
         #endregion
@@ -122,6 +123,7 @@ namespace Fallen8.API
                 var oldIndexFactory = IndexFactory;
                 var oldServiceFactory = ServiceFactory;
                 oldServiceFactory.ShutdownAllServices();
+                var oldGraphElements = _graphElements;
 #if __MonoCS__
     //mono specific code
 				#else
@@ -130,17 +132,19 @@ namespace Fallen8.API
                 GC.WaitForFullGCComplete();
                 GC.WaitForPendingFinalizers();
 #endif
-                var graphElements = PersistencyFactory.Load(this, path, ref _currentId, startServices);
+                _graphElements = new BigList<AGraphElement>();
 
-                if (graphElements != null)
+                var success = PersistencyFactory.Load(this, ref _graphElements, path, ref _currentId, startServices);
+
+                if (success)
                 {
-                    _graphElements = graphElements;
                     oldIndexFactory.DeleteAllIndices();
                     oldIndexFactory = null;
                     oldServiceFactory = null;
                 }
                 else
                 {
+                    _graphElements = oldGraphElements;
                     IndexFactory = oldIndexFactory;
                     ServiceFactory = oldServiceFactory;
                     ServiceFactory.StartAllServices();
