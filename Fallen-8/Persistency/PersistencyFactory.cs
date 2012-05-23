@@ -362,7 +362,7 @@ namespace Fallen8.API.Persistency
                 tasks[i] = factory.StartNew(() => LoadAnIndex(indexStreamLocation, fallen8, indexFactory));
             }
 
-            Task.WaitAll(tasks);
+           Task.WaitAll(tasks);
         }
 
         private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, TaskFactory factory, Boolean startServices)

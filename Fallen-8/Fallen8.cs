@@ -117,7 +117,7 @@ namespace Fallen8.API
 
         public void Load(String path, Boolean startServices = false)
         {
-            if (WriteResource())
+            if (ReadResource())
             {
                 var oldIndexFactory = IndexFactory;
                 var oldServiceFactory = ServiceFactory;
@@ -148,7 +148,7 @@ namespace Fallen8.API
 
                 TrimPrivate();
 
-                FinishWriteResource();
+                FinishReadResource();
 
                 return;
             }

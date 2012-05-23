@@ -214,7 +214,7 @@ namespace Fallen8.API.Service
                             Logger.LogError(String.Format("A service with the same name \"{0}\" already exists.", serviceName));
                         }
 
-                        service.Open(reader, fallen8);
+                        service.Load(reader, fallen8);
 
                         if (service.TryStart())
                         {

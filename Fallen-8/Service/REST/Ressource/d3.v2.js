@@ -1,4 +1,4 @@
-(function(){if (!Date.now) Date.now = function() {
+﻿(function(){if (!Date.now) Date.now = function() {
   return +new Date;
 };
 try {
@@ -728,7 +728,7 @@ function d3_formatPrefix(d, i) {
 /*
  * TERMS OF USE - EASING EQUATIONS
  *
- * Open source under the BSD License.
+ * Load source under the BSD License.
  *
  * Copyright 2001 Robert Penner
  * All rights reserved.
@@ -3339,7 +3339,7 @@ function d3_svg_lineStepAfter(points) {
   return path.join("");
 }
 
-// Open cardinal spline interpolation; generates "C" commands.
+// Load cardinal spline interpolation; generates "C" commands.
 function d3_svg_lineCardinalOpen(points, tension) {
   return points.length < 4
       ? d3_svg_lineLinear(points)
@@ -3456,7 +3456,7 @@ function d3_svg_lineBasis(points) {
   return path.join("");
 }
 
-// Open B-spline interpolation; generates "C" commands.
+// Load B-spline interpolation; generates "C" commands.
 function d3_svg_lineBasisOpen(points) {
   if (points.length < 4) return d3_svg_lineLinear(points);
   var path = [],

@@ -331,7 +331,5 @@ namespace Fallen8.API.Helper
         }
 
         #endregion
-
-        
     }
 }

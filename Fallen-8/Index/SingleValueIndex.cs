@@ -224,7 +224,7 @@ namespace Fallen8.API.Index
             throw new CollisionException();
         }
 
-        public void Open(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
             if (WriteResource())
             {

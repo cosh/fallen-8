@@ -26,7 +26,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using Fallen8.API.Error;
 using Fallen8.API.Log;
 using Fallen8.API.Plugin;
 using Framework.Serialization;
@@ -92,12 +92,23 @@ namespace Fallen8.API.Index
                 {
                     index.Initialize(null, parameter);
 
-                    var newIndices = new Dictionary<string, IIndex>(Indices);
-                    newIndices.Add(indexName, index);
+                    if (WriteResource())
+                    {
+                        try
+                        {
+                            if (!Indices.ContainsKey(indexName))
+                            {
+                                Indices.Add(indexName, index);
 
-                    Interlocked.Exchange(ref Indices, newIndices);
-
-                    return true;
+                                return true;
+                            }
+                            Logger.LogError(String.Format("The index with name \"{0}\" already exists.", indexName));
+                        }
+                        finally
+                        {
+                            FinishWriteResource();
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -116,13 +127,19 @@ namespace Fallen8.API.Index
         /// <param name='indexName'> Index name. </param>
         public bool TryDeleteIndex(string indexName)
         {
-            var newIndices = new Dictionary<string, IIndex>(Indices);
+            if (WriteResource())
+            {
+                try
+                {
+                    return Indices.Remove(indexName);
+                }
+                finally
+                {
+                    FinishWriteResource();
+                }
+            }
 
-            var sthRemoved = newIndices.Remove(indexName);
-
-            Interlocked.Exchange(ref Indices, newIndices);
-
-            return sthRemoved;
+            throw new CollisionException();
         }
 
         /// <summary>
@@ -133,7 +150,19 @@ namespace Fallen8.API.Index
         /// <param name='indexName'> Index name. </param>
         public bool TryGetIndex(out IIndex index, string indexName)
         {
-            return Indices.TryGetValue(indexName, out index);
+            if (ReadResource())
+            {
+                try
+                {
+                    return Indices.TryGetValue(indexName, out index);
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
+            }
+
+            throw new CollisionException();
         }
 
         /// <summary>
@@ -141,8 +170,21 @@ namespace Fallen8.API.Index
         /// </summary>
         public void DeleteAllIndices()
         {
-            var newIndices = new Dictionary<string, IIndex>();
-            Interlocked.Exchange(ref Indices, newIndices);
+            if (WriteResource())
+            {
+                try
+                {
+                    Indices = new Dictionary<string, IIndex>();
+
+                    return;
+                }
+                finally
+                {
+                    FinishWriteResource();
+                }
+            }
+
+            throw new CollisionException();
         }
 
         #endregion
@@ -161,17 +203,26 @@ namespace Fallen8.API.Index
             IIndex index;
             if (PluginFactory.TryFindPlugin(out index, indexPluginName))
             {
-                index.Open(reader, fallen8);
+                index.Load(reader, fallen8);
 
-                var newIndices = new Dictionary<string, IIndex>(Indices);
-                newIndices.Add(indexName, index);
+                if (WriteResource())
+                {
+                    try
+                    {
+                        Indices.Add(indexName, index);
 
-                Interlocked.Exchange(ref Indices, newIndices);
+                        return;
+                    }
+                    finally
+                    {
+                        FinishWriteResource();
+                    }
+                }
+
+                throw new CollisionException();
             }
-            else
-            {
-                Logger.LogError(String.Format("Could not find index plugin with name \"{0}\".", indexPluginName));
-            }
+                
+            Logger.LogError(String.Format("Could not find index plugin with name \"{0}\".", indexPluginName));
         }
 
         #endregion
