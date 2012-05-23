@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace Fallen8.API.Index.Fulltext
 {
@@ -33,8 +33,10 @@ namespace Fallen8.API.Index.Fulltext
 	/// Fulltext search result.
 	/// </summary>
 	public sealed class FulltextSearchResult
-	{
-		/// <summary>
+    {
+        #region data
+
+        /// <summary>
 		/// Gets or sets the maximum score.
 		/// </summary>
 		/// <value>
@@ -48,7 +50,41 @@ namespace Fallen8.API.Index.Fulltext
 		/// <value>
 		/// The elements.
 		/// </value>
-		public ReadOnlyCollection<FulltextSearchResultElement> Elements { get; private set;}
-	}
+		public List<FulltextSearchResultElement> Elements { get; private set; }
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Creates a new FulltextSearchResult instance
+        /// </summary>
+        public FulltextSearchResult()
+        {
+            Elements = new List<FulltextSearchResultElement>();
+        }
+
+        #endregion
+
+        #region public methods
+
+        /// <summary>
+        /// Adds an element
+        /// </summary>
+        /// <param name="element">Element</param>
+        public void AddElement(FulltextSearchResultElement element)
+        {
+            Elements.Add(element);
+
+            if (element.Score > MaximumScore)
+            {
+                MaximumScore = element.Score;
+            }
+        }
+
+        #endregion
+
+
+    }
 }
 

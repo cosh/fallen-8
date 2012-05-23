@@ -33,7 +33,7 @@ namespace Fallen8.API.Index.Range
 	/// <summary>
 	/// Fallen8 range index.
 	/// </summary>
-	public interface IRangeIndex
+    public interface IRangeIndex : IIndex
 	{
 		/// <summary>
 		/// Searches for graph elements lower than the the key.

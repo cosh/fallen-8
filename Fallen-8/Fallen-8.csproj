@@ -56,6 +56,7 @@
     <Compile Include="Helper\DateHelper.cs" />
     <Compile Include="Helper\SaveNativeMethods.cs" />
     <Compile Include="Helper\Statistics.cs" />
+    <Compile Include="Index\Fulltext\RegExIndex.cs" />
     <Compile Include="Index\IndexFactory.cs" />
     <Compile Include="Index\SingleValueIndex.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />

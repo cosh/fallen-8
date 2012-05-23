@@ -810,9 +810,10 @@ namespace Fallen8.API
         private static ReadOnlyCollection<AGraphElement> FindElementsIndex(BinaryOperatorDelegate finder,
                                                                            IComparable literal, IIndex index)
         {
-            return new ReadOnlyCollection<AGraphElement>(index.GetKeyValues<IComparable>()
+            return new ReadOnlyCollection<AGraphElement>(index.GetKeyValues()
                                                              .AsParallel()
-                                                             .Where(aIndexElement => finder(aIndexElement.Key, literal))
+                                                             .Select(aIndexElement => new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>((IComparable)aIndexElement.Key, aIndexElement.Value))
+                                                             .Where(aTypedIndexElement => finder(aTypedIndexElement.Key, literal))
                                                              .Select(_ => _.Value)
                                                              .SelectMany(__ => __)
                                                              .Distinct()

@@ -199,14 +199,14 @@ namespace Fallen8.API.Index
         }
 
 
-        public IEnumerable<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>> GetKeyValues<T>()
+        public IEnumerable<KeyValuePair<object, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
         {
 			if (ReadResource()) 
 			{
                 try
                 {
                     foreach (var aKv in _idx)
-                        yield return new KeyValuePair<T, ReadOnlyCollection<AGraphElement>>((T)aKv.Key, new ReadOnlyCollection<AGraphElement>(aKv.Value));
+                        yield return new KeyValuePair<object, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(aKv.Value));
                 }
                 finally
                 {

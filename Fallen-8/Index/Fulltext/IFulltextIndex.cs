@@ -31,7 +31,7 @@ namespace Fallen8.API.Index.Fulltext
 	/// <summary>
 	/// Fallen8 fulltext index interface.
 	/// </summary>
-	public interface IFulltextIndex
+    public interface IFulltextIndex : IIndex
 	{
 		/// <summary>
 		/// Tries to query the fulltext index.

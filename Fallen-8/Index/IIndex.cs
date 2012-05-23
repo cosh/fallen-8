@@ -85,7 +85,7 @@ namespace Fallen8.API.Index
         ///   Gets the key values.
         /// </summary>
         /// <returns> The key values. </returns>
-        IEnumerable<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>> GetKeyValues<T>();
+        IEnumerable<KeyValuePair<object, ReadOnlyCollection<AGraphElement>>> GetKeyValues();
 
         /// <summary>
         ///   Gets the value.

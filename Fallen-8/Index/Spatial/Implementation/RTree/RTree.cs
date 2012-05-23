@@ -1192,9 +1192,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             return Enumerable.Empty<Object>();
         }
 
-        public IEnumerable<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>> GetKeyValues<T>()
+        public IEnumerable<KeyValuePair<object, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
         {
-            return Enumerable.Empty<KeyValuePair<T, ReadOnlyCollection<AGraphElement>>>();
+            return Enumerable.Empty<KeyValuePair<object, ReadOnlyCollection<AGraphElement>>>();
         }
 
         #endregion
