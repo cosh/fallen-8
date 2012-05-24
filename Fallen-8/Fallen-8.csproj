@@ -129,6 +129,7 @@
     <Compile Include="Service\REST\Specification\ResultTypeSpecification.cs" />
     <Compile Include="Service\REST\Specification\ScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\VertexSpecification.cs" />
+    <Compile Include="Index\Range\RangeIndex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
