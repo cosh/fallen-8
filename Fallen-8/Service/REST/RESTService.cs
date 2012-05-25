@@ -211,7 +211,7 @@ namespace Fallen8.API.Service.REST
         public Fallen8Status Status()
         {
 			var freeBytesOfMemory = GetFreeMemory();
-			var totalBytesOfMemoryUsed = GetTotalMemory();
+			var totalBytesOfMemoryUsed = GetTotalMemory() - freeBytesOfMemory;
 
             var vertexCount = _fallen8.VertexCount;
             var edgeCount = _fallen8.EdgeCount;
