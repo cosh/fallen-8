@@ -25,56 +25,49 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Fallen8.API.Helper;
 using Fallen8.API.Error;
+using Fallen8.API.Helper;
 
 namespace Fallen8.API.Model
 {
     /// <summary>
-    /// A graph element.
+    ///   A graph element.
     /// </summary>
     public abstract class AGraphElement : AThreadSafeElement
     {
         #region Data
-        
+
         /// <summary>
-        /// The identifier of this graph element.
+        ///   The identifier of this graph element.
         /// </summary>
         public readonly Int32 Id;
-        
+
         /// <summary>
-        /// The creation date.
+        ///   The creation date.
         /// </summary>
         public readonly UInt32 CreationDate;
-        
+
         /// <summary>
-        /// The modification date.
+        ///   The modification date.
         /// </summary>
         public UInt32 ModificationDate;
-        
+
         /// <summary>
-        /// The properties.
+        ///   The properties.
         /// </summary>
         private PropertyContainer[] _properties;
-  
+
         #endregion
-        
+
         #region constructor
-        
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="AGraphElement"/> class.
+        ///   Initializes a new instance of the <see cref="AGraphElement" /> class.
         /// </summary>
-        /// <param name='id'>
-        /// Identifier.
-        /// </param>
-        /// <param name='creationDate'>
-        /// Creation date.
-        /// </param>
-        /// <param name='properties'>
-        /// Properties.
-        /// </param>
+        /// <param name='id'> Identifier. </param>
+        /// <param name='creationDate'> Creation date. </param>
+        /// <param name='properties'> Properties. </param>
         protected AGraphElement(Int32 id, UInt32 creationDate, PropertyContainer[] properties)
         {
             Id = id;
@@ -82,15 +75,15 @@ namespace Fallen8.API.Model
             ModificationDate = 0;
             _properties = properties;
         }
-        
+
         #endregion
-        
+
         #region public methods
 
         /// <summary>
-        /// Returns the count of properties
+        ///   Returns the count of properties
         /// </summary>
-        /// <returns>Count of Properties</returns>
+        /// <returns> Count of Properties </returns>
         public Int32 GetPropertyCount()
         {
             if (ReadResource())
@@ -106,26 +99,17 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Gets all properties.
+        ///   Gets all properties.
         /// </summary>
-        /// <returns>
-        /// All properties.
-        /// </returns>
+        /// <returns> All properties. </returns>
         public ReadOnlyCollection<PropertyContainer> GetAllProperties()
         {
             if (ReadResource())
             {
-                ReadOnlyCollection<PropertyContainer> result;
-                
-                if (_properties != null)
-                {
-                    result = new ReadOnlyCollection<PropertyContainer>(_properties);
-                }
-                else
-                {
-                    result = new ReadOnlyCollection<PropertyContainer>(new PropertyContainer[0]);
-                }
-                
+                var result = _properties != null 
+                    ? new ReadOnlyCollection<PropertyContainer>(_properties) 
+                    : new ReadOnlyCollection<PropertyContainer>(new PropertyContainer[0]);
+
                 FinishReadResource();
 
                 return result;
@@ -135,17 +119,16 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Tries the get property.
+        ///   Tries the get property.
         /// </summary>
-        /// <typeparam name="TProperty">Type of the property</typeparam>
-        /// <param name="result">Result.</param>
-        /// <param name="propertyId">Property identifier.</param>
-        /// <returns><c>true</c> if something was found; otherwise, <c>false</c>.</returns>
+        /// <typeparam name="TProperty"> Type of the property </typeparam>
+        /// <param name="result"> Result. </param>
+        /// <param name="propertyId"> Property identifier. </param>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         public Boolean TryGetProperty<TProperty>(out TProperty result, UInt16 propertyId)
         {
             if (ReadResource())
             {
-
                 if (_properties != null)
                 {
                     for (var i = 0; i < _properties.Length; i++)
@@ -153,7 +136,7 @@ namespace Fallen8.API.Model
                         var aPropContainer = _properties[i];
                         if (aPropContainer.Value != null && aPropContainer.PropertyId == propertyId)
                         {
-                            result = (TProperty)aPropContainer.Value;
+                            result = (TProperty) aPropContainer.Value;
 
                             FinishReadResource();
 
@@ -161,9 +144,9 @@ namespace Fallen8.API.Model
                         }
                     }
                 }
-                
+
                 result = default(TProperty);
-                
+
                 FinishReadResource();
 
                 return false;
@@ -171,13 +154,13 @@ namespace Fallen8.API.Model
 
             throw new CollisionException();
         }
- 
+
         #endregion
 
         #region internal methods
 
         /// <summary>
-        /// Trims the graph element
+        ///   Trims the graph element
         /// </summary>
         internal virtual void Trim()
         {
@@ -185,20 +168,12 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Tries to add a property.
+        ///   Tries to add a property.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if it was an update; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name='propertyId'>
-        /// If set to <c>true</c> property identifier.
-        /// </param>
-        /// <param name='property'>
-        /// If set to <c>true</c> property.
-        /// </param>
-        /// <exception cref='CollisionException'>
-        /// Is thrown when the collision exception.
-        /// </exception>
+        /// <returns> <c>true</c> if it was an update; otherwise, <c>false</c> . </returns>
+        /// <param name='propertyId'> If set to <c>true</c> property identifier. </param>
+        /// <param name='property'> If set to <c>true</c> property. </param>
+        /// <exception cref='CollisionException'>Is thrown when the collision exception.</exception>
         internal bool TryAddProperty(UInt16 propertyId, object property)
         {
             if (WriteResource())
@@ -223,13 +198,14 @@ namespace Fallen8.API.Model
                         //resize
                         var newProperties = new PropertyContainer[_properties.Length + 1];
                         Array.Copy(_properties, newProperties, _properties.Length);
-                        newProperties[_properties.Length] = new PropertyContainer{PropertyId = propertyId, Value = property};
+                        newProperties[_properties.Length] = new PropertyContainer
+                                                                {PropertyId = propertyId, Value = property};
 
                         _properties = newProperties;
                     }
                     else
                     {
-                        _properties[idx] = new PropertyContainer { PropertyId = propertyId, Value = property };
+                        _properties[idx] = new PropertyContainer {PropertyId = propertyId, Value = property};
                     }
                 }
                 else
@@ -239,7 +215,7 @@ namespace Fallen8.API.Model
                 }
 
                 //set the modificationdate
-                ModificationDate = Constants.GetModificationDate(CreationDate);
+                ModificationDate = DateHelper.GetModificationDate(CreationDate);
 
                 FinishWriteResource();
 
@@ -250,17 +226,11 @@ namespace Fallen8.API.Model
         }
 
         /// <summary>
-        /// Tries to remove a property.
+        ///   Tries to remove a property.
         /// </summary>
-        /// <returns>
-        /// <c>true</c> if the property was removed; otherwise, <c>false</c> if there was no such property.
-        /// </returns>
-        /// <param name='propertyId'>
-        /// If set to <c>true</c> property identifier.
-        /// </param>
-        /// <exception cref='CollisionException'>
-        /// Is thrown when the collision exception.
-        /// </exception>
+        /// <returns> <c>true</c> if the property was removed; otherwise, <c>false</c> if there was no such property. </returns>
+        /// <param name='propertyId'> If set to <c>true</c> property identifier. </param>
+        /// <exception cref='CollisionException'>Is thrown when the collision exception.</exception>
         internal bool TryRemoveProperty(UInt16 propertyId)
         {
             if (WriteResource())
@@ -289,18 +259,19 @@ namespace Fallen8.API.Model
                         {
                             //everything until the to be removed item
                             Array.Copy(_properties, newProperties, toBeRemovedIdx);
-							
-							if (toBeRemovedIdx > newProperties.Length) 
-							{
-								//everything after the removed item
-                            	Array.Copy(_properties, toBeRemovedIdx + 1, newProperties, toBeRemovedIdx, _properties.Length - toBeRemovedIdx);
-							}
-                            
+
+                            if (toBeRemovedIdx > newProperties.Length)
+                            {
+                                //everything after the removed item
+                                Array.Copy(_properties, toBeRemovedIdx + 1, newProperties, toBeRemovedIdx,
+                                           _properties.Length - toBeRemovedIdx);
+                            }
+
                             _properties = newProperties;
                         }
 
                         //set the modificationdate
-                        ModificationDate = Constants.GetModificationDate(CreationDate);
+                        ModificationDate = DateHelper.GetModificationDate(CreationDate);
                     }
                 }
                 FinishWriteResource();
@@ -309,10 +280,8 @@ namespace Fallen8.API.Model
             }
 
             throw new CollisionException();
-
         }
 
-        #endregion  
+        #endregion
     }
 }
-

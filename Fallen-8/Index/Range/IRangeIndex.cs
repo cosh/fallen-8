@@ -33,7 +33,7 @@ namespace Fallen8.API.Index.Range
 	/// <summary>
 	/// Fallen8 range index.
 	/// </summary>
-	public interface IRangeIndex
+    public interface IRangeIndex : IIndex
 	{
 		/// <summary>
 		/// Searches for graph elements lower than the the key.
@@ -78,19 +78,19 @@ namespace Fallen8.API.Index.Range
 		/// <param name='result'>
 		/// Result.
 		/// </param>
-		/// <param name='leftLimit'>
-		/// Left limit.
+		/// <param name='lowerLimit'>
+		/// Lower limit.
 		/// </param>
-		/// <param name='rightLimit'>
-		/// Right limit.
+		/// <param name='upperLimit'>
+		/// Upper limit.
 		/// </param>
-		/// <param name='includeleftLimit'>
-		/// Include the left limit.
+		/// <param name='includeLowerLimit'>
+		/// Include the lower limit.
 		/// </param>
-		/// <param name='includerightLimit'>
-		/// Include the right limit.
+		/// <param name='includeUpperLimit'>
+		/// Include the upper limit.
 		/// </param>
-        Boolean Between(out ReadOnlyCollection<AGraphElement> result, IComparable leftLimit, IComparable rightLimit, bool includeleftLimit = true, bool includerightLimit = true);
+        Boolean Between(out ReadOnlyCollection<AGraphElement> result, IComparable lowerLimit, IComparable upperLimit, bool includeLowerLimit = true, bool includeUpperLimit = true);
 	}
 }
 

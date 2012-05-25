@@ -1,10 +1,10 @@
-﻿// 
-// IFallen8Service.cs
+// 
+// IndexHelper.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2012 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,48 +23,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using Fallen8.API.Persistency;
-using Fallen8.API.Plugin;
 
-namespace Fallen8.API.Service
+using System;
+
+namespace Fallen8.API.Helper
 {
-	/// <summary>
-	/// Fallen-8 service interface.
-	/// </summary>
-    public interface IFallen8Service : IFallen8Plugin, IFallen8Serializable
+    /// <summary>
+    ///   Index helper.
+    /// </summary>
+    public static class IndexHelper
     {
-		/// <summary>
-		/// Gets the start time.
-		/// </summary>
-		/// <value>
-		/// The start time.
-		/// </value>
-        DateTime StartTime { get; }
-        
-		/// <summary>
-		/// Gets a value indicating whether this instance is running.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if this instance is running; otherwise, <c>false</c>.
-		/// </value>
-		Boolean IsRunning { get; }
-        
-		/// <summary>
-		/// Gets the metadata.
-		/// </summary>
-		/// <value>
-		/// The metadata.
-		/// </value>
-		IDictionary<String, String> Metadata { get; }
-        
-		/// <summary>
-		/// Tries to stop this service.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if this instance is stopped; otherwise, <c>false</c>.
-		/// </returns>
-		bool TryStop();
+        /// <summary>
+        /// Checks if an object is of Type T
+        /// </summary>
+        /// <typeparam name="T">The desired type</typeparam>
+        /// <param name="result">The result</param>
+        /// <param name="obj">The object</param>
+        /// <returns>True for success</returns>
+        public static Boolean CheckObject<T>(out T result, Object obj) where T: class 
+        {
+            result = obj as T;
+            return result != null;
+        }
     }
 }

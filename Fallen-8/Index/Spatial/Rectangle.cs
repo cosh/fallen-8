@@ -24,20 +24,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System.Collections.Generic;
+using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
+
 namespace Fallen8.API.Index.Spatial
 {
 	/// <summary>
 	/// Rectangle.
 	/// </summary>
 	public sealed class Rectangle : IGeometry
-	{
-		/// <summary>
+    {
+        #region constructor
+
+        public Rectangle(IPoint lowerLeft, IPoint upperRight)
+        {
+            LowerLeft = lowerLeft;
+            UpperRight = upperRight;
+        }
+
+        #endregion
+
+        #region
+
+        /// <summary>
 		/// Gets or sets the lower left corner.
 		/// </summary>
 		/// <value>
 		/// The lower left corner.
 		/// </value>
-		public Point LowerLeft { get; private set; }
+		public IPoint LowerLeft { get; private set; }
 		
 		/// <summary>
 		/// Gets or sets the upper right corner.
@@ -45,16 +60,24 @@ namespace Fallen8.API.Index.Spatial
 		/// <value>
 		/// The upper right corner.
 		/// </value>
-		public Point UpperRight { get; private set; }
-		
-		#region IComparable implementation
-		
-		public int CompareTo (object obj)
-		{
-			throw new System.NotImplementedException ();
-		}
-		
-		#endregion
-	}
+		public IPoint UpperRight { get; private set; }
+
+        #endregion
+
+        #region IGeometry
+
+        public IMBR GeometryToMBR()
+        {
+            return new MBR(LowerLeft.PointToSpaceR(),UpperRight.PointToSpaceR());
+        }
+
+        public List<IDimension> Dimensions
+        {
+            get { return LowerLeft.Dimensions; }
+        }
+
+        #endregion
+
+    }
 }
 

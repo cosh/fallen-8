@@ -23,14 +23,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Collections.Generic;
+using Fallen8.API.Error;
+using Fallen8.API.Helper;
 using Fallen8.API.Model;
 using Framework.Serialization;
-using Fallen8.API.Helper;
-using Fallen8.API.Error;
+using Fallen8.API.Log;
 
 namespace Fallen8.API.Index
 {
@@ -94,8 +96,14 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public void AddOrUpdate(IComparable key, AGraphElement graphElement)
+        public void AddOrUpdate(Object keyObject, AGraphElement graphElement)
         {
+            IComparable key;
+            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            {
+                return;
+            }
+
 			if (WriteResource()) 
 			{
 				List<AGraphElement> values;
@@ -117,8 +125,14 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public bool TryRemoveKey (IComparable key)
+        public bool TryRemoveKey (Object keyObject)
         {
+            IComparable key;
+            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            {
+                return false;
+            }
+
 			if (WriteResource()) 
 			{
 				var foundSth = _idx.Remove(key);
@@ -170,7 +184,7 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public IEnumerable<IComparable> GetKeys ()
+        public IEnumerable<Object> GetKeys ()
         {
 			if (ReadResource()) 
 			{
@@ -185,14 +199,19 @@ namespace Fallen8.API.Index
         }
 
 
-        public IEnumerable<KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
+        public IEnumerable<KeyValuePair<object, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
         {
 			if (ReadResource()) 
 			{
-				foreach (var aKv in _idx)
-                    yield return new KeyValuePair<IComparable, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(aKv.Value));
-				
-				FinishReadResource();
+                try
+                {
+                    foreach (var aKv in _idx)
+                        yield return new KeyValuePair<object, ReadOnlyCollection<AGraphElement>>(aKv.Key, new ReadOnlyCollection<AGraphElement>(aKv.Value));
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 				
 				yield break;
 			}
@@ -200,8 +219,15 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, IComparable key)
+        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object keyObject)
         {
+            IComparable key;
+            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            {
+                result = null;
+                return false;
+            }
+
 			if (ReadResource()) 
 			{
 				List<AGraphElement> graphElements;
@@ -232,7 +258,7 @@ namespace Fallen8.API.Index
                     writer.WriteOptimized(aKV.Value.Count);
                     foreach (var aItem in aKV.Value)
                     {
-                        writer.WriteOptimized(aItem.Id);
+                        writer.Write(aItem.Id);
                     }
                 }
 				
@@ -244,7 +270,7 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public void Open(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
 			if (WriteResource()) 
 			{
@@ -261,12 +287,15 @@ namespace Fallen8.API.Index
                     var valueCount = reader.ReadOptimizedInt32();
                     for (var j = 0; j < valueCount; j++)
                     {
-                        var graphElementId = reader.ReadOptimizedInt32();
+                        var graphElementId = reader.ReadInt32();
                         AGraphElement graphElement;
-                        fallen8.TryGetGraphElement(out graphElement, graphElementId);
-                        if (graphElement != null)
+                        if(fallen8.TryGetGraphElement(out graphElement, graphElementId))
                         {
                             value.Add(graphElement);
+                        }
+                        else
+                        {
+                            Logger.LogError(String.Format("Error while deserializing the index. Could not find the graph element \"{0}\"", graphElementId));
                         }
                     }
                     _idx.Add((IComparable)key, value);
@@ -282,7 +311,7 @@ namespace Fallen8.API.Index
 
         #endregion
 
-        #region IFallen8Plugin implementation
+        #region IPlugin implementation
 
         public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {

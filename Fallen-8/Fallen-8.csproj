@@ -14,23 +14,18 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;</DefineConstants>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -39,6 +34,7 @@
     <AssemblyOriginatorKeyFile>Fallen-8.key</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -55,51 +51,76 @@
     <Compile Include="Expression\BinaryOperator.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper\AThreadSafeElement.cs" />
+    <Compile Include="Helper\BigList.cs" />
+    <Compile Include="Helper\IndexHelper.cs" />
+    <Compile Include="Helper\DateHelper.cs" />
     <Compile Include="Helper\SaveNativeMethods.cs" />
     <Compile Include="Helper\Statistics.cs" />
-    <Compile Include="IFallen8Read.cs" />
-    <Compile Include="IFallen8Write.cs" />
+    <Compile Include="Index\Fulltext\RegExIndex.cs" />
+    <Compile Include="Index\IndexFactory.cs" />
     <Compile Include="Index\SingleValueIndex.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResult.cs" />
     <Compile Include="Index\Fulltext\FulltextSearchResultElement.cs" />
     <Compile Include="Index\Fulltext\IFulltextIndex.cs" />
-    <Compile Include="Index\IFallen8IndexFactory.cs" />
     <Compile Include="Index\IIndex.cs" />
     <Compile Include="Index\Range\IRangeIndex.cs" />
-    <Compile Include="Index\Spatial\Circle.cs" />
+    <Compile Include="Index\Spatial\ICurve.cs" />
+    <Compile Include="Index\Spatial\IDimension.cs" />
     <Compile Include="Index\Spatial\IGeometry.cs" />
+    <Compile Include="Index\Spatial\IMBP.cs" />
+    <Compile Include="Index\Spatial\IMBR.cs" />
+    <Compile Include="Index\Spatial\IMetric.cs" />
+    <Compile Include="Index\Spatial\Implementation\Geometry\RealDimension.cs" />
+    <Compile Include="Index\Spatial\Implementation\Metric\EuclidianMetric.cs" />
+    <Compile Include="Index\Spatial\Implementation\Metric\GeoMetric.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\RTree.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\RTreeLeaf.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\RTreeNode.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\RTreePoint.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\SpatialDataContainer.cs" />
+    <Compile Include="Index\Spatial\Implementation\SpatialContainer\APointContainer.cs" />
+    <Compile Include="Index\Spatial\Implementation\SpatialContainer\ARTreeContainer.cs" />
+    <Compile Include="Index\Spatial\Implementation\SpatialContainer\ASpatialContainer.cs" />
+    <Compile Include="Index\Spatial\Implementation\SpatialContainer\MBR.cs" />
+    <Compile Include="Index\Spatial\Implementation\RTree\PointDataContainer.cs" />
+    <Compile Include="Index\Spatial\Implementation\SpatialContainer\TypeOfContainer.cs" />
+    <Compile Include="Index\Spatial\IPoint.cs" />
+    <Compile Include="Index\Spatial\IRTreeContainer.cs" />
+    <Compile Include="Index\Spatial\IRTreeDataContainer.cs" />
+    <Compile Include="Index\Spatial\ISpatialContainer.cs" />
     <Compile Include="Index\Spatial\ISpatialIndex.cs" />
     <Compile Include="Index\Spatial\Point.cs" />
     <Compile Include="Index\Spatial\Rectangle.cs" />
+    <Compile Include="IRead.cs" />
+    <Compile Include="IWrite.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Model\EdgeContainer.cs" />
     <Compile Include="Model\PropertyContainer.cs" />
     <Compile Include="Persistency\IFallen8Serializable.cs" />
-    <Compile Include="Plugin\IFallen8Plugin.cs" />
+    <Compile Include="Persistency\PersistencyFactory.cs" />
+    <Compile Include="Plugin\IPlugin.cs" />
+    <Compile Include="Plugin\PluginFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\EdgeModel.cs" />
     <Compile Include="Model\VertexModel.cs" />
     <Compile Include="Fallen8.cs" />
     <Compile Include="Model\AGraphElement.cs" />
-    <Compile Include="Index\Fallen8IndexFactory.cs" />
-    <Compile Include="Plugin\Fallen8PluginFactory.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
-    <Compile Include="Fallen8Server.cs" />
-    <Compile Include="Service\IFallen8Service.cs" />
+    <Compile Include="Service\IService.cs" />
+    <Compile Include="Service\REST\IRESTService.cs" />
+    <Compile Include="Service\REST\RESTService.cs" />
+    <Compile Include="Service\REST\RESTServicePlugin.cs" />
+    <Compile Include="Service\ServiceFactory.cs" />
     <Compile Include="Helper\Constants.cs" />
-    <Compile Include="Persistency\Fallen8PersistencyFactory.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
-    <Compile Include="Service\REST\Fallen8RESTServicePlugin.cs" />
     <Compile Include="Service\REST\Fallen8Status.cs" />
-    <Compile Include="Service\REST\IFallen8RESTService.cs" />
     <Compile Include="Service\REST\Ressource\Frontend.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Frontend.resx</DependentUpon>
     </Compile>
-    <Compile Include="Service\REST\Fallen8RESTService.cs" />
-    <Compile Include="Service\REST\Fallen8RESTProperties.cs" />
+    <Compile Include="Service\REST\RESTProperties.cs" />
     <Compile Include="Helper\Fallen8Pool.cs" />
     <Compile Include="Service\REST\Specification\EdgeSpecification.cs" />
     <Compile Include="Service\REST\Specification\LiteralSpecification.cs" />
@@ -108,6 +129,7 @@
     <Compile Include="Service\REST\Specification\ResultTypeSpecification.cs" />
     <Compile Include="Service\REST\Specification\ScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\VertexSpecification.cs" />
+    <Compile Include="Index\Range\RangeIndex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -42,14 +42,13 @@ namespace Fallen8.API.Persistency
         void Save(SerializationWriter writer);
 
         /// <summary>
-        /// Open the plugin.
+        ///   Load the plugin.
         /// </summary>
         /// <param name='reader'>
         /// Reader.
-        /// </param>
+        void Load(SerializationReader reader, Fallen8 fallen8);
         /// <param name="fallen8">
         /// Fallen-8 
         /// </param>
-        void Open(SerializationReader reader, Fallen8 fallen8);
     }
 }

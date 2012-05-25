@@ -34,8 +34,10 @@ namespace Fallen8.API.Index.Fulltext
 	/// Fulltext search result element.
 	/// </summary>
 	public class FulltextSearchResultElement
-	{
-		/// <summary>
+    {
+        #region data
+
+        /// <summary>
 		/// Gets or sets the graph element.
 		/// </summary>
 		/// <value>
@@ -58,6 +60,38 @@ namespace Fallen8.API.Index.Fulltext
 		/// The score.
 		/// </value>
 		public Double Score { get; private set; }
-	}
+
+        #endregion
+
+        #region constructor
+
+	    /// <summary>
+	    /// Create a new FulltextSearchResultElement instance
+	    /// </summary>
+	    /// <param name="graphElement">Graph element</param>
+	    /// <param name="score">Score</param>
+	    /// <param name="highlights">Highlights</param>
+	    public FulltextSearchResultElement(AGraphElement graphElement, Double score, IEnumerable<String> highlights = null )
+        {
+            GraphElement = graphElement;
+            Score = score;
+            Highlights = highlights == null ? new List<string>() : new List<string>(highlights);
+        }
+
+        #endregion
+
+        #region public methods
+
+        /// <summary>
+        /// Adds an highlight
+        /// </summary>
+        /// <param name="highlight">Highlight</param>
+        public void AddHighlight(String highlight)
+        {
+            Highlights.Add(highlight);
+        }
+
+        #endregion
+    }
 }
 

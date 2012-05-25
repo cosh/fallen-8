@@ -1,8 +1,8 @@
-// 
-// Circle.cs
+﻿// 
+// RealDimension.cs
 //  
 // Author:
-//       Henning Rauch <Henning@RauchEntwicklung.biz>
+//       Andriy Kupershmidt <kuper133@googlemail.com>
 // 
 // Copyright (c) 2011 Henning Rauch
 // 
@@ -26,37 +26,18 @@
 
 using System;
 
-namespace Fallen8.API.Index.Spatial
+namespace Fallen8.API.Index.Spatial.Implementation.Geometry
 {
-	/// <summary>
-	/// Circle.
-	/// </summary>
-	public sealed class Circle : IGeometry
-	{
-		/// <summary>
-		/// Gets or sets the center.
-		/// </summary>
-		/// <value>
-		/// The center.
-		/// </value>
-		public Point Center { get; private set; }
-		
-		/// <summary>
-		/// Gets or sets the radius.
-		/// </summary>
-		/// <value>
-		/// The radius.
-		/// </value>
-		public Double Radius { get; private set; }
-		
-		#region IComparable implementation
-		
-		public int CompareTo (object obj)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		#endregion
-	}
-}
+    public sealed class RealDimension : IDimension
+    {
+        public int CountOfR
+        {
+            get { return 1; }
+        }
 
+        public Type ObjectType
+        {
+            get { return typeof (float); }
+        }
+    }
+}
