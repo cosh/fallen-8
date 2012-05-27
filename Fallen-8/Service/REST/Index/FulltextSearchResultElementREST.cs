@@ -1,5 +1,5 @@
 // 
-//  VertexSpecification.cs
+//  FulltextSearchResultElementREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,28 +24,65 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
+using Fallen8.API.Index.Fulltext;
 
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The vertex specification
+    ///   The pendant to the embedded FulltextSearchResultElement
     /// </summary>
     [DataContract]
-    public sealed class VertexSpecification
+    public sealed class FulltextSearchResultElementREST
     {
-        /// <summary>
-        ///   The creation date
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public UInt32 CreationDate { get; set; }
+		#region data
 
         /// <summary>
-        ///   The properties of the vertex
+		/// Gets or sets the graph element id.
+		/// </summary>
+		/// <value>
+		/// The graph element.
+		/// </value>
+		[DataMember]
+		public readonly Int32 GraphElementId;
+		
+		/// <summary>
+		/// Gets or sets the highlights.
+		/// </summary>
+		/// <value>
+		/// The highlights.
+		/// </value>
+		[DataMember]
+		public readonly IList<string> Highlights;
+		
+		/// <summary>
+		/// Gets or sets the score.
+		/// </summary>
+		/// <value>
+		/// The score.
+		/// </value>
+		[DataMember]
+		public readonly Double Score;
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Creates a new FulltextSearchResultElementREST instance
         /// </summary>
-        [DataMember]
-        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
+        public FulltextSearchResultElementREST(FulltextSearchResultElement toBeTransferredResult)
+        {
+			if (toBeTransferredResult != null) 
+			{
+				GraphElementId = toBeTransferredResult.GraphElement.Id;
+				Highlights = toBeTransferredResult.Highlights;
+				Score = toBeTransferredResult.Score;
+			}
+        }
+
+        #endregion
     }
 }
 

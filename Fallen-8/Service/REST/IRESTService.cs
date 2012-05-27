@@ -312,6 +312,17 @@ namespace Fallen8.API.Service.REST
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
 
+		/// <summary>
+        ///   Fulltext scan for graph elements.
+        /// </summary>
+        /// <param name="indexId"> The index identifier </param>
+        /// <param name="definition"> The scan specification </param>
+        /// <returns> The matching identifier </returns>
+        [OperationContract(Name = "FulltextIndexScan")]
+        [WebInvoke(UriTemplate = "/FulltextIndexScan?indexId={indexId}", Method = "POST",
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        FulltextSearchResultREST FulltextIndexScan(String indexId, FulltextScanSpecification definition);
+
         #endregion
 
         #region persistence

@@ -38,25 +38,25 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The creation date
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public UInt32 CreationDate { get; set; }
 		
 		/// <summary>
         ///   The source vertex
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public Int32 SourceVertex { get; set; }
 		
 		/// <summary>
         ///   The target vertex
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public Int32 TargetVertex { get; set; }
 	
 		/// <summary>
         ///   The edge property identifier
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public UInt16 EdgePropertyId { get; set; }
 		
         /// <summary>

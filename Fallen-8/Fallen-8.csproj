@@ -130,6 +130,9 @@
     <Compile Include="Service\REST\Specification\ScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\VertexSpecification.cs" />
     <Compile Include="Index\Range\RangeIndex.cs" />
+    <Compile Include="Service\REST\Index\FulltextSearchResultREST.cs" />
+    <Compile Include="Service\REST\Index\FulltextSearchResultElementREST.cs" />
+    <Compile Include="Service\REST\Index\FulltextScanSpecification.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -195,4 +198,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Service\REST\Index\" />
+  </ItemGroup>
 </Project>

@@ -37,13 +37,13 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The value of the literal
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String Value { get; set; }
 
         /// <summary>
         ///   The type of the literal
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String FullQualifiedTypeName { get; set; }
     }
 }

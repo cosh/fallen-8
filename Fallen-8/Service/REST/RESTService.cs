@@ -40,6 +40,7 @@ using Fallen8.API.Index;
 using Fallen8.API.Model;
 using Fallen8.API.Plugin;
 using Fallen8.API.Service.REST.Ressource;
+using Fallen8.API.Index.Fulltext;
 
 namespace Fallen8.API.Service.REST
 {
@@ -385,6 +386,23 @@ namespace Fallen8.API.Service.REST
                        : Enumerable.Empty<Int32>();
         }
 
+		public FulltextSearchResultREST FulltextIndexScan (string indexId, FulltextScanSpecification definition)
+		{
+			#region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+			FulltextSearchResult result;
+            return _fallen8.FulltextIndexScan(out result, indexId, definition.RequestString)
+                       ? new FulltextSearchResultREST(result)
+                       : null;
+		}
+
         public void Load(string startServices)
         {
             _fallen8.Load(FindLatestFallen8(), Convert.ToBoolean(startServices));
@@ -692,5 +710,6 @@ namespace Fallen8.API.Service.REST
         }
 
         #endregion
+
     }
 }

@@ -1,5 +1,5 @@
 // 
-//  VertexSpecification.cs
+//  FulltextScanSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,28 +24,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
+using Fallen8.API.Index.Fulltext;
 
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The vertex specification
+    /// The fulltext index request object
     /// </summary>
     [DataContract]
-    public sealed class VertexSpecification
+    public sealed class FulltextScanSpecification
     {
-        /// <summary>
-        ///   The creation date
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public UInt32 CreationDate { get; set; }
+		#region data
 
-        /// <summary>
-        ///   The properties of the vertex
-        /// </summary>
-        [DataMember]
-        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
+		[DataMember(IsRequired = true)]
+		public String RequestString;
+
+        #endregion
     }
 }
-

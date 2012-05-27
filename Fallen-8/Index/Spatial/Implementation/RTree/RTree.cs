@@ -41,7 +41,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
     /// </summary>
     public sealed class RTree : AThreadSafeElement,ISpatialIndex
     {
-
         #region public member
         /// <summary>
         /// Metric for R-Tree space
@@ -59,6 +58,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         /// a space for the r-tree
         /// </summary>
         public List<IDimension> Space { get; private set; }
+
         #endregion
 
         #region private member
@@ -67,7 +67,11 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         private int _countOfReInsert;
         private Dictionary<int, IRTreeDataContainer> _mapOfContainers;
         private ARTreeContainer _root;
-        #endregion
+        
+		private delegate bool SpatialFilter (ASpatialContainer spatialContainer, IRTreeDataContainer treeDataContainer);
+		private delegate bool DataContainerFilter (IRTreeDataContainer treeDataContainer1, IRTreeDataContainer treeDataContainer2);
+
+		#endregion
 
         #region constructor
         public RTree()
@@ -134,7 +138,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #region methodes for spatial search
 
         #region universal searching
-        private ReadOnlyCollection<AGraphElement> Searching(IRTreeDataContainer element, Predicate<AGraphElement> predicate, Func<ASpatialContainer, IRTreeDataContainer, bool> spatialPredicate, Func<IRTreeDataContainer, IRTreeDataContainer, bool> dataContainerPredicate)
+        private ReadOnlyCollection<AGraphElement> Searching(IRTreeDataContainer element, SpatialFilter spatialPredicate, DataContainerFilter dataContainerPredicate)
         {
             var stack = new Stack<ARTreeContainer>();
             var currentResult = new List<AGraphElement>();
@@ -166,11 +170,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 }
             }
 
-            if (predicate != null)
-            {
-                return currentResult.FindAll(predicate).AsReadOnly();
-            }
-            
             return currentResult.AsReadOnly();
         }
         #endregion
@@ -269,13 +268,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         /// <param name="searchContainer">
         /// container for searching
         /// </param>
-        /// <param name="predicate">
-        /// predicate
-        /// </param>
         /// <returns>
         /// list of result
         /// </returns>
-        private ReadOnlyCollection<AGraphElement> OverlapSearch(IRTreeDataContainer searchContainer, Predicate<AGraphElement> predicate = null)
+        private ReadOnlyCollection<AGraphElement> OverlapSearch(IRTreeDataContainer searchContainer)
         {
             var stack = new Stack<ARTreeContainer>();
             var currentResult = new List<AGraphElement>();
@@ -307,11 +303,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 }
             }
 
-            if (predicate != null)
-            {
-                return currentResult.FindAll(predicate).AsReadOnly();
-            }
-            
             return currentResult.AsReadOnly();
         }
         #endregion
@@ -1219,7 +1210,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                     else
                         searchContainer = new SpatialDataContainer(key.GeometryToMBR());
 
-                    var removeObjects = Searching(searchContainer, null, (x, y) => x.Inclusion(y), (x, y) => x.Inclusion(y));
+                    var removeObjects = Searching(searchContainer, Inclusion1, Inclusion2);
                     FinishReadResource();
                     foreach (AGraphElement value in removeObjects)
                     {
@@ -1232,6 +1223,21 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             }
             throw new CollisionException();
         }
+
+		private static bool Inclusion1(ASpatialContainer x, IRTreeDataContainer y)
+		{
+			return x.Inclusion(y);
+		}
+
+		private static bool Inclusion2(IRTreeDataContainer x, IRTreeDataContainer y)
+		{
+			return x.Inclusion(y);
+		}
+
+		private static bool Intersection(ASpatialContainer x, IRTreeDataContainer y)
+		{
+			return x.Intersection(y);
+		}
 
         #region TryGetValue
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object geometryObject)
@@ -1281,7 +1287,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        public bool SearchDistance(out ReadOnlyCollection<AGraphElement> result, float distance, IGeometry geometry, Predicate<AGraphElement> predicate=null)
+        public bool SearchDistance(out ReadOnlyCollection<AGraphElement> result, float distance, IGeometry geometry)
         {
             if (ReadResource())
             {
@@ -1290,7 +1296,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (this.DimensionTest(geometry.Dimensions) && this.TestOfGeometry(geometry))
                 {
                     searchContainer = CreateSearchContainer(geometry.GeometryToMBR(), distance);
-                    result = OverlapSearch(searchContainer, predicate);
+                    result = OverlapSearch(searchContainer);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1310,13 +1316,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        public bool SearchDistance(out ReadOnlyCollection<AGraphElement> result, float distance, AGraphElement graphElement, Predicate<AGraphElement> predicate = null)
+        public bool SearchDistance(out ReadOnlyCollection<AGraphElement> result, float distance, AGraphElement graphElement)
         {
             if (ReadResource())
             {
@@ -1325,7 +1328,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (_mapOfContainers.TryGetValue(graphElement.Id, out element))
                 {
                     searchContainer = CreateSearchContainer(element, distance);
-                    result = OverlapSearch(searchContainer, predicate);
+                    result = OverlapSearch(searchContainer);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1423,7 +1426,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         }
 
-        public bool SearchRegion(out ReadOnlyCollection<AGraphElement> result, IMBR minimalBoundedRechtangle, Predicate<AGraphElement> predicate = null)
+        public bool SearchRegion(out ReadOnlyCollection<AGraphElement> result, IMBR minimalBoundedRechtangle)
         {
             if (ReadResource())
             {
@@ -1431,7 +1434,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (TestOfMBR(minimalBoundedRechtangle))
                 {
                     var searchRegion = new SpatialDataContainer(minimalBoundedRechtangle);
-                    result = this.OverlapSearch(searchRegion, predicate);
+                    result = this.OverlapSearch(searchRegion);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1439,7 +1442,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
+        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
         {
             if (ReadResource())
             {
@@ -1452,7 +1455,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                     else
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
-                    result = this.OverlapSearch(searchContainer, predicate);
+                    result = this.OverlapSearch(searchContainer);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1460,7 +1463,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
+        public bool Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
         {
             if (ReadResource())
             {
@@ -1468,7 +1471,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.OverlapSearch(output, predicate);
+                    result = this.OverlapSearch(output);
                 }
 
                 FinishReadResource();
@@ -1477,7 +1480,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
+        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
         {
             if (ReadResource())
             {
@@ -1485,7 +1488,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.Searching(output, predicate, (x, y) => x.Inclusion(y), (x, y) => x.Inclusion(y));
+                    result = this.Searching(output, Inclusion1, Inclusion2);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1493,7 +1496,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
+        public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
         {
             if (ReadResource())
             {
@@ -1507,7 +1510,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
 
-                    result = this.Searching(searchContainer, predicate, (x, y) => x.Inclusion(y), (x, y) => x.Inclusion(y));
+                    result = this.Searching(searchContainer, Inclusion1, Inclusion2);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1515,7 +1518,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
+        public bool Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
         {
             if (ReadResource())
             {
@@ -1529,7 +1532,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
 
-                    result = this.Searching(searchContainer, predicate, (x, y) => x.Intersection(y), (x, y) => y.Inclusion(x));
+                    result = this.Searching(searchContainer, Intersection, (x, y) => y.Inclusion(x));
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1537,7 +1540,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
+        public bool Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
         {
             if (ReadResource())
             {
@@ -1545,7 +1548,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.Searching(output, predicate, (x, y) => x.Intersection(y), (x, y) => y.Inclusion(x));
+                    result = this.Searching(output, Intersection, (x, y) => y.Inclusion(x));
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1553,7 +1556,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null)
+        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
         {
             if (ReadResource())
             {
@@ -1561,7 +1564,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.Searching(output, predicate, (x, y) => x.Intersection(y), (x, y) => x.Adjacency(x));
+                    result = this.Searching(output, Intersection, (x, y) => x.Adjacency(x));
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1569,7 +1572,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null)
+        public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
         {
             if (ReadResource())
             {
@@ -1583,7 +1586,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
 
-                    result = this.Searching(searchContainer, predicate, (x, y) => x.Intersection(y), (x, y) => x.Adjacency(x));
+                    result = this.Searching(searchContainer, Intersection, (x, y) => x.Adjacency(x));
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1591,7 +1594,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null)
+        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors)
         {
             if (ReadResource())
             {
@@ -1606,7 +1609,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                     foreach (IRTreeDataContainer value in elements)
                     {
                         var dist = Distance(output, value);
-                        if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value != output && (predicate == null || predicate(value.GraphElement)))
+                        if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value != output)
                         {
                             if (containers.Count == 0)
                             {
@@ -1670,7 +1673,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                                 {
                                     var dist = Distance(value2, output);
 
-                                    if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value2 != output && (predicate == null || predicate(value2.GraphElement)))
+                                    if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value2 != output)
                                     {
                                         if (containers.Count == 0)
                                         {
@@ -1723,7 +1726,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null)
+        public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors)
         {
             if (ReadResource())
             {
@@ -1761,7 +1764,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                             {
                                 var dist = Distance(value2, output);
 
-                                if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value2 != output && (predicate == null || predicate(value2.GraphElement)))
+                                if ((containers.Count < countOfNextNeighbors || dist < maxElement) && value2 != output)
                                 {
                                     if (containers.Count == 0)
                                     {
@@ -1816,7 +1819,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         }
         
 
-        public bool SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point, Predicate<AGraphElement> predicate = null)
+        public bool SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point)
         {
             if (ReadResource())
             {
@@ -1824,7 +1827,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (TestOfGeometry(point) && DimensionTest(point.Dimensions))
                 {
                     var searchContainer = new PointDataContainer(point.PointToSpaceR());
-                    result = Searching(searchContainer, predicate, (x, y) => x.Intersection(y), (x, y) => x.Intersection(y));
+                    result = Searching(searchContainer, Intersection, (x, y) => x.Intersection(y));
                 }
                 FinishReadResource();
                 return result.Count > 0;

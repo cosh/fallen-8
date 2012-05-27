@@ -38,19 +38,19 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   Left limit
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String LeftLimit { get; set; }
 
         /// <summary>
         ///   Right limit
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String RightLimit { get; set; }
 
         /// <summary>
         ///   The type of the literals
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String FullQualifiedTypeName { get; set; }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   Result type specification
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public ResultTypeSpecification ResultType { get; set; }
     }
 }

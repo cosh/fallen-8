@@ -38,19 +38,19 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   Binary Operator
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public BinaryOperator Operator { get; set; }
 
         /// <summary>
         ///   Literal specification
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public LiteralSpecification Literal { get; set; }
 
         /// <summary>
         ///   Result type specification
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public ResultTypeSpecification ResultType { get; set; }
     }
 }

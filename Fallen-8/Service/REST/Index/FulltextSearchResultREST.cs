@@ -1,5 +1,5 @@
 // 
-//  VertexSpecification.cs
+//  FulltextSearchResultREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,28 +24,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
+using Fallen8.API.Index.Fulltext;
 
 namespace Fallen8.API.Service.REST
 {
 	/// <summary>
-    ///   The vertex specification
+    ///   The pendant to the embedded FulltextSearchResult
     /// </summary>
     [DataContract]
-    public sealed class VertexSpecification
+    public sealed class FulltextSearchResultREST
     {
-        /// <summary>
-        ///   The creation date
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public UInt32 CreationDate { get; set; }
+		#region data
 
         /// <summary>
-        ///   The properties of the vertex
+		/// Gets or sets the maximum score.
+		/// </summary>
+		/// <value>
+		/// The maximum score.
+		/// </value>
+		[DataMember]
+		public readonly Double MaximumScore;
+		
+		/// <summary>
+		/// Gets or sets the elements.
+		/// </summary>
+		/// <value>
+		/// The elements.
+		/// </value>
+		[DataMember]
+		public readonly List<FulltextSearchResultElementREST> Elements;
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Creates a new FulltextSearchResultREST instance
         /// </summary>
-        [DataMember]
-        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
+        public FulltextSearchResultREST(FulltextSearchResult toBeTransferredResult)
+        {
+			if (toBeTransferredResult != null) 
+			{
+				MaximumScore = toBeTransferredResult.MaximumScore;
+				Elements = new List<FulltextSearchResultElementREST>(toBeTransferredResult.Elements.Count);
+				for (int i = 0; i < toBeTransferredResult.Elements.Count; i++) 
+				{
+					Elements.Add(new FulltextSearchResultElementREST(toBeTransferredResult.Elements[i]));
+				}
+			}
+        }
+
+        #endregion
     }
 }
 
