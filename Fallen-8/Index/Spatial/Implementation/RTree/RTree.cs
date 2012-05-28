@@ -183,13 +183,16 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         private static bool Adjacency(ISpatialContainer x, ISpatialContainer y)
 		{
+
 			return x.Adjacency(y);
 		}
 
         private static bool ReInclusion(ISpatialContainer x, ISpatialContainer y)
-		{
+        {
 			return y.Inclusion(x);
 		}
+
+		
 
         private static bool Intersection(ISpatialContainer x, ISpatialContainer y)
 		{
