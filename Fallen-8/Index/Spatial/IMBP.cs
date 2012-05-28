@@ -27,13 +27,13 @@
 namespace Fallen8.API.Index.Spatial
 {
     /// <summary>
-    /// IMBP is the interface for representation of point from n-dimensional real space
+    /// IMBP is the abstract class for representation of point from n-dimensional real space
     /// </summary>
-    public interface IMBP
+    public abstract class IMBP
     {
         /// <summary>
-        /// gets coordinates of point
+        /// coordinates of point
         /// </summary>
-       float[] Coordinates { get; }
+        public float[] Coordinates;
     }
 }

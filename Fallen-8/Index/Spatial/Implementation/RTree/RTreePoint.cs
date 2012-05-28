@@ -35,7 +35,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             this.Coordinates = coordinates;
         }
-        public float[] Coordinates { get; private set; }
     }
    
 }

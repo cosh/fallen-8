@@ -250,12 +250,12 @@ namespace Fallen8.API.Index
         {
 			if (ReadResource()) 
 			{
-				writer.WriteOptimized(0);//parameter
-                writer.WriteOptimized(_idx.Count);
+				writer.Write(0);//parameter
+                writer.Write(_idx.Count);
                 foreach (var aKV in _idx)
                 {
                     writer.WriteObject(aKV.Key);
-                    writer.WriteOptimized(aKV.Value.Count);
+                    writer.Write(aKV.Value.Count);
                     foreach (var aItem in aKV.Value)
                     {
                         writer.Write(aItem.Id);
@@ -274,9 +274,9 @@ namespace Fallen8.API.Index
         {
 			if (WriteResource()) 
 			{
-                reader.ReadOptimizedInt32();//parameter
+                reader.ReadInt32();//parameter
 
-                var keyCount = reader.ReadOptimizedInt32();
+                var keyCount = reader.ReadInt32();
 
                 _idx = new Dictionary<IComparable, List<AGraphElement>>(keyCount);
 
@@ -284,7 +284,7 @@ namespace Fallen8.API.Index
                 {
                     var key = reader.ReadObject();
                     var value = new List<AGraphElement>();
-                    var valueCount = reader.ReadOptimizedInt32();
+                    var valueCount = reader.ReadInt32();
                     for (var j = 0; j < valueCount; j++)
                     {
                         var graphElementId = reader.ReadInt32();

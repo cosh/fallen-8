@@ -83,11 +83,11 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
         public float[] TransformationOfDistance(float distance, IMBR mbr)
         {
             {
-                if (mbr.LowerPoint.Length != 2)
+                if (mbr.Lower.Length != 2)
                     throw new Exception("The points are not in geo space");
 
                 var result = new float[2];
-                var latidtude = mbr.LowerPoint[0] * Math.PI / 180;
+                var latidtude = mbr.Lower[0] * Math.PI / 180;
                 result[0] = 180 * distance / ((float)Math.PI * this.RadiusOfEarth);
                 var dist = (float)(180 * distance / (Math.PI * this.RadiusOfEarth * Math.Cos(latidtude)));
                 if (dist > 360)

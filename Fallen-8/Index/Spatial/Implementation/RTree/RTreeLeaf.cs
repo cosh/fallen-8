@@ -39,8 +39,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         }
         public RTreeLeaf(IMBR mbr, ARTreeContainer parent = null)
         {
-            this.Lower = mbr.LowerPoint;
-            this.Upper = mbr.UpperPoint;
+            this.Lower = mbr.Lower;
+            this.Upper = mbr.Upper;
             if (parent != null)
                 this.Parent = parent;
             this.Data = new List<IRTreeDataContainer>();

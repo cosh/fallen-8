@@ -47,8 +47,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         {
             if (parent != null)
                 this.Parent = parent;
-            this.Lower = mbr.LowerPoint;
-            this.Upper = mbr.UpperPoint;
+            this.Lower = mbr.Lower;
+            this.Upper = mbr.Upper;
         }
         public AGraphElement GraphElement
         {

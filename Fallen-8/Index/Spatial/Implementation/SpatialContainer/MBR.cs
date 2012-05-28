@@ -33,20 +33,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
     {
         public MBR(float[] lower, float[] upper)
         {
-            this.LowerPoint = lower;
-            this.UpperPoint = upper;
+            this.Lower = lower;
+            this.Upper = upper;
         }
-
-        public float[] LowerPoint
-        {
-            get;
-            private set;
-        }
-
-        public float[] UpperPoint
-        {
-            get;
-            private set;
-        }
+   
     }
 }

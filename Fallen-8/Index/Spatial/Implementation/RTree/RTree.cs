@@ -67,10 +67,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         private int _countOfReInsert;
         private Dictionary<int, IRTreeDataContainer> _mapOfContainers;
         private ARTreeContainer _root;
-        
-		private delegate bool SpatialFilter (ASpatialContainer spatialContainer, IRTreeDataContainer treeDataContainer);
-		private delegate bool DataContainerFilter (IRTreeDataContainer treeDataContainer1, IRTreeDataContainer treeDataContainer2);
 
+        private delegate bool SpatialFilter(ISpatialContainer spatialContainer1, ISpatialContainer spatialContainer2);
+		
 		#endregion
 
         #region constructor
@@ -138,7 +137,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #region methodes for spatial search
 
         #region universal searching
-        private ReadOnlyCollection<AGraphElement> Searching(IRTreeDataContainer element, SpatialFilter spatialPredicate, DataContainerFilter dataContainerPredicate)
+        private ReadOnlyCollection<AGraphElement> Searching(IRTreeDataContainer element, SpatialFilter spatialPredicate, SpatialFilter dataContainerPredicate)
         {
             var stack = new Stack<ARTreeContainer>();
             var currentResult = new List<AGraphElement>();
@@ -176,35 +175,27 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         
 		#region helper methods
 
-		private static bool Inclusion1(ASpatialContainer x, IRTreeDataContainer y)
+        private static bool Inclusion(ISpatialContainer x, ISpatialContainer y)
 		{
 			return x.Inclusion(y);
 		}
 
-		private static bool Inclusion2(IRTreeDataContainer x, IRTreeDataContainer y)
+
+        private static bool Adjacency(ISpatialContainer x, ISpatialContainer y)
 		{
-			return x.Inclusion(y);
+			return x.Adjacency(y);
 		}
 
-		private static bool Adjacency(IRTreeDataContainer x, IRTreeDataContainer y)
-		{
-			return x.Adjacency(x);
-		}
-
-		private static bool ReInclusion2(IRTreeDataContainer x, IRTreeDataContainer y)
+        private static bool ReInclusion(ISpatialContainer x, ISpatialContainer y)
 		{
 			return y.Inclusion(x);
 		}
 
-		private static bool Intersection(ASpatialContainer x, IRTreeDataContainer y)
+        private static bool Intersection(ISpatialContainer x, ISpatialContainer y)
 		{
 			return x.Intersection(y);
 		}
 
-		private static bool Intersection2(IRTreeDataContainer x, IRTreeDataContainer y)
-		{
-			return x.Intersection(y);
-		}
 
 		#endregion
 
@@ -288,8 +279,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
             for (int i = 0; i < this._countOfR; i++)
             {
-                lower[i] = mbr.LowerPoint[i] - transformationOfDistance[i];
-                upper[i] = mbr.UpperPoint[i] + transformationOfDistance[i];
+                lower[i] = mbr.Lower[i] - transformationOfDistance[i];
+                upper[i] = mbr.Upper[i] + transformationOfDistance[i];
             }
 
             return new SpatialDataContainer(new MBR(lower, upper));
@@ -387,8 +378,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                     if (((RTreeLeaf)rTree).Data.Count == 0)
                         for (int i = 0; i < this._countOfR; i++)
                         {
-                            rTree.UpperPoint[i] = float.NegativeInfinity;
-                            rTree.LowerPoint[i] = float.PositiveInfinity;
+                            rTree.Upper[i] = float.NegativeInfinity;
+                            rTree.Lower[i] = float.PositiveInfinity;
                         }
                 }
                 else
@@ -464,8 +455,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
                 var recalculateMBR = FindMBR(recalculatePath.Parent, newContainer);
                 recalculatePath.Parent.Area = GetArea(recalculateMBR);
-                recalculatePath.Parent.LowerPoint = recalculateMBR.LowerPoint;
-                recalculatePath.Parent.UpperPoint = recalculateMBR.UpperPoint;
+                recalculatePath.Parent.Lower = recalculateMBR.Lower;
+                recalculatePath.Parent.Upper = recalculateMBR.Upper;
                 recalculatePath = recalculatePath.Parent;
             }
         }
@@ -478,15 +469,15 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (recalculatePath.Parent.IsLeaf)
                 {
                     var newMBR = FindMBR(((RTreeLeaf)recalculatePath.Parent).Data);
-                    recalculatePath.Parent.LowerPoint = newMBR.LowerPoint;
-                    recalculatePath.Parent.UpperPoint = newMBR.UpperPoint;
+                    recalculatePath.Parent.Lower = newMBR.Lower;
+                    recalculatePath.Parent.Upper = newMBR.Upper;
                     recalculatePath.Parent.Area = GetArea(newMBR);
                 }
                 else
                 {
                     var newMBR = FindMBR(((RTreeNode)recalculatePath.Parent).Children);
-                    recalculatePath.Parent.LowerPoint = newMBR.LowerPoint;
-                    recalculatePath.Parent.UpperPoint = newMBR.UpperPoint;
+                    recalculatePath.Parent.Lower = newMBR.Lower;
+                    recalculatePath.Parent.Upper = newMBR.Upper;
                     recalculatePath.Parent.Area = GetArea(newMBR);
 
                 }
@@ -509,15 +500,15 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (recalculatePath.Parent.IsLeaf)
                 {
                     var newMBR = FindMBR(((RTreeLeaf)recalculatePath.Parent).Data);
-                    recalculatePath.Parent.LowerPoint = newMBR.LowerPoint;
-                    recalculatePath.Parent.UpperPoint = newMBR.UpperPoint;
+                    recalculatePath.Parent.Lower = newMBR.Lower;
+                    recalculatePath.Parent.Upper = newMBR.Upper;
                     recalculatePath.Parent.Area = GetArea(newMBR);
                 }
                 else
                 {
                     var newMBR = FindMBR(((RTreeNode)recalculatePath.Parent).Children);
-                    recalculatePath.Parent.LowerPoint = newMBR.LowerPoint;
-                    recalculatePath.Parent.UpperPoint = newMBR.UpperPoint;
+                    recalculatePath.Parent.Lower = newMBR.Lower;
+                    recalculatePath.Parent.Upper = newMBR.Upper;
                     recalculatePath.Parent.Area = GetArea(newMBR);
 
                 }
@@ -603,7 +594,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             var center = new float[this._countOfR];
             for (int i = 0; i < this._countOfR; i++)
             {
-                center[i] = ((container.LowerPoint[i] + container.UpperPoint[i]) / 2);
+                center[i] = ((container.Lower[i] + container.Upper[i]) / 2);
             }
             return center;
         }
@@ -633,8 +624,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
             if (container.Parent == null)
             {
-                var lower = _root.LowerPoint;
-                var upper = _root.UpperPoint;
+                var lower = _root.Lower;
+                var upper = _root.Upper;
                 var area = _root.Area;
                 _root.Dispose();
                 _root = null;
@@ -832,12 +823,12 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             }
 
             parent1.Area = area1;
-            parent1.LowerPoint = mbrParent1.LowerPoint;
-            parent1.UpperPoint = mbrParent1.UpperPoint;
+            parent1.Lower = mbrParent1.Lower;
+            parent1.Upper = mbrParent1.Upper;
 
             parent2.Area = area2;
-            parent2.LowerPoint = mbrParent2.LowerPoint;
-            parent2.UpperPoint = mbrParent2.UpperPoint;
+            parent2.Lower = mbrParent2.Lower;
+            parent2.Upper = mbrParent2.Upper;
 
             if (!parent1.IsLeaf)
             {
@@ -890,8 +881,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 {
                     if (value is ASpatialContainer)
                     {
-                        var temporalMin = ((ASpatialContainer)value).LowerPoint[dimension];
-                        var temporalMax = ((ASpatialContainer)value).UpperPoint[dimension];
+                        var temporalMin = ((ASpatialContainer)value).Lower[dimension];
+                        var temporalMax = ((ASpatialContainer)value).Upper[dimension];
                         if (currentMin > temporalMin)
                             currentMin = temporalMin;
                         if (currentMax < temporalMax)
@@ -935,10 +926,10 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         private float FindOverlapValue(IMBR mbr1, IMBR mbr2)
         {
             float[] value = new float[this._countOfR];
-            var lowerPoint1 = mbr1.LowerPoint;
-            var upperPoint1 = mbr1.UpperPoint;
-            var lowerPoint2 = mbr2.LowerPoint;
-            var upperPoint2 = mbr2.UpperPoint;
+            var lowerPoint1 = mbr1.Lower;
+            var upperPoint1 = mbr1.Upper;
+            var lowerPoint2 = mbr2.Lower;
+            var upperPoint2 = mbr2.Upper;
             var overlapValue = 1.0f;
 
             for (int i = 0; i < this._countOfR; i++)
@@ -1082,9 +1073,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         private float GetArea(IMBR mbr)
         {
             var currentArea = 1.0f;
-            for (int i = 0; i < mbr.LowerPoint.Length; i++)
+            for (int i = 0; i < mbr.Lower.Length; i++)
             {
-                currentArea *= mbr.UpperPoint[i] - mbr.LowerPoint[i];
+                currentArea *= mbr.Upper[i] - mbr.Lower[i];
 
             }
 
@@ -1137,12 +1128,12 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         #region Test of MBR
         private bool TestOfMBR(IMBR mbr)
         {
-            if (mbr.LowerPoint.Length != mbr.UpperPoint.Length && mbr.LowerPoint.Length != this._countOfR)
+            if (mbr.Lower.Length != mbr.Upper.Length && mbr.Lower.Length != this._countOfR)
             {
                 return false;
             }
-            for (int i = 0; i < mbr.LowerPoint.Length; i++)
-                if (mbr.LowerPoint[i] > mbr.UpperPoint[i])
+            for (int i = 0; i < mbr.Lower.Length; i++)
+                if (mbr.Lower[i] > mbr.Upper[i])
                     return false;
             return true;
 
@@ -1244,7 +1235,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                     else
                         searchContainer = new SpatialDataContainer(key.GeometryToMBR());
 
-                    var removeObjects = Searching(searchContainer, Inclusion1, Inclusion2);
+                    var removeObjects = Searching(searchContainer, Inclusion, Inclusion);
                     FinishReadResource();
                     foreach (AGraphElement value in removeObjects)
                     {
@@ -1381,7 +1372,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         else
                         {
                             var mbr = key.GeometryToMBR();
-                            currentContainer = new SpatialDataContainer(mbr.LowerPoint, mbr.UpperPoint)
+                            currentContainer = new SpatialDataContainer(mbr.Lower, mbr.Upper)
                                                    {GraphElement = graphElement};
                         }
 
@@ -1417,7 +1408,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 
                 var mbr1 = geometry1.GeometryToMBR();
                 var mbr2 = geometry2.GeometryToMBR();
-                var points = FindNeighborPoints(mbr1.LowerPoint, mbr1.UpperPoint, mbr2.LowerPoint, mbr2.UpperPoint);
+                var points = FindNeighborPoints(mbr1.Lower, mbr1.Upper, mbr2.Lower, mbr2.Upper);
                     
                 FinishReadResource();
                 return Metric.Distance(points.Item1, points.Item2);
@@ -1507,7 +1498,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.Searching(output, Inclusion1, Inclusion2);
+                    result = this.Searching(output, Inclusion, Inclusion);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1529,7 +1520,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
 
-                    result = this.Searching(searchContainer, Inclusion1, Inclusion2);
+                    result = this.Searching(searchContainer, Inclusion, Inclusion);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1551,7 +1542,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
 
-                    result = this.Searching(searchContainer, Intersection, ReInclusion2);
+                    result = this.Searching(searchContainer, Intersection, ReInclusion);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1567,7 +1558,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.Searching(output, Intersection, ReInclusion2);
+                    result = this.Searching(output, Intersection, ReInclusion);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1846,7 +1837,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (TestOfGeometry(point) && DimensionTest(point.Dimensions))
                 {
                     var searchContainer = new PointDataContainer(point.PointToSpaceR());
-                    result = Searching(searchContainer, Intersection, Intersection2);
+                    result = Searching(searchContainer, Intersection, Intersection);
                 }
                 FinishReadResource();
                 return result.Count > 0;
