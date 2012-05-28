@@ -297,7 +297,7 @@ namespace Fallen8.API.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "IndexScan")]
-        [WebInvoke(UriTemplate = "/IndexScan?indexId={indexId}", Method = "POST", 
+        [WebInvoke(UriTemplate = "/IndexScan/{indexId}", Method = "POST", 
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
 
@@ -308,7 +308,7 @@ namespace Fallen8.API.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "RangeIndexScan")]
-        [WebInvoke(UriTemplate = "/RangeIndexScan?indexId={indexId}", Method = "POST",
+        [WebInvoke(UriTemplate = "/RangeIndexScan/{indexId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
 
@@ -319,9 +319,20 @@ namespace Fallen8.API.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "FulltextIndexScan")]
-        [WebInvoke(UriTemplate = "/FulltextIndexScan?indexId={indexId}", Method = "POST",
+        [WebInvoke(UriTemplate = "/FulltextIndexScan/{indexId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         FulltextSearchResultREST FulltextIndexScan(String indexId, FulltextScanSpecification definition);
+
+		/// <summary>
+        ///   Spatial index scan for graph elements. Finds all objects in a certain distance to a given graph element
+        /// </summary>
+        /// <param name="indexId"> The index identifier </param>
+        /// <param name="definition"> The search distance specification </param>
+        /// <returns> The matching identifier </returns>
+        [OperationContract(Name = "SpatialIndexScan")]
+        [WebInvoke(UriTemplate = "/SpatialIndexScan/{indexId}/SearchDistance", Method = "POST",
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        IEnumerable<Int32> SpatialIndexScanSearchDistance(String indexId, SearchDistanceSpecification definition);
 
         #endregion
 

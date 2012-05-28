@@ -133,6 +133,7 @@
     <Compile Include="Service\REST\Index\FulltextSearchResultREST.cs" />
     <Compile Include="Service\REST\Index\FulltextSearchResultElementREST.cs" />
     <Compile Include="Service\REST\Index\FulltextScanSpecification.cs" />
+    <Compile Include="Service\REST\Index\SearchDistanceSpecification.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

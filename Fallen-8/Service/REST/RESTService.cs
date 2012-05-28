@@ -38,9 +38,11 @@ using Fallen8.API.Algorithms.Path;
 using Fallen8.API.Helper;
 using Fallen8.API.Index;
 using Fallen8.API.Model;
+using Fallen8.API.Log;
 using Fallen8.API.Plugin;
 using Fallen8.API.Service.REST.Ressource;
 using Fallen8.API.Index.Fulltext;
+using Fallen8.API.Index.Spatial;
 
 namespace Fallen8.API.Service.REST
 {
@@ -401,6 +403,41 @@ namespace Fallen8.API.Service.REST
             return _fallen8.FulltextIndexScan(out result, indexId, definition.RequestString)
                        ? new FulltextSearchResultREST(result)
                        : null;
+		}
+
+		public IEnumerable<int> SpatialIndexScanSearchDistance (string indexId, SearchDistanceSpecification definition)
+		{
+			#region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+			AGraphElement graphElement;
+			if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
+			{
+				IIndex idx;
+				if (_fallen8.IndexFactory.TryGetIndex(out idx, indexId)) 
+				{
+					var spatialIndex = idx as ISpatialIndex;
+					if (spatialIndex != null) 
+					{
+						ReadOnlyCollection<AGraphElement> result;
+						return spatialIndex.SearchDistance(out result, definition.Distance, graphElement)
+							? result.Select(_ => _.Id)
+							: null;
+					}
+					Logger.LogError(string.Format("The index with id {0} is no spatial index.", indexId));
+					return null;
+				}
+				Logger.LogError(string.Format("Could not find index {0}.", indexId));
+				return null;
+			}
+			Logger.LogError(string.Format("Could not find graph element {0}.", definition.GraphElementId));
+			return null;
 		}
 
         public void Load(string startServices)
