@@ -174,6 +174,40 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
         }
         #endregion
         
+		#region helper methods
+
+		private static bool Inclusion1(ASpatialContainer x, IRTreeDataContainer y)
+		{
+			return x.Inclusion(y);
+		}
+
+		private static bool Inclusion2(IRTreeDataContainer x, IRTreeDataContainer y)
+		{
+			return x.Inclusion(y);
+		}
+
+		private static bool Adjacency(IRTreeDataContainer x, IRTreeDataContainer y)
+		{
+			return x.Adjacency(x);
+		}
+
+		private static bool ReInclusion2(IRTreeDataContainer x, IRTreeDataContainer y)
+		{
+			return y.Inclusion(x);
+		}
+
+		private static bool Intersection(ASpatialContainer x, IRTreeDataContainer y)
+		{
+			return x.Intersection(y);
+		}
+
+		private static bool Intersection2(IRTreeDataContainer x, IRTreeDataContainer y)
+		{
+			return x.Intersection(y);
+		}
+
+		#endregion
+
         #region EqualsSearch
         private ReadOnlyCollection<AGraphElement> EqualSearch(IRTreeDataContainer element)
         {
@@ -1224,21 +1258,6 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new CollisionException();
         }
 
-		private static bool Inclusion1(ASpatialContainer x, IRTreeDataContainer y)
-		{
-			return x.Inclusion(y);
-		}
-
-		private static bool Inclusion2(IRTreeDataContainer x, IRTreeDataContainer y)
-		{
-			return x.Inclusion(y);
-		}
-
-		private static bool Intersection(ASpatialContainer x, IRTreeDataContainer y)
-		{
-			return x.Intersection(y);
-		}
-
         #region TryGetValue
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object geometryObject)
         {
@@ -1532,7 +1551,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
 
-                    result = this.Searching(searchContainer, Intersection, (x, y) => y.Inclusion(x));
+                    result = this.Searching(searchContainer, Intersection, ReInclusion2);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1548,7 +1567,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.Searching(output, Intersection, (x, y) => y.Inclusion(x));
+                    result = this.Searching(output, Intersection, ReInclusion2);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1564,7 +1583,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 IRTreeDataContainer output;
                 if (this._mapOfContainers.TryGetValue(graphElement.Id, out output))
                 {
-                    result = this.Searching(output, Intersection, (x, y) => x.Adjacency(x));
+                    result = this.Searching(output, Intersection, Adjacency);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1586,7 +1605,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                         searchContainer = new SpatialDataContainer(geometry.GeometryToMBR());
 
 
-                    result = this.Searching(searchContainer, Intersection, (x, y) => x.Adjacency(x));
+                    result = this.Searching(searchContainer, Intersection, Adjacency);
                 }
                 FinishReadResource();
                 return result.Count > 0;
@@ -1827,7 +1846,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                 if (TestOfGeometry(point) && DimensionTest(point.Dimensions))
                 {
                     var searchContainer = new PointDataContainer(point.PointToSpaceR());
-                    result = Searching(searchContainer, Intersection, (x, y) => x.Intersection(y));
+                    result = Searching(searchContainer, Intersection, Intersection2);
                 }
                 FinishReadResource();
                 return result.Count > 0;
