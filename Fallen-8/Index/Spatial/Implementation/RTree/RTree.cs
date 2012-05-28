@@ -188,7 +188,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
 		private static bool Adjacency(IRTreeDataContainer x, IRTreeDataContainer y)
 		{
-			return x.Adjacency(x);
+			return x.Adjacency(y);
 		}
 
 		private static bool ReInclusion2(IRTreeDataContainer x, IRTreeDataContainer y)
