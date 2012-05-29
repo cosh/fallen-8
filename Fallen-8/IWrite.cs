@@ -25,9 +25,9 @@
 // THE SOFTWARE.
 
 using System;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API
+namespace NoSQL.GraphDB
 {
     /// <summary>
     ///   Fallen8 write interface.

@@ -25,10 +25,10 @@
 // THE SOFTWARE.
 
 using System.Collections.Generic;
-using Fallen8.API.Index.Spatial.Implementation.Geometry;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
+using NoSQL.GraphDB.Index.Spatial.Implementation.Geometry;
+using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
 
-namespace Fallen8.API.Index.Spatial
+namespace NoSQL.GraphDB.Index.Spatial
 {
 	/// <summary>
 	/// Point.

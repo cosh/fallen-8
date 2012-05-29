@@ -28,7 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fallen8.API.Helper
+namespace NoSQL.GraphDB.Helper
 {
     /// <summary>
     /// Class for statistic calculations

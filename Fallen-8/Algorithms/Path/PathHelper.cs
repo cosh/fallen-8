@@ -26,9 +26,9 @@
 
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Algorithms.Path
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// A static helper class for path algorithms

@@ -27,7 +27,7 @@
 using System;
 using System.Globalization;
 
-namespace Fallen8.API.Model
+namespace NoSQL.GraphDB.Model
 {
     /// <summary>
     ///   Edge model.

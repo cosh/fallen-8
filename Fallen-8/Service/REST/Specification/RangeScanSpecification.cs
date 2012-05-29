@@ -27,7 +27,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
     ///   The range scan specification

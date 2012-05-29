@@ -27,13 +27,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Fallen8.API.Algorithms.Path;
-using Fallen8.API.Expression;
-using Fallen8.API.Index.Fulltext;
-using Fallen8.API.Index.Spatial;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Algorithms.Path;
+using NoSQL.GraphDB.Expression;
+using NoSQL.GraphDB.Index.Fulltext;
+using NoSQL.GraphDB.Index.Spatial;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API
+namespace NoSQL.GraphDB
 {
     /// <summary>
     ///   Fallen8 read interface.

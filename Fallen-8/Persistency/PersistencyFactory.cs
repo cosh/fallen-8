@@ -30,14 +30,14 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Fallen8.API.Helper;
-using Fallen8.API.Index;
-using Fallen8.API.Model;
-using Fallen8.API.Service;
 using Framework.Serialization;
-using Fallen8.API.Log;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Index;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Model;
+using NoSQL.GraphDB.Service;
 
-namespace Fallen8.API.Persistency
+namespace NoSQL.GraphDB.Persistency
 {
     /// <summary>
     ///   Persistency factory.
@@ -54,7 +54,7 @@ namespace Fallen8.API.Persistency
         /// <param name="pathToSavePoint">The path to the save point.</param>
         /// <param name="currentId">The maximum graph element id</param>
         /// <param name="startServices">Start the services</param>
-        internal static Boolean Load(Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
+        internal static Boolean Load(NoSQL.GraphDB.Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
@@ -123,7 +123,7 @@ namespace Fallen8.API.Persistency
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
         /// <param name="currentId">The current graph elemement identifier.</param>
-        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
+        internal static void Save(NoSQL.GraphDB.Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
@@ -345,7 +345,7 @@ namespace Fallen8.API.Persistency
             return result;
         }
 
-        private static void LoadIndices(Fallen8 fallen8, IndexFactory indexFactory, List<String> indexStreams)
+        private static void LoadIndices(NoSQL.GraphDB.Fallen8 fallen8, IndexFactory indexFactory, List<String> indexStreams)
         {
             //load the indices
             for (var i = 0; i < indexStreams.Count; i++)
@@ -354,7 +354,7 @@ namespace Fallen8.API.Persistency
             }
         }
 
-        private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, Boolean startServices)
+        private static void LoadServices(NoSQL.GraphDB.Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, Boolean startServices)
         {
             //load the indices
             for (var i = 0; i < serviceStreams.Count; i++)
@@ -363,7 +363,7 @@ namespace Fallen8.API.Persistency
             }
         }
 
-        private static void LoadAService(string serviceLocaion, Fallen8 fallen8, ServiceFactory serviceFactory, Boolean startService)
+        private static void LoadAService(string serviceLocaion, NoSQL.GraphDB.Fallen8 fallen8, ServiceFactory serviceFactory, Boolean startService)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(serviceLocaion))
@@ -382,7 +382,7 @@ namespace Fallen8.API.Persistency
             }
         }
 
-        private static void LoadAnIndex(string indexLocaion, Fallen8 fallen8, IndexFactory indexFactory)
+        private static void LoadAnIndex(string indexLocaion, NoSQL.GraphDB.Fallen8 fallen8, IndexFactory indexFactory)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(indexLocaion))

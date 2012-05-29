@@ -28,13 +28,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Fallen8.API.Error;
-using Fallen8.API.Helper;
-using Fallen8.API.Model;
 using Framework.Serialization;
-using Fallen8.API.Log;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index
+namespace NoSQL.GraphDB.Index
 {
     /// <summary>
     /// Dictionary index.
@@ -270,7 +270,7 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public void Load(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
         {
 			if (WriteResource()) 
 			{
@@ -313,7 +313,7 @@ namespace Fallen8.API.Index
 
         #region IPlugin implementation
 
-        public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize (NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, List<AGraphElement>>();
         }

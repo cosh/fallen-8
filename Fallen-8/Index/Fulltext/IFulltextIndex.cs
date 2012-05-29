@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Fallen8.API.Index.Fulltext
+namespace NoSQL.GraphDB.Index.Fulltext
 {
 	/// <summary>
 	/// Fallen8 fulltext index interface.

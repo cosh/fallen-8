@@ -27,7 +27,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Fallen8.API.Helper
+namespace NoSQL.GraphDB.Helper
 {
     /// <summary>
     /// A place for save native methods

@@ -31,7 +31,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Fallen8.API.Plugin
+namespace NoSQL.GraphDB.Plugin
 {
     /// <summary>
     ///   Fallen8 plugin factory.

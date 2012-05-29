@@ -29,8 +29,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using NoSQL.GraphDB.Service.REST.Index;
+using NoSQL.GraphDB.Service.REST.Specification;
 
-namespace Fallen8.API.Service.REST
+namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
     ///   The Fallen-8 REST service.

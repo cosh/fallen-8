@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 
 
-namespace Fallen8.API.Index.Spatial
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     /// Minimum Bounding Rectangle (MBR)

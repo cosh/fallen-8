@@ -28,7 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service.REST
+namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
     ///   The Fallen-8 REST properties

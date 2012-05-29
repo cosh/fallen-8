@@ -23,11 +23,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Runtime.Serialization;
-using Fallen8.API.Expression;
 
-namespace Fallen8.API.Service.REST
+using System.Runtime.Serialization;
+using NoSQL.GraphDB.Expression;
+
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
     ///   The scan specification

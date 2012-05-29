@@ -34,17 +34,19 @@ using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
-using Fallen8.API.Algorithms.Path;
-using Fallen8.API.Helper;
-using Fallen8.API.Index;
-using Fallen8.API.Model;
-using Fallen8.API.Log;
-using Fallen8.API.Plugin;
-using Fallen8.API.Service.REST.Ressource;
-using Fallen8.API.Index.Fulltext;
-using Fallen8.API.Index.Spatial;
+using NoSQL.GraphDB.Algorithms.Path;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Index;
+using NoSQL.GraphDB.Index.Fulltext;
+using NoSQL.GraphDB.Index.Spatial;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Model;
+using NoSQL.GraphDB.Plugin;
+using NoSQL.GraphDB.Service.REST.Index;
+using NoSQL.GraphDB.Service.REST.Ressource;
+using NoSQL.GraphDB.Service.REST.Specification;
 
-namespace Fallen8.API.Service.REST
+namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
     ///   Fallen-8 REST service.
@@ -57,7 +59,7 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The internal Fallen-8 instance
         /// </summary>
-        private readonly Fallen8 _fallen8;
+        private readonly NoSQL.GraphDB.Fallen8 _fallen8;
 
         /// <summary>
         ///   The ressources.
@@ -97,7 +99,7 @@ namespace Fallen8.API.Service.REST
         ///   Initializes a new instance of the RESTService class.
         /// </summary>
         /// <param name='fallen8'> Fallen-8. </param>
-        public RESTService(Fallen8 fallen8)
+        public RESTService(NoSQL.GraphDB.Fallen8 fallen8)
         {
             _fallen8 = fallen8;
             LoadFrontend();

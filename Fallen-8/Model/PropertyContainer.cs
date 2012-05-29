@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Fallen8.API.Model
+namespace NoSQL.GraphDB.Model
 {
     /// <summary>
     /// Property container.

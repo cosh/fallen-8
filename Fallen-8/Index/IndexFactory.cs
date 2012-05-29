@@ -26,13 +26,13 @@
 
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Error;
-using Fallen8.API.Log;
-using Fallen8.API.Plugin;
 using Framework.Serialization;
-using Fallen8.API.Helper;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Plugin;
 
-namespace Fallen8.API.Index
+namespace NoSQL.GraphDB.Index
 {
     /// <summary>
     ///   Index factory.
@@ -198,7 +198,7 @@ namespace Fallen8.API.Index
         /// <param name="indexPluginName"> The index plugin name </param>
         /// <param name="reader"> Serialization reader </param>
         /// <param name="fallen8"> Fallen-8 </param>
-        internal void OpenIndex(string indexName, string indexPluginName, SerializationReader reader, Fallen8 fallen8)
+        internal void OpenIndex(string indexName, string indexPluginName, SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
         {
             IIndex index;
             if (PluginFactory.TryFindPlugin(out index, indexPluginName))

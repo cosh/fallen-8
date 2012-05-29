@@ -27,7 +27,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Fallen8.API.Model
+namespace NoSQL.GraphDB.Model
 {
     /// <summary>
     /// edge container.

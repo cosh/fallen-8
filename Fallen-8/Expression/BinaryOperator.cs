@@ -26,7 +26,7 @@
 
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Expression
+namespace NoSQL.GraphDB.Expression
 {
 	/// <summary>
 	/// Binary operator.

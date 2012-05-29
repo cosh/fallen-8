@@ -27,7 +27,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Fallen8.API.Plugin
+namespace NoSQL.GraphDB.Plugin
 {
     public interface IPlugin : IDisposable
     {
@@ -61,6 +61,6 @@ namespace Fallen8.API.Plugin
         /// <param name='fallen8'> A fallen-8 session. </param>
         /// <param name='parameter'> Parameter. </param>
         /// <returns> The initialized plugin </returns>
-        void Initialize(Fallen8 fallen8, IDictionary<String, Object> parameter);
+        void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<String, Object> parameter);
     }
 }

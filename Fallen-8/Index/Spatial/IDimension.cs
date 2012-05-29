@@ -25,7 +25,8 @@
 // THE SOFTWARE.
 
 using System;
-namespace Fallen8.API.Index.Spatial
+
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     /// IDimension is the interface for representation of dimensions from n-dimensional real space

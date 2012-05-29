@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Fallen8.API.Helper
+namespace NoSQL.GraphDB.Helper
 {
     /// <summary>
     ///   Constants.

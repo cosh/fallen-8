@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
 {
     /// <summary>
     /// The realisation of minimal bounded rechtangle

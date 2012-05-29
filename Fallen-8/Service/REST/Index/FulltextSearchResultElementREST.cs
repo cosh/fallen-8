@@ -23,12 +23,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
-using Fallen8.API.Index.Fulltext;
+using NoSQL.GraphDB.Index.Fulltext;
 
-namespace Fallen8.API.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Index
 {
 	/// <summary>
     ///   The pendant to the embedded FulltextSearchResultElement

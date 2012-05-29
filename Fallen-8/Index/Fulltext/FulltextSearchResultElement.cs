@@ -25,10 +25,10 @@
 // THE SOFTWARE.
 
 using System;
-using Fallen8.API.Model;
 using System.Collections.Generic;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index.Fulltext
+namespace NoSQL.GraphDB.Index.Fulltext
 {
 	/// <summary>
 	/// Fulltext search result element.

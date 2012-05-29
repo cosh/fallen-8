@@ -26,9 +26,9 @@
 
 using System;
 using System.Collections.ObjectModel;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index.Range
+namespace NoSQL.GraphDB.Index.Range
 {
 	/// <summary>
 	/// Fallen8 range index.

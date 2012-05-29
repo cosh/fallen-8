@@ -25,9 +25,9 @@
 // THE SOFTWARE.
 
 using System;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Algorithms.Path
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     ///   The element of a path

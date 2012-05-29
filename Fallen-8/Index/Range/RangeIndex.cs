@@ -27,14 +27,14 @@
 using System;
 using System.Linq;
 using System.Collections.ObjectModel;
-using Fallen8.API.Model;
 using System.Collections.Generic;
 using Framework.Serialization;
-using Fallen8.API.Helper;
-using Fallen8.API.Error;
-using Fallen8.API.Log;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index.Range
+namespace NoSQL.GraphDB.Index.Range
 {
 	/// <summary>
 	/// Fallen8 range index.
@@ -75,7 +75,7 @@ namespace Fallen8.API.Index.Range
 		#endregion
 
 		#region IPlugin implementation
-		public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
+		public void Initialize (NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
 		{
             _idx = new Dictionary<IComparable, List<AGraphElement>>();
 		}
@@ -129,7 +129,7 @@ namespace Fallen8.API.Index.Range
 			throw new CollisionException();
 		}
 
-		public void Load (SerializationReader reader, Fallen8 fallen8)
+		public void Load (SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
 		{
 			
 			if (WriteResource()) 

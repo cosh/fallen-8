@@ -28,7 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Fallen8.API.Helper
+namespace NoSQL.GraphDB.Helper
 {
     /// <summary>
     /// A big list

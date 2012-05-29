@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Fallen8.API.Index.Spatial.Implementation.Geometry
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.Geometry
 {
     public sealed class RealDimension : IDimension
     {

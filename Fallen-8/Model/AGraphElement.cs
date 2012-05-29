@@ -26,10 +26,10 @@
 
 using System;
 using System.Collections.ObjectModel;
-using Fallen8.API.Error;
-using Fallen8.API.Helper;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
 
-namespace Fallen8.API.Model
+namespace NoSQL.GraphDB.Model
 {
     /// <summary>
     ///   A graph element.

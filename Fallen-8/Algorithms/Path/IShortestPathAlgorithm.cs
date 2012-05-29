@@ -26,9 +26,9 @@
 
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Plugin;
+using NoSQL.GraphDB.Plugin;
 
-namespace Fallen8.API.Algorithms.Path
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// The interface for path algorithms
@@ -48,7 +48,7 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="edgeCost">The edge cost delegate.</param>
         /// <param name="vertexCost">The vertex cost delegate.</param>
         /// <returns>Paths</returns>
-        List<Path> Calculate(
+        List<global::NoSQL.GraphDB.Algorithms.Path.Path> Calculate(
             Int32 sourceVertexId, 
             Int32 destinationVertexId,
             Int32 maxDepth = 1,

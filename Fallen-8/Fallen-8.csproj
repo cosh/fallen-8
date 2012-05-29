@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{40759EF1-EBF9-41A3-BFEB-1314ABE36489}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Fallen8.API</RootNamespace>
+    <RootNamespace>NoSQL.GraphDB</RootNamespace>
     <AssemblyName>Fallen-8</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -199,7 +199,5 @@
     </Content>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Service\REST\Index\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

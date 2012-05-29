@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Fallen8.API.Log
+namespace NoSQL.GraphDB.Log
 {
     /// <summary>
     ///   The Fallen-8 logger

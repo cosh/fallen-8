@@ -28,9 +28,9 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Algorithms.Path
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// The Path.

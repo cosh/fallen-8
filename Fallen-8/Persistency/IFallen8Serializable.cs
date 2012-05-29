@@ -26,7 +26,7 @@
 
 using Framework.Serialization;
 
-namespace Fallen8.API.Persistency
+namespace NoSQL.GraphDB.Persistency
 {
     /// <summary>
     /// The interface for serializable things in Fallen-8
@@ -46,7 +46,7 @@ namespace Fallen8.API.Persistency
         /// </summary>
         /// <param name='reader'>
         /// Reader.
-        void Load(SerializationReader reader, Fallen8 fallen8);
+        void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8);
         /// <param name="fallen8">
         /// Fallen-8 
         /// </param>

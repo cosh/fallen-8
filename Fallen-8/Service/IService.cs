@@ -26,10 +26,10 @@
 
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Persistency;
-using Fallen8.API.Plugin;
+using NoSQL.GraphDB.Persistency;
+using NoSQL.GraphDB.Plugin;
 
-namespace Fallen8.API.Service
+namespace NoSQL.GraphDB.Service
 {
     /// <summary>
     ///   Fallen-8 service interface.

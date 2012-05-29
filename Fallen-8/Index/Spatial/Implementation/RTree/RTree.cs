@@ -23,18 +23,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 using System.Collections.ObjectModel;
-using Fallen8.API.Model;
 using Framework.Serialization;
-using Fallen8.API.Helper;
-using Fallen8.API.Error;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
+using NoSQL.GraphDB.Model;
 
-
-namespace Fallen8.API.Index.Spatial.Implementation.RTree
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 {
     /// <summary>
     /// Spatial index implementation as r-tree
@@ -1868,7 +1868,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             get { return typeof(IIndex); }
         }
 
-        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             if (parameter == null) throw new ArgumentNullException("parameter");
 
@@ -1944,7 +1944,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
             throw new NotImplementedException();
         }
 
-        public void Load(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
         {
             throw new NotImplementedException();
         }

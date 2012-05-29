@@ -26,10 +26,8 @@
 
 using System;
 using System.Runtime.Serialization;
-using System.Collections.Generic;
-using Fallen8.API.Index.Fulltext;
 
-namespace Fallen8.API.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Index
 {
 	/// <summary>
     /// The search distance request object for spatial queries
