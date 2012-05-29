@@ -24,7 +24,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
+
+#endregion
 
 namespace NoSQL.GraphDB.Index.Spatial.Implementation.Metric
 {
@@ -74,7 +78,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.Metric
             var x = sl1 * sl2 + cl1 * cl2 * cdelta;
             var angelDifference = Math.Atan2(y, x);
 
-            float currentDistance = (float)angelDifference * this.RadiusOfEarth;
+            float currentDistance = (float)angelDifference * RadiusOfEarth;
 
 
             return currentDistance;
@@ -89,8 +93,8 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.Metric
 
                 var result = new float[2];
                 var latidtude = mbr.Lower[0] * Math.PI / 180;
-                result[0] = 180 * distance / ((float)Math.PI * this.RadiusOfEarth);
-                var dist = (float)(180 * distance / (Math.PI * this.RadiusOfEarth * Math.Cos(latidtude)));
+                result[0] = 180 * distance / ((float)Math.PI * RadiusOfEarth);
+                var dist = (float)(180 * distance / (Math.PI * RadiusOfEarth * Math.Cos(latidtude)));
                 if (dist > 360)
                 {
 

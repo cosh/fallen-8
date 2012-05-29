@@ -24,15 +24,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
-using System.Linq;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Framework.Serialization;
 using NoSQL.GraphDB.Error;
 using NoSQL.GraphDB.Helper;
 using NoSQL.GraphDB.Log;
 using NoSQL.GraphDB.Model;
+
+#endregion
 
 namespace NoSQL.GraphDB.Index.Range
 {

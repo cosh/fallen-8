@@ -33,7 +33,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
     {
         public RTreePoint(float[] coordinates)
         {
-            this.Coordinates = coordinates;
+            Coordinates = coordinates;
         }
     }
    

@@ -24,8 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
 using NoSQL.GraphDB.Model;
+
+#endregion
 
 namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 {
@@ -39,17 +43,17 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                          ARTreeContainer parent = null)
         {
             if (parent != null)
-                this.Parent = parent;
-            this.Lower = clower;
-            this.Upper = cupper;
+                Parent = parent;
+            Lower = clower;
+            Upper = cupper;
         }
         public SpatialDataContainer(IMBR mbr,
                          ARTreeContainer parent = null)
         {
             if (parent != null)
-                this.Parent = parent;
-            this.Lower = mbr.Lower;
-            this.Upper = mbr.Upper;
+                Parent = parent;
+            Lower = mbr.Lower;
+            Upper = mbr.Upper;
         }
         public AGraphElement GraphElement
         {

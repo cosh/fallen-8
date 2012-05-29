@@ -24,10 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using NoSQL.GraphDB.Persistency;
 using NoSQL.GraphDB.Plugin;
+
+#endregion
 
 namespace NoSQL.GraphDB.Service
 {

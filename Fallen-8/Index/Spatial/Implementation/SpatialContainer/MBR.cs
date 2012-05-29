@@ -33,8 +33,8 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
     {
         public MBR(float[] lower, float[] upper)
         {
-            this.Lower = lower;
-            this.Upper = upper;
+            Lower = lower;
+            Upper = upper;
         }
    
     }

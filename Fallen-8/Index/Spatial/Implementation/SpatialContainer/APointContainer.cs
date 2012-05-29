@@ -40,7 +40,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
         #region Inclusion of MBR and Point
         virtual public bool Inclusion(ISpatialContainer container)
         {
-            return this.EqualTo(container);
+            return EqualTo(container);
         }
         #endregion
         #region Intersection of MBR and Point
@@ -50,9 +50,9 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
             if (container is ASpatialContainer)
             {
                 var currentContainer = (ASpatialContainer)container;
-                for (var i = 0; i < this.Coordinates.Length; i++)
+                for (var i = 0; i < Coordinates.Length; i++)
                 {
-                    if (currentContainer.Lower[i] > this.Coordinates[i] || currentContainer.Upper[i] < this.Coordinates[i])
+                    if (currentContainer.Lower[i] > Coordinates[i] || currentContainer.Upper[i] < Coordinates[i])
                         return false;
                 }
 
@@ -61,7 +61,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
             #endregion
             #region Point
             
-            return this.EqualTo(container);
+            return EqualTo(container);
 
             #endregion
         }
@@ -75,9 +75,9 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
 
                 var currentPoint = ((APointContainer)container).Coordinates;
 
-                for (int i = 0; i < this.Coordinates.Length; i++)
+                for (int i = 0; i < Coordinates.Length; i++)
                 {
-                    if (this.Coordinates[i] != currentPoint[i])
+                    if (Coordinates[i] != currentPoint[i])
                         return false;
                 }
 
@@ -87,9 +87,9 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
             var currentLower = ((ASpatialContainer)container).Lower;
             var currentUpper = ((ASpatialContainer)container).Upper;
 
-            for (int i = 0; i < this.Coordinates.Length; i++)
+            for (int i = 0; i < Coordinates.Length; i++)
             {
-                if (currentLower[i] != this.Coordinates[i] || currentUpper[i] != this.Coordinates[i])
+                if (currentLower[i] != Coordinates[i] || currentUpper[i] != Coordinates[i])
                     return false;
             }
             return true;
@@ -101,16 +101,16 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
             #region Point
             if (container is APointContainer)
             {
-                return this.EqualTo(container);
+                return EqualTo(container);
             }
             #endregion
             #region MBR
             
             var currentLower = ((ASpatialContainer)container).Lower;
             var currentUpper = ((ASpatialContainer)container).Upper;
-            for (int i = 0; i < this.Coordinates.Length; i++)
+            for (int i = 0; i < Coordinates.Length; i++)
             {
-                if (currentLower[i] != this.Coordinates[i] || currentUpper[i] != this.Coordinates[i])
+                if (currentLower[i] != Coordinates[i] || currentUpper[i] != Coordinates[i])
                     return false;
             }
 
@@ -123,14 +123,14 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
        
         virtual public float[] LowerPoint
         {
-            get { return this.Coordinates; }
+            get { return Coordinates; }
 
 
         }
 
         virtual public float[] UpperPoint
         {
-            get { return this.Coordinates; }
+            get { return Coordinates; }
 
         }
         #endregion

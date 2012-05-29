@@ -24,8 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
 using NoSQL.GraphDB.Model;
+
+#endregion
 
 namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 {
@@ -38,8 +42,8 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                           ARTreeContainer parent = null)
         {
             if (parent != null)
-                this.Parent = parent;
-            this.Coordinates = point;
+                Parent = parent;
+            Coordinates = point;
         }
         public AGraphElement GraphElement
         {

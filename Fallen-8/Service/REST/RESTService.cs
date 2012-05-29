@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -45,6 +47,8 @@ using NoSQL.GraphDB.Plugin;
 using NoSQL.GraphDB.Service.REST.Index;
 using NoSQL.GraphDB.Service.REST.Ressource;
 using NoSQL.GraphDB.Service.REST.Specification;
+
+#endregion
 
 namespace NoSQL.GraphDB.Service.REST
 {

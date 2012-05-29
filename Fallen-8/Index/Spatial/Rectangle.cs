@@ -24,8 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System.Collections.Generic;
 using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
+
+#endregion
 
 namespace NoSQL.GraphDB.Index.Spatial
 {

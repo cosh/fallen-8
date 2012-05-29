@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -32,6 +34,8 @@ using System.ServiceModel.Description;
 using System.Xml;
 using Framework.Serialization;
 using NoSQL.GraphDB.Log;
+
+#endregion
 
 namespace NoSQL.GraphDB.Service.REST
 {
@@ -146,7 +150,7 @@ namespace NoSQL.GraphDB.Service.REST
             }
             catch (Exception e)
             {
-                Logger.LogError(String.Format("Could not start service \"{0}\".{1}{2}", this.PluginName, Environment.NewLine, e.Message));
+                Logger.LogError(String.Format("Could not start service \"{0}\".{1}{2}", PluginName, Environment.NewLine, e.Message));
 
                 return false;
             }
