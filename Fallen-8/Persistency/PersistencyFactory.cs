@@ -145,6 +145,8 @@ namespace NoSQL.GraphDB.Persistency
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
                 var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None,
                                         TaskScheduler.Default);
+                var baseFilenName = System.IO.Path.GetFileName(path);
+
                 #region graph elements
 
                 var graphElementCount = fallen8.VertexCount + fallen8.EdgeCount;
@@ -158,7 +160,7 @@ namespace NoSQL.GraphDB.Persistency
                     for (var i = 0; i < graphElementPartitions.Count; i++)
                     {
                         var partition = graphElementPartitions[i];
-                        graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, path));
+                        graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, baseFilenName));
                     }    
                 }
                 else
@@ -178,7 +180,7 @@ namespace NoSQL.GraphDB.Persistency
                     var indexName = aIndex.Key;
                     var index = aIndex.Value;
 
-                    indexSaver[counter] = f.StartNew(() => SaveIndex(indexName, index, path));
+                    indexSaver[counter] = f.StartNew(() => SaveIndex(indexName, index, baseFilenName));
                     counter++;
                 }
 
@@ -194,7 +196,7 @@ namespace NoSQL.GraphDB.Persistency
                     var serviceName = aService.Key;
                     var service = aService.Value;
 
-                    serviceSaver[counter] = f.StartNew(() => SaveService(serviceName, service, path));
+                    serviceSaver[counter] = f.StartNew(() => SaveService(serviceName, service, baseFilenName));
                     counter++;
                 }
 
