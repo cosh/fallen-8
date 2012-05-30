@@ -567,6 +567,7 @@ namespace NoSQL.GraphDB
             Double maxPathWeight = Double.MaxValue,
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
+            PathDelegates.VertexFilter vertexFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null)
@@ -580,7 +581,7 @@ namespace NoSQL.GraphDB
                 {
                     result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxPathWeight, maxResults,
                                             edgePropertyFilter,
-                                            edgeFilter, edgeCost, vertexCost);
+                                            vertexFilter, edgeFilter, edgeCost, vertexCost);
 
                     FinishReadResource();
 

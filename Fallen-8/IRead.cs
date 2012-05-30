@@ -165,6 +165,7 @@ namespace NoSQL.GraphDB
         /// <param name="maxPathWeight"> The maximum path weight. </param>
         /// <param name="maxResults"> The maximum number of results. </param>
         /// <param name="edgePropertyFilter"> The edge property filter. </param>
+        /// <param name="vertexFilter"> The vertex filter. </param>
         /// <param name="edgeFilter"> The edge filter. </param>
         /// <param name="edgeCost"> The edge cost. </param>
         /// <param name="vertexCost"> The vertex cost. </param>
@@ -178,6 +179,7 @@ namespace NoSQL.GraphDB
             double maxPathWeight = Double.MaxValue,
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
+            PathDelegates.VertexFilter vertexFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null);

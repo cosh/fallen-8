@@ -48,17 +48,19 @@ namespace NoSQL.GraphDB.Algorithms.Path
         /// <param name="maxPathWeight">The maximum path weight.</param>
         /// <param name="maxResults">The maximum number of results.</param>
         /// <param name="edgePropertyFilter">Edge property filter delegate.</param>
+        /// <param name="vertexFilter">Vertex filter delegate.</param>
         /// <param name="edgeFilter">Edge filter delegate.</param>
         /// <param name="edgeCost">The edge cost delegate.</param>
         /// <param name="vertexCost">The vertex cost delegate.</param>
         /// <returns>Paths</returns>
-        List<global::NoSQL.GraphDB.Algorithms.Path.Path> Calculate(
+        List<NoSQL.GraphDB.Algorithms.Path.Path> Calculate(
             Int32 sourceVertexId, 
             Int32 destinationVertexId,
             Int32 maxDepth = 1,
             Double maxPathWeight = Double.MaxValue,
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
+            PathDelegates.VertexFilter vertexFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null);
