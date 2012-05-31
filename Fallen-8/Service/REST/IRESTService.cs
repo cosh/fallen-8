@@ -360,5 +360,11 @@ namespace NoSQL.GraphDB.Service.REST
         void Save();
 
         #endregion
+
+        #region path
+
+
+
+        #endregion
     }
 }

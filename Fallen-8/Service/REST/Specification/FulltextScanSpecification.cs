@@ -1,5 +1,5 @@
 // 
-//  SearchDistanceSpecification.cs
+//  FulltextScanSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -31,27 +31,18 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST.Index
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
-    /// The search distance request object for spatial queries
+    /// The fulltext index request object
     /// </summary>
     [DataContract]
-    public sealed class SearchDistanceSpecification
+    public sealed class FulltextScanSpecification
     {
 		#region data
 
-		/// <summary>
-		/// The graph element identifier.
-		/// </summary>
 		[DataMember(IsRequired = true)]
-		public Int32 GraphElementId;
-
-		/// <summary>
-		/// The distance.
-		/// </summary>
-		[DataMember(IsRequired = true)]
-		public float Distance;
+		public String RequestString;
 
         #endregion
     }
