@@ -141,6 +141,10 @@
       <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
       <Name>FastSerializer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Dependencies\Jint\Jint\Jint.csproj">
+      <Project>{DBF3AEF6-9D13-4E03-899B-561BCFDD9920}</Project>
+      <Name>Jint</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Service\REST\Ressource\d3.v2.js">
