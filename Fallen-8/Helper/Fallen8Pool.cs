@@ -36,7 +36,7 @@ namespace NoSQL.GraphDB.Helper
     /// <summary>
     ///   Fallen-8 object pool.
     /// </summary>
-    public class Fallen8Pool
+    public sealed class Fallen8Pool
     {
         #region Data
 
