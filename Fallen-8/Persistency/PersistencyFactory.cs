@@ -127,7 +127,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
         /// <param name="currentId">The current graph elemement identifier.</param>
-        internal static void Save(NoSQL.GraphDB.Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
+        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
