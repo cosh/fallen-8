@@ -44,8 +44,8 @@ using NoSQL.GraphDB.Index.Spatial;
 using NoSQL.GraphDB.Log;
 using NoSQL.GraphDB.Model;
 using NoSQL.GraphDB.Plugin;
-using NoSQL.GraphDB.Service.REST.Index;
 using NoSQL.GraphDB.Service.REST.Ressource;
+using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
 
 #endregion

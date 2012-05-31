@@ -33,7 +33,7 @@ using NoSQL.GraphDB.Index.Fulltext;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST.Index
+namespace NoSQL.GraphDB.Service.REST.Result
 {
 	/// <summary>
     ///   The pendant to the embedded FulltextSearchResultElement

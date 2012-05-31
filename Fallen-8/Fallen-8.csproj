@@ -110,6 +110,8 @@
     <Compile Include="Service\REST\IRESTService.cs" />
     <Compile Include="Service\REST\RESTService.cs" />
     <Compile Include="Service\REST\RESTServicePlugin.cs" />
+    <Compile Include="Service\REST\Result\FulltextSearchResultElementREST.cs" />
+    <Compile Include="Service\REST\Result\FulltextSearchResultREST.cs" />
     <Compile Include="Service\REST\Specification\FulltextScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\SearchDistanceSpecification.cs" />
     <Compile Include="Service\ServiceFactory.cs" />
@@ -132,8 +134,6 @@
     <Compile Include="Service\REST\Specification\ScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\VertexSpecification.cs" />
     <Compile Include="Index\Range\RangeIndex.cs" />
-    <Compile Include="Service\REST\Index\FulltextSearchResultREST.cs" />
-    <Compile Include="Service\REST\Index\FulltextSearchResultElementREST.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using NoSQL.GraphDB.Service.REST.Index;
+using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
 
 #endregion
