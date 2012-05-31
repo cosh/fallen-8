@@ -49,7 +49,7 @@ namespace NoSQL.GraphDB.Service.REST.Specification
         /// <summary>
         ///   The properties of the vertex
         /// </summary>
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
     }
 }

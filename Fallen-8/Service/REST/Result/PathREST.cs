@@ -1,5 +1,5 @@
 // 
-//  RangeScanSpecification.cs
+//  PathREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -26,54 +26,56 @@
 
 #region Usings
 
-using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using NoSQL.GraphDB.Algorithms.Path;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST.Specification
+namespace NoSQL.GraphDB.Service.REST.Result
 {
 	/// <summary>
-    ///   The range scan specification
+    /// The REST pendant to Path
     /// </summary>
     [DataContract]
-    public sealed class RangeScanSpecification
+    public sealed class PathREST
     {
+		#region data
+
         /// <summary>
-        ///   Left limit
+        /// The path elements
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String LeftLimit { get; set; }
-
+		public List<PathElementREST> PathElements;
+		
         /// <summary>
-        ///   Right limit
+        /// The weight of the path
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String RightLimit { get; set; }
+		public double TotalWeight;
+
+        #endregion
+
+        #region constructor
 
         /// <summary>
-        ///   The type of the literals
+        /// Creates a new PathREST instance
         /// </summary>
-        [DataMember(IsRequired = true)]
-        public String FullQualifiedTypeName { get; set; }
+        public PathREST(Path toBeTransferredResult)
+        {
+            var toBeTransferredPathElements = toBeTransferredResult.GetPathElements();
 
-        /// <summary>
-        ///   Include left limit
-        /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeLeft { get; set; }
+            PathElements = new List<PathElementREST>(toBeTransferredPathElements.Count);
 
-        /// <summary>
-        ///   Include right limit
-        /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeRight { get; set; }
+            for (var i = 0; i < toBeTransferredPathElements.Count; i++)
+            {
+                PathElements.Add(new PathElementREST(toBeTransferredPathElements[i]));
+            }
 
-        /// <summary>
-        ///   Result type specification
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public ResultTypeSpecification ResultType { get; set; }
+            TotalWeight = toBeTransferredResult.Weight;
+        }
+
+        #endregion
     }
 }
 

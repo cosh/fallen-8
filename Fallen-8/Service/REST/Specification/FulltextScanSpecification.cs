@@ -41,6 +41,9 @@ namespace NoSQL.GraphDB.Service.REST.Specification
     {
 		#region data
 
+        /// <summary>
+        /// The request string
+        /// </summary>
 		[DataMember(IsRequired = true)]
 		public String RequestString;
 

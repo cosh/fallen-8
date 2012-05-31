@@ -363,7 +363,14 @@ namespace NoSQL.GraphDB.Service.REST
 
         #region path
 
-
+        /// <summary>
+        /// Path traverser
+        /// </summary>
+        [OperationContract(Name = "Paths")]
+        [WebInvoke(
+            UriTemplate = "/Paths?from={from}&to={to}",
+            Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        List<PathREST> GetPaths(String from, String to, PathSpecification definition);
 
         #endregion
     }

@@ -1,5 +1,5 @@
 // 
-//  RangeScanSpecification.cs
+//  PathCostSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -34,46 +34,22 @@ using System.Runtime.Serialization;
 namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
-    ///   The range scan specification
+    ///   The path cost specification
     /// </summary>
     [DataContract]
-    public sealed class RangeScanSpecification
+    public sealed class PathCostSpecification
     {
         /// <summary>
-        ///   Left limit
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public String LeftLimit { get; set; }
-
-        /// <summary>
-        ///   Right limit
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public String RightLimit { get; set; }
-
-        /// <summary>
-        ///   The type of the literals
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public String FullQualifiedTypeName { get; set; }
-
-        /// <summary>
-        ///   Include left limit
+        /// The vertex cost function (JS)
         /// </summary>
         [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeLeft { get; set; }
+        public String Vertex { get; set; }
 
         /// <summary>
-        ///   Include right limit
+        /// The edge cost function (JS)
         /// </summary>
         [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeRight { get; set; }
-
-        /// <summary>
-        ///   Result type specification
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public ResultTypeSpecification ResultType { get; set; }
+        public String Edge { get; set; }
     }
 }
 

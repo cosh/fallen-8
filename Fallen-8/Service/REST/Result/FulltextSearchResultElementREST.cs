@@ -49,7 +49,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
 		/// <value>
 		/// The graph element.
 		/// </value>
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public readonly Int32 GraphElementId;
 		
 		/// <summary>
@@ -58,7 +58,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
 		/// <value>
 		/// The highlights.
 		/// </value>
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public readonly IList<string> Highlights;
 		
 		/// <summary>
@@ -67,7 +67,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
 		/// <value>
 		/// The score.
 		/// </value>
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public readonly Double Score;
 
         #endregion

@@ -49,7 +49,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
 		/// <value>
 		/// The maximum score.
 		/// </value>
-		[DataMember]
+        [DataMember(IsRequired = true)]
 		public readonly Double MaximumScore;
 		
 		/// <summary>
@@ -58,7 +58,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
 		/// <value>
 		/// The elements.
 		/// </value>
-		[DataMember]
+        [DataMember(IsRequired = true)]
 		public readonly List<FulltextSearchResultElementREST> Elements;
 
         #endregion

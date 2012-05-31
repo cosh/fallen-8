@@ -1,5 +1,5 @@
 // 
-//  RangeScanSpecification.cs
+//  PathElementREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -26,54 +26,76 @@
 
 #region Usings
 
-using System;
 using System.Runtime.Serialization;
+using NoSQL.GraphDB.Algorithms.Path;
+using System;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST.Specification
+namespace NoSQL.GraphDB.Service.REST.Result
 {
 	/// <summary>
-    ///   The range scan specification
+    /// The REST pendant to PathElement
     /// </summary>
     [DataContract]
-    public sealed class RangeScanSpecification
+    public sealed class PathElementREST
     {
+		#region data
+
         /// <summary>
-        ///   Left limit
+        /// The source vertex identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String LeftLimit { get; set; }
+		public Int32 SourceVertexId;
 
         /// <summary>
-        ///   Right limit
+        /// The target vertex identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String RightLimit { get; set; }
+        public Int32 TargetVertexId;
 
         /// <summary>
-        ///   The type of the literals
+        /// The edge identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String FullQualifiedTypeName { get; set; }
+        public Int32 EdgeId;
 
         /// <summary>
-        ///   Include left limit
-        /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeLeft { get; set; }
-
-        /// <summary>
-        ///   Include right limit
-        /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeRight { get; set; }
-
-        /// <summary>
-        ///   Result type specification
+        /// The edge property identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public ResultTypeSpecification ResultType { get; set; }
+        public UInt16 EdgePropertyId;
+
+        /// <summary>
+        /// The direction of the edge
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public Direction Direction;
+
+        /// <summary>
+        /// The weight of the pathelement
+        /// </summary>
+        [DataMember(IsRequired = true)]
+		public double Weight;
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Creates a new PathElementREST instance
+        /// </summary>
+        public PathElementREST(PathElement toBeTransferredResult)
+        {
+            SourceVertexId = toBeTransferredResult.SourceVertex.Id;
+            TargetVertexId = toBeTransferredResult.TargetVertex.Id;
+            EdgeId = toBeTransferredResult.Edge.Id;
+            EdgePropertyId = toBeTransferredResult.EdgePropertyId;
+            Direction = toBeTransferredResult.Direction;
+            Weight = toBeTransferredResult.Weight;
+        }
+
+        #endregion
     }
 }
 

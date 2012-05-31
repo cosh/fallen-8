@@ -1,5 +1,5 @@
 // 
-//  RangeScanSpecification.cs
+//  PathSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -34,46 +34,46 @@ using System.Runtime.Serialization;
 namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
-    ///   The range scan specification
+    ///   The path specification
     /// </summary>
     [DataContract]
-    public sealed class RangeScanSpecification
+    public sealed class PathSpecification
     {
         /// <summary>
-        ///   Left limit
+        ///   The desired path algorithm plugin name
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String LeftLimit { get; set; }
+        public String PathAlgorithmName { get; set; }
 
         /// <summary>
-        ///   Right limit
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public String RightLimit { get; set; }
-
-        /// <summary>
-        ///   The type of the literals
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public String FullQualifiedTypeName { get; set; }
-
-        /// <summary>
-        ///   Include left limit
+        ///   The maximum depth
         /// </summary>
         [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeLeft { get; set; }
+        public UInt16 MaxDepth { get; set; }
 
         /// <summary>
-        ///   Include right limit
+        ///   The maximum result count
         /// </summary>
         [DataMember(EmitDefaultValue = false)]
-        public Boolean IncludeRight { get; set; }
+        public UInt16 MaxResults { get; set; }
 
         /// <summary>
-        ///   Result type specification
+        ///   The maximum path weight
         /// </summary>
-        [DataMember(IsRequired = true)]
-        public ResultTypeSpecification ResultType { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public Double MaxPathWeight { get; set; }
+
+        /// <summary>
+        ///   The path filter specification
+        /// </summary>
+        [DataMember(EmitDefaultValue = false)]
+        public PathFilterSpecification Filter { get; set; }
+
+        /// <summary>
+        ///   The path cost specification
+        /// </summary>
+        [DataMember(EmitDefaultValue = false)]
+        public PathCostSpecification Cost { get; set; }
     }
 }
 

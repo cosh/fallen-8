@@ -110,8 +110,13 @@
     <Compile Include="Service\REST\IRESTService.cs" />
     <Compile Include="Service\REST\RESTService.cs" />
     <Compile Include="Service\REST\RESTServicePlugin.cs" />
+    <Compile Include="Service\REST\Result\PathElementREST.cs" />
+    <Compile Include="Service\REST\Result\PathREST.cs" />
     <Compile Include="Service\REST\Result\FulltextSearchResultElementREST.cs" />
     <Compile Include="Service\REST\Result\FulltextSearchResultREST.cs" />
+    <Compile Include="Service\REST\Specification\PathFilterSpecification.cs" />
+    <Compile Include="Service\REST\Specification\PathCostSpecification.cs" />
+    <Compile Include="Service\REST\Specification\PathSpecification.cs" />
     <Compile Include="Service\REST\Specification\FulltextScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\SearchDistanceSpecification.cs" />
     <Compile Include="Service\ServiceFactory.cs" />
