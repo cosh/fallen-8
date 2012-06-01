@@ -139,6 +139,11 @@
     <Compile Include="Service\REST\Specification\ScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\VertexSpecification.cs" />
     <Compile Include="Index\Range\RangeIndex.cs" />
+    <Compile Include="Service\REST\Specification\IndexSpecification.cs" />
+    <Compile Include="Service\REST\Specification\IndexDeleteSpecificaton.cs" />
+    <Compile Include="Service\REST\Specification\IndexAddToSpecification.cs" />
+    <Compile Include="Service\REST\Specification\IndexRemoveKeyFromIndexSpecification.cs" />
+    <Compile Include="Service\REST\Specification\IndexRemoveGraphelementFromIndexSpecification.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

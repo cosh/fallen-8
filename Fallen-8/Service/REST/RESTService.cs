@@ -591,9 +591,105 @@ namespace NoSQL.GraphDB.Service.REST
             return null;
         }
 
-        #endregion
+		public List<PathREST> GetPathsByVertex (string from, string to, PathSpecification definition)
+		{
+			return GetPaths(from, to, definition);
+		}
+
+
+		public bool CreateIndex (IndexSpecification definition)
+		{
+			IIndex result;
+			return _fallen8.IndexFactory.TryCreateIndex(out result, definition.IndexId, definition.IndexType, CreatePluginOptions(definition.IndexOptions));
+		}
+
+		public bool AddToIndex (IndexAddToSpecification definition)
+		{
+			IIndex idx;
+			if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
+			{
+				AGraphElement graphElement;
+				if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
+				{
+					idx.AddOrUpdate(CreateObject(definition.Key), graphElement);
+					return true; 
+				}
+
+				Logger.LogError(String.Format("Could not find graph element {0}.", definition.GraphElementId));
+				return false;
+			}
+			Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
+			return false;
+		}
+
+		public bool RemoveKeyFromIndex (IndexRemoveKeyFromIndexSpecification definition)
+		{
+			IIndex idx;
+			if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
+			{
+				return idx.TryRemoveKey(CreateObject(definition.Key));
+			}
+			Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
+			return false;
+		}
+
+		public bool RemoveGraphElementFromIndex (IndexRemoveGraphelementFromIndexSpecification definition)
+		{
+			IIndex idx;
+			if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
+			{
+				AGraphElement graphElement;
+				if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
+				{
+					idx.RemoveValue(graphElement);
+					return true; 
+				}
+
+				Logger.LogError(String.Format("Could not find graph element {0}.", definition.GraphElementId));
+				return false;
+			}
+			Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
+			return false;
+		}
+
+		public bool DeleteIndex (IndexDeleteSpecificaton definition)
+		{
+			return _fallen8.IndexFactory.TryDeleteIndex(definition.IndexId);
+		}
+
+		#endregion
 
         #region private helper
+
+		/// <summary>
+		/// Creates the plugin options.
+		/// </summary>
+		/// <returns>
+		/// The plugin options.
+		/// </returns>
+		/// <param name='options'>
+		/// Options.
+		/// </param>
+		IDictionary<string, object> CreatePluginOptions (Dictionary<string, PropertySpecification> options)
+		{
+			return options.ToDictionary(key => key.Key, value => CreateObject(value.Value));
+		}
+
+		/// <summary>
+		/// Creates the object.
+		/// </summary>
+		/// <returns>
+		/// The object.
+		/// </returns>
+		/// <param name='key'>
+		/// Key.
+		/// </param>
+		private static object CreateObject (PropertySpecification key)
+		{
+			return Convert.ChangeType(
+				key.Property,
+				Type.GetType(key.FullQualifiedTypeName,true, true));
+		}
 
         /// <summary>
         /// Creates an edge filter delegate

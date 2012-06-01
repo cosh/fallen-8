@@ -44,7 +44,7 @@ namespace NoSQL.GraphDB.Service.REST
     [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8RESTService")]
     public interface IRESTService
     {
-        #region Create/Add/Delete
+        #region Create/Add/Delete GRAPHELEMENT
 
         /// <summary>
         ///   Adds a vertex to the Fallen-8
@@ -107,6 +107,69 @@ namespace NoSQL.GraphDB.Service.REST
         void TabulaRasa();
 
         #endregion
+
+		#region Create/Add/Delete INDEX
+
+		/// <summary>
+        /// Creates an index 
+		/// </summary>
+        /// <param name="definition"> The index specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "CreateIndex")]
+        [WebInvoke(
+			UriTemplate = "/CreateIndex", 
+			Method = "POST", 
+			RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+		bool CreateIndex(IndexSpecification definition);
+
+		/// <summary>
+        /// Updates an index 
+		/// </summary>
+        /// <param name="definition"> The update specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "AddToIndex")]
+        [WebInvoke(
+			UriTemplate = "/AddToIndex", 
+			Method = "POST", 
+			RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+		bool AddToIndex(IndexAddToSpecification definition);
+
+		/// <summary>
+        /// Deletes an index 
+		/// </summary>
+        /// <param name="definition"> The index delete specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "DeleteIndex")]
+        [WebInvoke(
+			UriTemplate = "/DeleteIndex", 
+			Method = "DELETE")]
+		bool DeleteIndex(IndexDeleteSpecificaton definition);
+
+		/// <summary>
+        /// Deletes a key from an index 
+		/// </summary>
+        /// <param name="definition"> The index delete specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "RemoveKeyFromIndex")]
+        [WebInvoke(
+			UriTemplate = "/Index/DeleteKey", 
+			Method = "DELETE")]
+		bool RemoveKeyFromIndex (IndexRemoveKeyFromIndexSpecification definition);
+
+		/// <summary>
+        /// Deletes a graph element from an index 
+		/// </summary>
+        /// <param name="definition"> The index delete specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "RemoveGraphElementFromIndex")]
+        [WebInvoke(
+			UriTemplate = "/Index/DeleteGraphElement", 
+			Method = "DELETE")]
+		bool RemoveGraphElementFromIndex (IndexRemoveGraphelementFromIndexSpecification definition);
+
+		#endregion
 
         #region Read
 
@@ -371,6 +434,19 @@ namespace NoSQL.GraphDB.Service.REST
             UriTemplate = "/Paths?from={from}&to={to}",
             Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         List<PathREST> GetPaths(String from, String to, PathSpecification definition);
+
+
+		/// <summary>
+        ///   Returns all vertex properties
+        /// </summary>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <returns> PropertyName -> PropertyValue </returns>
+        [OperationContract(Name = "PathFromVertex")]
+        [WebInvoke(
+			UriTemplate = "/Vertices/{vertexIdentifier}/Paths?to={to}", 
+			Method = "POST", RequestFormat = WebMessageFormat.Json, 
+			ResponseFormat = WebMessageFormat.Json)]
+        List<PathREST> GetPathsByVertex(String vertexIdentifier, String to, PathSpecification definition);
 
         #endregion
     }
