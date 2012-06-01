@@ -121,7 +121,7 @@ namespace NoSQL.GraphDB.Service.REST
 			Method = "POST", 
 			RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-		bool CreateIndex(IndexSpecification definition);
+		bool CreateIndex(PluginSpecification definition);
 
 		/// <summary>
         /// Updates an index 
@@ -168,6 +168,35 @@ namespace NoSQL.GraphDB.Service.REST
 			UriTemplate = "/Index/DeleteGraphElement", 
 			Method = "DELETE")]
 		bool RemoveGraphElementFromIndex (IndexRemoveGraphelementFromIndexSpecification definition);
+
+		#endregion
+
+		#region services
+
+		/// <summary>
+        /// Starts a service 
+		/// </summary>
+        /// <param name="definition"> The service specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "StartService")]
+        [WebInvoke(
+			UriTemplate = "/StartService", 
+			Method = "POST", 
+			RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+		bool CreateService(PluginSpecification definition);
+
+		/// <summary>
+        /// Deletes a service 
+		/// </summary>
+        /// <param name="definition"> The service delete specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "DeleteService")]
+        [WebInvoke(
+			UriTemplate = "/DeleteService", 
+			Method = "DELETE")]
+		bool DeleteService(ServiceDeleteSpecificaton definition);
+
 
 		#endregion
 

@@ -52,7 +52,7 @@ namespace NoSQL.GraphDB.Service
         private readonly NoSQL.GraphDB.Fallen8 _fallen8;
 
         /// <summary>
-        ///   The created indices.
+        ///   The created services.
         /// </summary>
         public IDictionary<String, IService> Services;
 

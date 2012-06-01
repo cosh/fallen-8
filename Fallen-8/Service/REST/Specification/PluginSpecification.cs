@@ -1,5 +1,5 @@
 // 
-//  IndexSpecification.cs
+//  PluginSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -35,28 +35,28 @@ using System.Runtime.Serialization;
 namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
-    ///   The index creation specification
+    ///   The plugin creation specification
     /// </summary>
     [DataContract]
-    public sealed class IndexSpecification
+    public sealed class PluginSpecification
     {
         /// <summary>
-        ///   The unique index identifier
+        ///   The unique plugin identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String IndexId { get; set; }
+        public String UniqueId { get; set; }
 
 		/// <summary>
-        ///   The name of the index type
+        ///   The name of the plugin type
         /// </summary>
         [DataMember(IsRequired = true)]
-        public String IndexType { get; set; }
+        public String PluginType { get; set; }
 
 		/// <summary>
-        ///   The specification of the index options
+        ///   The specification of the plugin options
         /// </summary>
         [DataMember]
-        public Dictionary<String, PropertySpecification> IndexOptions { get; set; }
+        public Dictionary<String, PropertySpecification> PluginOptions { get; set; }
     }
 }
 

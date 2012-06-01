@@ -597,10 +597,10 @@ namespace NoSQL.GraphDB.Service.REST
 		}
 
 
-		public bool CreateIndex (IndexSpecification definition)
+		public bool CreateIndex (PluginSpecification definition)
 		{
 			IIndex result;
-			return _fallen8.IndexFactory.TryCreateIndex(out result, definition.IndexId, definition.IndexType, CreatePluginOptions(definition.IndexOptions));
+			return _fallen8.IndexFactory.TryCreateIndex(out result, definition.UniqueId, definition.PluginType, CreatePluginOptions(definition.PluginOptions));
 		}
 
 		public bool AddToIndex (IndexAddToSpecification definition)
@@ -655,6 +655,17 @@ namespace NoSQL.GraphDB.Service.REST
 		public bool DeleteIndex (IndexDeleteSpecificaton definition)
 		{
 			return _fallen8.IndexFactory.TryDeleteIndex(definition.IndexId);
+		}
+
+		public bool CreateService (PluginSpecification definition)
+		{
+			IService service;
+			return _fallen8.ServiceFactory.TryAddService(out service, definition.PluginType, definition.UniqueId, CreatePluginOptions(definition.PluginOptions));
+		}
+
+		public bool DeleteService (ServiceDeleteSpecificaton definition)
+		{
+			return _fallen8.ServiceFactory.Services.Remove(definition.ServiceId);
 		}
 
 		#endregion
