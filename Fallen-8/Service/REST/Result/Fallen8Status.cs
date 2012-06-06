@@ -32,7 +32,7 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Result
 {
     /// <summary>
     ///   The Fallen-8 status
