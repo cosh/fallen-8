@@ -110,10 +110,12 @@
     <Compile Include="Service\REST\IRESTService.cs" />
     <Compile Include="Service\REST\RESTService.cs" />
     <Compile Include="Service\REST\RESTServicePlugin.cs" />
+    <Compile Include="Service\REST\Result\Fallen8Status.cs" />
     <Compile Include="Service\REST\Result\PathElementREST.cs" />
     <Compile Include="Service\REST\Result\PathREST.cs" />
     <Compile Include="Service\REST\Result\FulltextSearchResultElementREST.cs" />
     <Compile Include="Service\REST\Result\FulltextSearchResultREST.cs" />
+    <Compile Include="Service\REST\Result\RESTProperties.cs" />
     <Compile Include="Service\REST\Specification\PathFilterSpecification.cs" />
     <Compile Include="Service\REST\Specification\PathCostSpecification.cs" />
     <Compile Include="Service\REST\Specification\PathSpecification.cs" />
@@ -123,13 +125,11 @@
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
-    <Compile Include="Service\REST\Fallen8Status.cs" />
     <Compile Include="Service\REST\Ressource\Frontend.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Frontend.resx</DependentUpon>
     </Compile>
-    <Compile Include="Service\REST\RESTProperties.cs" />
     <Compile Include="Helper\Fallen8Pool.cs" />
     <Compile Include="Service\REST\Specification\EdgeSpecification.cs" />
     <Compile Include="Service\REST\Specification\LiteralSpecification.cs" />
