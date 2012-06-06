@@ -274,7 +274,7 @@ namespace NoSQL.GraphDB.Service.REST
 
                 binding.ReaderQuotas = readerQuotas;
 
-                var se = _host.AddServiceEndpoint(typeof (IGraphService), binding, _restServiceAddress);
+                var se = _host.AddServiceEndpoint(typeof (IAdminService), binding, _restServiceAddress);
                 var webBehav = new WebHttpBehavior
                                    {
                                        HelpEnabled = true

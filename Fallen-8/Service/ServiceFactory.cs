@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Framework.Serialization;
 using NoSQL.GraphDB.Error;
 using NoSQL.GraphDB.Helper;
@@ -73,6 +74,44 @@ namespace NoSQL.GraphDB.Service
         #endregion
 
         #region public methods
+
+        /// <summary>
+        /// Helper method to start the graph service
+        /// </summary>
+        /// <param name="iPAddress">The IP address</param>
+        /// <param name="port">The port</param>
+        public void StartGraphService(IPAddress iPAddress, ushort port)
+        {
+            var restServiceProperties = new Dictionary<string, object>
+                                     {
+                                         {"IPAddress", iPAddress},
+                                         {"Port", port}
+                                     };
+            IService graphService;
+            _fallen8.ServiceFactory.TryAddService(out graphService, "Fallen-8_Graph_Service", "Graph service", restServiceProperties);
+            graphService.TryStart();
+        }
+
+        /// <summary>
+        /// Helper method to start the admin service
+        /// </summary>
+        /// <param name="iPAddress">The IP address</param>
+        /// <param name="port">The port</param>
+        /// <param name="username">The user name</param>
+        /// <param name="password">The password</param>
+        public void StartAdminService(IPAddress iPAddress, ushort port, string username, string password)
+        {
+            var restServiceProperties = new Dictionary<string, object>
+                                     {
+                                         {"IPAddress", iPAddress},
+                                         {"Port", port},
+                                         {"Username", username},
+                                         {"Password", password}
+                                     };
+            IService adminService;
+            _fallen8.ServiceFactory.TryAddService(out adminService, "Fallen-8_Admin_Service", "Admin service", restServiceProperties);
+            adminService.TryStart();
+        }
 
         /// <summary>
         ///   Gets the available service plugins.
