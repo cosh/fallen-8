@@ -107,6 +107,10 @@
     <Compile Include="Model\AGraphElement.cs" />
     <Compile Include="Index\DictionaryIndex.cs" />
     <Compile Include="Service\IService.cs" />
+    <Compile Include="Service\REST\AdminServicePlugin.cs" />
+    <Compile Include="Service\REST\ServiceHelper.cs" />
+    <Compile Include="Service\REST\AdminService.cs" />
+    <Compile Include="Service\REST\IAdminService.cs" />
     <Compile Include="Service\REST\IRESTService.cs" />
     <Compile Include="Service\REST\RESTService.cs" />
     <Compile Include="Service\REST\RESTServicePlugin.cs" />

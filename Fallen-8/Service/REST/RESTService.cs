@@ -66,36 +66,6 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         private readonly NoSQL.GraphDB.Fallen8 _fallen8;
 
-        /// <summary>
-        ///   The ressources.
-        /// </summary>
-        private Dictionary<String, MemoryStream> _ressources;
-
-        /// <summary>
-        ///   The html befor the code injection
-        /// </summary>
-        private String _frontEndPre;
-
-        /// <summary>
-        ///   The html after the code injection
-        /// </summary>
-        private String _frontEndPost;
-
-        /// <summary>
-        /// The Fallen-8 save path
-        /// </summary>
-        private String _savePath;
-
-        /// <summary>
-        /// The Fallen-8 save file
-        /// </summary>
-        private String _saveFile;
-
-        /// <summary>
-        /// The optimal number of partitions
-        /// </summary>
-        private UInt32 _optimalNumberOfPartitions;
-
         #endregion
 
         #region Constructor
@@ -104,15 +74,9 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Initializes a new instance of the RESTService class.
         /// </summary>
         /// <param name='fallen8'> Fallen-8. </param>
-        public RESTService(NoSQL.GraphDB.Fallen8 fallen8)
+        public RESTService(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
-            LoadFrontend();
-
-            _saveFile = "Temp.f8s";
-            _savePath = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + _saveFile;
-
-            _optimalNumberOfPartitions = Convert.ToUInt32(Environment.ProcessorCount * 3 / 2);
         }
 
         #endregion
@@ -211,121 +175,7 @@ namespace NoSQL.GraphDB.Service.REST
             }
             return null;
         }
-
-        public void Trim()
-        {
-            _fallen8.Trim();
-        }
-
-        public StatusREST Status()
-        {
-			var freeBytesOfMemory = GetFreeMemory();
-			var totalBytesOfMemoryUsed = GetTotalMemory() - freeBytesOfMemory;
-
-            var vertexCount = _fallen8.VertexCount;
-            var edgeCount = _fallen8.EdgeCount;
-
-            IEnumerable<String> availableIndices;
-            PluginFactory.TryGetAvailablePlugins<IIndex>(out availableIndices);
-
-            IEnumerable<String> availablePathAlgos;
-            PluginFactory.TryGetAvailablePlugins<IShortestPathAlgorithm>(out availablePathAlgos);
-
-            IEnumerable<String> availableServices;
-            PluginFactory.TryGetAvailablePlugins<IService>(out availableServices);
-
-            return new StatusREST
-                       {
-                           AvailableIndexPlugins = new List<String>(availableIndices),
-                           AvailablePathPlugins = new List<String>(availablePathAlgos),
-                           AvailableServicePlugins = new List<String>(availableServices),
-                           EdgeCount = edgeCount,
-                           VertexCount = vertexCount,
-                           UsedMemory = totalBytesOfMemoryUsed,
-                           FreeMemory = freeBytesOfMemory
-                       };
-        }
-
-        public Stream GetFrontend()
-        {
-            if (WebOperationContext.Current != null)
-            {
-                var baseUri = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri;
-
-                WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
-
-                var sb = new StringBuilder();
-
-                sb.Append(_frontEndPre);
-                sb.Append(Environment.NewLine);
-                sb.AppendLine("var baseUri = \"" + baseUri + "\";" + Environment.NewLine);
-                sb.Append(_frontEndPost);
-
-                return new MemoryStream(Encoding.UTF8.GetBytes(sb.ToString()));
-            }
-
-            return new MemoryStream(Encoding.UTF8.GetBytes("Sorry, no frontend available."));
-        }
-
-        public void ReloadFrontend()
-        {
-            LoadFrontend();
-        }
-
-        public Stream GetFrontendRessources(String ressourceName)
-        {
-            MemoryStream ressourceStream;
-            if (_ressources.TryGetValue(ressourceName, out ressourceStream))
-            {
-                var result = new MemoryStream();
-                var buffer = new byte[32768];
-                int read;
-                while ((read = ressourceStream.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    result.Write(buffer, 0, read);
-                }
-                ressourceStream.Position = 0;
-                result.Position = 0;
-
-                if (WebOperationContext.Current != null)
-                {
-                    var extension = ressourceName.Split('.').Last();
-
-                    switch (extension)
-                    {
-                        case "html":
-                        case "htm":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
-                            break;
-                        case "png":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "image/png";
-                            break;
-                        case "css":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "text/css";
-                            break;
-                        case "gif":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "image/gif";
-                            break;
-                        case "ico":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "image/ico";
-                            break;
-                        case "swf":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-shockwave-flash";
-                            break;
-                        case "js":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "text/javascript";
-                            break;
-                        default:
-                            throw new ApplicationException(String.Format("File type {0} not supported", extension));
-                    }
-                }
-
-                return result;
-            }
-
-            return null;
-        }
-
+        
         public IEnumerable<int> GraphScan(String propertyIdString, ScanSpecification definition)
         {
             #region initial checks
@@ -446,16 +296,6 @@ namespace NoSQL.GraphDB.Service.REST
 			return null;
 		}
 
-        public void Load(string startServices)
-        {
-            _fallen8.Load(FindLatestFallen8(), Convert.ToBoolean(startServices));
-        }
-
-        public void Save()
-        {
-            _fallen8.Save(_savePath, _optimalNumberOfPartitions);
-        }
-
 		public bool TryAddProperty (string graphElementIdString, string propertyIdString, PropertySpecification definition)
 		{
 			var graphElementId = Convert.ToInt32(graphElementIdString);
@@ -482,27 +322,7 @@ namespace NoSQL.GraphDB.Service.REST
 
 			return _fallen8.TryRemoveGraphElement(graphElementId);
 		}
-
-		public void TabulaRasa ()
-		{
-			_fallen8.TabulaRasa();
-		}
-
-		public uint VertexCount ()
-		{
-			return _fallen8.VertexCount;
-		}
-
-		public uint EdgeCount ()
-		{
-			return _fallen8.EdgeCount;
-		}
-
-		public UInt64 FreeMem ()
-		{
-			return GetFreeMemory();
-		}
-
+		
 		public uint GetInDegree (string vertexIdentifier)
 		{
 			VertexModel vertex;
@@ -596,11 +416,10 @@ namespace NoSQL.GraphDB.Service.REST
 			return GetPaths(from, to, definition);
 		}
 
-
 		public bool CreateIndex (PluginSpecification definition)
 		{
 			IIndex result;
-			return _fallen8.IndexFactory.TryCreateIndex(out result, definition.UniqueId, definition.PluginType, CreatePluginOptions(definition.PluginOptions));
+			return _fallen8.IndexFactory.TryCreateIndex(out result, definition.UniqueId, definition.PluginType, ServiceHelper.CreatePluginOptions(definition.PluginOptions));
 		}
 
 		public bool AddToIndex (IndexAddToSpecification definition)
@@ -611,7 +430,7 @@ namespace NoSQL.GraphDB.Service.REST
 				AGraphElement graphElement;
 				if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
 				{
-					idx.AddOrUpdate(CreateObject(definition.Key), graphElement);
+                    idx.AddOrUpdate(ServiceHelper.CreateObject(definition.Key), graphElement);
 					return true; 
 				}
 
@@ -627,7 +446,7 @@ namespace NoSQL.GraphDB.Service.REST
 			IIndex idx;
 			if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
 			{
-				return idx.TryRemoveKey(CreateObject(definition.Key));
+                return idx.TryRemoveKey(ServiceHelper.CreateObject(definition.Key));
 			}
 			Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
 			return false;
@@ -657,50 +476,9 @@ namespace NoSQL.GraphDB.Service.REST
 			return _fallen8.IndexFactory.TryDeleteIndex(definition.IndexId);
 		}
 
-		public bool CreateService (PluginSpecification definition)
-		{
-			IService service;
-			return _fallen8.ServiceFactory.TryAddService(out service, definition.PluginType, definition.UniqueId, CreatePluginOptions(definition.PluginOptions));
-		}
-
-		public bool DeleteService (ServiceDeleteSpecificaton definition)
-		{
-			return _fallen8.ServiceFactory.Services.Remove(definition.ServiceId);
-		}
-
 		#endregion
 
         #region private helper
-
-		/// <summary>
-		/// Creates the plugin options.
-		/// </summary>
-		/// <returns>
-		/// The plugin options.
-		/// </returns>
-		/// <param name='options'>
-		/// Options.
-		/// </param>
-		IDictionary<string, object> CreatePluginOptions (Dictionary<string, PropertySpecification> options)
-		{
-			return options.ToDictionary(key => key.Key, value => CreateObject(value.Value));
-		}
-
-		/// <summary>
-		/// Creates the object.
-		/// </summary>
-		/// <returns>
-		/// The object.
-		/// </returns>
-		/// <param name='key'>
-		/// Key.
-		/// </param>
-		private static object CreateObject (PropertySpecification key)
-		{
-			return Convert.ChangeType(
-				key.Property,
-				Type.GetType(key.FullQualifiedTypeName,true, true));
-		}
 
         /// <summary>
         /// Creates an edge filter delegate
@@ -708,7 +486,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="pathFilterSpecification">Filter specification.</param>
         /// <param name="engine">Jint engine</param>
         /// <returns>The delegate</returns>
-        private PathDelegates.EdgeFilter CreateEdgeFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        private static PathDelegates.EdgeFilter CreateEdgeFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Edge))
             {
@@ -735,7 +513,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="pathFilterSpecification">Filter specification.</param>
         /// <param name="engine">Jint engine</param>
         /// <returns>The delegate</returns>
-        private PathDelegates.VertexFilter CreateVertexFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        private static PathDelegates.VertexFilter CreateVertexFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Vertex))
             {
@@ -763,7 +541,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="pathFilterSpecification">Filter specification.</param>
         /// <param name="engine">Jint engine</param>
         /// <returns>The delegate</returns>
-        private PathDelegates.EdgePropertyFilter CreateEdgePropertyFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        private static PathDelegates.EdgePropertyFilter CreateEdgePropertyFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.EdgeProperty))
             {
@@ -785,7 +563,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="pathCostSpecification">Cost specificateion</param>
         /// <param name="engine">Jint engine</param>
         /// <returns>The delegate</returns>
-        private PathDelegates.VertexCost CreateVertexCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
+        private static PathDelegates.VertexCost CreateVertexCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
         {
             if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Vertex))
             {
@@ -813,7 +591,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="pathCostSpecification">Cost specificateion</param>
         /// <param name="engine">Jint engine</param>
         /// <returns>The delegate</returns>
-        private PathDelegates.EdgeCost CreateEdgeCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
+        private static PathDelegates.EdgeCost CreateEdgeCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
         {
             if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Edge))
             {
@@ -831,75 +609,6 @@ namespace NoSQL.GraphDB.Service.REST
                 };
             }
             return null;
-        }
-
-        /// <summary>
-        /// Get the free memory of the system
-        /// </summary>
-        /// <returns>Free memory in bytes</returns>
-		private UInt64 GetFreeMemory ()
-		{
-			#if __MonoCS__
-    			//mono specific code
-				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
-            	var totalMemory = (ulong)pc.RawValue;
-
-				Process.GetCurrentProcess().Refresh();
-            	var usedMemory = (ulong)Process.GetCurrentProcess().WorkingSet64;
-
-				return totalMemory - usedMemory;
-			#else
-                var freeMem = new PerformanceCounter("Memory", "Available Bytes");
-            	return Convert.ToUInt64(freeMem.NextValue());
-			#endif
-		}
-
-        /// <summary>
-        /// Gets the total memory of the system
-        /// </summary>
-        /// <returns>Total memory in bytes</returns>
-		private UInt64 GetTotalMemory ()
-		{
-			#if __MonoCS__
-    			//mono specific code
-				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
-            	return (ulong)pc.RawValue;
-			#else
-            var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();	
-				return computerInfo.TotalPhysicalMemory;
-			#endif
-		}
-
-        /// <summary>
-        /// Searches for the latest fallen-8
-        /// </summary>
-        /// <returns></returns>
-        private string FindLatestFallen8()
-        {
-            var versions = System.IO.Directory.EnumerateFiles(Environment.CurrentDirectory,
-                                               _saveFile + Constants.VersionSeparator + "*")
-                                               .ToList();
-
-            if (versions.Count > 0)
-            {
-                var fileToPathMapper = versions
-                    .Select(path => path.Split(System.IO.Path.DirectorySeparatorChar))
-                    .Where(_ => !_.Last().Contains(Constants.GraphElementsSaveString))
-                    .Where(_ => !_.Last().Contains(Constants.IndexSaveString))
-                    .Where(_ => !_.Last().Contains(Constants.ServiceSaveString))
-                    .ToDictionary(key => key.Last(), value => value.Aggregate((a, b) => a + System.IO.Path.DirectorySeparatorChar + b));
-
-                var latestRevision = fileToPathMapper
-                    .Select(file => file.Key.Split(Constants.VersionSeparator)[1])
-                    .Select(revisionString => DateTime.FromBinary(Convert.ToInt64(revisionString)))
-                    .OrderByDescending(revision => revision)
-                    .First()
-                    .ToBinary()
-                    .ToString(CultureInfo.InvariantCulture);
-
-                return fileToPathMapper.First(_ => _.Key.Contains(latestRevision)).Value;
-            }
-            return _savePath;
         }
 
         /// <summary>
@@ -926,60 +635,7 @@ namespace NoSQL.GraphDB.Service.REST
                     throw new ArgumentOutOfRangeException("resultTypeSpecification");
             }
         }
-
-        /// <summary>
-        ///   Load the frontend
-        /// </summary>
-        private void LoadFrontend()
-        {
-            if (_ressources != null)
-            {
-                foreach (var memoryStream in _ressources)
-                {
-                    memoryStream.Value.Dispose();
-                }
-            }
-
-            _ressources = FindRessources();
-            _frontEndPre = Frontend.Pre;
-            _frontEndPost = Frontend.Post;
-        }
-
-        /// <summary>
-        ///   Find all ressources
-        /// </summary>
-        /// <returns> Ressources </returns>
-        private static Dictionary<string, MemoryStream> FindRessources()
-        {
-            var ressourceDirectory = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + "Service" +
-                                     System.IO.Path.DirectorySeparatorChar + "REST" +
-                                     System.IO.Path.DirectorySeparatorChar + "Ressource" +
-                                     System.IO.Path.DirectorySeparatorChar;
-
-            return Directory.EnumerateFiles(ressourceDirectory)
-                .ToDictionary(
-                    key => key.Split(System.IO.Path.DirectorySeparatorChar).Last(),
-                    CreateMemoryStreamFromFile);
-        }
-
-        /// <summary>
-        ///   Creates a memory stream from a file
-        /// </summary>
-        /// <param name="value"> The path of the file </param>
-        /// <returns> MemoryStream </returns>
-        private static MemoryStream CreateMemoryStreamFromFile(string value)
-        {
-            MemoryStream result;
-
-            using (var file = File.OpenRead(value))
-            {
-                var reader = new BinaryReader(file);
-                result = new MemoryStream(reader.ReadBytes((Int32) file.Length));
-            }
-
-            return result;
-        }
-
+       
         /// <summary>
         ///   Generates the properties.
         /// </summary>

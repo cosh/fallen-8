@@ -99,13 +99,6 @@ namespace NoSQL.GraphDB.Service.REST
 		           ResponseFormat = WebMessageFormat.Json)]
         Boolean TryRemoveGraphElement(string graphElementId);
 
-		/// <summary>
-        /// Put the database in its initial state (deletes all vertices and edges).
-        /// </summary>
-        [OperationContract(Name = "TabulaRasa")]
-		[WebInvoke(UriTemplate = "/TabulaRasa", Method = "DELETE")]
-        void TabulaRasa();
-
         #endregion
 
 		#region Create/Add/Delete INDEX
@@ -168,35 +161,6 @@ namespace NoSQL.GraphDB.Service.REST
 			UriTemplate = "/Index/DeleteGraphElement", 
 			Method = "DELETE")]
 		bool RemoveGraphElementFromIndex (IndexRemoveGraphelementFromIndexSpecification definition);
-
-		#endregion
-
-		#region services
-
-		/// <summary>
-        /// Starts a service 
-		/// </summary>
-        /// <param name="definition"> The service specification </param>
-        /// <returns> True for success otherwise false </returns>
-        [OperationContract(Name = "StartService")]
-        [WebInvoke(
-			UriTemplate = "/StartService", 
-			Method = "POST", 
-			RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-		bool CreateService(PluginSpecification definition);
-
-		/// <summary>
-        /// Deletes a service 
-		/// </summary>
-        /// <param name="definition"> The service delete specification </param>
-        /// <returns> True for success otherwise false </returns>
-        [OperationContract(Name = "DeleteService")]
-        [WebInvoke(
-			UriTemplate = "/DeleteService", 
-			Method = "DELETE")]
-		bool DeleteService(ServiceDeleteSpecificaton definition);
-
 
 		#endregion
 
@@ -304,77 +268,6 @@ namespace NoSQL.GraphDB.Service.REST
 
         #endregion
 
-        #region misc
-
-        /// <summary>
-        ///   Trims the database
-        /// </summary>
-        [OperationContract(Name = "Trim")]
-        [WebGet(UriTemplate = "/Trim", ResponseFormat = WebMessageFormat.Json)]
-        void Trim();
-
-        /// <summary>
-        ///   Status of the database
-        /// </summary>
-        /// <returns> The status </returns>
-        [OperationContract(Name = "Status")]
-        [WebGet(UriTemplate = "/Status", ResponseFormat = WebMessageFormat.Json)]
-        StatusREST Status();
-
-		/// <summary>
-        /// Gets the number of vertices
-        /// </summary>
-        /// <returns> Number of vertices </returns>
-        [OperationContract(Name = "VertexCount")]
-        [WebGet(UriTemplate = "/VertexCount", ResponseFormat = WebMessageFormat.Json)]
-        UInt32 VertexCount();
-
-		/// <summary>
-        /// Gets the number of edges
-        /// </summary>
-        /// <returns> Number of edges </returns>
-        [OperationContract(Name = "EdgeCount")]
-        [WebGet(UriTemplate = "/EdgeCount", ResponseFormat = WebMessageFormat.Json)]
-        UInt32 EdgeCount();
-
-		/// <summary>
-        /// Gets the number of free bytes in RAM
-        /// </summary>
-        /// <returns> Number of free bytes </returns>
-        [OperationContract(Name = "FreeMem")]
-        [WebGet(UriTemplate = "/FreeMem", ResponseFormat = WebMessageFormat.Json)]
-        UInt64 FreeMem();
-
-        #endregion
-
-        #region frontend
-
-        /// <summary>
-        ///   Gets the frontend.
-        /// </summary>
-        /// <returns> The frontend. </returns>
-        [OperationContract(Name = "Frontend")]
-        [WebGet(UriTemplate = "/Frontend")]
-        Stream GetFrontend();
-
-        /// <summary>
-        ///   Reload the frontend.
-        /// </summary>
-        [OperationContract(Name = "ReloadFrontend")]
-        [WebGet(UriTemplate = "/ReloadFrontend")]
-        void ReloadFrontend();
-
-        /// <summary>
-        ///   Gets the frontend ressources.
-        /// </summary>
-        /// <returns> The frontend ressources. </returns>
-        /// <param name='ressourceName'> Ressource name. </param>
-        [OperationContract(Name = "FrontendRessource")]
-        [WebGet(UriTemplate = "/Frontend/Ressource/{ressourceName}")]
-        Stream GetFrontendRessources(String ressourceName);
-
-        #endregion
-
         #region scan
 
         /// <summary>
@@ -434,25 +327,6 @@ namespace NoSQL.GraphDB.Service.REST
 
         #endregion
 
-        #region persistence
-
-        /// <summary>
-        ///   Loads a Fallen-8
-        /// </summary>
-        /// <param name="startServices"> Start the services of the loaded save point? </param>
-        [OperationContract(Name = "Load")]
-		[WebGet(UriTemplate = "/Load?startServices={startServices}")]
-        void Load(string startServices);
-
-        /// <summary>
-        ///   Saves the Fallen-8
-        /// </summary>
-        [OperationContract(Name = "Save")]
-        [WebGet(UriTemplate = "/Save")]
-        void Save();
-
-        #endregion
-
         #region path
 
         /// <summary>
@@ -465,10 +339,12 @@ namespace NoSQL.GraphDB.Service.REST
         List<PathREST> GetPaths(String from, String to, PathSpecification definition);
 
 
-		/// <summary>
+        /// <summary>
         ///   Returns all vertex properties
         /// </summary>
         /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <param name="to">The destination</param>
+        /// <param name="definition">The definition of the path traversal</param>
         /// <returns> PropertyName -> PropertyValue </returns>
         [OperationContract(Name = "PathFromVertex")]
         [WebInvoke(
