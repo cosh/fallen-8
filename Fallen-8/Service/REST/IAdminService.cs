@@ -38,9 +38,9 @@ using NoSQL.GraphDB.Service.REST.Specification;
 namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
-    ///   The Fallen-8 REST service.
+    ///   The Fallen-8 admin service.
     /// </summary>
-    [ServiceContract(Namespace = "Fallen-8", Name = "Fallen admin service")]
+    [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8 admin service")]
     public interface IAdminService
     {
 		#region services

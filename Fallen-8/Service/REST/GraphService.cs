@@ -1,5 +1,5 @@
 // 
-//  RESTService.cs
+//  GraphService.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -57,24 +57,24 @@ namespace NoSQL.GraphDB.Service.REST
     ///   Fallen-8 REST service.
     /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
-    public sealed class RESTService : IRESTService, IDisposable
+    public sealed class GraphService : IGraphService, IDisposable
     {
         #region Data
 
         /// <summary>
         ///   The internal Fallen-8 instance
         /// </summary>
-        private readonly NoSQL.GraphDB.Fallen8 _fallen8;
+        private readonly Fallen8 _fallen8;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        ///   Initializes a new instance of the RESTService class.
+        ///   Initializes a new instance of the GraphService class.
         /// </summary>
         /// <param name='fallen8'> Fallen-8. </param>
-        public RESTService(Fallen8 fallen8)
+        public GraphService(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
         }
@@ -90,7 +90,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         #endregion
 
-        #region IRESTService implementation
+        #region IGraphService implementation
 
         public int AddVertex(VertexSpecification definition)
         {

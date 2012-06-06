@@ -74,7 +74,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <summary>
         ///   Service description
         /// </summary>
-        private const String _description = "The Fallen-8 plugin that starts the REST maintenance service";
+        private const String _description = "The Fallen-8 plugin that starts the admin service";
 
         /// <summary>
         /// The URI-Pattern of the service
@@ -274,7 +274,7 @@ namespace NoSQL.GraphDB.Service.REST
 
                 binding.ReaderQuotas = readerQuotas;
 
-                var se = _host.AddServiceEndpoint(typeof (IRESTService), binding, _restServiceAddress);
+                var se = _host.AddServiceEndpoint(typeof (IGraphService), binding, _restServiceAddress);
                 var webBehav = new WebHttpBehavior
                                    {
                                        HelpEnabled = true

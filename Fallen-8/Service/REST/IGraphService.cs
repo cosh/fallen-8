@@ -1,5 +1,5 @@
 // 
-//  IRESTService.cs
+//  IGraphService.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -39,10 +39,10 @@ using NoSQL.GraphDB.Service.REST.Specification;
 namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
-    ///   The Fallen-8 REST service.
+    ///   The Fallen-8 graph service.
     /// </summary>
-    [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8RESTService")]
-    public interface IRESTService
+    [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8 graph service")]
+    public interface IGraphService
     {
         #region Create/Add/Delete GRAPHELEMENT
 

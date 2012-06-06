@@ -1,5 +1,5 @@
 // 
-//  RESTServicePlugin.cs
+//  GraphServicePlugin.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -42,7 +42,7 @@ namespace NoSQL.GraphDB.Service.REST
     /// <summary>
     ///   Fallen-8 REST service.
     /// </summary>
-    public sealed class RESTServicePlugin : IService
+    public sealed class GraphServicePlugin : IService
     {
         #region data
 
@@ -64,7 +64,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <summary>
         ///   The actual service
         /// </summary>
-        private RESTService _service;
+        private GraphService _service;
 
         /// <summary>
         ///   The host that runs the service
@@ -74,7 +74,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <summary>
         ///   Service description
         /// </summary>
-        private const String _description = "The Fallen-8 plugin that starts the REST service";
+        private const String _description = "The Fallen-8 plugin that starts the graph service";
 
         /// <summary>
         /// The URI-Pattern of the service
@@ -184,7 +184,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         public void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
         {
-            _uriPattern = "Fallen8";
+            _uriPattern = "Graph";
             if (parameter != null && parameter.ContainsKey("URIPattern"))
                 _uriPattern = (String)Convert.ChangeType(parameter["URIPattern"], typeof(String));
 
@@ -201,7 +201,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         public string PluginName
         {
-            get { return "Fallen-8_REST_Service"; }
+            get { return "Fallen-8_Graph_Service"; }
         }
 
         public Type PluginCategory
@@ -244,7 +244,7 @@ namespace NoSQL.GraphDB.Service.REST
             if (!_uri.IsWellFormedOriginalString())
                 throw new Exception("The URI Pattern is not well formed!");
 
-            _service = new RESTService(fallen8);
+            _service = new GraphService(fallen8);
 
             _host = new ServiceHost(_service, _uri)
                         {
@@ -274,7 +274,7 @@ namespace NoSQL.GraphDB.Service.REST
 
                 binding.ReaderQuotas = readerQuotas;
 
-                var se = _host.AddServiceEndpoint(typeof (IRESTService), binding, _restServiceAddress);
+                var se = _host.AddServiceEndpoint(typeof (IGraphService), binding, _restServiceAddress);
                 var webBehav = new WebHttpBehavior
                                    {
                                        HelpEnabled = true
