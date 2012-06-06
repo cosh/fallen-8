@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  StatusREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -38,7 +38,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
     ///   The Fallen-8 status
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class StatusREST
     {
         /// <summary>
         ///   The available memory

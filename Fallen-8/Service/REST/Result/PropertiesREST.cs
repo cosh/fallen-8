@@ -1,5 +1,5 @@
 // 
-//  RESTProperties.cs
+//  PropertiesREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -38,7 +38,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
     ///   The Fallen-8 REST properties
     /// </summary>
     [DataContract]
-    public sealed class RESTProperties
+    public sealed class PropertiesREST
     {
         /// <summary>
         ///   The identifier

@@ -158,12 +158,12 @@ namespace NoSQL.GraphDB.Service.REST
                                     definition.CreationDate, GenerateProperties(definition.Properties)).Id;
         }
 
-        public RESTProperties GetAllVertexProperties(string vertexIdentifier)
+        public PropertiesREST GetAllVertexProperties(string vertexIdentifier)
         {
             return GetGraphElementProperties(vertexIdentifier);
         }
 
-        public RESTProperties GetAllEdgeProperties(string edgeIdentifier)
+        public PropertiesREST GetAllEdgeProperties(string edgeIdentifier)
         {
             return GetGraphElementProperties(edgeIdentifier);
         }
@@ -217,7 +217,7 @@ namespace NoSQL.GraphDB.Service.REST
             _fallen8.Trim();
         }
 
-        public Fallen8Status Status()
+        public StatusREST Status()
         {
 			var freeBytesOfMemory = GetFreeMemory();
 			var totalBytesOfMemoryUsed = GetTotalMemory() - freeBytesOfMemory;
@@ -234,7 +234,7 @@ namespace NoSQL.GraphDB.Service.REST
             IEnumerable<String> availableServices;
             PluginFactory.TryGetAvailablePlugins<IService>(out availableServices);
 
-            return new Fallen8Status
+            return new StatusREST
                        {
                            AvailableIndexPlugins = new List<String>(availableIndices),
                            AvailablePathPlugins = new List<String>(availablePathAlgos),
@@ -1018,12 +1018,12 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         /// <returns> The graph element properties. </returns>
         /// <param name='vertexIdentifier'> Vertex identifier. </param>
-        private RESTProperties GetGraphElementProperties(string vertexIdentifier)
+        private PropertiesREST GetGraphElementProperties(string vertexIdentifier)
         {
             AGraphElement vertex;
             if (_fallen8.TryGetGraphElement(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
-                return new RESTProperties
+                return new PropertiesREST
                            {
                                Id = vertex.Id,
                                CreationDate = DateHelper.GetDateTimeFromUnixTimeStamp(vertex.CreationDate),

@@ -209,7 +209,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> PropertyName -> PropertyValue </returns>
         [OperationContract(Name = "VertexProperties")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        RESTProperties GetAllVertexProperties(String vertexIdentifier);
+        PropertiesREST GetAllVertexProperties(String vertexIdentifier);
 
         /// <summary>
         ///   Returns all edge properties
@@ -218,7 +218,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> PropertyId -> PropertyValue </returns>
         [OperationContract(Name = "EdgeProperties")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        RESTProperties GetAllEdgeProperties(String edgeIdentifier);
+        PropertiesREST GetAllEdgeProperties(String edgeIdentifier);
 
         /// <summary>
         ///   Returns all available outgoing edges for a given vertex
@@ -319,7 +319,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> The status </returns>
         [OperationContract(Name = "Status")]
         [WebGet(UriTemplate = "/Status", ResponseFormat = WebMessageFormat.Json)]
-        Fallen8Status Status();
+        StatusREST Status();
 
 		/// <summary>
         /// Gets the number of vertices
