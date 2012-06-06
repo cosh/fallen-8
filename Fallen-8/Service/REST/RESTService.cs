@@ -56,7 +56,7 @@ namespace NoSQL.GraphDB.Service.REST
     /// <summary>
     ///   Fallen-8 REST service.
     /// </summary>
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
     public sealed class RESTService : IRESTService, IDisposable
     {
         #region Data
