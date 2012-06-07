@@ -26,6 +26,10 @@
 
 #region Usings
 
+using System.IdentityModel.Selectors;
+using System.Security;
+using System.Security.Cryptography;
+using System.Text;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -284,7 +288,7 @@ namespace NoSQL.GraphDB.Service.REST
                 ((ServiceBehaviorAttribute) _host.Description.Behaviors[typeof (ServiceBehaviorAttribute)]).
                     InstanceContextMode = InstanceContextMode.Single;
             }
-            catch (CommunicationException)
+            catch (Exception)
             {
                 _host.Abort();
                 throw;
