@@ -105,22 +105,6 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         private String _restServiceAddress;
 
-		/// <summary>
-		/// The name of the user.
-		/// </summary>
-		private string _userName;
-
-		/// <summary>
-		/// The password hash.
-		/// </summary>
-		private byte[] _passwordHash;
-
-		/// <summary>
-		/// The password validator.
-		/// </summary>
-		private AdminPasswordValidator _pwValidator;
-
-
         #endregion
 
         #region Constructor
@@ -187,8 +171,6 @@ namespace NoSQL.GraphDB.Service.REST
             writer.Write(_uriPattern);
             writer.Write(_address.ToString());
             writer.Write(_port);
-			writer.Write(_userName);
-			writer.Write(_passwordHash);
         }
 
         public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
@@ -196,10 +178,6 @@ namespace NoSQL.GraphDB.Service.REST
             _uriPattern = reader.ReadString();
             _address = IPAddress.Parse(reader.ReadString());
             _port = reader.ReadUInt16();
-
-			_userName = reader.ReadString();
-			_passwordHash = reader.ReadByteArray();
-			_pwValidator = new AdminPasswordValidator(_userName, _passwordHash);
 
             StartService(fallen8);
         }
@@ -221,16 +199,6 @@ namespace NoSQL.GraphDB.Service.REST
             _port = 2357;
             if (parameter != null && parameter.ContainsKey("Port"))
                 _port = (ushort)Convert.ChangeType(parameter["Port"], typeof(ushort));
-
-			_userName = "foo";
-            if (parameter != null && parameter.ContainsKey("Username"))
-                _userName = (String)Convert.ChangeType(parameter["Username"], typeof(String));
-
-			var password = "bar";
-            if (parameter != null && parameter.ContainsKey("Password"))
-                password = (String)Convert.ChangeType(parameter["Password"], typeof(String));
-			_pwValidator = new AdminPasswordValidator(_userName, password);
-			_passwordHash = _pwValidator.PasswordHash;
 
             StartService(fallen8);
         }
@@ -299,12 +267,6 @@ namespace NoSQL.GraphDB.Service.REST
                                       ReceiveTimeout = new TimeSpan(1, 0, 0)
                                   };
 
-				binding.Security.Mode = WebHttpSecurityMode.TransportCredentialOnly;
-				binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
-
-				_host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = _pwValidator;
-				_host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = System.ServiceModel.Security.UserNamePasswordValidationMode.Custom;
-
                 var readerQuotas = new XmlDictionaryReaderQuotas
                                        {
                                            MaxDepth = 2147483647,
@@ -336,130 +298,4 @@ namespace NoSQL.GraphDB.Service.REST
 
         #endregion
     }
-
-	
-	/// <summary>
-	/// Admin password validator.
-	/// </summary>
-	internal class AdminPasswordValidator : UserNamePasswordValidator
-	{
-		#region Data
-
-		/// <summary>
-		/// The name of the user.
-		/// </summary>
-		public readonly string Username;
-
-		/// <summary>
-		/// The password hash.
-		/// </summary>
-		public readonly byte[] PasswordHash;
-
-		/// <summary>
-		/// The hash algo.
-		/// </summary>
-		private SHA256 _hashAlgo;
-
-		#endregion
-
-		#region Constructor
-
-		/// <summary>
-		/// Initializes a new instance of the AdminPasswordValidator class.
-		/// </summary>
-		/// <param name='userName'>
-		/// User name.
-		/// </param>
-		/// <param name='pwHash'>
-		/// Password hash.
-		/// </param>
-		public AdminPasswordValidator(string userName, byte[] pwHash)
-		{
-			Username = userName;
-			PasswordHash = pwHash;
-
-			_hashAlgo = new SHA256Managed();
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the AdminPasswordValidator class.
-		/// </summary>
-		/// <param name='userName'>
-		/// User name.
-		/// </param>
-		/// <param name='password'>
-		/// Password.
-		/// </param>
-		public AdminPasswordValidator (string userName, string password)
-		{
-			Username = userName;
-			_hashAlgo = new SHA256Managed();
-
-			PasswordHash = ComputeHash(password);
-		}
-		#endregion
-
-		#region implemented abstract members of System.IdentityModel.Selectors.UserNamePasswordValidator
-		public override void Validate (string userName, string password)
-		{
-			if (userName == Username && IsValidPassword(password))
-    		{
-				return; 
-			}
-    		throw new SecurityException("Access denied.");
-		}
-		#endregion
-
-		#region private helper
-
-		/// <summary>
-		/// Determines whether this instance is valid password the specified password.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if this instance is valid password the specified password; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name='password'>
-		/// If set to <c>true</c> password.
-		/// </param>
-		bool IsValidPassword (string password)
-		{
-			var currentPasswordHash = ComputeHash(password);
-
-			if (PasswordHash.Length != currentPasswordHash.Length) 
-			{
-				return false;
-			}
-
-			for (int i = 0; i < PasswordHash.Length; i++) 
-			{
-				if (PasswordHash[i] != currentPasswordHash[i]) 
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		#endregion
-
-		#region public methods
-
-		/// <summary>
-		/// Computes the hash.
-		/// </summary>
-		/// <returns>
-		/// The hash.
-		/// </returns>
-		/// <param name='toBeHashedValue'>
-		/// To be hashed value.
-		/// </param>
-		private byte[] ComputeHash(string toBeHashedValue)
-		{
-			return _hashAlgo.ComputeHash(UTF8Encoding.Default.GetBytes(toBeHashedValue));
-		}
-
-		#endregion
-	}
-
 }

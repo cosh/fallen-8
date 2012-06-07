@@ -23,6 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System.ComponentModel;
 
 #region Usings
 
@@ -50,8 +51,9 @@ namespace NoSQL.GraphDB.Service.REST
 		/// </summary>
         /// <param name="definition"> The service specification </param>
         /// <returns> True for success otherwise false </returns>
-        [OperationContract(Name = "StartService")]
-        [WebInvoke(
+		[OperationContract(Name = "StartService")]
+		[Description("Starts a service.")]
+		[WebInvoke(
 			UriTemplate = "/StartService", 
 			Method = "POST", 
 			RequestFormat = WebMessageFormat.Json,
@@ -64,6 +66,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The service delete specification </param>
         /// <returns> True for success otherwise false </returns>
         [OperationContract(Name = "DeleteService")]
+		[Description("Deletes a service.")]
         [WebInvoke(
 			UriTemplate = "/DeleteService", 
 			Method = "DELETE")]
@@ -78,6 +81,7 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Trims the database
         /// </summary>
         [OperationContract(Name = "Trim")]
+		[Description("Trims the database.")]
         [WebGet(UriTemplate = "/Trim", ResponseFormat = WebMessageFormat.Json)]
         void Trim();
 
@@ -86,6 +90,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         /// <returns> The status </returns>
         [OperationContract(Name = "Status")]
+		[Description("Status of the database.")]
         [WebGet(UriTemplate = "/Status", ResponseFormat = WebMessageFormat.Json)]
         StatusREST Status();
 
@@ -94,6 +99,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         /// <returns> Number of vertices </returns>
         [OperationContract(Name = "VertexCount")]
+		[Description("Gets the number of vertices.")]
         [WebGet(UriTemplate = "/VertexCount", ResponseFormat = WebMessageFormat.Json)]
         UInt32 VertexCount();
 
@@ -102,6 +108,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         /// <returns> Number of edges </returns>
         [OperationContract(Name = "EdgeCount")]
+		[Description("Gets the number of edges")]
         [WebGet(UriTemplate = "/EdgeCount", ResponseFormat = WebMessageFormat.Json)]
         UInt32 EdgeCount();
 
@@ -110,6 +117,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         /// <returns> Number of free bytes </returns>
         [OperationContract(Name = "FreeMem")]
+		[Description("Gets the number of free bytes in RAM.")]
         [WebGet(UriTemplate = "/FreeMem", ResponseFormat = WebMessageFormat.Json)]
         UInt64 FreeMem();
 
@@ -117,6 +125,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// Put the database in its initial state (deletes all vertices and edges).
         /// </summary>
         [OperationContract(Name = "TabulaRasa")]
+		[Description("Put the database in its initial state (deletes all vertices and edges).")]
         [WebInvoke(UriTemplate = "/TabulaRasa", Method = "DELETE")]
         void TabulaRasa();
 
@@ -130,6 +139,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         /// <returns> The frontend. </returns>
         [OperationContract(Name = "Frontend")]
+		[Description("Gets the frontend.")]
         [WebGet(UriTemplate = "/Frontend")]
         Stream GetFrontend();
 
@@ -137,6 +147,7 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Reload the frontend.
         /// </summary>
         [OperationContract(Name = "ReloadFrontend")]
+		[Description("Reload the frontend.")]
         [WebGet(UriTemplate = "/ReloadFrontend")]
         void ReloadFrontend();
 
@@ -146,6 +157,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> The frontend ressources. </returns>
         /// <param name='ressourceName'> Ressource name. </param>
         [OperationContract(Name = "FrontendRessource")]
+		[Description("Gets the frontend ressources.")]
         [WebGet(UriTemplate = "/Frontend/Ressource/{ressourceName}")]
         Stream GetFrontendRessources(String ressourceName);
 
@@ -158,6 +170,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         /// <param name="startServices"> Start the services of the loaded save point? </param>
         [OperationContract(Name = "Load")]
+		[Description("Loads a Fallen-8.")]
 		[WebGet(UriTemplate = "/Load?startServices={startServices}")]
         void Load(string startServices);
 
@@ -165,6 +178,7 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Saves the Fallen-8
         /// </summary>
         [OperationContract(Name = "Save")]
+		[Description("Saves the Fallen-8.")]
         [WebGet(UriTemplate = "/Save")]
         void Save();
 

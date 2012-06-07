@@ -97,16 +97,12 @@ namespace NoSQL.GraphDB.Service
         /// </summary>
         /// <param name="iPAddress">The IP address</param>
         /// <param name="port">The port</param>
-        /// <param name="username">The user name</param>
-        /// <param name="password">The password</param>
-        public void StartAdminService(IPAddress iPAddress, ushort port, string username, string password)
+        public void StartAdminService(IPAddress iPAddress, ushort port)
         {
             var restServiceProperties = new Dictionary<string, object>
                                      {
                                          {"IPAddress", iPAddress},
                                          {"Port", port},
-                                         {"Username", username},
-                                         {"Password", password}
                                      };
             IService adminService;
             _fallen8.ServiceFactory.TryAddService(out adminService, "Fallen-8_Admin_Service", "Admin service", restServiceProperties);
