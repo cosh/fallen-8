@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +33,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Fallen8.API.Plugin
+#endregion
+
+namespace NoSQL.GraphDB.Plugin
 {
     /// <summary>
     ///   Fallen8 plugin factory.

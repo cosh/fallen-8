@@ -24,11 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.ObjectModel;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index.Range
+#endregion
+
+namespace NoSQL.GraphDB.Index.Range
 {
 	/// <summary>
 	/// Fallen8 range index.

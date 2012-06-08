@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{40759EF1-EBF9-41A3-BFEB-1314ABE36489}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Fallen8.API</RootNamespace>
+    <RootNamespace>NoSQL.GraphDB</RootNamespace>
     <AssemblyName>Fallen-8</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -110,6 +110,15 @@
     <Compile Include="Service\REST\IRESTService.cs" />
     <Compile Include="Service\REST\RESTService.cs" />
     <Compile Include="Service\REST\RESTServicePlugin.cs" />
+    <Compile Include="Service\REST\Result\PathElementREST.cs" />
+    <Compile Include="Service\REST\Result\PathREST.cs" />
+    <Compile Include="Service\REST\Result\FulltextSearchResultElementREST.cs" />
+    <Compile Include="Service\REST\Result\FulltextSearchResultREST.cs" />
+    <Compile Include="Service\REST\Specification\PathFilterSpecification.cs" />
+    <Compile Include="Service\REST\Specification\PathCostSpecification.cs" />
+    <Compile Include="Service\REST\Specification\PathSpecification.cs" />
+    <Compile Include="Service\REST\Specification\FulltextScanSpecification.cs" />
+    <Compile Include="Service\REST\Specification\SearchDistanceSpecification.cs" />
     <Compile Include="Service\ServiceFactory.cs" />
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
@@ -136,6 +145,10 @@
     <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer.csproj">
       <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
       <Name>FastSerializer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dependencies\Jint\Jint\Jint.csproj">
+      <Project>{DBF3AEF6-9D13-4E03-899B-561BCFDD9920}</Project>
+      <Name>Jint</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -200,5 +213,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup />
 </Project>

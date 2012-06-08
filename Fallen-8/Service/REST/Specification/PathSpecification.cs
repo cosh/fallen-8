@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  PathSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -27,59 +27,53 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
-    /// <summary>
-    ///   The Fallen-8 status
+	/// <summary>
+    ///   The path specification
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class PathSpecification
     {
         /// <summary>
-        ///   The available memory
+        ///   The desired path algorithm plugin name
         /// </summary>
-        [DataMember]
-        public UInt64 FreeMemory { get; set; }
+        [DataMember(IsRequired = true)]
+        public String PathAlgorithmName { get; set; }
 
         /// <summary>
-        ///   The used memory
+        ///   The maximum depth
         /// </summary>
-        [DataMember]
-        public UInt64 UsedMemory { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public UInt16 MaxDepth { get; set; }
 
         /// <summary>
-        ///   Vertex count
+        ///   The maximum result count
         /// </summary>
-        [DataMember]
-        public UInt32 VertexCount { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public UInt16 MaxResults { get; set; }
 
         /// <summary>
-        ///   Edge count
+        ///   The maximum path weight
         /// </summary>
-        [DataMember]
-        public UInt32 EdgeCount { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public Double MaxPathWeight { get; set; }
 
         /// <summary>
-        ///   Available index plugins
+        ///   The path filter specification
         /// </summary>
-        [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public PathFilterSpecification Filter { get; set; }
 
         /// <summary>
-        ///   Available path plugins
+        ///   The path cost specification
         /// </summary>
-        [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
-
-        /// <summary>
-        ///   Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public PathCostSpecification Cost { get; set; }
     }
 }
+

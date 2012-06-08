@@ -24,13 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Fallen8.API.Model;
+using System.Linq;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Algorithms.Path
+#endregion
+
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// The Path.

@@ -24,14 +24,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using Fallen8.API.Error;
+using NoSQL.GraphDB.Error;
 
-namespace Fallen8.API.Model
+#endregion
+
+namespace NoSQL.GraphDB.Model
 {
     /// <summary>
     ///   Vertex model.

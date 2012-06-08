@@ -24,14 +24,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Fallen8.API.Model;
-using Fallen8.API.Persistency;
-using Fallen8.API.Plugin;
+using NoSQL.GraphDB.Model;
+using NoSQL.GraphDB.Persistency;
+using NoSQL.GraphDB.Plugin;
 
-namespace Fallen8.API.Index
+#endregion
+
+namespace NoSQL.GraphDB.Index
 {
     /// <summary>
     ///   The Fallen8 index interface.

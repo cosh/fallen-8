@@ -23,9 +23,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
-namespace Fallen8.API.Index.Spatial
+#region Usings
+
+using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
+
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     /// for nodes of the tree

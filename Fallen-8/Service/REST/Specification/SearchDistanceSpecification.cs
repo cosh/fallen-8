@@ -1,10 +1,10 @@
-﻿// 
-// Logger.cs
-//  
-// Author:
-//       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+//  SearchDistanceSpecification.cs
+//  
+//  Author:
+//       Henning Rauch <Henning@RauchEntwicklung.biz>
+//  
+//  Copyright (c) 2012 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,32 +27,32 @@
 #region Usings
 
 using System;
+using System.Runtime.Serialization;
 
 #endregion
 
-namespace NoSQL.GraphDB.Log
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
-    /// <summary>
-    ///   The Fallen-8 logger
+	/// <summary>
+    /// The search distance request object for spatial queries
     /// </summary>
-    public static class Logger
+    [DataContract]
+    public sealed class SearchDistanceSpecification
     {
-        /// <summary>
-        /// Log an error
-        /// </summary>
-        /// <param name="message">Error message</param>
-        public static void LogError(String message)
-        {
-        	Console.WriteLine(message);
-        }
+		#region data
 
-        /// <summary>
-        /// Log an info
-        /// </summary>
-        /// <param name="message">Info message</param>
-        public static void LogInfo(string message)
-        {
-            Console.WriteLine(message);
-        }
+		/// <summary>
+		/// The graph element identifier.
+		/// </summary>
+		[DataMember(IsRequired = true)]
+		public Int32 GraphElementId;
+
+		/// <summary>
+		/// The distance.
+		/// </summary>
+		[DataMember(IsRequired = true)]
+		public float Distance;
+
+        #endregion
     }
 }

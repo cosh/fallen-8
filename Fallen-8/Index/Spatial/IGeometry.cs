@@ -23,9 +23,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#region Usings
+
 using System.Collections.Generic;
 
-namespace Fallen8.API.Index.Spatial
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     /// Geometry interface for representation of objects as geometry object.

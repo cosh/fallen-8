@@ -24,10 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service.REST
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
     /// <summary>
     ///   The property specification
@@ -38,13 +42,13 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The type name
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String FullQualifiedTypeName { get; set; }
 
         /// <summary>
         ///   The property string representation
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String Property { get; set; }
     }
 }

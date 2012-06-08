@@ -24,10 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using Fallen8.API.Model;
+#region Usings
 
-namespace Fallen8.API
+using System;
+using NoSQL.GraphDB.Model;
+
+#endregion
+
+namespace NoSQL.GraphDB
 {
     /// <summary>
     ///   Fallen8 write interface.

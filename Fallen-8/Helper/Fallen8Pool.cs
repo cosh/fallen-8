@@ -24,10 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Concurrent;
 
-namespace Fallen8.API.Helper
+#endregion
+
+namespace NoSQL.GraphDB.Helper
 {
     /// <summary>
     ///   Fallen-8 object pool.
@@ -39,7 +43,7 @@ namespace Fallen8.API.Helper
         /// <summary>
         ///   The place where the Fallen-8 live.
         /// </summary>
-        private readonly ConcurrentQueue<Fallen8> _instances;
+        private readonly ConcurrentQueue<NoSQL.GraphDB.Fallen8> _instances;
 
         /// <summary>
         ///   The max count of instances.
@@ -71,7 +75,7 @@ namespace Fallen8.API.Helper
 
             _minValue = minValue;
             _maxValue = maxValue;
-            _instances = new ConcurrentQueue<Fallen8>();
+            _instances = new ConcurrentQueue<NoSQL.GraphDB.Fallen8>();
             FillQueue();
         }
 
@@ -84,7 +88,7 @@ namespace Fallen8.API.Helper
         /// </summary>
         /// <returns> True for success. </returns>
         /// <param name='result'> The resulting Fallen-8. </param>
-        public bool TryGetFallen8(out Fallen8 result)
+        public bool TryGetFallen8(out NoSQL.GraphDB.Fallen8 result)
         {
             if (_instances.TryDequeue(out result))
             {
@@ -104,7 +108,7 @@ namespace Fallen8.API.Helper
         ///   Recycles a Fallen-8 instance.
         /// </summary>
         /// <param name='instance'> Fallen-8 instance. </param>
-        public void RecycleFallen8(Fallen8 instance)
+        public void RecycleFallen8(NoSQL.GraphDB.Fallen8 instance)
         {
             instance.TabulaRasa();
 
@@ -133,7 +137,7 @@ namespace Fallen8.API.Helper
 
             for (var i = 0; i < countOfNewInstances; i++)
             {
-                _instances.Enqueue(new Fallen8());
+                _instances.Enqueue(new NoSQL.GraphDB.Fallen8());
             }
         }
 

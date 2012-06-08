@@ -24,10 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service.REST
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
     ///   The range scan specification
@@ -38,37 +42,37 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   Left limit
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String LeftLimit { get; set; }
 
         /// <summary>
         ///   Right limit
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String RightLimit { get; set; }
 
         /// <summary>
         ///   The type of the literals
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String FullQualifiedTypeName { get; set; }
 
         /// <summary>
         ///   Include left limit
         /// </summary>
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public Boolean IncludeLeft { get; set; }
 
         /// <summary>
         ///   Include right limit
         /// </summary>
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public Boolean IncludeRight { get; set; }
 
         /// <summary>
         ///   Result type specification
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public ResultTypeSpecification ResultType { get; set; }
     }
 }

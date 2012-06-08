@@ -24,9 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 
-namespace Fallen8.API.Index.Fulltext
+#endregion
+
+namespace NoSQL.GraphDB.Index.Fulltext
 {
 	/// <summary>
 	/// Fallen8 fulltext index interface.

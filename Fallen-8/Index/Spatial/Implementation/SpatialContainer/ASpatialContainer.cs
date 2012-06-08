@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer
 {
     /// <summary>
     /// container for spatial data
@@ -38,13 +38,13 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         {
             if (container is ASpatialContainer)
             {
-                var currentLower = ((ASpatialContainer)container).LowerPoint;
-                var currentUpper = ((ASpatialContainer)container).UpperPoint;
+                var currentLower = ((ASpatialContainer)container).Lower;
+                var currentUpper = ((ASpatialContainer)container).Upper;
 
 
-                for (int i = 0; i < this.LowerPoint.Length; i++)
+                for (int i = 0; i < Lower.Length; i++)
                 {
-                    if (this.Lower[i] > currentLower[i] || this.Upper[i] < currentUpper[i])
+                    if (Lower[i] > currentLower[i] || Upper[i] < currentUpper[i])
                         return false;
                 }
 
@@ -56,13 +56,13 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 
         public bool Inclusion(IMBR container)
         {
-            var currentLower = container.LowerPoint;
-            var currentUpper = container.UpperPoint;
+            var currentLower = container.Lower;
+            var currentUpper = container.Upper;
 
-            for (int i = 0; i < this.Lower.Length; i++)
+            for (int i = 0; i < Lower.Length; i++)
             {
 
-                if (this.Lower[i] > currentLower[i] || this.Upper[i] < currentUpper[i])
+                if (Lower[i] > currentLower[i] || Upper[i] < currentUpper[i])
                     return false;
             }
 
@@ -75,9 +75,9 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         {
             var currentEnumerator = aPointContainer.Coordinates;
 
-            for (int i = 0; i < this.LowerPoint.Length; i++)
+            for (int i = 0; i < Lower.Length; i++)
             {
-                if (this.Lower[i] > currentEnumerator[i] || this.Upper[i] < currentEnumerator[i])
+                if (Lower[i] > currentEnumerator[i] || Upper[i] < currentEnumerator[i])
                     return false;
             }
 
@@ -87,11 +87,11 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         #region Intersection of internal space
         private bool InternalIntersection(ASpatialContainer spatialContainer)
         {
-            var currentLower = spatialContainer.LowerPoint;
-            var currentUpper = spatialContainer.UpperPoint;
-            for (int i = 0; i < this.LowerPoint.Length; i++)
+            var currentLower = spatialContainer.Lower;
+            var currentUpper = spatialContainer.Upper;
+            for (int i = 0; i < Lower.Length; i++)
             {
-                if (this.Lower[i] >= currentUpper[i] || this.Upper[i] <= currentLower[i])
+                if (Lower[i] >= currentUpper[i] || Upper[i] <= currentLower[i])
                     return false;
             }
 
@@ -103,17 +103,17 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         {
             if (container is ASpatialContainer)
             {
-                var currentLower = ((ASpatialContainer) container).LowerPoint;
-                var currentUpper = ((ASpatialContainer) container).UpperPoint;
-                for (int i = 0; i < this.LowerPoint.Length; i++)
+                var currentLower = ((ASpatialContainer) container).Lower;
+                var currentUpper = ((ASpatialContainer) container).Upper;
+                for (int i = 0; i < Lower.Length; i++)
                 {
-                    if (this.Lower[i] > currentUpper[i] || this.Upper[i] < currentLower[i])
+                    if (Lower[i] > currentUpper[i] || Upper[i] < currentLower[i])
                         return false;
                 }
 
                 return true;
             }
-            return this.Inclusion(container);
+            return Inclusion(container);
         }
 
         #endregion
@@ -124,17 +124,17 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
             {
                 var currentPointContainer = (APointContainer)container;
 
-                for (int i = 0; i < this.LowerPoint.Length; i++)
+                for (int i = 0; i < Lower.Length; i++)
                 {
-                    if (this.Lower[i] != currentPointContainer.Coordinates[i]
-                        || this.Upper[i] != currentPointContainer.Coordinates[i])
+                    if (Lower[i] != currentPointContainer.Coordinates[i]
+                        || Upper[i] != currentPointContainer.Coordinates[i])
                         return false;
                 }
 
 
                 return true;
             }
-            if (this.Intersection(container) && !this.InternalIntersection((ASpatialContainer)container))
+            if (Intersection(container) && !InternalIntersection((ASpatialContainer)container))
                 return true;
             
             return false;
@@ -149,21 +149,21 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
 
                 var currentPoint = ((APointContainer)myContainer).Coordinates;
 
-                for (int i = 0; i < this.LowerPoint.Length; i++)
+                for (int i = 0; i < Lower.Length; i++)
                 {
-                    if (this.Lower[i] != currentPoint[i] || this.Upper[i] != currentPoint[i])
+                    if (Lower[i] != currentPoint[i] || Upper[i] != currentPoint[i])
                         return false;
                 }
 
                 return true;
             }
             
-            var currentLower = ((ASpatialContainer)myContainer).LowerPoint;
-            var currentUpper = ((ASpatialContainer)myContainer).UpperPoint;
+            var currentLower = ((ASpatialContainer)myContainer).Lower;
+            var currentUpper = ((ASpatialContainer)myContainer).Upper;
 
-            for (int i = 0; i < this.LowerPoint.Length; i++)
+            for (int i = 0; i < Lower.Length; i++)
             {
-                if (currentLower[i] != this.Lower[i] || currentUpper[i] != this.Upper[i])
+                if (currentLower[i] != Lower[i] || currentUpper[i] != Upper[i])
                     return false;
             }
 
@@ -171,8 +171,7 @@ namespace Fallen8.API.Index.Spatial.Implementation.SpatialContainer
         }
         #endregion
         #region Point get,set
-        protected float[] Lower;
-        protected float[] Upper;
+        
         virtual public float[] LowerPoint
         {
             get { return Lower; }

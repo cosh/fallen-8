@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  PathElementREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -26,60 +26,76 @@
 
 #region Usings
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
+using NoSQL.GraphDB.Algorithms.Path;
+using System;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Result
 {
-    /// <summary>
-    ///   The Fallen-8 status
+	/// <summary>
+    /// The REST pendant to PathElement
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class PathElementREST
     {
-        /// <summary>
-        ///   The available memory
-        /// </summary>
-        [DataMember]
-        public UInt64 FreeMemory { get; set; }
+		#region data
 
         /// <summary>
-        ///   The used memory
+        /// The source vertex identifier
         /// </summary>
-        [DataMember]
-        public UInt64 UsedMemory { get; set; }
+        [DataMember(IsRequired = true)]
+		public Int32 SourceVertexId;
 
         /// <summary>
-        ///   Vertex count
+        /// The target vertex identifier
         /// </summary>
-        [DataMember]
-        public UInt32 VertexCount { get; set; }
+        [DataMember(IsRequired = true)]
+        public Int32 TargetVertexId;
 
         /// <summary>
-        ///   Edge count
+        /// The edge identifier
         /// </summary>
-        [DataMember]
-        public UInt32 EdgeCount { get; set; }
+        [DataMember(IsRequired = true)]
+        public Int32 EdgeId;
 
         /// <summary>
-        ///   Available index plugins
+        /// The edge property identifier
         /// </summary>
-        [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
+        [DataMember(IsRequired = true)]
+        public UInt16 EdgePropertyId;
 
         /// <summary>
-        ///   Available path plugins
+        /// The direction of the edge
         /// </summary>
-        [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
+        [DataMember(IsRequired = true)]
+        public Direction Direction;
 
         /// <summary>
-        ///   Available index plugins
+        /// The weight of the pathelement
         /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        [DataMember(IsRequired = true)]
+		public double Weight;
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Creates a new PathElementREST instance
+        /// </summary>
+        public PathElementREST(PathElement toBeTransferredResult)
+        {
+            SourceVertexId = toBeTransferredResult.SourceVertex.Id;
+            TargetVertexId = toBeTransferredResult.TargetVertex.Id;
+            EdgeId = toBeTransferredResult.Edge.Id;
+            EdgePropertyId = toBeTransferredResult.EdgePropertyId;
+            Direction = toBeTransferredResult.Direction;
+            Weight = toBeTransferredResult.Weight;
+        }
+
+        #endregion
     }
 }
+

@@ -23,9 +23,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#region Usings
+
 using System;
 
-namespace Fallen8.API.Persistency
+#endregion
+
+namespace NoSQL.GraphDB.Persistency
 {
     /// <summary>
     /// A helper struct to track the edges that have to be added to the vertices

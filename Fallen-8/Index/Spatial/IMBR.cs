@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 
 
-namespace Fallen8.API.Index.Spatial
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     /// Minimum Bounding Rectangle (MBR)
@@ -33,13 +33,13 @@ namespace Fallen8.API.Index.Spatial
     public abstract class IMBR
     {
         /// <summary>
-        /// gets lowest point of the rechtangle
+        /// lowest point of the rechtangle
         /// </summary>
-        public float[] LowerPoint;
+        public float[] Lower;
 
         /// <summary>
-        /// gets upperst point of the rechtangle
+        /// upperst point of the rechtangle
         /// </summary>
-        public float[] UpperPoint;
+       public float[] Upper;
     }
 }

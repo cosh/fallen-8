@@ -23,10 +23,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#region Usings
+
 using System;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service.REST
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
     ///   The scan specification
@@ -37,13 +42,13 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The value of the literal
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String Value { get; set; }
 
         /// <summary>
         ///   The type of the literal
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public String FullQualifiedTypeName { get; set; }
     }
 }

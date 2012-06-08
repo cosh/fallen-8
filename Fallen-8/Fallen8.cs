@@ -24,26 +24,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Fallen8.API.Algorithms.Path;
-using Fallen8.API.Error;
-using Fallen8.API.Expression;
-using Fallen8.API.Helper;
-using Fallen8.API.Index;
-using Fallen8.API.Index.Fulltext;
-using Fallen8.API.Index.Range;
-using Fallen8.API.Index.Spatial;
-using Fallen8.API.Model;
-using Fallen8.API.Persistency;
-using Fallen8.API.Plugin;
-using Fallen8.API.Service;
+using NoSQL.GraphDB.Algorithms.Path;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Expression;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Index;
+using NoSQL.GraphDB.Index.Fulltext;
+using NoSQL.GraphDB.Index.Range;
+using NoSQL.GraphDB.Index.Spatial;
+using NoSQL.GraphDB.Model;
+using NoSQL.GraphDB.Persistency;
+using NoSQL.GraphDB.Plugin;
+using NoSQL.GraphDB.Service;
 
-namespace Fallen8.API
+#endregion
+
+namespace NoSQL.GraphDB
 {
     /// <summary>
     ///   Fallen8.
@@ -563,6 +567,7 @@ namespace Fallen8.API
             Double maxPathWeight = Double.MaxValue,
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
+            PathDelegates.VertexFilter vertexFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null)
@@ -576,7 +581,7 @@ namespace Fallen8.API
                 {
                     result = algo.Calculate(sourceVertexId, destinationVertexId, maxDepth, maxPathWeight, maxResults,
                                             edgePropertyFilter,
-                                            edgeFilter, edgeCost, vertexCost);
+                                            vertexFilter, edgeFilter, edgeCost, vertexCost);
 
                     FinishReadResource();
 

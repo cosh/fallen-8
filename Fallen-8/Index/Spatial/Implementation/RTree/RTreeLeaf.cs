@@ -23,10 +23,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System.Collections.Generic;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
-namespace Fallen8.API.Index.Spatial.Implementation.RTree
+#region Usings
+
+using System.Collections.Generic;
+using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
+
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 {
     /// <summary>
     /// leaf node of r-tree
@@ -35,24 +40,24 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
     {
         public RTreeLeaf()
         {
-            this.Data = new List<IRTreeDataContainer>();
+            Data = new List<IRTreeDataContainer>();
         }
         public RTreeLeaf(IMBR mbr, ARTreeContainer parent = null)
         {
-            this.Lower = mbr.LowerPoint;
-            this.Upper = mbr.UpperPoint;
+            Lower = mbr.Lower;
+            Upper = mbr.Upper;
             if (parent != null)
-                this.Parent = parent;
-            this.Data = new List<IRTreeDataContainer>();
+                Parent = parent;
+            Data = new List<IRTreeDataContainer>();
         }
 
         public RTreeLeaf(float[] clower, float[] cupper, ARTreeContainer parent = null)
         {
-            this.Lower = clower;
-            this.Upper = cupper;
+            Lower = clower;
+            Upper = cupper;
             if (parent != null)
-                this.Parent = parent;
-            this.Data = new List<IRTreeDataContainer>();
+                Parent = parent;
+            Data = new List<IRTreeDataContainer>();
         }
 
         public override bool IsLeaf
@@ -64,11 +69,11 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
 
         public override void Dispose()
         {
-            this.Data.Clear();
+            Data.Clear();
             Data = null;
             Parent = null;
-            this.Lower = null;
-            this.Upper = null;
+            Lower = null;
+            Upper = null;
         }
     }
 }

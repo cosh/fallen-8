@@ -24,10 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using Fallen8.API.Model;
+#region Usings
 
-namespace Fallen8.API.Algorithms.Path
+using System;
+using NoSQL.GraphDB.Model;
+
+#endregion
+
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// Path delegates
@@ -49,6 +53,13 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="direction">The direction of the edge.</param>
         /// <returns>False will filter the edge</returns>
         public delegate bool EdgeFilter(EdgeModel edge, Direction direction);
+
+        /// <summary>
+        /// Filter for vertices
+        /// </summary>
+        /// <param name="edge">The vertex.</param>
+        /// <returns>False will filter the vertex</returns>
+        public delegate bool VertexFilter(VertexModel edge);
        
         /// <summary>
         /// Sets the cost of for the edge

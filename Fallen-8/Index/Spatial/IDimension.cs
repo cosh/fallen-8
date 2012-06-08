@@ -24,8 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
-namespace Fallen8.API.Index.Spatial
+
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     /// IDimension is the interface for representation of dimensions from n-dimensional real space

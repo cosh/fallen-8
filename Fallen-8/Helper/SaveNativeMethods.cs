@@ -24,10 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Runtime.InteropServices;
 
-namespace Fallen8.API.Helper
+#endregion
+
+namespace NoSQL.GraphDB.Helper
 {
     /// <summary>
     /// A place for save native methods

@@ -24,11 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Plugin;
+using NoSQL.GraphDB.Plugin;
 
-namespace Fallen8.API.Algorithms.Path
+#endregion
+
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// The interface for path algorithms
@@ -44,17 +48,19 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="maxPathWeight">The maximum path weight.</param>
         /// <param name="maxResults">The maximum number of results.</param>
         /// <param name="edgePropertyFilter">Edge property filter delegate.</param>
+        /// <param name="vertexFilter">Vertex filter delegate.</param>
         /// <param name="edgeFilter">Edge filter delegate.</param>
         /// <param name="edgeCost">The edge cost delegate.</param>
         /// <param name="vertexCost">The vertex cost delegate.</param>
         /// <returns>Paths</returns>
-        List<Path> Calculate(
+        List<NoSQL.GraphDB.Algorithms.Path.Path> Calculate(
             Int32 sourceVertexId, 
             Int32 destinationVertexId,
             Int32 maxDepth = 1,
             Double maxPathWeight = Double.MaxValue,
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
+            PathDelegates.VertexFilter vertexFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null);

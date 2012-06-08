@@ -24,12 +24,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.ObjectModel;
-using Fallen8.API.Error;
-using Fallen8.API.Helper;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
 
-namespace Fallen8.API.Model
+#endregion
+
+namespace NoSQL.GraphDB.Model
 {
     /// <summary>
     ///   A graph element.

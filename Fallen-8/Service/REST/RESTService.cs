@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,14 +36,22 @@ using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
-using Fallen8.API.Algorithms.Path;
-using Fallen8.API.Helper;
-using Fallen8.API.Index;
-using Fallen8.API.Model;
-using Fallen8.API.Plugin;
-using Fallen8.API.Service.REST.Ressource;
+using Jint;
+using NoSQL.GraphDB.Algorithms.Path;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Index;
+using NoSQL.GraphDB.Index.Fulltext;
+using NoSQL.GraphDB.Index.Spatial;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Model;
+using NoSQL.GraphDB.Plugin;
+using NoSQL.GraphDB.Service.REST.Ressource;
+using NoSQL.GraphDB.Service.REST.Result;
+using NoSQL.GraphDB.Service.REST.Specification;
 
-namespace Fallen8.API.Service.REST
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
     ///   Fallen-8 REST service.
@@ -54,7 +64,7 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The internal Fallen-8 instance
         /// </summary>
-        private readonly Fallen8 _fallen8;
+        private readonly NoSQL.GraphDB.Fallen8 _fallen8;
 
         /// <summary>
         ///   The ressources.
@@ -94,7 +104,7 @@ namespace Fallen8.API.Service.REST
         ///   Initializes a new instance of the RESTService class.
         /// </summary>
         /// <param name='fallen8'> Fallen-8. </param>
-        public RESTService(Fallen8 fallen8)
+        public RESTService(NoSQL.GraphDB.Fallen8 fallen8)
         {
             _fallen8 = fallen8;
             LoadFrontend();
@@ -103,7 +113,6 @@ namespace Fallen8.API.Service.REST
             _savePath = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + _saveFile;
 
             _optimalNumberOfPartitions = Convert.ToUInt32(Environment.ProcessorCount * 3 / 2);
-            _optimalNumberOfPartitions = 1;
         }
 
         #endregion
@@ -211,7 +220,7 @@ namespace Fallen8.API.Service.REST
         public Fallen8Status Status()
         {
 			var freeBytesOfMemory = GetFreeMemory();
-			var totalBytesOfMemoryUsed = GetTotalMemory();
+			var totalBytesOfMemoryUsed = GetTotalMemory() - freeBytesOfMemory;
 
             var vertexCount = _fallen8.VertexCount;
             var edgeCount = _fallen8.EdgeCount;
@@ -385,6 +394,58 @@ namespace Fallen8.API.Service.REST
                        : Enumerable.Empty<Int32>();
         }
 
+		public FulltextSearchResultREST FulltextIndexScan (string indexId, FulltextScanSpecification definition)
+		{
+			#region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+			FulltextSearchResult result;
+            return _fallen8.FulltextIndexScan(out result, indexId, definition.RequestString)
+                       ? new FulltextSearchResultREST(result)
+                       : null;
+		}
+
+		public IEnumerable<int> SpatialIndexScanSearchDistance (string indexId, SearchDistanceSpecification definition)
+		{
+			#region initial checks
+
+            if (definition == null)
+            {
+                throw new ArgumentNullException("definition");
+            }
+
+            #endregion
+
+			AGraphElement graphElement;
+			if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
+			{
+				IIndex idx;
+				if (_fallen8.IndexFactory.TryGetIndex(out idx, indexId)) 
+				{
+					var spatialIndex = idx as ISpatialIndex;
+					if (spatialIndex != null) 
+					{
+						ReadOnlyCollection<AGraphElement> result;
+						return spatialIndex.SearchDistance(out result, definition.Distance, graphElement)
+							? result.Select(_ => _.Id)
+							: null;
+					}
+					Logger.LogError(string.Format("The index with id {0} is no spatial index.", indexId));
+					return null;
+				}
+				Logger.LogError(string.Format("Could not find index {0}.", indexId));
+				return null;
+			}
+			Logger.LogError(string.Format("Could not find graph element {0}.", definition.GraphElementId));
+			return null;
+		}
+
         public void Load(string startServices)
         {
             _fallen8.Load(FindLatestFallen8(), Convert.ToBoolean(startServices));
@@ -490,11 +551,186 @@ namespace Fallen8.API.Service.REST
             return 0;
 		}
 
+        public List<PathREST> GetPaths(string from, string to, PathSpecification definition)
+        {
+            if (definition != null)
+            {
+                var fromId = Convert.ToInt32(from);
+                var toId = Convert.ToInt32(to);
+
+                var engine = new JintEngine();
+
+                var edgeCostDelegate = CreateEdgeCostDelegate(definition.Cost, engine);
+                var vertexCostDelegate = CreateVertexCostDelegate(definition.Cost, engine);
+
+                var edgePropertyFilterDelegate = CreateEdgePropertyFilterDelegate(definition.Filter, engine);
+                var vertexFilterDelegate = CreateVertexFilterDelegate(definition.Filter, engine);
+                var edgeFilterDelegate = CreateEdgeFilterDelegate(definition.Filter, engine);
+
+                List<NoSQL.GraphDB.Algorithms.Path.Path> paths;
+                if (_fallen8.CalculateShortestPath(
+                    out paths,
+                    definition.PathAlgorithmName,
+                    fromId,
+                    toId,
+                    definition.MaxDepth,
+                    definition.MaxPathWeight,
+                    definition.MaxResults,
+                    edgePropertyFilterDelegate,
+                    vertexFilterDelegate,
+                    edgeFilterDelegate,
+                    edgeCostDelegate,
+                    vertexCostDelegate))
+                {
+                    if (paths != null)
+                    {
+                        return new List<PathREST>(paths.Select(aPath => new PathREST(aPath)));
+                    }
+                }
+            }
+            return null;
+        }
+
         #endregion
 
         #region private helper
 
-		UInt64 GetFreeMemory ()
+        /// <summary>
+        /// Creates an edge filter delegate
+        /// </summary>
+        /// <param name="pathFilterSpecification">Filter specification.</param>
+        /// <param name="engine">Jint engine</param>
+        /// <returns>The delegate</returns>
+        private PathDelegates.EdgeFilter CreateEdgeFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        {
+            if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Edge))
+            {
+                engine.Run(pathFilterSpecification.Edge);
+
+                return delegate(EdgeModel edge, Direction direction)
+                           {
+                               return Convert.ToBoolean(engine.CallFunction(Constants.EdgeFilterFuncName, 
+                                   edge.Id,
+                                   direction.ToString(),
+                                   edge.CreationDate,
+                                   edge.ModificationDate,
+                                   edge.GetAllProperties().ToDictionary(
+                                        key => key.PropertyId,
+                                        value => value.Value)));
+                           };
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Creates a vertex filter delegate
+        /// </summary>
+        /// <param name="pathFilterSpecification">Filter specification.</param>
+        /// <param name="engine">Jint engine</param>
+        /// <returns>The delegate</returns>
+        private PathDelegates.VertexFilter CreateVertexFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        {
+            if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Vertex))
+            {
+                engine.Run(pathFilterSpecification.Vertex);
+
+                return delegate(VertexModel vertex)
+                {
+                    return Convert.ToBoolean(engine.CallFunction(Constants.VertexFilterFuncName,
+                        vertex.Id,
+                        vertex.CreationDate,
+                        vertex.ModificationDate,
+                        vertex.GetInDegree(),
+                        vertex.GetOutDegree(),
+                        vertex.GetAllProperties().ToDictionary(
+                             key => key.PropertyId,
+                             value => value.Value)));
+                };
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Creates an edge property filter delegate
+        /// </summary>
+        /// <param name="pathFilterSpecification">Filter specification.</param>
+        /// <param name="engine">Jint engine</param>
+        /// <returns>The delegate</returns>
+        private PathDelegates.EdgePropertyFilter CreateEdgePropertyFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        {
+            if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.EdgeProperty))
+            {
+                engine.Run(pathFilterSpecification.EdgeProperty);
+
+                return delegate(ushort id, Direction direction)
+                           {
+                               return Convert.ToBoolean(engine.CallFunction(Constants.EdgePropertyFilterFuncName,
+                                                                            id,
+                                                                            direction.ToString()));
+                           };
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Creates a vertex cost delegate
+        /// </summary>
+        /// <param name="pathCostSpecification">Cost specificateion</param>
+        /// <param name="engine">Jint engine</param>
+        /// <returns>The delegate</returns>
+        private PathDelegates.VertexCost CreateVertexCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
+        {
+            if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Vertex))
+            {
+                engine.Run(pathCostSpecification.Vertex);
+
+                return delegate(VertexModel vertex)
+                           {
+                               return Convert.ToDouble(engine.CallFunction(Constants.VertexCostFuncName,
+                                                                           vertex.Id,
+                                                                           vertex.CreationDate,
+                                                                           vertex.ModificationDate,
+                                                                           vertex.GetInDegree(),
+                                                                           vertex.GetOutDegree(),
+                                                                           vertex.GetAllProperties().ToDictionary(
+                                                                               key => key.PropertyId,
+                                                                               value => value.Value)));
+                           };
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Creates an edge cost delegate
+        /// </summary>
+        /// <param name="pathCostSpecification">Cost specificateion</param>
+        /// <param name="engine">Jint engine</param>
+        /// <returns>The delegate</returns>
+        private PathDelegates.EdgeCost CreateEdgeCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
+        {
+            if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Edge))
+            {
+                engine.Run(pathCostSpecification.Edge);
+
+                return delegate(EdgeModel edge)
+                {
+                    return Convert.ToDouble(engine.CallFunction(Constants.EdgeCostFuncName,
+                                                                edge.Id,
+                                                                edge.CreationDate,
+                                                                edge.ModificationDate,
+                                                                edge.GetAllProperties().ToDictionary(
+                                                                    key => key.PropertyId,
+                                                                    value => value.Value)));
+                };
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get the free memory of the system
+        /// </summary>
+        /// <returns>Free memory in bytes</returns>
+		private UInt64 GetFreeMemory ()
 		{
 			#if __MonoCS__
     			//mono specific code
@@ -511,7 +747,11 @@ namespace Fallen8.API.Service.REST
 			#endif
 		}
 
-		UInt64 GetTotalMemory ()
+        /// <summary>
+        /// Gets the total memory of the system
+        /// </summary>
+        /// <returns>Total memory in bytes</returns>
+		private UInt64 GetTotalMemory ()
 		{
 			#if __MonoCS__
     			//mono specific code

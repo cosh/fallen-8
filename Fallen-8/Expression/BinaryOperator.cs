@@ -24,9 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Expression
+#endregion
+
+namespace NoSQL.GraphDB.Expression
 {
 	/// <summary>
 	/// Binary operator.

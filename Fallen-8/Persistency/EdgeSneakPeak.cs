@@ -23,11 +23,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using Fallen8.API.Model;
 
-namespace Fallen8.API.Persistency
+#region Usings
+
+using System;
+using NoSQL.GraphDB.Model;
+
+#endregion
+
+namespace NoSQL.GraphDB.Persistency
 {
     /// <summary>
     /// Edge sneak peak.

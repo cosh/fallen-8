@@ -23,11 +23,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Runtime.Serialization;
-using System.Collections.Generic;
 
-namespace Fallen8.API.Service.REST
+#region Usings
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
     ///   The edge specification
@@ -38,25 +43,25 @@ namespace Fallen8.API.Service.REST
         /// <summary>
         ///   The creation date
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public UInt32 CreationDate { get; set; }
 		
 		/// <summary>
         ///   The source vertex
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public Int32 SourceVertex { get; set; }
 		
 		/// <summary>
         ///   The target vertex
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public Int32 TargetVertex { get; set; }
 	
 		/// <summary>
         ///   The edge property identifier
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public UInt16 EdgePropertyId { get; set; }
 		
         /// <summary>

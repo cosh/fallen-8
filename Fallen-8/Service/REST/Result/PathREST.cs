@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  PathREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -26,60 +26,56 @@
 
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using NoSQL.GraphDB.Algorithms.Path;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Result
 {
-    /// <summary>
-    ///   The Fallen-8 status
+	/// <summary>
+    /// The REST pendant to Path
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class PathREST
     {
-        /// <summary>
-        ///   The available memory
-        /// </summary>
-        [DataMember]
-        public UInt64 FreeMemory { get; set; }
+		#region data
 
         /// <summary>
-        ///   The used memory
+        /// The path elements
         /// </summary>
-        [DataMember]
-        public UInt64 UsedMemory { get; set; }
+        [DataMember(IsRequired = true)]
+		public List<PathElementREST> PathElements;
+		
+        /// <summary>
+        /// The weight of the path
+        /// </summary>
+        [DataMember(IsRequired = true)]
+		public double TotalWeight;
+
+        #endregion
+
+        #region constructor
 
         /// <summary>
-        ///   Vertex count
+        /// Creates a new PathREST instance
         /// </summary>
-        [DataMember]
-        public UInt32 VertexCount { get; set; }
+        public PathREST(Path toBeTransferredResult)
+        {
+            var toBeTransferredPathElements = toBeTransferredResult.GetPathElements();
 
-        /// <summary>
-        ///   Edge count
-        /// </summary>
-        [DataMember]
-        public UInt32 EdgeCount { get; set; }
+            PathElements = new List<PathElementREST>(toBeTransferredPathElements.Count);
 
-        /// <summary>
-        ///   Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
+            for (var i = 0; i < toBeTransferredPathElements.Count; i++)
+            {
+                PathElements.Add(new PathElementREST(toBeTransferredPathElements[i]));
+            }
 
-        /// <summary>
-        ///   Available path plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
+            TotalWeight = toBeTransferredResult.Weight;
+        }
 
-        /// <summary>
-        ///   Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        #endregion
     }
 }
+

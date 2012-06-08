@@ -23,18 +23,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
-using Fallen8.API.Log;
-using Fallen8.API.Model;
 using Framework.Serialization;
-using Fallen8.API.Helper;
-using Fallen8.API.Error;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index
+#endregion
+
+namespace NoSQL.GraphDB.Index
 {
     /// <summary>
     /// Single value index.
@@ -234,8 +238,8 @@ namespace Fallen8.API.Index
         {
 			if (ReadResource()) 
 			{
-                writer.WriteOptimized(0);//parameter
-                writer.WriteOptimized(_idx.Count);
+                writer.Write(0);//parameter
+                writer.Write(_idx.Count);
                 foreach (var aKV in _idx)
                 {
                     writer.WriteObject(aKV.Key);
@@ -250,13 +254,13 @@ namespace Fallen8.API.Index
 			throw new CollisionException();
         }
 
-        public void Load(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
         {
 			if (WriteResource()) 
 			{
-                reader.ReadOptimizedInt32();//parameter
+                reader.ReadInt32();//parameter
 
-                var keyCount = reader.ReadOptimizedInt32();
+                var keyCount = reader.ReadInt32();
 
                 _idx = new Dictionary<IComparable, AGraphElement>(keyCount);
 
@@ -287,7 +291,7 @@ namespace Fallen8.API.Index
 
         #region IPlugin implementation
 
-        public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize (NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, AGraphElement>();
         }

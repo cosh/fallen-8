@@ -23,10 +23,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using Fallen8.API.Model;
-using Fallen8.API.Index.Spatial.Implementation.SpatialContainer;
 
-namespace Fallen8.API.Index.Spatial.Implementation.RTree
+#region Usings
+
+using NoSQL.GraphDB.Index.Spatial.Implementation.SpatialContainer;
+using NoSQL.GraphDB.Model;
+
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 {
     /// <summary>
     /// the realisation of point-container for the container with element of graph 
@@ -37,8 +42,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.RTree
                           ARTreeContainer parent = null)
         {
             if (parent != null)
-                this.Parent = parent;
-            this.Coordinates = point;
+                Parent = parent;
+            Coordinates = point;
         }
         public AGraphElement GraphElement
         {

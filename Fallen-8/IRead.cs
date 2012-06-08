@@ -24,16 +24,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Fallen8.API.Algorithms.Path;
-using Fallen8.API.Expression;
-using Fallen8.API.Index.Fulltext;
-using Fallen8.API.Index.Spatial;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Algorithms.Path;
+using NoSQL.GraphDB.Expression;
+using NoSQL.GraphDB.Index.Fulltext;
+using NoSQL.GraphDB.Index.Spatial;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API
+#endregion
+
+namespace NoSQL.GraphDB
 {
     /// <summary>
     ///   Fallen8 read interface.
@@ -161,6 +165,7 @@ namespace Fallen8.API
         /// <param name="maxPathWeight"> The maximum path weight. </param>
         /// <param name="maxResults"> The maximum number of results. </param>
         /// <param name="edgePropertyFilter"> The edge property filter. </param>
+        /// <param name="vertexFilter"> The vertex filter. </param>
         /// <param name="edgeFilter"> The edge filter. </param>
         /// <param name="edgeCost"> The edge cost. </param>
         /// <param name="vertexCost"> The vertex cost. </param>
@@ -174,6 +179,7 @@ namespace Fallen8.API
             double maxPathWeight = Double.MaxValue,
             Int32 maxResults = 1,
             PathDelegates.EdgePropertyFilter edgePropertyFilter = null,
+            PathDelegates.VertexFilter vertexFilter = null,
             PathDelegates.EdgeFilter edgeFilter = null,
             PathDelegates.EdgeCost edgeCost = null,
             PathDelegates.VertexCost vertexCost = null);

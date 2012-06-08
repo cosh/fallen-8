@@ -24,9 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 
-namespace Fallen8.API.Helper
+#endregion
+
+namespace NoSQL.GraphDB.Helper
 {
     /// <summary>
     ///   Constants.
@@ -62,5 +66,30 @@ namespace Fallen8.API.Helper
         /// Service files contain this string
         /// </summary>
         public const string ServiceSaveString = "_service_";
+
+        /// <summary>
+        /// The name of the edge filter funtion within the java script
+        /// </summary>
+        public const string EdgeFilterFuncName = "edgeFilter";
+
+        /// <summary>
+        /// The name of the edge property filter funtion within the java script
+        /// </summary>
+        public const string EdgePropertyFilterFuncName = "edgePropertyFilter";
+
+        /// <summary>
+        /// The name of the vertex filter funtion within the java script
+        /// </summary>
+        public const string VertexFilterFuncName = "vertexFilter";
+
+        /// <summary>
+        /// The name of the edge cost funtion within the java script
+        /// </summary>
+        public const string EdgeCostFuncName = "edgeCost";
+
+        /// <summary>
+        /// The name of the vertex cost funtion within the java script
+        /// </summary>
+        public const string VertexCostFuncName = "vertexCost";
     }
 }

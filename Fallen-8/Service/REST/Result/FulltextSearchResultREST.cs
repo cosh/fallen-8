@@ -1,5 +1,5 @@
 // 
-//  VertexSpecification.cs
+//  FulltextSearchResultREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -29,28 +29,59 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using NoSQL.GraphDB.Index.Fulltext;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST.Specification
+namespace NoSQL.GraphDB.Service.REST.Result
 {
 	/// <summary>
-    ///   The vertex specification
+    ///   The pendant to the embedded FulltextSearchResult
     /// </summary>
     [DataContract]
-    public sealed class VertexSpecification
+    public sealed class FulltextSearchResultREST
     {
-        /// <summary>
-        ///   The creation date
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public UInt32 CreationDate { get; set; }
+		#region data
 
         /// <summary>
-        ///   The properties of the vertex
+		/// Gets or sets the maximum score.
+		/// </summary>
+		/// <value>
+		/// The maximum score.
+		/// </value>
+        [DataMember(IsRequired = true)]
+		public readonly Double MaximumScore;
+		
+		/// <summary>
+		/// Gets or sets the elements.
+		/// </summary>
+		/// <value>
+		/// The elements.
+		/// </value>
+        [DataMember(IsRequired = true)]
+		public readonly List<FulltextSearchResultElementREST> Elements;
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Creates a new FulltextSearchResultREST instance
         /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
+        public FulltextSearchResultREST(FulltextSearchResult toBeTransferredResult)
+        {
+			if (toBeTransferredResult != null) 
+			{
+				MaximumScore = toBeTransferredResult.MaximumScore;
+				Elements = new List<FulltextSearchResultElementREST>(toBeTransferredResult.Elements.Count);
+				for (int i = 0; i < toBeTransferredResult.Elements.Count; i++) 
+				{
+					Elements.Add(new FulltextSearchResultElementREST(toBeTransferredResult.Elements[i]));
+				}
+			}
+        }
+
+        #endregion
     }
 }
 

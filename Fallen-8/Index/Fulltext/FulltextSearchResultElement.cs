@@ -24,11 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using Fallen8.API.Model;
-using System.Collections.Generic;
+#region Usings
 
-namespace Fallen8.API.Index.Fulltext
+using System;
+using System.Collections.Generic;
+using NoSQL.GraphDB.Model;
+
+#endregion
+
+namespace NoSQL.GraphDB.Index.Fulltext
 {
 	/// <summary>
 	/// Fulltext search result element.

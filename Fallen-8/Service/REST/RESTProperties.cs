@@ -24,11 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Fallen8.API.Service.REST
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
     ///   The Fallen-8 REST properties

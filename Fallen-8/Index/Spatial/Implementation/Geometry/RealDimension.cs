@@ -24,9 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 
-namespace Fallen8.API.Index.Spatial.Implementation.Geometry
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.Geometry
 {
     public sealed class RealDimension : IDimension
     {

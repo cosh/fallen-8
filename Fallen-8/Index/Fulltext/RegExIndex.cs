@@ -24,18 +24,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Fallen8.API.Error;
-using Fallen8.API.Helper;
-using Fallen8.API.Log;
-using Fallen8.API.Model;
 using Framework.Serialization;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index.Fulltext
+#endregion
+
+namespace NoSQL.GraphDB.Index.Fulltext
 {
 	/// <summary>
 	/// Regular expression index
@@ -145,7 +149,7 @@ namespace Fallen8.API.Index.Fulltext
             throw new CollisionException();
         }
 
-        public void AddOrUpdate(object keyObject, Model.AGraphElement graphElement)
+        public void AddOrUpdate(object keyObject, AGraphElement graphElement)
         {
             String key;
             if (!IndexHelper.CheckObject<String>(out key, keyObject))
@@ -194,7 +198,7 @@ namespace Fallen8.API.Index.Fulltext
             throw new CollisionException();
         }
 
-        public void RemoveValue(Model.AGraphElement graphElement)
+        public void RemoveValue(AGraphElement graphElement)
         {
             if (WriteResource())
             {
@@ -267,7 +271,7 @@ namespace Fallen8.API.Index.Fulltext
             throw new CollisionException();
         }
 
-        public bool TryGetValue(out ReadOnlyCollection<Model.AGraphElement> result, object keyObject)
+        public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, object keyObject)
         {
             String key;
             if (!IndexHelper.CheckObject<String>(out key, keyObject))
@@ -318,7 +322,7 @@ namespace Fallen8.API.Index.Fulltext
             get { return "Henning Rauch"; }
         }
 
-        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<String, List<AGraphElement>>();
         }
@@ -361,7 +365,7 @@ namespace Fallen8.API.Index.Fulltext
             throw new CollisionException();
         }
 
-        public void Load(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
         {
             if (WriteResource())
             {

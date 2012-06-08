@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-namespace Fallen8.API.Index.Spatial
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     ///IMetric is the metric for n-dimensional real space.

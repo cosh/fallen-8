@@ -24,11 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Algorithms.Path
+#endregion
+
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// A static helper class for path algorithms
@@ -42,8 +46,14 @@ namespace Fallen8.API.Algorithms.Path
         /// <param name="direction">The direction.</param>
         /// <param name="edgepropertyFilter">The edge property filter.</param>
         /// <param name="edgeFilter">The edge filter.</param>
+        /// <param name="vertexFilter">The target vertex filter.</param>
         /// <returns>Valid edges</returns>
-        public static List<Tuple<UInt16, IEnumerable<EdgeModel>>> GetValidEdges(VertexModel vertex, Direction direction, PathDelegates.EdgePropertyFilter edgepropertyFilter, PathDelegates.EdgeFilter edgeFilter)
+        public static List<Tuple<UInt16, IEnumerable<EdgeModel>>> GetValidEdges(
+            VertexModel vertex, 
+            Direction direction, 
+            PathDelegates.EdgePropertyFilter edgepropertyFilter, 
+            PathDelegates.EdgeFilter edgeFilter,
+            PathDelegates.VertexFilter vertexFilter)
         {
             var edgeProperties = direction == Direction.IncomingEdge ? vertex.GetIncomingEdges() : vertex.GetOutgoingEdges();
             var result = new List<Tuple<ushort, IEnumerable<EdgeModel>>>();
@@ -61,18 +71,52 @@ namespace Fallen8.API.Algorithms.Path
                     {
                         var validEdges = new List<EdgeModel>();
 
-                        foreach (var aEdge in edgeContainer.Edges)
+                        for (var i = 0; i < edgeContainer.Edges.Count; i++)
                         {
+                            var aEdge = edgeContainer.Edges[i];
                             if (edgeFilter(aEdge, direction))
                             {
-                                validEdges.Add(aEdge);
+                                if (vertexFilter != null)
+                                {
+                                    if (
+                                        vertexFilter(direction == Direction.IncomingEdge
+                                                         ? aEdge.SourceVertex
+                                                         : aEdge.TargetVertex))
+                                    {
+                                        validEdges.Add(aEdge);
+                                    }
+                                }
+                                else
+                                {
+                                    validEdges.Add(aEdge);
+                                }
                             }
                         }
                         result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, validEdges));
                     }
                     else
                     {
-                        result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, edgeContainer.Edges));
+                        if (vertexFilter != null)
+                        {
+                            var validEdges = new List<EdgeModel>();
+
+                            for (var i = 0; i < edgeContainer.Edges.Count; i++)
+                            {
+                                var aEdge = edgeContainer.Edges[i];
+                                if (
+                                    vertexFilter(direction == Direction.IncomingEdge
+                                                     ? aEdge.SourceVertex
+                                                     : aEdge.TargetVertex))
+                                {
+                                    validEdges.Add(aEdge);
+                                }
+                            }
+                            result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, validEdges));
+                        }
+                        else
+                        {
+                            result.Add(new Tuple<ushort, IEnumerable<EdgeModel>>(edgeContainer.EdgePropertyId, edgeContainer.Edges));                                                        
+                        }
                     }
                 }
             }

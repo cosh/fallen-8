@@ -24,17 +24,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using Fallen8.API.Error;
-using Fallen8.API.Log;
-using Fallen8.API.Plugin;
-using Fallen8.API.Helper;
 using Framework.Serialization;
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Log;
+using NoSQL.GraphDB.Plugin;
 
-namespace Fallen8.API.Service
+#endregion
+
+namespace NoSQL.GraphDB.Service
 {
     /// <summary>
     ///   Service factory
@@ -46,7 +49,7 @@ namespace Fallen8.API.Service
         /// <summary>
         /// The Fallen-8 instance
         /// </summary>
-        private readonly Fallen8 _fallen8;
+        private readonly NoSQL.GraphDB.Fallen8 _fallen8;
 
         /// <summary>
         ///   The created indices.
@@ -61,7 +64,7 @@ namespace Fallen8.API.Service
         /// Creates a new service factory
         /// </summary>
         /// <param name="fallen8">Fallen-8</param>
-        public ServiceFactory(Fallen8 fallen8)
+        public ServiceFactory(NoSQL.GraphDB.Fallen8 fallen8)
         {
             _fallen8 = fallen8;
             Services = new Dictionary<string, IService>();
@@ -200,7 +203,7 @@ namespace Fallen8.API.Service
         /// <param name="reader">Serialization reader</param>
         /// <param name="fallen8">Fallen-8</param>
         /// <param name="startService">Start the service?</param>
-        internal void OpenService(string serviceName, string servicePluginName, SerializationReader reader, Fallen8 fallen8, Boolean startService)
+        internal void OpenService(string serviceName, string servicePluginName, SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8, Boolean startService)
         {
             IService service;
             if (PluginFactory.TryFindPlugin(out service, servicePluginName))

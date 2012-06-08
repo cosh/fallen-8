@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  PathCostSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -27,59 +27,29 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
-    /// <summary>
-    ///   The Fallen-8 status
+	/// <summary>
+    ///   The path cost specification
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class PathCostSpecification
     {
         /// <summary>
-        ///   The available memory
+        /// The vertex cost function (JS)
         /// </summary>
-        [DataMember]
-        public UInt64 FreeMemory { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public String Vertex { get; set; }
 
         /// <summary>
-        ///   The used memory
+        /// The edge cost function (JS)
         /// </summary>
-        [DataMember]
-        public UInt64 UsedMemory { get; set; }
-
-        /// <summary>
-        ///   Vertex count
-        /// </summary>
-        [DataMember]
-        public UInt32 VertexCount { get; set; }
-
-        /// <summary>
-        ///   Edge count
-        /// </summary>
-        [DataMember]
-        public UInt32 EdgeCount { get; set; }
-
-        /// <summary>
-        ///   Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableIndexPlugins { get; set; }
-
-        /// <summary>
-        ///   Available path plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailablePathPlugins { get; set; }
-
-        /// <summary>
-        ///   Available index plugins
-        /// </summary>
-        [DataMember]
-        public List<String> AvailableServicePlugins { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public String Edge { get; set; }
     }
 }
+

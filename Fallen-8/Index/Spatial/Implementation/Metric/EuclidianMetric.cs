@@ -23,8 +23,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#region Usings
+
 using System;
-namespace Fallen8.API.Index.Spatial.Implementation.Metric
+
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial.Implementation.Metric
 {
     /// <summary>
     /// Metric for n-dimensinal real space
@@ -58,8 +64,8 @@ namespace Fallen8.API.Index.Spatial.Implementation.Metric
 
         public float[] TransformationOfDistance(float distance, IMBR mbr)
         {
-            var transformation = new float[mbr.LowerPoint.Length];
-            for (var i = 0; i < mbr.LowerPoint.Length; i++)
+            var transformation = new float[mbr.Lower.Length];
+            for (var i = 0; i < mbr.Lower.Length; i++)
                 transformation[i] = distance;
             return transformation;
         }

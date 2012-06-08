@@ -1,10 +1,10 @@
-﻿// 
-// Logger.cs
-//  
-// Author:
-//       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+//  FulltextScanSpecification.cs
+//  
+//  Author:
+//       Henning Rauch <Henning@RauchEntwicklung.biz>
+//  
+//  Copyright (c) 2012 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,32 +27,26 @@
 #region Usings
 
 using System;
+using System.Runtime.Serialization;
 
 #endregion
 
-namespace NoSQL.GraphDB.Log
+namespace NoSQL.GraphDB.Service.REST.Specification
 {
-    /// <summary>
-    ///   The Fallen-8 logger
+	/// <summary>
+    /// The fulltext index request object
     /// </summary>
-    public static class Logger
+    [DataContract]
+    public sealed class FulltextScanSpecification
     {
-        /// <summary>
-        /// Log an error
-        /// </summary>
-        /// <param name="message">Error message</param>
-        public static void LogError(String message)
-        {
-        	Console.WriteLine(message);
-        }
+		#region data
 
         /// <summary>
-        /// Log an info
+        /// The request string
         /// </summary>
-        /// <param name="message">Info message</param>
-        public static void LogInfo(string message)
-        {
-            Console.WriteLine(message);
-        }
+		[DataMember(IsRequired = true)]
+		public String RequestString;
+
+        #endregion
     }
 }

@@ -1,5 +1,5 @@
 // 
-//  VertexSpecification.cs
+//  FulltextSearchResultElementREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -29,28 +29,65 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using NoSQL.GraphDB.Index.Fulltext;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST.Specification
+namespace NoSQL.GraphDB.Service.REST.Result
 {
 	/// <summary>
-    ///   The vertex specification
+    ///   The pendant to the embedded FulltextSearchResultElement
     /// </summary>
     [DataContract]
-    public sealed class VertexSpecification
+    public sealed class FulltextSearchResultElementREST
     {
-        /// <summary>
-        ///   The creation date
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public UInt32 CreationDate { get; set; }
+		#region data
 
         /// <summary>
-        ///   The properties of the vertex
+		/// Gets or sets the graph element id.
+		/// </summary>
+		/// <value>
+		/// The graph element.
+		/// </value>
+		[DataMember(IsRequired = true)]
+		public readonly Int32 GraphElementId;
+		
+		/// <summary>
+		/// Gets or sets the highlights.
+		/// </summary>
+		/// <value>
+		/// The highlights.
+		/// </value>
+		[DataMember(IsRequired = true)]
+		public readonly IList<string> Highlights;
+		
+		/// <summary>
+		/// Gets or sets the score.
+		/// </summary>
+		/// <value>
+		/// The score.
+		/// </value>
+		[DataMember(IsRequired = true)]
+		public readonly Double Score;
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Creates a new FulltextSearchResultElementREST instance
         /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public Dictionary<UInt16, PropertySpecification> Properties { get; set; }
+        public FulltextSearchResultElementREST(FulltextSearchResultElement toBeTransferredResult)
+        {
+			if (toBeTransferredResult != null) 
+			{
+				GraphElementId = toBeTransferredResult.GraphElement.Id;
+				Highlights = toBeTransferredResult.Highlights;
+				Score = toBeTransferredResult.Score;
+			}
+        }
+
+        #endregion
     }
 }
 

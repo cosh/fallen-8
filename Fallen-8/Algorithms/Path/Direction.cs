@@ -24,14 +24,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-namespace Fallen8.API.Algorithms.Path
+using System.Runtime.Serialization;
+
+namespace NoSQL.GraphDB.Algorithms.Path
 {
     /// <summary>
     /// The direction enum
     /// </summary>
+    [DataContract]
     public enum Direction : byte
     {
+        [EnumMember(Value = "In")]
         IncomingEdge,
+
+        [EnumMember(Value = "Out")]
         OutgoingEdge
     }
 }

@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -31,9 +33,11 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Xml;
 using Framework.Serialization;
-using Fallen8.API.Log;
+using NoSQL.GraphDB.Log;
 
-namespace Fallen8.API.Service.REST
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
     ///   Fallen-8 REST service.
@@ -146,7 +150,7 @@ namespace Fallen8.API.Service.REST
             }
             catch (Exception e)
             {
-                Logger.LogError(String.Format("Could not start service \"{0}\".{1}{2}", this.PluginName, Environment.NewLine, e.Message));
+                Logger.LogError(String.Format("Could not start service \"{0}\".{1}{2}", PluginName, Environment.NewLine, e.Message));
 
                 return false;
             }
@@ -165,7 +169,7 @@ namespace Fallen8.API.Service.REST
             writer.Write(_port);
         }
 
-        public void Load(SerializationReader reader, Fallen8 fallen8)
+        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
         {
             _uriPattern = reader.ReadString();
             _address = IPAddress.Parse(reader.ReadString());
@@ -178,7 +182,7 @@ namespace Fallen8.API.Service.REST
 
         #region IPlugin implementation
 
-        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _uriPattern = "Fallen8";
             if (parameter != null && parameter.ContainsKey("URIPattern"))
@@ -233,7 +237,7 @@ namespace Fallen8.API.Service.REST
         ///   Starts the actual service
         /// </summary>
         /// <param name="fallen8"> Fallen-8. </param>
-        private void StartService(Fallen8 fallen8)
+        private void StartService(NoSQL.GraphDB.Fallen8 fallen8)
         {
             _uri = new Uri("http://" + _address + ":" + _port + "/" + _uriPattern);
 

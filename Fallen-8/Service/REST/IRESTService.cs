@@ -24,13 +24,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using NoSQL.GraphDB.Service.REST.Result;
+using NoSQL.GraphDB.Service.REST.Specification;
 
-namespace Fallen8.API.Service.REST
+#endregion
+
+namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
     ///   The Fallen-8 REST service.
@@ -297,7 +303,7 @@ namespace Fallen8.API.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "IndexScan")]
-        [WebInvoke(UriTemplate = "/IndexScan?indexId={indexId}", Method = "POST", 
+        [WebInvoke(UriTemplate = "/IndexScan/{indexId}", Method = "POST", 
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
 
@@ -308,9 +314,31 @@ namespace Fallen8.API.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "RangeIndexScan")]
-        [WebInvoke(UriTemplate = "/RangeIndexScan?indexId={indexId}", Method = "POST",
+        [WebInvoke(UriTemplate = "/RangeIndexScan/{indexId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
+
+		/// <summary>
+        ///   Fulltext scan for graph elements.
+        /// </summary>
+        /// <param name="indexId"> The index identifier </param>
+        /// <param name="definition"> The scan specification </param>
+        /// <returns> The matching identifier </returns>
+        [OperationContract(Name = "FulltextIndexScan")]
+        [WebInvoke(UriTemplate = "/FulltextIndexScan/{indexId}", Method = "POST",
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        FulltextSearchResultREST FulltextIndexScan(String indexId, FulltextScanSpecification definition);
+
+		/// <summary>
+        ///   Spatial index scan for graph elements. Finds all objects in a certain distance to a given graph element
+        /// </summary>
+        /// <param name="indexId"> The index identifier </param>
+        /// <param name="definition"> The search distance specification </param>
+        /// <returns> The matching identifier </returns>
+        [OperationContract(Name = "SpatialIndexScan")]
+        [WebInvoke(UriTemplate = "/SpatialIndexScan/{indexId}/SearchDistance", Method = "POST",
+		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        IEnumerable<Int32> SpatialIndexScanSearchDistance(String indexId, SearchDistanceSpecification definition);
 
         #endregion
 
@@ -330,6 +358,19 @@ namespace Fallen8.API.Service.REST
         [OperationContract(Name = "Save")]
         [WebGet(UriTemplate = "/Save")]
         void Save();
+
+        #endregion
+
+        #region path
+
+        /// <summary>
+        /// Path traverser
+        /// </summary>
+        [OperationContract(Name = "Paths")]
+        [WebInvoke(
+            UriTemplate = "/Paths?from={from}&to={to}",
+            Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        List<PathREST> GetPaths(String from, String to, PathSpecification definition);
 
         #endregion
     }

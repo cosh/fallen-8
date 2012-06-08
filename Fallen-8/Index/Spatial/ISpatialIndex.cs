@@ -24,11 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System;
 using System.Collections.ObjectModel;
-using Fallen8.API.Model;
+using NoSQL.GraphDB.Model;
 
-namespace Fallen8.API.Index.Spatial
+#endregion
+
+namespace NoSQL.GraphDB.Index.Spatial
 {
     /// <summary>
     /// Fallen8 spatial index interface.
@@ -49,7 +53,8 @@ namespace Fallen8.API.Index.Spatial
         /// value of distance
         /// </returns>
         float Distance(IGeometry geometry1, IGeometry geometry2);
-        /// <summary>
+        
+		/// <summary>
         /// find distance between two geometric elements of graph
         /// </summary>
         /// <param name="graphElement1">
@@ -74,13 +79,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="minimalBoundedRechtangle">
         /// region(minimal bounded rechtangle)
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean SearchRegion(out ReadOnlyCollection<AGraphElement> result, IMBR minimalBoundedRechtangle, Predicate<AGraphElement> predicate = null);
+        Boolean SearchRegion(out ReadOnlyCollection<AGraphElement> result, IMBR minimalBoundedRechtangle);
         #endregion
 
         #region Overlap
@@ -93,14 +95,12 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometric object
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
-        /// <summary>
+        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry);
+        
+		/// <summary>
         /// find all objects that have at least one point in common with this element of graph
         /// </summary>
         /// <param name="result">
@@ -109,13 +109,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
+        Boolean Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement);
         #endregion
 
         #region Enclosure
@@ -128,14 +125,12 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
-        /// <summary>
+        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement);
+        
+		/// <summary>
         /// find all objects (if they exist), which this geometry included.
         /// </summary>
         /// <param name="result">
@@ -144,17 +139,15 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geomtry
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
+        Boolean Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry);
         #endregion
 
         #region Containment
-        /// <summary>
+        
+		/// <summary>
         /// find all objects, which this geometry contains. 
         /// </summary>
         /// <param name="result">
@@ -163,14 +156,12 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate=null);
-        /// <summary>
+        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry);
+        
+		/// <summary>
         /// find all objects, which this element of graph contains. 
         /// </summary>
         /// <param name="result">
@@ -179,13 +170,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
+        Boolean Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement);
         #endregion
 
         #region GetAllNeighbors
@@ -198,14 +186,12 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, Predicate<AGraphElement> predicate=null);
-        /// <summary>
+        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement);
+        
+		/// <summary>
         /// find all neighbors for this geometry
         /// </summary>
         /// <param name="result">
@@ -214,13 +200,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, Predicate<AGraphElement> predicate = null);
+        Boolean GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry);
         #endregion
 
         #region GetNextNeighbors
@@ -236,13 +219,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="countOfNextNeighbors">
         /// count of neighbors
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null);
+        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors);
         /// <summary>
         /// find k next neighbors for this geometry
         /// </summary>
@@ -255,13 +235,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="countOfNextNeighbors">
         /// count of neighbors
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors, Predicate<AGraphElement> predicate=null);
+        Boolean GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors);
         #endregion
 
         #region SearchDistance
@@ -277,17 +254,14 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="graphElement">
         /// element of graph
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
         Boolean SearchDistance(out ReadOnlyCollection<AGraphElement> result,
             float distance,
-            AGraphElement graphElement,
-            Predicate<AGraphElement> predicate=null);
-        /// <summary>
+            AGraphElement graphElement);
+        
+		/// <summary>
         /// find all object which distance less or equal d from this geometry have
         /// </summary>
         /// <param name="result">
@@ -299,16 +273,12 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
         Boolean SearchDistance(out ReadOnlyCollection<AGraphElement> result,
             float distance,
-            IGeometry geometry,
-            Predicate<AGraphElement> predicate=null);
+            IGeometry geometry);
         #endregion
 
         #region SearchPoint
@@ -321,13 +291,10 @@ namespace Fallen8.API.Index.Spatial
         /// <param name="point">
         /// point
         /// </param>
-        /// <param name="predicate">
-        /// not geomtric condition, this parameter is optional
-        /// </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
-        Boolean SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point, Predicate<AGraphElement> predicate=null);
+        Boolean SearchPoint(out ReadOnlyCollection<AGraphElement> result, IPoint point);
         #endregion
     }
 }
