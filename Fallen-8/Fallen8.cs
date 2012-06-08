@@ -699,10 +699,7 @@ namespace NoSQL.GraphDB
             var rangeIndex = index as IRangeIndex;
             if (rangeIndex != null)
             {
-                if (rangeIndex.Between(out result, leftLimit, rightLimit, includeLeft, includeRight))
-                {
-                    return true;
-                }
+                return rangeIndex.Between(out result, leftLimit, rightLimit, includeLeft, includeRight);
             }
 
             result = null;
@@ -721,10 +718,7 @@ namespace NoSQL.GraphDB
             var fulltextIndex = index as IFulltextIndex;
             if (fulltextIndex != null)
             {
-                if (fulltextIndex.TryQuery(out result, searchQuery))
-                {
-                    return true;
-                }
+                return fulltextIndex.TryQuery(out result, searchQuery);
             }
 
             result = null;
@@ -743,10 +737,7 @@ namespace NoSQL.GraphDB
             var spatialIndex = index as ISpatialIndex;
             if (spatialIndex != null)
             {
-                if (spatialIndex.TryGetValue(out result, geometry))
-                {
-                    return true;
-                }
+                return spatialIndex.TryGetValue(out result, geometry);
             }
 
             result = null;

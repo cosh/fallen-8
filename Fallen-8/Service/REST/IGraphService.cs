@@ -1,5 +1,5 @@
 // 
-//  IRESTService.cs
+//  IGraphService.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -23,6 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System.ComponentModel;
 
 #region Usings
 
@@ -39,12 +40,12 @@ using NoSQL.GraphDB.Service.REST.Specification;
 namespace NoSQL.GraphDB.Service.REST
 {
     /// <summary>
-    ///   The Fallen-8 REST service.
+    ///   The Fallen-8 graph service.
     /// </summary>
-    [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8RESTService")]
-    public interface IRESTService
+    [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8 graph service")]
+    public interface IGraphService
     {
-        #region Create/Add/Delete
+        #region Create/Add/Delete GRAPHELEMENT
 
         /// <summary>
         ///   Adds a vertex to the Fallen-8
@@ -52,6 +53,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The vertex specification </param>
         /// <returns> The new vertex id </returns>
         [OperationContract(Name = "CreateVertex")]
+		[Description("Adds a vertex to the Fallen-8.")]
         [WebInvoke(UriTemplate = "/CreateVertex", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Int32 AddVertex(VertexSpecification definition);
@@ -62,18 +64,20 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The edge specification </param>
         /// <returns> The new edge id </returns>
         [OperationContract(Name = "CreateEdge")]
+		[Description("Adds an edge to the Fallen-8.")]
         [WebInvoke(UriTemplate = "/CreateEdge", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Int32 AddEdge(EdgeSpecification definition);
 
 		/// <summary>
-        /// Tries to add a property to a grap element
+        /// Tries to add a property to a graph element
         /// </summary>
         /// <param name="graphElementId"> The graph element identifier </param>
         /// <param name="propertyId"> The property identifier </param>
         /// <param name="definition"> The property specification </param>
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryAddProperty")]
+		[Description("Tries to add a property to a graph element.")]
 		[WebInvoke(UriTemplate = "/TryAddProperty?graphElementId={graphElementId}&propertyId={propertyId}", Method = "POST", 
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         Boolean TryAddProperty(string graphElementId, string propertyId, PropertySpecification definition);
@@ -85,6 +89,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="propertyId"> The property identifier </param>
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryRemoveProperty")]
+		[Description("Tries to remove a property from a graph element.")]
 		[WebInvoke(UriTemplate = "/TryRemoveProperty?graphElementId={graphElementId}&propertyId={propertyId}", Method = "DELETE",
 		           ResponseFormat = WebMessageFormat.Json)]
         Boolean TryRemoveProperty(string graphElementId, string propertyId);
@@ -95,18 +100,80 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="graphElementId"> The graph element identifier </param>
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryRemoveGraphElement")]
+		[Description("Tries to remove a graph element.")]
 		[WebInvoke(UriTemplate = "/TryRemoveGraphElement?graphElementId={graphElementId}", Method = "DELETE",
 		           ResponseFormat = WebMessageFormat.Json)]
         Boolean TryRemoveGraphElement(string graphElementId);
 
-		/// <summary>
-        /// Put the database in its initial state (deletes all vertices and edges).
-        /// </summary>
-        [OperationContract(Name = "TabulaRasa")]
-		[WebInvoke(UriTemplate = "/TabulaRasa", Method = "DELETE")]
-        void TabulaRasa();
-
         #endregion
+
+		#region Create/Add/Delete INDEX
+
+		/// <summary>
+        /// Creates an index 
+		/// </summary>
+        /// <param name="definition"> The index specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "CreateIndex")]
+		[Description("Creates an index.")]
+        [WebInvoke(
+			UriTemplate = "/CreateIndex", 
+			Method = "POST", 
+			RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+		bool CreateIndex(PluginSpecification definition);
+
+		/// <summary>
+        /// Updates an index 
+		/// </summary>
+        /// <param name="definition"> The update specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "AddToIndex")]
+		[Description("Updates an index.")]
+        [WebInvoke(
+			UriTemplate = "/AddToIndex", 
+			Method = "POST", 
+			RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+		bool AddToIndex(IndexAddToSpecification definition);
+
+		/// <summary>
+        /// Deletes an index 
+		/// </summary>
+        /// <param name="definition"> The index delete specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "DeleteIndex")]
+		[Description("Deletes an index.")]
+        [WebInvoke(
+			UriTemplate = "/DeleteIndex", 
+			Method = "DELETE")]
+		bool DeleteIndex(IndexDeleteSpecificaton definition);
+
+		/// <summary>
+        /// Deletes a key from an index 
+		/// </summary>
+        /// <param name="definition"> The index delete specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "RemoveKeyFromIndex")]
+		[Description("Deletes a key from an index.")]
+        [WebInvoke(
+			UriTemplate = "/Index/DeleteKey", 
+			Method = "DELETE")]
+		bool RemoveKeyFromIndex (IndexRemoveKeyFromIndexSpecification definition);
+
+		/// <summary>
+        /// Deletes a graph element from an index 
+		/// </summary>
+        /// <param name="definition"> The index delete specification </param>
+        /// <returns> True for success otherwise false </returns>
+        [OperationContract(Name = "RemoveGraphElementFromIndex")]
+		[Description("Deletes a graph element from an index.")]
+        [WebInvoke(
+			UriTemplate = "/Index/DeleteGraphElement", 
+			Method = "DELETE")]
+		bool RemoveGraphElementFromIndex (IndexRemoveGraphelementFromIndexSpecification definition);
+
+		#endregion
 
         #region Read
 
@@ -116,8 +183,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="vertexIdentifier"> The vertex identifier </param>
         /// <returns> PropertyName -> PropertyValue </returns>
         [OperationContract(Name = "VertexProperties")]
+		[Description("Returns all vertex properties.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        RESTProperties GetAllVertexProperties(String vertexIdentifier);
+        PropertiesREST GetAllVertexProperties(String vertexIdentifier);
 
         /// <summary>
         ///   Returns all edge properties
@@ -125,8 +193,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="edgeIdentifier"> The edge identifier </param>
         /// <returns> PropertyId -> PropertyValue </returns>
         [OperationContract(Name = "EdgeProperties")]
+		[Description("Returns all edge properties.")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        RESTProperties GetAllEdgeProperties(String edgeIdentifier);
+        PropertiesREST GetAllEdgeProperties(String edgeIdentifier);
 
         /// <summary>
         ///   Returns all available outgoing edges for a given vertex
@@ -134,6 +203,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="vertexIdentifier"> The vertex identifier </param>
         /// <returns> List of available incoming edge property ids </returns>
         [OperationContract(Name = "AvailableOutEdges")]
+		[Description("Returns all available outgoing edges for a given vertex.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/AvailableOutEdges", ResponseFormat = WebMessageFormat.Json)]
         List<UInt16> GetAllAvailableOutEdgesOnVertex(String vertexIdentifier);
 
@@ -143,6 +213,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="vertexIdentifier"> The vertex identifier </param>
         /// <returns> List of available incoming edge property ids </returns>
         [OperationContract(Name = "AvailableInEdges")]
+		[Description("Returns all available incoming edges for a given vertex.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/AvailableInEdges", ResponseFormat = WebMessageFormat.Json)]
         List<UInt16> GetAllAvailableIncEdgesOnVertex(String vertexIdentifier);
 
@@ -153,6 +224,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
         /// <returns> List of edge ids </returns>
         [OperationContract(Name = "OutEdges")]
+		[Description("Returns all outgoing edges for a given edge property.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutEdges/{edgePropertyIdentifier}",
             ResponseFormat = WebMessageFormat.Json)]
         List<Int32> GetOutgoingEdges(String vertexIdentifier, String edgePropertyIdentifier);
@@ -164,6 +236,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
         /// <returns> List of edge ids </returns>
         [OperationContract(Name = "IncEdges")]
+		[Description("Returns all incoming edges for a given edge property.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/IncEdges/{edgePropertyIdentifier}",
             ResponseFormat = WebMessageFormat.Json)]
         List<Int32> GetIncomingEdges(String vertexIdentifier, String edgePropertyIdentifier);
@@ -174,6 +247,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="vertexIdentifier"> The vertex identifier </param>
         /// <returns> In-degree </returns>
         [OperationContract(Name = "InDegree")]
+		[Description("Returns the in-degree of the vertex.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/InDegree",
             ResponseFormat = WebMessageFormat.Json)]
         UInt32 GetInDegree(String vertexIdentifier);
@@ -184,6 +258,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="vertexIdentifier"> The vertex identifier </param>
         /// <returns> In-degree </returns>
         [OperationContract(Name = "OutDegree")]
+		[Description("Returns the out-degree of the vertex.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutDegree",
             ResponseFormat = WebMessageFormat.Json)]
         UInt32 GetOutDegree(String vertexIdentifier);
@@ -195,6 +270,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
         /// <returns> Degree of an incoming edge </returns>
         [OperationContract(Name = "IncEdgesDegree")]
+		[Description("Returns the degree of an incoming edge.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/IncEdges/{edgePropertyIdentifier}/Degree",
             ResponseFormat = WebMessageFormat.Json)]
         UInt32 GetInEdgeDegree(String vertexIdentifier, String edgePropertyIdentifier);
@@ -206,80 +282,10 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="edgePropertyIdentifier"> The edge property identifier </param>
         /// <returns> Degree of an incoming edge </returns>
         [OperationContract(Name = "OutEdgesDegree")]
+		[Description("Returns the degree of an outgoing edge.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutEdges/{edgePropertyIdentifier}/Degree",
             ResponseFormat = WebMessageFormat.Json)]
         UInt32 GetOutEdgeDegree(String vertexIdentifier, String edgePropertyIdentifier);
-
-        #endregion
-
-        #region misc
-
-        /// <summary>
-        ///   Trims the database
-        /// </summary>
-        [OperationContract(Name = "Trim")]
-        [WebGet(UriTemplate = "/Trim", ResponseFormat = WebMessageFormat.Json)]
-        void Trim();
-
-        /// <summary>
-        ///   Status of the database
-        /// </summary>
-        /// <returns> The status </returns>
-        [OperationContract(Name = "Status")]
-        [WebGet(UriTemplate = "/Status", ResponseFormat = WebMessageFormat.Json)]
-        Fallen8Status Status();
-
-		/// <summary>
-        /// Gets the number of vertices
-        /// </summary>
-        /// <returns> Number of vertices </returns>
-        [OperationContract(Name = "VertexCount")]
-        [WebGet(UriTemplate = "/VertexCount", ResponseFormat = WebMessageFormat.Json)]
-        UInt32 VertexCount();
-
-		/// <summary>
-        /// Gets the number of edges
-        /// </summary>
-        /// <returns> Number of edges </returns>
-        [OperationContract(Name = "EdgeCount")]
-        [WebGet(UriTemplate = "/EdgeCount", ResponseFormat = WebMessageFormat.Json)]
-        UInt32 EdgeCount();
-
-		/// <summary>
-        /// Gets the number of free bytes in RAM
-        /// </summary>
-        /// <returns> Number of free bytes </returns>
-        [OperationContract(Name = "FreeMem")]
-        [WebGet(UriTemplate = "/FreeMem", ResponseFormat = WebMessageFormat.Json)]
-        UInt64 FreeMem();
-
-        #endregion
-
-        #region frontend
-
-        /// <summary>
-        ///   Gets the frontend.
-        /// </summary>
-        /// <returns> The frontend. </returns>
-        [OperationContract(Name = "Frontend")]
-        [WebGet(UriTemplate = "/Frontend")]
-        Stream GetFrontend();
-
-        /// <summary>
-        ///   Reload the frontend.
-        /// </summary>
-        [OperationContract(Name = "ReloadFrontend")]
-        [WebGet(UriTemplate = "/ReloadFrontend")]
-        void ReloadFrontend();
-
-        /// <summary>
-        ///   Gets the frontend ressources.
-        /// </summary>
-        /// <returns> The frontend ressources. </returns>
-        /// <param name='ressourceName'> Ressource name. </param>
-        [OperationContract(Name = "FrontendRessource")]
-        [WebGet(UriTemplate = "/Frontend/Ressource/{ressourceName}")]
-        Stream GetFrontendRessources(String ressourceName);
 
         #endregion
 
@@ -292,6 +298,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "GraphScan")]
+		[Description("Full graph scan for graph elements.")]
         [WebInvoke(UriTemplate = "/GraphScan?propertyId={propertyId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> GraphScan(String propertyId, ScanSpecification definition);
@@ -303,6 +310,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "IndexScan")]
+		[Description("Index scan for graph elements.")]
         [WebInvoke(UriTemplate = "/IndexScan/{indexId}", Method = "POST", 
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
@@ -314,6 +322,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "RangeIndexScan")]
+		[Description("Scan for graph elements by a specified property range.")]
         [WebInvoke(UriTemplate = "/RangeIndexScan/{indexId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
@@ -325,6 +334,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "FulltextIndexScan")]
+		[Description("Fulltext scan for graph elements.")]
         [WebInvoke(UriTemplate = "/FulltextIndexScan/{indexId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         FulltextSearchResultREST FulltextIndexScan(String indexId, FulltextScanSpecification definition);
@@ -336,28 +346,10 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="definition"> The search distance specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "SpatialIndexScan")]
+		[Description("Spatial index scan for graph elements. Finds all objects in a certain distance to a given graph element.")]
         [WebInvoke(UriTemplate = "/SpatialIndexScan/{indexId}/SearchDistance", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> SpatialIndexScanSearchDistance(String indexId, SearchDistanceSpecification definition);
-
-        #endregion
-
-        #region persistence
-
-        /// <summary>
-        ///   Loads a Fallen-8
-        /// </summary>
-        /// <param name="startServices"> Start the services of the loaded save point? </param>
-        [OperationContract(Name = "Load")]
-		[WebGet(UriTemplate = "/Load?startServices={startServices}")]
-        void Load(string startServices);
-
-        /// <summary>
-        ///   Saves the Fallen-8
-        /// </summary>
-        [OperationContract(Name = "Save")]
-        [WebGet(UriTemplate = "/Save")]
-        void Save();
 
         #endregion
 
@@ -367,10 +359,27 @@ namespace NoSQL.GraphDB.Service.REST
         /// Path traverser
         /// </summary>
         [OperationContract(Name = "Paths")]
+		[Description("Path traverser.")]
         [WebInvoke(
             UriTemplate = "/Paths?from={from}&to={to}",
             Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         List<PathREST> GetPaths(String from, String to, PathSpecification definition);
+
+
+        /// <summary>
+        ///   Path traverser starting at a given vertex.
+        /// </summary>
+        /// <param name="vertexIdentifier"> The vertex identifier </param>
+        /// <param name="to">The destination</param>
+        /// <param name="definition">The definition of the path traversal</param>
+        /// <returns> PropertyName -> PropertyValue </returns>
+        [OperationContract(Name = "PathFromVertex")]
+		[Description("Path traverser starting at a given vertex.")]
+        [WebInvoke(
+			UriTemplate = "/Vertices/{vertexIdentifier}/Paths?to={to}", 
+			Method = "POST", RequestFormat = WebMessageFormat.Json, 
+			ResponseFormat = WebMessageFormat.Json)]
+        List<PathREST> GetPathsByVertex(String vertexIdentifier, String to, PathSpecification definition);
 
         #endregion
     }

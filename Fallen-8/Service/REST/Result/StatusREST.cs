@@ -1,5 +1,5 @@
 // 
-//  Fallen8Status.cs
+//  StatusREST.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -32,13 +32,13 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace NoSQL.GraphDB.Service.REST
+namespace NoSQL.GraphDB.Service.REST.Result
 {
     /// <summary>
     ///   The Fallen-8 status
     /// </summary>
     [DataContract]
-    public sealed class Fallen8Status
+    public sealed class StatusREST
     {
         /// <summary>
         ///   The available memory
