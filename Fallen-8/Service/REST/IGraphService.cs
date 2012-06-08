@@ -54,7 +54,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> The new vertex id </returns>
         [OperationContract(Name = "CreateVertex")]
 		[Description("Adds a vertex to the Fallen-8.")]
-        [WebInvoke(UriTemplate = "/CreateVertex", Method = "POST", RequestFormat = WebMessageFormat.Json,
+        [WebInvoke(UriTemplate = "/Vertex/Create", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Int32 AddVertex(VertexSpecification definition);
 
@@ -65,45 +65,55 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> The new edge id </returns>
         [OperationContract(Name = "CreateEdge")]
 		[Description("Adds an edge to the Fallen-8.")]
-        [WebInvoke(UriTemplate = "/CreateEdge", Method = "POST", RequestFormat = WebMessageFormat.Json,
+        [WebInvoke(UriTemplate = "/Edge/Create", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Int32 AddEdge(EdgeSpecification definition);
+
+        /// <summary>
+        ///   Returns all graph element properties
+        /// </summary>
+        /// <param name="graphElementIdentifier"> The graph element identifier </param>
+        /// <returns> PropertyName -> PropertyValue </returns>
+        [OperationContract(Name = "GraphElementProperties")]
+        [Description("Returns all graph element properties.")]
+        [WebGet(UriTemplate = "/GraphElements/{graphElementIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
+        PropertiesREST GetAllGraphelementProperties(String graphElementIdentifier);
 
 		/// <summary>
         /// Tries to add a property to a graph element
         /// </summary>
-        /// <param name="graphElementId"> The graph element identifier </param>
+        /// <param name="graphElementIdentifier"> The graph element identifier </param>
         /// <param name="propertyId"> The property identifier </param>
         /// <param name="definition"> The property specification </param>
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryAddProperty")]
 		[Description("Tries to add a property to a graph element.")]
-		[WebInvoke(UriTemplate = "/TryAddProperty?graphElementId={graphElementId}&propertyId={propertyId}", Method = "POST", 
+        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryAddProperty?propertyId={propertyId}", Method = "POST", 
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Boolean TryAddProperty(string graphElementId, string propertyId, PropertySpecification definition);
+        Boolean TryAddProperty(string graphElementIdentifier, string propertyId, PropertySpecification definition);
 
 		/// <summary>
-        /// Tries to remove a property from a graph element
+        /// Tries to delete a property from a graph element
         /// </summary>
-        /// <param name="graphElementId"> The graph element identifier </param>
+        /// <param name="graphElementIdentifier"> The graph element identifier </param>
         /// <param name="propertyId"> The property identifier </param>
         /// <returns> True for success, otherwise false </returns>
-        [OperationContract(Name = "TryRemoveProperty")]
-		[Description("Tries to remove a property from a graph element.")]
-		[WebInvoke(UriTemplate = "/TryRemoveProperty?graphElementId={graphElementId}&propertyId={propertyId}", Method = "DELETE",
+        [OperationContract(Name = "TryDeleteProperty")]
+		[Description("Tries to delete a property from a graph element.")]
+        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDeleteProperty?propertyId={propertyId}", Method = "DELETE",
 		           ResponseFormat = WebMessageFormat.Json)]
-        Boolean TryRemoveProperty(string graphElementId, string propertyId);
+        Boolean TryRemoveProperty(string graphElementIdentifier, string propertyId);
 
 		/// <summary>
-        /// Tries to remove a graph element
+        /// Tries to delete a graph element
         /// </summary>
-        /// <param name="graphElementId"> The graph element identifier </param>
+        /// <param name="graphElementIdentifier"> The graph element identifier </param>
         /// <returns> True for success, otherwise false </returns>
-        [OperationContract(Name = "TryRemoveGraphElement")]
-		[Description("Tries to remove a graph element.")]
-		[WebInvoke(UriTemplate = "/TryRemoveGraphElement?graphElementId={graphElementId}", Method = "DELETE",
+        [OperationContract(Name = "TryDeleteGraphElement")]
+		[Description("Tries to delete a graph element.")]
+        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDelete", Method = "DELETE",
 		           ResponseFormat = WebMessageFormat.Json)]
-        Boolean TryRemoveGraphElement(string graphElementId);
+        Boolean TryRemoveGraphElement(string graphElementIdentifier);
 
         #endregion
 
@@ -117,7 +127,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "CreateIndex")]
 		[Description("Creates an index.")]
         [WebInvoke(
-			UriTemplate = "/CreateIndex", 
+			UriTemplate = "/Index/Create", 
 			Method = "POST", 
 			RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
@@ -131,7 +141,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "AddToIndex")]
 		[Description("Updates an index.")]
         [WebInvoke(
-			UriTemplate = "/AddToIndex", 
+			UriTemplate = "/Index/AddTo", 
 			Method = "POST", 
 			RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
@@ -145,7 +155,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "DeleteIndex")]
 		[Description("Deletes an index.")]
         [WebInvoke(
-			UriTemplate = "/DeleteIndex", 
+			UriTemplate = "/Index/Delete", 
 			Method = "DELETE")]
 		bool DeleteIndex(IndexDeleteSpecificaton definition);
 
@@ -154,7 +164,7 @@ namespace NoSQL.GraphDB.Service.REST
 		/// </summary>
         /// <param name="definition"> The index delete specification </param>
         /// <returns> True for success otherwise false </returns>
-        [OperationContract(Name = "RemoveKeyFromIndex")]
+        [OperationContract(Name = "DeleteKeyFromIndex")]
 		[Description("Deletes a key from an index.")]
         [WebInvoke(
 			UriTemplate = "/Index/DeleteKey", 
@@ -178,24 +188,24 @@ namespace NoSQL.GraphDB.Service.REST
         #region Read
 
         /// <summary>
-        ///   Returns all vertex properties
-        /// </summary>
-        /// <param name="vertexIdentifier"> The vertex identifier </param>
-        /// <returns> PropertyName -> PropertyValue </returns>
-        [OperationContract(Name = "VertexProperties")]
-		[Description("Returns all vertex properties.")]
-        [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        PropertiesREST GetAllVertexProperties(String vertexIdentifier);
-
-        /// <summary>
-        ///   Returns all edge properties
+        ///  Returns the source vertex of the edge
         /// </summary>
         /// <param name="edgeIdentifier"> The edge identifier </param>
-        /// <returns> PropertyId -> PropertyValue </returns>
-        [OperationContract(Name = "EdgeProperties")]
-		[Description("Returns all edge properties.")]
-        [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Properties", ResponseFormat = WebMessageFormat.Json)]
-        PropertiesREST GetAllEdgeProperties(String edgeIdentifier);
+        /// <returns> source vertex id </returns>
+        [OperationContract(Name = "EdgeSourceVertex")]
+        [Description("Returns the source vertex of the edge.")]
+        [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Source", ResponseFormat = WebMessageFormat.Json)]
+        Int32 GetSourceVertexForEdge(String edgeIdentifier);
+
+        /// <summary>
+        ///  Returns the target vertex of the edge
+        /// </summary>
+        /// <param name="edgeIdentifier"> The edge identifier </param>
+        /// <returns> target vertex id </returns>
+        [OperationContract(Name = "EdgeTargetVertex")]
+        [Description("Returns the target vertex of the edge.")]
+        [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Target", ResponseFormat = WebMessageFormat.Json)]
+        Int32 GetTargetVertexForEdge(String edgeIdentifier);
 
         /// <summary>
         ///   Returns all available outgoing edges for a given vertex
@@ -299,57 +309,53 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "GraphScan")]
 		[Description("Full graph scan for graph elements.")]
-        [WebInvoke(UriTemplate = "/GraphScan?propertyId={propertyId}", Method = "POST",
+        [WebInvoke(UriTemplate = "/Scan/Graph?propertyId={propertyId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Int32> GraphScan(String propertyId, ScanSpecification definition);
 
         /// <summary>
         ///   Index scan for graph elements
         /// </summary>
-        /// <param name="indexId"> The index identifier </param>
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "IndexScan")]
 		[Description("Index scan for graph elements.")]
-        [WebInvoke(UriTemplate = "/IndexScan/{indexId}", Method = "POST", 
+        [WebInvoke(UriTemplate = "/Scan/Index", Method = "POST", 
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> IndexScan(String indexId, ScanSpecification definition);
+        IEnumerable<Int32> IndexScan(IndexScanSpecification definition);
 
         /// <summary>
         ///   Scan for graph elements by a specified property range.
         /// </summary>
-        /// <param name="indexId"> The index identifier </param>
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "RangeIndexScan")]
 		[Description("Scan for graph elements by a specified property range.")]
-        [WebInvoke(UriTemplate = "/RangeIndexScan/{indexId}", Method = "POST",
+        [WebInvoke(UriTemplate = "/Scan/Index/Range", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> RangeIndexScan(String indexId, RangeScanSpecification definition);
+        IEnumerable<Int32> RangeIndexScan(RangeIndexScanSpecification definition);
 
 		/// <summary>
         ///   Fulltext scan for graph elements.
         /// </summary>
-        /// <param name="indexId"> The index identifier </param>
         /// <param name="definition"> The scan specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "FulltextIndexScan")]
 		[Description("Fulltext scan for graph elements.")]
-        [WebInvoke(UriTemplate = "/FulltextIndexScan/{indexId}", Method = "POST",
+        [WebInvoke(UriTemplate = "/Scan/Index/Fulltext", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        FulltextSearchResultREST FulltextIndexScan(String indexId, FulltextScanSpecification definition);
+        FulltextSearchResultREST FulltextIndexScan(FulltextIndexScanSpecification definition);
 
 		/// <summary>
         ///   Spatial index scan for graph elements. Finds all objects in a certain distance to a given graph element
         /// </summary>
-        /// <param name="indexId"> The index identifier </param>
         /// <param name="definition"> The search distance specification </param>
         /// <returns> The matching identifier </returns>
         [OperationContract(Name = "SpatialIndexScan")]
 		[Description("Spatial index scan for graph elements. Finds all objects in a certain distance to a given graph element.")]
-        [WebInvoke(UriTemplate = "/SpatialIndexScan/{indexId}/SearchDistance", Method = "POST",
+        [WebInvoke(UriTemplate = "/Scan/Index/Spatial/SearchDistance", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> SpatialIndexScanSearchDistance(String indexId, SearchDistanceSpecification definition);
+        IEnumerable<Int32> SpatialIndexScanSearchDistance(SearchDistanceSpecification definition);
 
         #endregion
 
@@ -361,7 +367,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "Paths")]
 		[Description("Path traverser.")]
         [WebInvoke(
-            UriTemplate = "/Paths?from={from}&to={to}",
+            UriTemplate = "/Scan/Paths?from={from}&to={to}",
             Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         List<PathREST> GetPaths(String from, String to, PathSpecification definition);
 

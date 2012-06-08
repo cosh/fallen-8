@@ -121,10 +121,12 @@
     <Compile Include="Service\REST\Result\FulltextSearchResultREST.cs" />
     <Compile Include="Service\REST\Result\PropertiesREST.cs" />
     <Compile Include="Service\REST\Result\StatusREST.cs" />
+    <Compile Include="Service\REST\Specification\FulltextIndexScanSpecification.cs" />
+    <Compile Include="Service\REST\Specification\IndexScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\PathFilterSpecification.cs" />
     <Compile Include="Service\REST\Specification\PathCostSpecification.cs" />
     <Compile Include="Service\REST\Specification\PathSpecification.cs" />
-    <Compile Include="Service\REST\Specification\FulltextScanSpecification.cs" />
+    <Compile Include="Service\REST\Specification\RangeIndexScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\SearchDistanceSpecification.cs" />
     <Compile Include="Service\ServiceFactory.cs" />
     <Compile Include="Helper\Constants.cs" />
@@ -139,7 +141,6 @@
     <Compile Include="Service\REST\Specification\EdgeSpecification.cs" />
     <Compile Include="Service\REST\Specification\LiteralSpecification.cs" />
     <Compile Include="Service\REST\Specification\PropertySpecification.cs" />
-    <Compile Include="Service\REST\Specification\RangeScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\ResultTypeSpecification.cs" />
     <Compile Include="Service\REST\Specification\ScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\VertexSpecification.cs" />

@@ -54,7 +54,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[OperationContract(Name = "StartService")]
 		[Description("Starts a service.")]
 		[WebInvoke(
-			UriTemplate = "/StartService", 
+			UriTemplate = "/Service/Start", 
 			Method = "POST", 
 			RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
@@ -68,7 +68,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "DeleteService")]
 		[Description("Deletes a service.")]
         [WebInvoke(
-			UriTemplate = "/DeleteService", 
+			UriTemplate = "/Service/Delete", 
 			Method = "DELETE")]
 		bool DeleteService(ServiceDeleteSpecificaton definition);
 
@@ -100,7 +100,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> Number of vertices </returns>
         [OperationContract(Name = "VertexCount")]
 		[Description("Gets the number of vertices.")]
-        [WebGet(UriTemplate = "/VertexCount", ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(UriTemplate = "/Status/VertexCount", ResponseFormat = WebMessageFormat.Json)]
         UInt32 VertexCount();
 
 		/// <summary>
@@ -109,7 +109,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> Number of edges </returns>
         [OperationContract(Name = "EdgeCount")]
 		[Description("Gets the number of edges")]
-        [WebGet(UriTemplate = "/EdgeCount", ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(UriTemplate = "/Status/EdgeCount", ResponseFormat = WebMessageFormat.Json)]
         UInt32 EdgeCount();
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> Number of free bytes </returns>
         [OperationContract(Name = "FreeMem")]
 		[Description("Gets the number of free bytes in RAM.")]
-        [WebGet(UriTemplate = "/FreeMem", ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(UriTemplate = "/Status/FreeMem", ResponseFormat = WebMessageFormat.Json)]
         UInt64 FreeMem();
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         [OperationContract(Name = "ReloadFrontend")]
 		[Description("Reload the frontend.")]
-        [WebGet(UriTemplate = "/ReloadFrontend")]
+        [WebGet(UriTemplate = "/Frontent/Reload")]
         void ReloadFrontend();
 
         /// <summary>

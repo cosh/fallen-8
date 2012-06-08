@@ -41,6 +41,12 @@ namespace NoSQL.GraphDB.Service.REST.Specification
     {
 		#region data
 
+        /// <summary>
+        ///   Index identifier
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public String IndexId { get; set; }
+
 		/// <summary>
 		/// The graph element identifier.
 		/// </summary>
