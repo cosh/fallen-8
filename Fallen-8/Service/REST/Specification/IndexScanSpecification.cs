@@ -1,5 +1,5 @@
 // 
-//  ScanSpecification.cs
+//  IndexScanSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -26,36 +26,24 @@
 
 #region Usings
 
+using System;
 using System.Runtime.Serialization;
-using NoSQL.GraphDB.Expression;
 
 #endregion
 
 namespace NoSQL.GraphDB.Service.REST.Specification
 {
 	/// <summary>
-    ///   The scan specification
+    ///   The index scan specification
     /// </summary>
     [DataContract]
-    public class ScanSpecification
+    public sealed class IndexScanSpecification : ScanSpecification
     {
         /// <summary>
-        ///   Binary Operator
+        ///   Index identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public BinaryOperator Operator { get; set; }
-
-        /// <summary>
-        ///   Literal specification
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public LiteralSpecification Literal { get; set; }
-
-        /// <summary>
-        ///   Result type specification
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public ResultTypeSpecification ResultType { get; set; }
+        public String IndexId { get; set; }
     }
 }
 

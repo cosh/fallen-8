@@ -1,5 +1,5 @@
 // 
-//  FulltextScanSpecification.cs
+//  FulltextIndexScanSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -37,9 +37,15 @@ namespace NoSQL.GraphDB.Service.REST.Specification
     /// The fulltext index request object
     /// </summary>
     [DataContract]
-    public sealed class FulltextScanSpecification
+    public sealed class FulltextIndexScanSpecification
     {
 		#region data
+
+        /// <summary>
+        ///   Index identifier
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public String IndexId { get; set; }
 
         /// <summary>
         /// The request string

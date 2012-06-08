@@ -1,5 +1,5 @@
 // 
-//  RangeScanSpecification.cs
+//  RangeIndexScanSpecification.cs
 //  
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -37,8 +37,14 @@ namespace NoSQL.GraphDB.Service.REST.Specification
     ///   The range scan specification
     /// </summary>
     [DataContract]
-    public sealed class RangeScanSpecification
+    public sealed class RangeIndexScanSpecification
     {
+        /// <summary>
+        ///   Index identifier
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public String IndexId { get; set; }
+
         /// <summary>
         ///   Left limit
         /// </summary>
