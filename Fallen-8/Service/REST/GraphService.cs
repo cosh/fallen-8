@@ -27,17 +27,14 @@
 #region Usings
 
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
-using Jint;
+using Microsoft.CSharp;
 using NoSQL.GraphDB.Algorithms.Path;
 using NoSQL.GraphDB.Helper;
 using NoSQL.GraphDB.Index;
@@ -45,10 +42,9 @@ using NoSQL.GraphDB.Index.Fulltext;
 using NoSQL.GraphDB.Index.Spatial;
 using NoSQL.GraphDB.Log;
 using NoSQL.GraphDB.Model;
-using NoSQL.GraphDB.Plugin;
-using NoSQL.GraphDB.Service.REST.Ressource;
 using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
+using System.Text;
 
 #endregion
 
@@ -67,6 +63,22 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         private readonly Fallen8 _fallen8;
 
+        #region Code generation stuff
+
+        private readonly CSharpCodeProvider _codeProvider;
+        private readonly CompilerParameters _compilerParameters;
+
+        private const String PathDelegateClassName = "NoSQL.GraphDB.Algorithms.Path.PathDelegateProvider";
+        private readonly String _pathDelegateClassPrefix = CodeGeneration.Prefix;
+        private readonly String _pathDelegateClassSuffix = CodeGeneration.Suffix;
+        private const String VertexFilterMethodName = "VertexFilter";
+        private const String EdgeFilterMethodName = "EdgeFilter";
+        private const String EdgePropertyFilterMethodName = "EdgePropertyFilter";
+        private const String VertexCostMethodName = "VertexCost";
+        private const String EdgeCostMethodName = "EdgeCost";
+
+        #endregion
+
         #endregion
 
         #region Constructor
@@ -78,6 +90,27 @@ namespace NoSQL.GraphDB.Service.REST
         public GraphService(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
+
+            _compilerParameters = new CompilerParameters
+            {
+                GenerateExecutable = false,
+                GenerateInMemory = true,
+                TreatWarningsAsErrors = false,
+                IncludeDebugInformation = false,
+                CompilerOptions = "/optimize /target:library",
+            };
+
+            var curAss = Assembly.GetAssembly(fallen8.GetType());
+            _compilerParameters.ReferencedAssemblies.Add("System.dll");
+            _compilerParameters.ReferencedAssemblies.Add("mscorlib.dll");
+            _compilerParameters.ReferencedAssemblies.Add("System.dll");
+            _compilerParameters.ReferencedAssemblies.Add("System.Data.dll");
+            _compilerParameters.ReferencedAssemblies.Add(curAss.Location);
+
+            _codeProvider = new CSharpCodeProvider(new Dictionary<string, string>
+                                                      {
+                                                          { "CompilerVersion", "v4.0" }
+                                                      });
         }
 
         #endregion
@@ -414,14 +447,22 @@ namespace NoSQL.GraphDB.Service.REST
                 var fromId = Convert.ToInt32(from);
                 var toId = Convert.ToInt32(to);
 
-                var engine = new JintEngine();
+                var results = _codeProvider.CompileAssemblyFromSource(_compilerParameters, new string[] { CreateSource(definition) });
 
-                var edgeCostDelegate = CreateEdgeCostDelegate(definition.Cost, engine);
-                var vertexCostDelegate = CreateVertexCostDelegate(definition.Cost, engine);
+                if (results.Errors.HasErrors)
+                {
+                    throw new Exception(CreateErrorMessage(results.Errors));
+                }
 
-                var edgePropertyFilterDelegate = CreateEdgePropertyFilterDelegate(definition.Filter, engine);
-                var vertexFilterDelegate = CreateVertexFilterDelegate(definition.Filter, engine);
-                var edgeFilterDelegate = CreateEdgeFilterDelegate(definition.Filter, engine);
+                var type = results.CompiledAssembly.GetType(PathDelegateClassName);
+
+                var edgeCostDelegate = CreateEdgeCostDelegate(definition.Cost, results, type);
+                var vertexCostDelegate = CreateVertexCostDelegate(definition.Cost, results, type);
+
+                var edgePropertyFilterDelegate = CreateEdgePropertyFilterDelegate(definition.Filter, results, type);
+                var vertexFilterDelegate = CreateVertexFilterDelegate(definition.Filter, results, type);
+                var edgeFilterDelegate = CreateEdgeFilterDelegate(definition.Filter, results, type);
+                
 
                 List<NoSQL.GraphDB.Algorithms.Path.Path> paths;
                 if (_fallen8.CalculateShortestPath(
@@ -517,28 +558,87 @@ namespace NoSQL.GraphDB.Service.REST
         #region private helper
 
         /// <summary>
+        /// Create the source for the code generation
+        /// </summary>
+        /// <param name="definition">The path specification</param>
+        /// <returns>The source code</returns>
+        private string CreateSource(PathSpecification definition)
+        {
+            if (definition == null) return string.Empty;
+
+            var sb = new StringBuilder();
+            sb.AppendLine(_pathDelegateClassPrefix);
+
+            if (definition.Cost != null)
+            {
+                if (definition.Cost.Edge != null)
+                {
+                    sb.AppendLine(definition.Cost.Edge);
+                }
+
+                if (definition.Cost.Vertex != null)
+                {
+                    sb.AppendLine(definition.Cost.Vertex);
+                }
+            }
+
+            if (definition.Filter != null)
+            {
+                if (definition.Filter.Edge != null)
+                {
+                    sb.AppendLine(definition.Filter.Edge);
+                }
+
+                if (definition.Filter.EdgeProperty != null)
+                {
+                    sb.AppendLine(definition.Filter.EdgeProperty);
+                }
+
+                if (definition.Filter.Vertex != null)
+                {
+                    sb.AppendLine(definition.Filter.Vertex);
+                }
+            }
+
+            sb.AppendLine(_pathDelegateClassSuffix);
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Creates an error message.
+        /// </summary>
+        /// <param name="compilerErrorCollection">The compiler error collection</param>
+        /// <returns>The error string</returns>
+        private static string CreateErrorMessage(CompilerErrorCollection compilerErrorCollection)
+        {
+            if (compilerErrorCollection == null) throw new ArgumentNullException("compilerErrorCollection");
+            
+            var sb = new StringBuilder();
+
+            sb.AppendLine("Error building request");
+            foreach (var aError in compilerErrorCollection)
+            {
+                sb.AppendLine(aError.ToString());
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Creates an edge filter delegate
         /// </summary>
         /// <param name="pathFilterSpecification">Filter specification.</param>
-        /// <param name="engine">Jint engine</param>
+        /// <param name="engine">Compiler results</param>
+        /// <param name="pathDelegateType">The path delegate type  </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.EdgeFilter CreateEdgeFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        private static PathDelegates.EdgeFilter CreateEdgeFilterDelegate(PathFilterSpecification pathFilterSpecification, CompilerResults engine, Type pathDelegateType)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Edge))
             {
-                engine.Run(pathFilterSpecification.Edge);
+                var method = pathDelegateType.GetMethod(EdgeFilterMethodName);
 
-                return delegate(EdgeModel edge, Direction direction)
-                           {
-                               return Convert.ToBoolean(engine.CallFunction(Constants.EdgeFilterFuncName, 
-                                   edge.Id,
-                                   direction.ToString(),
-                                   edge.CreationDate,
-                                   edge.ModificationDate,
-                                   edge.GetAllProperties().ToDictionary(
-                                        key => key.PropertyId,
-                                        value => value.Value)));
-                           };
+                return (PathDelegates.EdgeFilter)Delegate.CreateDelegate(typeof(PathDelegates.EdgeFilter), method);
             }
             return null;
         }
@@ -547,26 +647,16 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates a vertex filter delegate
         /// </summary>
         /// <param name="pathFilterSpecification">Filter specification.</param>
-        /// <param name="engine">Jint engine</param>
+        /// <param name="engine">Compiler results</param>
+        /// <param name="pathDelegateType">The path delegate type </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.VertexFilter CreateVertexFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        private static PathDelegates.VertexFilter CreateVertexFilterDelegate(PathFilterSpecification pathFilterSpecification, CompilerResults engine, Type pathDelegateType)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Vertex))
             {
-                engine.Run(pathFilterSpecification.Vertex);
+                var method = pathDelegateType.GetMethod(VertexFilterMethodName);
 
-                return delegate(VertexModel vertex)
-                {
-                    return Convert.ToBoolean(engine.CallFunction(Constants.VertexFilterFuncName,
-                        vertex.Id,
-                        vertex.CreationDate,
-                        vertex.ModificationDate,
-                        vertex.GetInDegree(),
-                        vertex.GetOutDegree(),
-                        vertex.GetAllProperties().ToDictionary(
-                             key => key.PropertyId,
-                             value => value.Value)));
-                };
+                return (PathDelegates.VertexFilter)Delegate.CreateDelegate(typeof(PathDelegates.VertexFilter), method);
             }
             return null;
         }
@@ -575,20 +665,16 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates an edge property filter delegate
         /// </summary>
         /// <param name="pathFilterSpecification">Filter specification.</param>
-        /// <param name="engine">Jint engine</param>
+        /// <param name="engine">Compiler results</param>
+        /// <param name="pathDelegateType">The path delegate type </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.EdgePropertyFilter CreateEdgePropertyFilterDelegate(PathFilterSpecification pathFilterSpecification, JintEngine engine)
+        private static PathDelegates.EdgePropertyFilter CreateEdgePropertyFilterDelegate(PathFilterSpecification pathFilterSpecification, CompilerResults engine, Type pathDelegateType)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.EdgeProperty))
             {
-                engine.Run(pathFilterSpecification.EdgeProperty);
+                var method = pathDelegateType.GetMethod(EdgePropertyFilterMethodName);
 
-                return delegate(ushort id, Direction direction)
-                           {
-                               return Convert.ToBoolean(engine.CallFunction(Constants.EdgePropertyFilterFuncName,
-                                                                            id,
-                                                                            direction.ToString()));
-                           };
+                return (PathDelegates.EdgePropertyFilter)Delegate.CreateDelegate(typeof(PathDelegates.EdgePropertyFilter), method);
             }
             return null;
         }
@@ -597,26 +683,16 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates a vertex cost delegate
         /// </summary>
         /// <param name="pathCostSpecification">Cost specificateion</param>
-        /// <param name="engine">Jint engine</param>
+        /// <param name="engine">Compiler results</param>
+        /// <param name="pathDelegateType">The path delegate type </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.VertexCost CreateVertexCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
+        private static PathDelegates.VertexCost CreateVertexCostDelegate(PathCostSpecification pathCostSpecification, CompilerResults engine, Type pathDelegateType)
         {
-            if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Vertex))
+            if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Edge))
             {
-                engine.Run(pathCostSpecification.Vertex);
+                var method = pathDelegateType.GetMethod(VertexCostMethodName);
 
-                return delegate(VertexModel vertex)
-                           {
-                               return Convert.ToDouble(engine.CallFunction(Constants.VertexCostFuncName,
-                                                                           vertex.Id,
-                                                                           vertex.CreationDate,
-                                                                           vertex.ModificationDate,
-                                                                           vertex.GetInDegree(),
-                                                                           vertex.GetOutDegree(),
-                                                                           vertex.GetAllProperties().ToDictionary(
-                                                                               key => key.PropertyId,
-                                                                               value => value.Value)));
-                           };
+                return (PathDelegates.VertexCost)Delegate.CreateDelegate(typeof(PathDelegates.VertexCost), method);
             }
             return null;
         }
@@ -625,24 +701,16 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates an edge cost delegate
         /// </summary>
         /// <param name="pathCostSpecification">Cost specificateion</param>
-        /// <param name="engine">Jint engine</param>
+        /// <param name="engine">Compiler results</param>
+        /// <param name="pathDelegateType">The path delegate type</param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.EdgeCost CreateEdgeCostDelegate(PathCostSpecification pathCostSpecification, JintEngine engine)
+        private static PathDelegates.EdgeCost CreateEdgeCostDelegate(PathCostSpecification pathCostSpecification, CompilerResults engine, Type pathDelegateType)
         {
             if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Edge))
             {
-                engine.Run(pathCostSpecification.Edge);
+                var method = pathDelegateType.GetMethod(EdgeCostMethodName);
 
-                return delegate(EdgeModel edge)
-                {
-                    return Convert.ToDouble(engine.CallFunction(Constants.EdgeCostFuncName,
-                                                                edge.Id,
-                                                                edge.CreationDate,
-                                                                edge.ModificationDate,
-                                                                edge.GetAllProperties().ToDictionary(
-                                                                    key => key.PropertyId,
-                                                                    value => value.Value)));
-                };
+                return (PathDelegates.EdgeCost)Delegate.CreateDelegate(typeof(PathDelegates.EdgeCost), method);
             }
             return null;
         }

@@ -28,7 +28,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -36,14 +35,9 @@ using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
-using Jint;
 using NoSQL.GraphDB.Algorithms.Path;
 using NoSQL.GraphDB.Helper;
 using NoSQL.GraphDB.Index;
-using NoSQL.GraphDB.Index.Fulltext;
-using NoSQL.GraphDB.Index.Spatial;
-using NoSQL.GraphDB.Log;
-using NoSQL.GraphDB.Model;
 using NoSQL.GraphDB.Plugin;
 using NoSQL.GraphDB.Service.REST.Ressource;
 using NoSQL.GraphDB.Service.REST.Result;
