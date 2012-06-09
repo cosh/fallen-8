@@ -109,6 +109,11 @@
     <Compile Include="Index\DictionaryIndex.cs" />
     <Compile Include="Service\IService.cs" />
     <Compile Include="Service\REST\AdminServicePlugin.cs" />
+    <Compile Include="Service\REST\CodeGeneration.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CodeGeneration.resx</DependentUpon>
+    </Compile>
     <Compile Include="Service\REST\GraphService.cs" />
     <Compile Include="Service\REST\GraphServicePlugin.cs" />
     <Compile Include="Service\REST\IGraphService.cs" />
@@ -158,12 +163,12 @@
       <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
       <Name>FastSerializer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Dependencies\Jint\Jint\Jint.csproj">
-      <Project>{DBF3AEF6-9D13-4E03-899B-561BCFDD9920}</Project>
-      <Name>Jint</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Service\REST\CodeGeneration.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CodeGeneration.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Service\REST\Ressource\d3.v2.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
