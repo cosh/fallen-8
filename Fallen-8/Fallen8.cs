@@ -143,8 +143,6 @@ namespace NoSQL.GraphDB
                 if (success)
                 {
                     oldIndexFactory.DeleteAllIndices();
-                    oldIndexFactory = null;
-                    oldServiceFactory = null;
                 }
                 else
                 {
@@ -891,9 +889,9 @@ namespace NoSQL.GraphDB
         /// </summary>
         private void TrimPrivate()
         {
-            AGraphElement graphElement;
             for (var i = Constants.MinId; i <= _currentId; i++)
             {
+                AGraphElement graphElement;
                 if (_graphElements.TryGetElementOrDefault(out graphElement, i))
                 {
                     graphElement.Trim();   

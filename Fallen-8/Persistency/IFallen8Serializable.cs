@@ -48,11 +48,8 @@ namespace NoSQL.GraphDB.Persistency
         /// <summary>
         ///   Load the plugin.
         /// </summary>
-        /// <param name='reader'>
-        /// Reader.
-        void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8);
-        /// <param name="fallen8">
-        /// Fallen-8 
-        /// </param>
+        /// <param name="reader">The reader</param>
+        /// <param name="fallen8">Fallen-8</param>
+        void Load(SerializationReader reader, Fallen8 fallen8);
     }
 }

@@ -49,19 +49,19 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         /// <summary>
         /// Metric for R-Tree space
         /// </summary>
-        public IMetric Metric { get; private set; }
+        private IMetric Metric { get; set; }
         /// <summary>
         /// minimal value of count of kinder in the container
         /// </summary>
-        public int MinCountOfNode { get; private set; }
+        private int MinCountOfNode { get; set; }
         /// <summary>
         /// maximal value of count of kinder in the container
         /// </summary>
-        public int MaxCountOfNode { get; private set; }
+        private int MaxCountOfNode { get; set; }
         /// <summary>
         /// a space for the r-tree
         /// </summary>
-        public List<IDimension> Space { get; private set; }
+        private List<IDimension> Space { get; set; }
 
         #endregion
 
@@ -550,15 +550,9 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         {
             var center = FindCenterOfContainer(container);
             var distance = new List<Tuple<float, IRTreeContainer>>(MaxCountOfNode + 1);
-            List<ISpatialContainer> dataContainer;
-            if (container.IsLeaf)
-            {
-                dataContainer = new List<ISpatialContainer>(((RTreeLeaf) container).Data);
-            }
-            else
-            {
-                dataContainer = new List<ISpatialContainer>(((RTreeNode) container).Children);
-            }
+            var dataContainer = container.IsLeaf 
+                                     ? new List<ISpatialContainer>(((RTreeLeaf) container).Data) 
+                                     : new List<ISpatialContainer>(((RTreeNode) container).Children);
 
             foreach (IRTreeContainer value in dataContainer)
             {
@@ -682,15 +676,9 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         /// </returns>
         private int ChooseSplitAxis(out List<IRTreeContainer> result, ARTreeContainer container)
         {
-            List<IRTreeContainer> currentContainers;
-            if (container.IsLeaf == false)
-            {
-                currentContainers = new List<IRTreeContainer>(((RTreeNode)container).Children);
-            }
-            else
-            {
-                currentContainers = new List<IRTreeContainer>(((RTreeLeaf)container).Data);
-            }
+            var currentContainers = container.IsLeaf == false 
+                ? new List<IRTreeContainer>(((RTreeNode)container).Children) 
+                : new List<IRTreeContainer>(((RTreeLeaf)container).Data);
 
             result = currentContainers;
 
@@ -1227,7 +1215,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         public bool TryRemoveKey(Object keyObject)
         {
             IGeometry key;
-            if (!IndexHelper.CheckObject<IGeometry>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 return false;
             }
@@ -1260,7 +1248,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object geometryObject)
         {
             IGeometry geometry;
-            if (!IndexHelper.CheckObject<IGeometry>(out geometry, geometryObject))
+            if (!IndexHelper.CheckObject(out geometry, geometryObject))
             {
                 result = null;
                 return false;
@@ -1300,7 +1288,6 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         /// <param name="geometry">
         /// geometry
         /// </param>
-        /// <param name="predicate"> The predicate </param>
         /// <returns>
         /// <c>true</c> if something was found; otherwise, <c>false</c>.
         /// </returns>
@@ -1357,7 +1344,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         public void AddOrUpdate(Object keyObject, AGraphElement graphElement)
         {
             IGeometry key;
-            if (!IndexHelper.CheckObject<IGeometry>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 return;
             }
@@ -1872,7 +1859,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
             get { return typeof(IIndex); }
         }
 
-        public void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             if (parameter == null) throw new ArgumentNullException("parameter");
 
@@ -1948,7 +1935,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
             throw new NotImplementedException();
         }
 
-        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
             throw new NotImplementedException();
         }

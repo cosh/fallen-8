@@ -76,7 +76,7 @@ namespace NoSQL.GraphDB.Model
 
         #endregion
 
-        #region IEdgeModel implementation
+        #region data
 
         /// <summary>
         ///   The target vertex.

@@ -53,7 +53,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
         /// <param name="edgeCost">The edge cost delegate.</param>
         /// <param name="vertexCost">The vertex cost delegate.</param>
         /// <returns>Paths</returns>
-        List<NoSQL.GraphDB.Algorithms.Path.Path> Calculate(
+        List<Path> Calculate(
             Int32 sourceVertexId, 
             Int32 destinationVertexId,
             Int32 maxDepth = 1,

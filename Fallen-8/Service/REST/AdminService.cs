@@ -58,7 +58,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <summary>
         ///   The internal Fallen-8 instance
         /// </summary>
-        private readonly NoSQL.GraphDB.Fallen8 _fallen8;
+        private readonly Fallen8 _fallen8;
 
         /// <summary>
         ///   The ressources.
@@ -78,17 +78,17 @@ namespace NoSQL.GraphDB.Service.REST
         /// <summary>
         /// The Fallen-8 save path
         /// </summary>
-        private String _savePath;
+        private readonly String _savePath;
 
         /// <summary>
         /// The Fallen-8 save file
         /// </summary>
-        private String _saveFile;
+        private readonly String _saveFile;
 
         /// <summary>
         /// The optimal number of partitions
         /// </summary>
-        private UInt32 _optimalNumberOfPartitions;
+        private readonly UInt32 _optimalNumberOfPartitions;
 
         #endregion
 
@@ -324,7 +324,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns></returns>
         private string FindLatestFallen8()
         {
-            var versions = System.IO.Directory.EnumerateFiles(Environment.CurrentDirectory,
+            var versions = Directory.EnumerateFiles(Environment.CurrentDirectory,
                                                _saveFile + Constants.VersionSeparator + "*")
                                                .ToList();
 

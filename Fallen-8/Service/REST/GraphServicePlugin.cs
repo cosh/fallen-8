@@ -26,10 +26,6 @@
 
 #region Usings
 
-using System.IdentityModel.Selectors;
-using System.Security;
-using System.Security.Cryptography;
-using System.Text;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -173,7 +169,7 @@ namespace NoSQL.GraphDB.Service.REST
             writer.Write(_port);
         }
 
-        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
             _uriPattern = reader.ReadString();
             _address = IPAddress.Parse(reader.ReadString());
@@ -186,7 +182,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         #region IPlugin implementation
 
-        public void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _uriPattern = "Graph";
             if (parameter != null && parameter.ContainsKey("URIPattern"))
@@ -241,7 +237,7 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Starts the actual service
         /// </summary>
         /// <param name="fallen8"> Fallen-8. </param>
-        private void StartService(NoSQL.GraphDB.Fallen8 fallen8)
+        private void StartService(Fallen8 fallen8)
         {
             _uri = new Uri("http://" + _address + ":" + _port + "/" + _uriPattern);
 

@@ -46,7 +46,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
         /// <summary>
         /// The path elements
         /// </summary>
-        private List<PathElement> _pathElements;
+        private readonly List<PathElement> _pathElements;
 
         /// <summary>
         /// The weight of this path

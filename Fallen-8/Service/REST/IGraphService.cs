@@ -29,7 +29,6 @@ using System.ComponentModel;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using NoSQL.GraphDB.Service.REST.Result;

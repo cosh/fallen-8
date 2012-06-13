@@ -43,7 +43,7 @@ namespace NoSQL.GraphDB.Helper
         /// <summary>
         ///   The place where the Fallen-8 live.
         /// </summary>
-        private readonly ConcurrentQueue<NoSQL.GraphDB.Fallen8> _instances;
+        private readonly ConcurrentQueue<Fallen8> _instances;
 
         /// <summary>
         ///   The max count of instances.
@@ -75,7 +75,7 @@ namespace NoSQL.GraphDB.Helper
 
             _minValue = minValue;
             _maxValue = maxValue;
-            _instances = new ConcurrentQueue<NoSQL.GraphDB.Fallen8>();
+            _instances = new ConcurrentQueue<Fallen8>();
             FillQueue();
         }
 
@@ -88,7 +88,7 @@ namespace NoSQL.GraphDB.Helper
         /// </summary>
         /// <returns> True for success. </returns>
         /// <param name='result'> The resulting Fallen-8. </param>
-        public bool TryGetFallen8(out NoSQL.GraphDB.Fallen8 result)
+        public bool TryGetFallen8(out Fallen8 result)
         {
             if (_instances.TryDequeue(out result))
             {
@@ -108,7 +108,7 @@ namespace NoSQL.GraphDB.Helper
         ///   Recycles a Fallen-8 instance.
         /// </summary>
         /// <param name='instance'> Fallen-8 instance. </param>
-        public void RecycleFallen8(NoSQL.GraphDB.Fallen8 instance)
+        public void RecycleFallen8(Fallen8 instance)
         {
             instance.TabulaRasa();
 
@@ -137,7 +137,7 @@ namespace NoSQL.GraphDB.Helper
 
             for (var i = 0; i < countOfNewInstances; i++)
             {
-                _instances.Enqueue(new NoSQL.GraphDB.Fallen8());
+                _instances.Enqueue(new Fallen8());
             }
         }
 

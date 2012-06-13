@@ -202,7 +202,7 @@ namespace NoSQL.GraphDB.Index
         /// <param name="indexPluginName"> The index plugin name </param>
         /// <param name="reader"> Serialization reader </param>
         /// <param name="fallen8"> Fallen-8 </param>
-        internal void OpenIndex(string indexName, string indexPluginName, SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
+        internal void OpenIndex(string indexName, string indexPluginName, SerializationReader reader, Fallen8 fallen8)
         {
             IIndex index;
             if (PluginFactory.TryFindPlugin(out index, indexPluginName))

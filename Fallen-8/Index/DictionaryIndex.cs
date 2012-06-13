@@ -103,7 +103,7 @@ namespace NoSQL.GraphDB.Index
         public void AddOrUpdate(Object keyObject, AGraphElement graphElement)
         {
             IComparable key;
-            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 return;
             }
@@ -132,7 +132,7 @@ namespace NoSQL.GraphDB.Index
         public bool TryRemoveKey (Object keyObject)
         {
             IComparable key;
-            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 return false;
             }
@@ -226,7 +226,7 @@ namespace NoSQL.GraphDB.Index
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object keyObject)
         {
             IComparable key;
-            if (!IndexHelper.CheckObject<IComparable>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 result = null;
                 return false;
@@ -274,7 +274,7 @@ namespace NoSQL.GraphDB.Index
 			throw new CollisionException();
         }
 
-        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
 			if (WriteResource()) 
 			{
@@ -317,7 +317,7 @@ namespace NoSQL.GraphDB.Index
 
         #region IPlugin implementation
 
-        public void Initialize (NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize (Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<IComparable, List<AGraphElement>>();
         }

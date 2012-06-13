@@ -58,7 +58,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name="pathToSavePoint">The path to the save point.</param>
         /// <param name="currentId">The maximum graph element id</param>
         /// <param name="startServices">Start the services</param>
-        internal static Boolean Load(NoSQL.GraphDB.Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
+        internal static Boolean Load(Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
@@ -145,7 +145,7 @@ namespace NoSQL.GraphDB.Persistency
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
                 var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None,
                                         TaskScheduler.Default);
-                var baseFilenName = System.IO.Path.GetFileName(path);
+                var baseFilenName = Path.GetFileName(path);
 
                 #region graph elements
 
@@ -351,7 +351,7 @@ namespace NoSQL.GraphDB.Persistency
             return result;
         }
 
-        private static void LoadIndices(NoSQL.GraphDB.Fallen8 fallen8, IndexFactory indexFactory, List<String> indexStreams)
+        private static void LoadIndices(Fallen8 fallen8, IndexFactory indexFactory, List<String> indexStreams)
         {
             //load the indices
             for (var i = 0; i < indexStreams.Count; i++)
@@ -360,7 +360,7 @@ namespace NoSQL.GraphDB.Persistency
             }
         }
 
-        private static void LoadServices(NoSQL.GraphDB.Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, Boolean startServices)
+        private static void LoadServices(Fallen8 fallen8, ServiceFactory newServiceFactory, List<string> serviceStreams, Boolean startServices)
         {
             //load the indices
             for (var i = 0; i < serviceStreams.Count; i++)
@@ -369,7 +369,7 @@ namespace NoSQL.GraphDB.Persistency
             }
         }
 
-        private static void LoadAService(string serviceLocaion, NoSQL.GraphDB.Fallen8 fallen8, ServiceFactory serviceFactory, Boolean startService)
+        private static void LoadAService(string serviceLocaion, Fallen8 fallen8, ServiceFactory serviceFactory, Boolean startService)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(serviceLocaion))
@@ -388,7 +388,7 @@ namespace NoSQL.GraphDB.Persistency
             }
         }
 
-        private static void LoadAnIndex(string indexLocaion, NoSQL.GraphDB.Fallen8 fallen8, IndexFactory indexFactory)
+        private static void LoadAnIndex(string indexLocaion, Fallen8 fallen8, IndexFactory indexFactory)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(indexLocaion))

@@ -152,7 +152,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
         public void AddOrUpdate(object keyObject, AGraphElement graphElement)
         {
             String key;
-            if (!IndexHelper.CheckObject<String>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 return;
             }
@@ -181,7 +181,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
         public bool TryRemoveKey(object keyObject)
         {
             String key;
-            if (!IndexHelper.CheckObject<String>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 return false;
             }
@@ -274,7 +274,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, object keyObject)
         {
             String key;
-            if (!IndexHelper.CheckObject<String>(out key, keyObject))
+            if (!IndexHelper.CheckObject(out key, keyObject))
             {
                 result = null;
                 return false;
@@ -322,7 +322,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
             get { return "Henning Rauch"; }
         }
 
-        public void Initialize(NoSQL.GraphDB.Fallen8 fallen8, IDictionary<string, object> parameter)
+        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
         {
             _idx = new Dictionary<String, List<AGraphElement>>();
         }
@@ -365,7 +365,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
             throw new CollisionException();
         }
 
-        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
             if (WriteResource())
             {

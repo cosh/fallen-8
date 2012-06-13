@@ -23,10 +23,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System.IdentityModel.Selectors;
-using System.Security.Cryptography;
-using System.Security;
-using System.Text;
 
 #region Usings
 
@@ -173,7 +169,7 @@ namespace NoSQL.GraphDB.Service.REST
             writer.Write(_port);
         }
 
-        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
+        public void Load(SerializationReader reader, Fallen8 fallen8)
         {
             _uriPattern = reader.ReadString();
             _address = IPAddress.Parse(reader.ReadString());

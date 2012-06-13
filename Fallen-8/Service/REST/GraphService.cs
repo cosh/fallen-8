@@ -447,7 +447,7 @@ namespace NoSQL.GraphDB.Service.REST
                 var fromId = Convert.ToInt32(from);
                 var toId = Convert.ToInt32(to);
 
-                var results = _codeProvider.CompileAssemblyFromSource(_compilerParameters, new string[] { CreateSource(definition) });
+                var results = _codeProvider.CompileAssemblyFromSource(_compilerParameters, new[] { CreateSource(definition) });
 
                 if (results.Errors.HasErrors)
                 {
@@ -456,15 +456,15 @@ namespace NoSQL.GraphDB.Service.REST
 
                 var type = results.CompiledAssembly.GetType(PathDelegateClassName);
 
-                var edgeCostDelegate = CreateEdgeCostDelegate(definition.Cost, results, type);
-                var vertexCostDelegate = CreateVertexCostDelegate(definition.Cost, results, type);
+                var edgeCostDelegate = CreateEdgeCostDelegate(definition.Cost, type);
+                var vertexCostDelegate = CreateVertexCostDelegate(definition.Cost, type);
 
-                var edgePropertyFilterDelegate = CreateEdgePropertyFilterDelegate(definition.Filter, results, type);
-                var vertexFilterDelegate = CreateVertexFilterDelegate(definition.Filter, results, type);
-                var edgeFilterDelegate = CreateEdgeFilterDelegate(definition.Filter, results, type);
+                var edgePropertyFilterDelegate = CreateEdgePropertyFilterDelegate(definition.Filter, type);
+                var vertexFilterDelegate = CreateVertexFilterDelegate(definition.Filter, type);
+                var edgeFilterDelegate = CreateEdgeFilterDelegate(definition.Filter, type);
                 
 
-                List<NoSQL.GraphDB.Algorithms.Path.Path> paths;
+                List<Path> paths;
                 if (_fallen8.CalculateShortestPath(
                     out paths,
                     definition.PathAlgorithmName,
@@ -629,10 +629,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates an edge filter delegate
         /// </summary>
         /// <param name="pathFilterSpecification">Filter specification.</param>
-        /// <param name="engine">Compiler results</param>
         /// <param name="pathDelegateType">The path delegate type  </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.EdgeFilter CreateEdgeFilterDelegate(PathFilterSpecification pathFilterSpecification, CompilerResults engine, Type pathDelegateType)
+        private static PathDelegates.EdgeFilter CreateEdgeFilterDelegate(PathFilterSpecification pathFilterSpecification, Type pathDelegateType)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Edge))
             {
@@ -647,10 +646,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates a vertex filter delegate
         /// </summary>
         /// <param name="pathFilterSpecification">Filter specification.</param>
-        /// <param name="engine">Compiler results</param>
         /// <param name="pathDelegateType">The path delegate type </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.VertexFilter CreateVertexFilterDelegate(PathFilterSpecification pathFilterSpecification, CompilerResults engine, Type pathDelegateType)
+        private static PathDelegates.VertexFilter CreateVertexFilterDelegate(PathFilterSpecification pathFilterSpecification, Type pathDelegateType)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.Vertex))
             {
@@ -665,10 +663,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates an edge property filter delegate
         /// </summary>
         /// <param name="pathFilterSpecification">Filter specification.</param>
-        /// <param name="engine">Compiler results</param>
         /// <param name="pathDelegateType">The path delegate type </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.EdgePropertyFilter CreateEdgePropertyFilterDelegate(PathFilterSpecification pathFilterSpecification, CompilerResults engine, Type pathDelegateType)
+        private static PathDelegates.EdgePropertyFilter CreateEdgePropertyFilterDelegate(PathFilterSpecification pathFilterSpecification, Type pathDelegateType)
         {
             if (pathFilterSpecification != null && !String.IsNullOrEmpty(pathFilterSpecification.EdgeProperty))
             {
@@ -683,10 +680,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates a vertex cost delegate
         /// </summary>
         /// <param name="pathCostSpecification">Cost specificateion</param>
-        /// <param name="engine">Compiler results</param>
         /// <param name="pathDelegateType">The path delegate type </param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.VertexCost CreateVertexCostDelegate(PathCostSpecification pathCostSpecification, CompilerResults engine, Type pathDelegateType)
+        private static PathDelegates.VertexCost CreateVertexCostDelegate(PathCostSpecification pathCostSpecification, Type pathDelegateType)
         {
             if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Edge))
             {
@@ -701,10 +697,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// Creates an edge cost delegate
         /// </summary>
         /// <param name="pathCostSpecification">Cost specificateion</param>
-        /// <param name="engine">Compiler results</param>
         /// <param name="pathDelegateType">The path delegate type</param>
         /// <returns>The delegate</returns>
-        private static PathDelegates.EdgeCost CreateEdgeCostDelegate(PathCostSpecification pathCostSpecification, CompilerResults engine, Type pathDelegateType)
+        private static PathDelegates.EdgeCost CreateEdgeCostDelegate(PathCostSpecification pathCostSpecification, Type pathDelegateType)
         {
             if (pathCostSpecification != null && !String.IsNullOrEmpty(pathCostSpecification.Edge))
             {
