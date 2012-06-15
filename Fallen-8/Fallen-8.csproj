@@ -156,6 +156,9 @@
     <Compile Include="Service\REST\Specification\IndexRemoveGraphelementFromIndexSpecification.cs" />
     <Compile Include="Service\REST\Specification\ServiceDeleteSpecificaton.cs" />
     <Compile Include="Service\REST\Specification\PluginSpecification.cs" />
+    <Compile Include="Algorithms\Path\BidirectionalLevelSynchronousSSSP.cs" />
+    <Compile Include="Helper\ParallelHelper.cs" />
+    <Compile Include="Helper\BigBitArray.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
