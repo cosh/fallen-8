@@ -67,6 +67,15 @@ namespace NoSQL.GraphDB.Model
         }
 
         #endregion
+
+        #region overrides
+
+        public override string ToString()
+        {
+            return EdgePropertyId + ": |E|=" + Edges.Count;
+        }
+
+        #endregion
     }
 }
 

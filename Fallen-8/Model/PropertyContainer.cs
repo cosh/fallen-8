@@ -56,6 +56,15 @@ namespace NoSQL.GraphDB.Model
         public Object Value;
 		
         #endregion
+
+        #region overrides
+
+        public override string ToString()
+        {
+            return PropertyId + ": " + Value;
+        }
+
+        #endregion
     }
 }
 

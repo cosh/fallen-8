@@ -103,7 +103,7 @@ namespace NoSQL.GraphDB.Helper
 		/// <param name='value'>
 		/// Value.
 		/// </param>
-        public void SetValue(int index, Boolean value)
+        public bool SetValue(int index, Boolean value)
         {
             UInt16 shardIndex = 0;
             for (var i = 0; i < NumberOfShards; i++)
@@ -143,7 +143,11 @@ namespace NoSQL.GraphDB.Helper
                 shard = newShard;
             }
 
+		    var oldvalue = shard[positionInShard];
+
             shard[positionInShard] = value;
+
+		    return oldvalue != value;
         }
 
 		/// <summary>
