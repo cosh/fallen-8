@@ -223,7 +223,7 @@ namespace NoSQL.GraphDB.Service.REST
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
-                if (vertex.TryGetOutEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
+                if (vertex.TryGetOutEdge(out edges, Convert.ToUInt16(edgePropertyIdentifier)))
                 {
                     return edges.Select(_ => _.Id).ToList();
                 }
@@ -237,7 +237,7 @@ namespace NoSQL.GraphDB.Service.REST
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
-                if (vertex.TryGetInEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
+                if (vertex.TryGetInEdge(out edges, Convert.ToUInt16(edgePropertyIdentifier)))
                 {
                     return edges.Select(_ => _.Id).ToList();
                 }
@@ -418,7 +418,7 @@ namespace NoSQL.GraphDB.Service.REST
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
-                if (vertex.TryGetInEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
+                if (vertex.TryGetInEdge(out edges, Convert.ToUInt16(edgePropertyIdentifier)))
                 {
                     return Convert.ToUInt32(edges.Count);
                 }
@@ -432,7 +432,7 @@ namespace NoSQL.GraphDB.Service.REST
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
-                if (vertex.TryGetOutEdge(out edges, Convert.ToInt32(edgePropertyIdentifier)))
+                if (vertex.TryGetOutEdge(out edges, Convert.ToUInt16(edgePropertyIdentifier)))
                 {
                     return Convert.ToUInt32(edges.Count);
                 }

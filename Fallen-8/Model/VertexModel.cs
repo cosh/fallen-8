@@ -505,7 +505,7 @@ namespace NoSQL.GraphDB.Model
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> Result. </param>
         /// <param name='edgePropertyId'> Edge property identifier. </param>
-        public Boolean TryGetOutEdge(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
+        public Boolean TryGetOutEdge(out ReadOnlyCollection<EdgeModel> result, UInt16 edgePropertyId)
         {
             if (ReadResource())
             {
@@ -540,7 +540,7 @@ namespace NoSQL.GraphDB.Model
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> Result. </param>
         /// <param name='edgePropertyId'> Edge property identifier. </param>
-        public Boolean TryGetInEdge(out ReadOnlyCollection<EdgeModel> result, Int32 edgePropertyId)
+        public Boolean TryGetInEdge(out ReadOnlyCollection<EdgeModel> result, UInt16 edgePropertyId)
         {
             if (ReadResource())
             {
