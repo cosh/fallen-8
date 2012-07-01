@@ -46,7 +46,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
 		/// <value>
 		/// The maximum score.
 		/// </value>
-		public Double MaximumScore { get; private set; }
+		public Double MaximumScore { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the elements.
@@ -54,7 +54,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
 		/// <value>
 		/// The elements.
 		/// </value>
-		public List<FulltextSearchResultElement> Elements { get; private set; }
+		public List<FulltextSearchResultElement> Elements { get; set; }
 
         #endregion
 

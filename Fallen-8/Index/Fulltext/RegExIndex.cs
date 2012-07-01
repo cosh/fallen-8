@@ -83,6 +83,10 @@ namespace NoSQL.GraphDB.Index.Fulltext
             {
                 try
                 {
+					var matchingGraphElements = new Dictionary<AGraphElement, List<string>>();
+					var currentScore = 0;
+					var maximumScore = 0;
+
                     foreach (var aKV in _idx)
                     {
                         var matches = regexpression.Matches(aKV.Key);
@@ -95,16 +99,40 @@ namespace NoSQL.GraphDB.Index.Fulltext
                                 foundSth = true;
                             }
 
-                            var highlights = (from Match match in matches select match.Value).ToList();
+							var localHighlights = (from Match match in matches select GenerateHighlight(match)).ToList();
 
                             for (var i = 0; i < aKV.Value.Count; i++)
                             {
-                                var element = new FulltextSearchResultElement(aKV.Value[i], 1.0, highlights);
+								List<string> globalHighlights;
+								if (matchingGraphElements.TryGetValue(aKV.Value[i], out globalHighlights)) 
+								{
+									globalHighlights.AddRange(localHighlights);
+									currentScore = globalHighlights.Count;
+								}
+								else 
+								{
+									matchingGraphElements.Add(aKV.Value[i], localHighlights);
+									currentScore = localHighlights.Count;
+								}
 
-                                result.AddElement(element);
+								maximumScore = currentScore > maximumScore 
+										? currentScore
+										: maximumScore;
                             }
                         }
                     }
+
+					if (foundSth) 
+					{
+						//create the result
+						result = new FulltextSearchResult 
+						{ 
+							MaximumScore = maximumScore,
+							Elements = matchingGraphElements
+								.Select(aKV => new FulltextSearchResultElement(aKV.Key, aKV.Value.Count, aKV.Value))
+								.ToList()
+						};
+					}
 
                     return foundSth;
                 }
@@ -405,6 +433,25 @@ namespace NoSQL.GraphDB.Index.Fulltext
         }
 
         #endregion
+
+		#region private helper
+
+		/// <summary>
+		/// Generates the highlight.
+		/// </summary>
+		/// <returns>
+		/// The highlight.
+		/// </returns>
+		/// <param name='value'>
+		/// Value.
+		/// </param>
+		private static String GenerateHighlight (Match value)
+		{
+			//die linken und rechten Nachbarn auch noch mit ausgeben (über whitespaces)
+			return value.Value;
+		}
+
+		#endregion
     }
 }
 
