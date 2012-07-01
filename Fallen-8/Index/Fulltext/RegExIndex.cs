@@ -86,6 +86,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
 					var matchingGraphElements = new Dictionary<AGraphElement, List<string>>();
 					var currentScore = 0;
 					var maximumScore = 0;
+                    const char whitespace = ' ';
 
                     foreach (var aKV in _idx)
                     {
@@ -99,7 +100,60 @@ namespace NoSQL.GraphDB.Index.Fulltext
                                 foundSth = true;
                             }
 
-							var localHighlights = (from Match match in matches select GenerateHighlight(match)).ToList();
+                            var localHighlights = new List<String>(matches.Count);
+                            foreach (Match match in matches)
+                            {
+                                var currentPosition = -1;
+                                var lastPosition = -1;
+
+                                for (var i = 0; i < match.Index; i++)
+                                {
+                                    if (aKV.Key[i] == whitespace)
+                                    {
+                                        currentPosition = i;
+                                    }
+
+                                    if (currentPosition > lastPosition)
+                                    {
+                                        lastPosition = currentPosition;
+                                    }
+                                }
+
+                                var firstWhitespacePrev = lastPosition;
+
+                                lastPosition = -1;
+
+                                for (var i = match.Index + match.Length; i < aKV.Key.Length; i++)
+                                {
+                                    if (aKV.Key[i] == whitespace)
+                                    {
+                                        lastPosition = i;
+                                        break;
+                                    }
+                                }
+
+                                var firstWhitespaceAfter = lastPosition;
+
+                                if (firstWhitespacePrev == -1 && firstWhitespaceAfter == -1)
+                                {
+                                    localHighlights.Add(aKV.Key);
+                                    continue;
+                                }
+
+                                if (firstWhitespacePrev == -1)
+                                {
+                                    localHighlights.Add(aKV.Key.Substring(0, firstWhitespaceAfter));
+                                    continue;
+                                }
+
+                                if (firstWhitespaceAfter == -1)
+                                {
+                                    localHighlights.Add(aKV.Key.Substring(firstWhitespacePrev + 1));
+                                    continue;
+                                }
+
+                                localHighlights.Add(aKV.Key.Substring(firstWhitespacePrev + 1, firstWhitespaceAfter - firstWhitespacePrev - 1));
+                            }
 
                             for (var i = 0; i < aKV.Value.Count; i++)
                             {
@@ -436,19 +490,39 @@ namespace NoSQL.GraphDB.Index.Fulltext
 
 		#region private helper
 
-		/// <summary>
-		/// Generates the highlight.
-		/// </summary>
-		/// <returns>
-		/// The highlight.
-		/// </returns>
-		/// <param name='value'>
-		/// Value.
-		/// </param>
-		private static String GenerateHighlight (Match value)
+	    /// <summary>
+	    /// Generates the highlight.
+	    /// </summary>
+	    /// <returns>
+	    /// The highlight.
+	    /// </returns>
+	    /// <param name='value'>
+	    /// Value.
+	    /// </param>
+	    /// <param name="baseString">The base string </param>
+	    private static String GenerateHighlight (Match value, String baseString)
 		{
-			//die linken und rechten Nachbarn auch noch mit ausgeben (über whitespaces)
-			return value.Value;
+            //die linken und rechten Nachbarn auch noch mit ausgeben (über whitespaces)
+	        const char whitespace = ' ';
+		    var firstWhitespacePrev = baseString.LastIndexOf(whitespace, 0, value.Index);
+            var firstWhitespaceAfter = baseString.IndexOf(whitespace, value.Index + value.Length + 1);
+
+	        if (firstWhitespacePrev == -1 && firstWhitespaceAfter == -1)
+	        {
+	            return baseString;
+	        }
+
+	        if (firstWhitespacePrev == -1)
+	        {
+                return baseString.Substring(0, firstWhitespaceAfter);	            
+	        }
+
+            if (firstWhitespaceAfter == -1)
+            {
+                return baseString.Substring(firstWhitespacePrev);
+            }
+
+		    return baseString.Substring(firstWhitespacePrev, firstWhitespaceAfter);
 		}
 
 		#endregion
