@@ -99,8 +99,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryDeleteProperty")]
 		[Description("Tries to delete a property from a graph element.")]
-        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDeleteProperty?propertyId={propertyId}", Method = "DELETE",
-		           ResponseFormat = WebMessageFormat.Json)]
+        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDeleteProperty?propertyId={propertyId}", 
+            Method = "POST",
+            ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         Boolean TryRemoveProperty(string graphElementIdentifier, string propertyId);
 
 		/// <summary>
@@ -110,8 +111,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryDeleteGraphElement")]
 		[Description("Tries to delete a graph element.")]
-        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDelete", Method = "DELETE",
-		           ResponseFormat = WebMessageFormat.Json)]
+        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDelete",
+            Method = "POST",            
+            ResponseFormat = WebMessageFormat.Json)]
         Boolean TryRemoveGraphElement(string graphElementIdentifier);
 
         #endregion
@@ -153,9 +155,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success otherwise false </returns>
         [OperationContract(Name = "DeleteIndex")]
 		[Description("Deletes an index.")]
-        [WebInvoke(
-			UriTemplate = "/Index/Delete", 
-			Method = "DELETE")]
+        [WebInvoke(UriTemplate = "/Index/Delete", ResponseFormat = WebMessageFormat.Json,
+            Method = "POST",            
+            RequestFormat = WebMessageFormat.Json)]
 		bool DeleteIndex(IndexDeleteSpecificaton definition);
 
 		/// <summary>
@@ -165,9 +167,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success otherwise false </returns>
         [OperationContract(Name = "DeleteKeyFromIndex")]
 		[Description("Deletes a key from an index.")]
-        [WebInvoke(
-			UriTemplate = "/Index/DeleteKey", 
-			Method = "DELETE")]
+        [WebInvoke(UriTemplate = "/Index/DeleteKey", ResponseFormat = WebMessageFormat.Json,
+            Method = "POST",            
+            RequestFormat = WebMessageFormat.Json)]
 		bool RemoveKeyFromIndex (IndexRemoveKeyFromIndexSpecification definition);
 
 		/// <summary>
@@ -177,9 +179,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success otherwise false </returns>
         [OperationContract(Name = "RemoveGraphElementFromIndex")]
 		[Description("Deletes a graph element from an index.")]
-        [WebInvoke(
-			UriTemplate = "/Index/DeleteGraphElement", 
-			Method = "DELETE")]
+        [WebInvoke(UriTemplate = "/Index/DeleteGraphElement",
+            Method = "POST",            
+            ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
 		bool RemoveGraphElementFromIndex (IndexRemoveGraphelementFromIndexSpecification definition);
 
 		#endregion

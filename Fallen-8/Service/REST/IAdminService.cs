@@ -67,9 +67,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success otherwise false </returns>
         [OperationContract(Name = "DeleteService")]
 		[Description("Deletes a service.")]
-        [WebInvoke(
-			UriTemplate = "/Service/Delete", 
-			Method = "DELETE")]
+        [WebInvoke(UriTemplate = "/Service/Delete",
+            Method = "POST",
+            ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
 		bool DeleteService(ServiceDeleteSpecificaton definition);
 
 
@@ -126,7 +126,8 @@ namespace NoSQL.GraphDB.Service.REST
         /// </summary>
         [OperationContract(Name = "TabulaRasa")]
 		[Description("Put the database in its initial state (deletes all vertices and edges).")]
-        [WebInvoke(UriTemplate = "/TabulaRasa", Method = "DELETE")]
+        [WebGet(UriTemplate = "/TabulaRasa",
+            ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         void TabulaRasa();
 
 
