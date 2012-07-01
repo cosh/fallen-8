@@ -99,8 +99,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryDeleteProperty")]
 		[Description("Tries to delete a property from a graph element.")]
-        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDeleteProperty?propertyId={propertyId}", 
-            Method = "POST",
+        [WebGet(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDeleteProperty?propertyId={propertyId}", 
             ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         Boolean TryRemoveProperty(string graphElementIdentifier, string propertyId);
 
@@ -111,8 +110,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns> True for success, otherwise false </returns>
         [OperationContract(Name = "TryDeleteGraphElement")]
 		[Description("Tries to delete a graph element.")]
-        [WebInvoke(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDelete",
-            Method = "POST",            
+        [WebGet(UriTemplate = "/GraphElements/{graphElementIdentifier}/TryDelete",
             ResponseFormat = WebMessageFormat.Json)]
         Boolean TryRemoveGraphElement(string graphElementIdentifier);
 
