@@ -48,7 +48,7 @@ namespace NoSQL.GraphDB.Service.REST.Specification
         /// <summary>
         ///   The type of the literal
         /// </summary>
-        [DataMember(IsRequired = true)]
+        [DataMember(IsRequired = false)]
         public String FullQualifiedTypeName { get; set; }
     }
 }

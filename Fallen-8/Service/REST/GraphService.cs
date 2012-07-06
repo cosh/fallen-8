@@ -258,7 +258,9 @@ namespace NoSQL.GraphDB.Service.REST
 
             var propertyId = Convert.ToUInt16(propertyIdString);
 
-            var value = (IComparable) Convert.ChangeType(definition.Literal.Value,
+            IComparable value = definition.Literal.FullQualifiedTypeName == null 
+				? definition.Literal.Value
+				: (IComparable) Convert.ChangeType(definition.Literal.Value,
                                                          Type.GetType(definition.Literal.FullQualifiedTypeName, true,
                                                                       true));
 
@@ -279,7 +281,9 @@ namespace NoSQL.GraphDB.Service.REST
 
             #endregion
 
-            var value = (IComparable) Convert.ChangeType(definition.Literal.Value,
+            IComparable value = definition.Literal.FullQualifiedTypeName == null 
+				? definition.Literal.Value
+				: (IComparable) Convert.ChangeType(definition.Literal.Value,
                                                          Type.GetType(definition.Literal.FullQualifiedTypeName, true,
                                                                       true));
 
