@@ -137,7 +137,7 @@ namespace NoSQL.GraphDB.Service.REST
 
             #endregion
 
-            return _fallen8.CreateVertex(definition.CreationDate, GenerateProperties(definition.Properties)).Id;
+            return _fallen8.CreateVertex(definition.CreationDate, ServiceHelper.GenerateProperties(definition.Properties)).Id;
         }
 
         public int AddEdge(EdgeSpecification definition)
@@ -153,7 +153,7 @@ namespace NoSQL.GraphDB.Service.REST
 
             return
                 _fallen8.CreateEdge(definition.SourceVertex, definition.EdgePropertyId, definition.TargetVertex,
-                                    definition.CreationDate, GenerateProperties(definition.Properties)).Id;
+                                    definition.CreationDate, ServiceHelper.GenerateProperties(definition.Properties)).Id;
         }
 
         /// <summary>
@@ -739,39 +739,6 @@ namespace NoSQL.GraphDB.Service.REST
             }
         }
        
-        /// <summary>
-        ///   Generates the properties.
-        /// </summary>
-        /// <returns> The properties. </returns>
-        /// <param name='propertySpecification'> Property specification. </param>
-        private static PropertyContainer[] GenerateProperties(
-            Dictionary<UInt16, PropertySpecification> propertySpecification)
-        {
-            PropertyContainer[] properties = null;
-
-            if (propertySpecification != null)
-            {
-                var propCounter = 0;
-                properties = new PropertyContainer[propertySpecification.Count];
-
-                foreach (var aPropertyDefinition in propertySpecification)
-                {
-                    properties[propCounter] = new PropertyContainer
-                                                  {
-                                                      PropertyId = aPropertyDefinition.Key,
-                                                      Value =
-                                                          Convert.ChangeType(aPropertyDefinition.Value.Property,
-                                                                             Type.GetType(
-                                                                                 aPropertyDefinition.Value.FullQualifiedTypeName,
-                                                                                 true, true))
-                                                  };
-                    propCounter++;
-                }
-            }
-
-            return properties;
-        }
-
         #endregion
     }
 }
