@@ -89,14 +89,15 @@ namespace NoSQL.GraphDB.Service.REST
                 foreach (var aPropertyDefinition in propertySpecification)
                 {
                     properties[propCounter] = new PropertyContainer
-                                                  {
-                                                      PropertyId = aPropertyDefinition.Key,
-                                                      Value =
-                                                          Convert.ChangeType(aPropertyDefinition.Value.Property,
-                                                                             Type.GetType(
-                                                                                 aPropertyDefinition.Value.FullQualifiedTypeName,
-                                                                                 true, true))
-                                                  };
+                     {
+                         PropertyId = aPropertyDefinition.Key,
+                         Value = aPropertyDefinition.Value.FullQualifiedTypeName != null
+                             ? Convert.ChangeType(aPropertyDefinition.Value.Property,
+                                                Type.GetType(
+                                                    aPropertyDefinition.Value.FullQualifiedTypeName,
+                                                    true, true))
+                            : aPropertyDefinition.Value.Property
+                     };
                     propCounter++;
                 }
             }
