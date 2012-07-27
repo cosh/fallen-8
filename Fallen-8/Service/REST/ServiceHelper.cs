@@ -23,6 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using NoSQL.GraphDB.Model;
 
 #region Usings
 
@@ -69,5 +70,44 @@ namespace NoSQL.GraphDB.Service.REST
                 key.Property,
                 Type.GetType(key.FullQualifiedTypeName, true, true));
         }
+
+		/// <summary>
+        ///   Generates the properties.
+        /// </summary>
+        /// <returns> The properties. </returns>
+        /// <param name='propertySpecification'> Property specification. </param>
+        public static PropertyContainer[] GenerateProperties(
+            Dictionary<UInt16, PropertySpecification> propertySpecification)
+        {
+            PropertyContainer[] properties = null;
+
+            if (propertySpecification != null)
+            {
+                var propCounter = 0;
+                properties = new PropertyContainer[propertySpecification.Count];
+
+                foreach (var aPropertyDefinition in propertySpecification)
+                {
+                    properties[propCounter] = new PropertyContainer
+                     {
+                         PropertyId = aPropertyDefinition.Key,
+                         Value = aPropertyDefinition.Value.FullQualifiedTypeName != null
+                             ? Convert.ChangeType(aPropertyDefinition.Value.Property,
+                                                Type.GetType(
+                                                    aPropertyDefinition.Value.FullQualifiedTypeName,
+                                                    true, true))
+                            : aPropertyDefinition.Value.Property
+                     };
+                    propCounter++;
+                }
+            }
+
+            return properties;
+        }
+
+		public static Object Transform(PropertySpecification definition)
+		{
+			return Convert.ChangeType(definition.Property, Type.GetType(definition.FullQualifiedTypeName, true, true));
+		}
     }
 }
