@@ -277,6 +277,11 @@ namespace NoSQL.GraphDB.Service.REST
 			return _fallen8.ServiceFactory.Services.Remove(definition.ServiceId);
 		}
 
+		public void UploadPlugin (Stream dllStream)
+		{
+			PluginFactory.Assimilate(dllStream);
+		}
+
 		#endregion
 
         #region private helper

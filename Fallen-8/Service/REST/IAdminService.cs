@@ -23,10 +23,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System.ComponentModel;
 
 #region Usings
 
+using System.ComponentModel;
 using System;
 using System.IO;
 using System.ServiceModel;
@@ -71,7 +71,6 @@ namespace NoSQL.GraphDB.Service.REST
             Method = "POST",
             ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
 		bool DeleteService(ServiceDeleteSpecificaton definition);
-
 
 		#endregion
 
@@ -184,5 +183,21 @@ namespace NoSQL.GraphDB.Service.REST
         void Save();
 
         #endregion
-    }
+    
+		#region plugin
+
+		/// <summary>
+		/// Uploads a plugin.
+		/// </summary>
+		/// <param name='dllStream'>
+		/// Dll stream.
+		/// </param>
+		[OperationContract(Name = "UploadPluginService")]
+		[Description("Upload of a plugin.")]
+        [WebInvoke(UriTemplate = "/Plugin/Upload",
+            Method = "POST")]
+		void UploadPlugin(Stream dllStream);
+
+		#endregion
+	}
 }

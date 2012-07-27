@@ -100,6 +100,29 @@ namespace NoSQL.GraphDB.Plugin
             return result.Any();
         }
 
+		/// <summary>
+		/// Assimilate the specified dllStream.
+		/// </summary>
+		/// <param name='dllStream'>
+		/// Dll stream.
+		/// </param>
+		/// <param name='path'>
+		/// The path where the dll should be assimilated.
+		/// </param>
+		public static void Assimilate (Stream dllStream, String path = null)
+		{
+			var assimilationPath = path == null 
+					? Environment.CurrentDirectory + Path.DirectorySeparatorChar + Guid.NewGuid() + "_" + DateTime.UtcNow + ".dll" 
+					: path;
+
+			using(var dllFileStream = File.Create(assimilationPath, 1024))
+			{
+				dllStream.CopyTo(dllFileStream);
+			}
+			dllStream.Close();
+			dllStream.Dispose();
+		}
+
         #region private helper
 
         /// <summary>
