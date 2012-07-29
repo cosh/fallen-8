@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Fallen-8 : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Fallen-8</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/cosh/fallen-8">View on GitHub</a>
+
+          <h1 id="project_title">Fallen-8</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/cosh/fallen-8/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/cosh/fallen-8/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><img src="http://www.dreiundzwanzig.biz/F8White.svg" alt="Fallen-8 logo"></p>
+
+<h2>Welcome to Fallen-8.</h2>
+
+<p>Fallen-8 is an in-memory <a href="http://en.wikipedia.org/wiki/Graph_database">graph database</a> implemented in C#. Its focus is to provide raw speed for heavy graph algorithms.</p>
+
+<h3>Key features</h3>
+
+<ul>
+<li>
+<strong>Properties</strong> on vertices and edges </li>
+<li>
+<strong>Indexes</strong> on vertices and edges</li>
+<li>
+<strong>Plugins</strong> for indexes, algorithms and services</li>
+<li>Checkpoint <strong>persistency</strong>
+</li>
+</ul><h3>Sweet spots</h3>
+
+<ul>
+<li>
+<strong>Enterprise Search</strong> (Semantic adhoc queries on multi-dimensional graphs)</li>
+<li>
+<strong>Lawful Interception</strong> (Mass analysis)</li>
+<li>
+<strong>E-Commerce</strong> (Bid- and portfolio-management)</li>
+</ul><h2>HowTo Clone</h2>
+
+<p>Fallen-8 makes use of git submodules, that's why they have to be cloned too.</p>
+
+<pre><code>$ git clone git@github.com:cosh/fallen-8.git
+$ cd fallen-8
+$ git submodule init
+$ git submodule update
+</code></pre>
+
+<h2>HowTo Use</h2>
+
+<pre><code>var fallen8 = new Fallen8();
+
+//start the built-in services
+fallen8.ServiceFactory.StartGraphService(IPAddress.Parse("127.0.0.1"), 2323);
+fallen8.ServiceFactory.StartAdminService(IPAddress.Parse("127.0.0.1"), 2323);
+</code></pre>
+
+<h2>Additional information</h2>
+
+<p><a href="https://github.com/cosh/fallen-8/wiki">Wiki on GitHub</a></p>
+
+<p><a href="https://github.com/cosh/fallen-8/issues">Issues on GitHub</a></p>
+
+<p><a href="https://groups.google.com/d/forum/fallen-8">Google Group</a></p>
+
+<p><a href="http://www.slideshare.net/HenningRauch/graphdatabases">Graph databases - Henning Rauch</a></p>
+
+<p><a href="http://www.slideshare.net/HenningRauch/vorlesung-graphendatenbanken-an-der-universitt-hof">Graphendatenbanken - Henning Rauch (visiting lecture)</a></p>
+
+<h2>MIT-License</h2>
+
+<p>Copyright (c) 2012 Henning Rauch</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Fallen-8 maintained by <a href="https://github.com/cosh">cosh</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-30732147-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
