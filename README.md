@@ -1,5 +1,3 @@
-![Fallen-8 logo](http://www.fallen-8.com/F8White.svg)
-
 ## Welcome to Fallen-8.
 Fallen-8 is an in-memory [graph database](http://en.wikipedia.org/wiki/Graph_database) implemented in C#. It's focus is to provide raw speed for heavy graph algorithms.
 
