@@ -33,13 +33,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
 using NoSQL.GraphDB.Algorithms.Path;
 using NoSQL.GraphDB.Helper;
 using NoSQL.GraphDB.Index;
 using NoSQL.GraphDB.Plugin;
-using NoSQL.GraphDB.Service.REST.Ressource;
 using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
 
@@ -59,21 +56,6 @@ namespace NoSQL.GraphDB.Service.REST
         ///   The internal Fallen-8 instance
         /// </summary>
         private readonly Fallen8 _fallen8;
-
-        /// <summary>
-        ///   The ressources.
-        /// </summary>
-        private Dictionary<String, MemoryStream> _ressources;
-
-        /// <summary>
-        ///   The html befor the code injection
-        /// </summary>
-        private String _frontEndPre;
-
-        /// <summary>
-        ///   The html after the code injection
-        /// </summary>
-        private String _frontEndPost;
 
         /// <summary>
         /// The Fallen-8 save path
@@ -101,7 +83,6 @@ namespace NoSQL.GraphDB.Service.REST
         public AdminService(Fallen8 fallen8)
         {
             _fallen8 = fallen8;
-            LoadFrontend();
 
             _saveFile = "Temp.f8s";
             _savePath = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + _saveFile;
@@ -155,87 +136,7 @@ namespace NoSQL.GraphDB.Service.REST
                            FreeMemory = freeBytesOfMemory
                        };
         }
-
-        public Stream GetFrontend()
-        {
-            if (WebOperationContext.Current != null)
-            {
-                var baseUri = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri;
-
-                WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
-
-                var sb = new StringBuilder();
-
-                sb.Append(_frontEndPre);
-                sb.Append(Environment.NewLine);
-                sb.AppendLine("var baseUri = \"" + baseUri + "\";" + Environment.NewLine);
-                sb.Append(_frontEndPost);
-
-                return new MemoryStream(Encoding.UTF8.GetBytes(sb.ToString()));
-            }
-
-            return new MemoryStream(Encoding.UTF8.GetBytes("Sorry, no frontend available."));
-        }
-
-        public void ReloadFrontend()
-        {
-            LoadFrontend();
-        }
-
-        public Stream GetFrontendRessources(String ressourceName)
-        {
-            MemoryStream ressourceStream;
-            if (_ressources.TryGetValue(ressourceName, out ressourceStream))
-            {
-                var result = new MemoryStream();
-                var buffer = new byte[32768];
-                int read;
-                while ((read = ressourceStream.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    result.Write(buffer, 0, read);
-                }
-                ressourceStream.Position = 0;
-                result.Position = 0;
-
-                if (WebOperationContext.Current != null)
-                {
-                    var extension = ressourceName.Split('.').Last();
-
-                    switch (extension)
-                    {
-                        case "html":
-                        case "htm":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
-                            break;
-                        case "png":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "image/png";
-                            break;
-                        case "css":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "text/css";
-                            break;
-                        case "gif":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "image/gif";
-                            break;
-                        case "ico":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "image/ico";
-                            break;
-                        case "swf":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-shockwave-flash";
-                            break;
-                        case "js":
-                            WebOperationContext.Current.OutgoingResponse.ContentType = "text/javascript";
-                            break;
-                        default:
-                            throw new ApplicationException(String.Format("File type {0} not supported", extension));
-                    }
-                }
-
-                return result;
-            }
-
-            return null;
-        }
-        
+       
         public void Load(string startServices)
         {
             _fallen8.Load(FindLatestFallen8(), Convert.ToBoolean(startServices));
@@ -302,8 +203,9 @@ namespace NoSQL.GraphDB.Service.REST
 
 				return totalMemory - usedMemory;
 			#else
-                var freeMem = new PerformanceCounter("Memory", "Available Bytes");
-            	return Convert.ToUInt64(freeMem.NextValue());
+                var freeMemPerfCounter = new PerformanceCounter("Memory", "Available Bytes");
+                var freeMem = freeMemPerfCounter.NextValue();
+            	return Convert.ToUInt64(freeMem);
 			#endif
 		}
 
@@ -353,59 +255,6 @@ namespace NoSQL.GraphDB.Service.REST
                 return fileToPathMapper.First(_ => _.Key.Contains(latestRevision)).Value;
             }
             return _savePath;
-        }
-
-        /// <summary>
-        ///   Load the frontend
-        /// </summary>
-        private void LoadFrontend()
-        {
-            if (_ressources != null)
-            {
-                foreach (var memoryStream in _ressources)
-                {
-                    memoryStream.Value.Dispose();
-                }
-            }
-
-            _ressources = FindRessources();
-            _frontEndPre = Frontend.Pre;
-            _frontEndPost = Frontend.Post;
-        }
-
-        /// <summary>
-        ///   Find all ressources
-        /// </summary>
-        /// <returns> Ressources </returns>
-        private static Dictionary<string, MemoryStream> FindRessources()
-        {
-            var ressourceDirectory = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + "Service" +
-                                     System.IO.Path.DirectorySeparatorChar + "REST" +
-                                     System.IO.Path.DirectorySeparatorChar + "Ressource" +
-                                     System.IO.Path.DirectorySeparatorChar;
-
-            return Directory.EnumerateFiles(ressourceDirectory)
-                .ToDictionary(
-                    key => key.Split(System.IO.Path.DirectorySeparatorChar).Last(),
-                    CreateMemoryStreamFromFile);
-        }
-
-        /// <summary>
-        ///   Creates a memory stream from a file
-        /// </summary>
-        /// <param name="value"> The path of the file </param>
-        /// <returns> MemoryStream </returns>
-        private static MemoryStream CreateMemoryStreamFromFile(string value)
-        {
-            MemoryStream result;
-
-            using (var file = File.OpenRead(value))
-            {
-                var reader = new BinaryReader(file);
-                result = new MemoryStream(reader.ReadBytes((Int32) file.Length));
-            }
-
-            return result;
         }
 
         #endregion

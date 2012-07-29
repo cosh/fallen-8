@@ -138,11 +138,6 @@
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Persistency\EdgeSneakPeak.cs" />
     <Compile Include="Persistency\EdgeOnVertexToDo.cs" />
-    <Compile Include="Service\REST\Ressource\Frontend.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Frontend.resx</DependentUpon>
-    </Compile>
     <Compile Include="Helper\Fallen8Pool.cs" />
     <Compile Include="Service\REST\Specification\EdgeSpecification.cs" />
     <Compile Include="Service\REST\Specification\LiteralSpecification.cs" />
@@ -173,60 +168,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CodeGeneration.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Service\REST\Ressource\d3.v2.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Service\REST\Ressource\Frontend.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Frontend.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Service\REST\Ressource\status.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service\REST\Ressource\D3Licence.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Service\REST\Ressource\graph.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Service\REST\Ressource\copyright.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Service\REST\Ressource\style.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Service\REST\Ressource\ajax-loader.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Include="Service\REST\Ressource\arbor.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="Service\REST\Ressource\Explore.htm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Service\REST\Ressource\graphics.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Service\REST\Ressource\renderer.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Service\REST\Ressource\Stats.htm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <EmbeddedResource Include="Service\REST\Ressource\jquery-1.7.1.min.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <Content Include="Service\REST\Ressource\Overview.htm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

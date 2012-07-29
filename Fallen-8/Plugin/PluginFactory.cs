@@ -111,16 +111,12 @@ namespace NoSQL.GraphDB.Plugin
 		/// </param>
 		public static void Assimilate (Stream dllStream, String path = null)
 		{
-			var assimilationPath = path == null 
-					? Environment.CurrentDirectory + Path.DirectorySeparatorChar + Guid.NewGuid() + "_" + DateTime.UtcNow + ".dll" 
-					: path;
+			var assimilationPath = path ?? Environment.CurrentDirectory + Path.DirectorySeparatorChar + Guid.NewGuid() + "_" + DateTime.UtcNow + ".dll";
 
 			using(var dllFileStream = File.Create(assimilationPath, 1024))
 			{
 				dllStream.CopyTo(dllFileStream);
 			}
-			dllStream.Close();
-			dllStream.Dispose();
 		}
 
         #region private helper

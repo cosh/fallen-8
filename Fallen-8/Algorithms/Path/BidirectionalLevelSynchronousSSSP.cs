@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Threading;
 using NoSQL.GraphDB.Helper;
 
 #region Usings
@@ -33,8 +32,6 @@ using NoSQL.GraphDB.Model;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using NoSQL.GraphDB.Plugin;
-using System.Threading.Tasks;
 
 #endregion
 

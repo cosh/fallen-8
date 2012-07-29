@@ -132,37 +132,6 @@ namespace NoSQL.GraphDB.Service.REST
 
         #endregion
 
-        #region frontend
-
-        /// <summary>
-        ///   Gets the frontend.
-        /// </summary>
-        /// <returns> The frontend. </returns>
-        [OperationContract(Name = "Frontend")]
-		[Description("Gets the frontend.")]
-        [WebGet(UriTemplate = "/Frontend")]
-        Stream GetFrontend();
-
-        /// <summary>
-        ///   Reload the frontend.
-        /// </summary>
-        [OperationContract(Name = "ReloadFrontend")]
-		[Description("Reload the frontend.")]
-        [WebGet(UriTemplate = "/Frontent/Reload")]
-        void ReloadFrontend();
-
-        /// <summary>
-        ///   Gets the frontend ressources.
-        /// </summary>
-        /// <returns> The frontend ressources. </returns>
-        /// <param name='ressourceName'> Ressource name. </param>
-        [OperationContract(Name = "FrontendRessource")]
-		[Description("Gets the frontend ressources.")]
-        [WebGet(UriTemplate = "/Frontend/Ressource/{ressourceName}")]
-        Stream GetFrontendRessources(String ressourceName);
-
-        #endregion
-
         #region persistence
 
         /// <summary>

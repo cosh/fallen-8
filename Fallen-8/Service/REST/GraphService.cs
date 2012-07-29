@@ -119,7 +119,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         public void Dispose()
         {
-            //do nothing atm
+            _codeProvider.Dispose();
         }
 
         #endregion

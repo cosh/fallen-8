@@ -285,10 +285,10 @@ namespace NoSQL.GraphDB.Service.REST
                     InstanceContextMode = InstanceContextMode.Single;
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _host.Abort();
-                throw e;
+                throw;
             }
         }
 
