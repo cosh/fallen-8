@@ -1,14 +1,14 @@
 ## Welcome to Fallen-8.
-Fallen-8 is an in-memory [graph database](http://en.wikipedia.org/wiki/Graph_database) implemented in C#. It's focus is to provide raw speed for heavy graph algorithms.
+Fallen-8 is an in-memory [graph database](http://en.wikipedia.org/wiki/Graph_database) implemented in C#. Its focus is to provide raw speed for heavy graph algorithms.
 
 ### Key featues
-* **Properies** on vertices and edges 
+* **Properties** on vertices and edges 
 * **Indexes** on vertices and edges
 * **Plugins** for indexes, algorithms and services
 * Checkpoint **persistency**
 
 ### Sweet spots
-* **Enterprise Search** (Sematic adhoc queries on multi-dimensionsional graphs)
+* **Enterprise Search** (Semantic adhoc queries on multi-dimensional graphs)
 * **Lawful Interception** (Mass analysis)
 * **E-Commerce** (Bid- and portfolio-management)
 
