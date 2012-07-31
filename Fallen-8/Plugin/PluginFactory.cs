@@ -49,7 +49,7 @@ namespace NoSQL.GraphDB.Plugin
         /// <param name='result'> Result. </param>
         /// <param name='name'> The unique name of the pluginN. </param>
         /// <typeparam name='T'> The interface type of the plugin. </typeparam>
-        public static Boolean TryFindPlugin<T>(out T result, String name)
+        public static Boolean TryFindPlugin<T>(out T result, String name) where T : IPlugin
         {
             foreach (var aPluginTypeOfT in GetAllTypes<T>())
             {
@@ -61,6 +61,29 @@ namespace NoSQL.GraphDB.Plugin
                         result = (T) aPluginInstance;
                         return true;
                     }
+                }
+            }
+
+            result = default(T);
+            return false;
+        }
+
+        /// <summary>
+        ///   Tries to find a class.
+        /// </summary>
+        /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
+        /// <param name='result'> Result. </param>
+        /// <param name='name'> The unique name of the pluginN. </param>
+        /// <typeparam name='T'> The interface type of the plugin. </typeparam>
+        public static Boolean TryFind<T>(out T result, String name)
+        {
+            foreach (var aPluginTypeOfT in GetAllTypes<T>(false))
+            {
+                var aPluginInstance = Activator.CreateInstance(aPluginTypeOfT);
+                if (aPluginInstance != null)
+                {
+                    result = (T)aPluginInstance;
+                    return true;
                 }
             }
 
@@ -111,11 +134,11 @@ namespace NoSQL.GraphDB.Plugin
 		/// </param>
 		public static void Assimilate (Stream dllStream, String path = null)
 		{
-			var assimilationPath = path ?? Environment.CurrentDirectory + Path.DirectorySeparatorChar + Guid.NewGuid() + "_" + DateTime.UtcNow + ".dll";
+			var assimilationPath = path ?? Environment.CurrentDirectory + Path.DirectorySeparatorChar + Path.GetRandomFileName() + ".dll";
 
 			using(var dllFileStream = File.Create(assimilationPath, 1024))
 			{
-				dllStream.CopyTo(dllFileStream);
+                dllStream.CopyTo(dllFileStream);
 			}
 		}
 
@@ -144,7 +167,7 @@ namespace NoSQL.GraphDB.Plugin
         /// </summary>
         /// <returns> The all types. </returns>
         /// <typeparam name='T'> The type of the plugin. </typeparam>
-        private static IEnumerable<Type> GetAllTypes<T>()
+        private static IEnumerable<Type> GetAllTypes<T>(Boolean checkForIPlugin = true)
         {
             var result = new List<Type>();
 
@@ -168,7 +191,7 @@ namespace NoSQL.GraphDB.Plugin
                         continue;
                     }
 
-                    if (!IsInterfaceOf<IPlugin>(aType))
+                    if (checkForIPlugin && !IsInterfaceOf<IPlugin>(aType))
                     {
                         continue;
                     }
