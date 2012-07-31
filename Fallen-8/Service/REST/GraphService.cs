@@ -34,6 +34,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.ServiceModel;
+using System.Text;
 using Microsoft.CSharp;
 using NoSQL.GraphDB.Algorithms.Path;
 using NoSQL.GraphDB.Helper;
@@ -44,7 +45,6 @@ using NoSQL.GraphDB.Log;
 using NoSQL.GraphDB.Model;
 using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
-using System.Text;
 
 #endregion
 

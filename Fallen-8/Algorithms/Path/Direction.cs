@@ -24,7 +24,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#region Usings
+
 using System.Runtime.Serialization;
+
+#endregion
 
 namespace NoSQL.GraphDB.Algorithms.Path
 {

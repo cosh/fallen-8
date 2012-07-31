@@ -1,4 +1,4 @@
-// 
+﻿// 
 // RegExIndex.cs
 //  
 // Author:

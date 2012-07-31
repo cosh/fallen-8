@@ -24,14 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using NoSQL.GraphDB.Helper;
-
 #region Usings
 
-using NoSQL.GraphDB.Model;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Model;
+
+    #region Usings
+
+#endregion
 
 #endregion
 

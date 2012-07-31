@@ -23,14 +23,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using NoSQL.GraphDB.Model;
 
 #region Usings
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NoSQL.GraphDB.Model;
 using NoSQL.GraphDB.Service.REST.Specification;
+
+    #region Usings
+
+#endregion
 
 #endregion
 

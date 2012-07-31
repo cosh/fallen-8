@@ -26,9 +26,9 @@
 
 #region Usings
 
+using System;
 using System.Runtime.Serialization;
 using NoSQL.GraphDB.Algorithms.Path;
-using System;
 
 #endregion
 
