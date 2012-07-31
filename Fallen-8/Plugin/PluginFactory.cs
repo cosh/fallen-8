@@ -53,7 +53,7 @@ namespace NoSQL.GraphDB.Plugin
         {
             foreach (var aPluginTypeOfT in GetAllTypes<T>())
             {
-                var aPluginInstance = Activate(aPluginTypeOfT);
+                var aPluginInstance = Activate<IPlugin>(aPluginTypeOfT);
                 if (aPluginInstance != null)
                 {
                     if (aPluginInstance.PluginName == name)
@@ -100,7 +100,7 @@ namespace NoSQL.GraphDB.Plugin
         public static Boolean TryGetAvailablePluginsWithDescriptions<T>(out Dictionary<String, String> result)
         {
             result = (from aPluginTypeOfT in GetAllTypes<T>()
-                      select Activate(aPluginTypeOfT)
+                      select Activate<IPlugin>(aPluginTypeOfT)
                       into aPluginInstance
                       where aPluginInstance != null
                       select aPluginInstance).ToDictionary(key => key.PluginName, GenerateDescription);
@@ -116,7 +116,7 @@ namespace NoSQL.GraphDB.Plugin
         public static Boolean TryGetAvailablePlugins<T>(out IEnumerable<String> result)
         {
             result = (from aPluginTypeOfT in GetAllTypes<T>()
-                      select Activate(aPluginTypeOfT)
+                      select Activate<IPlugin>(aPluginTypeOfT)
                       into aPluginInstance
                       where aPluginInstance != null
                       select aPluginInstance.PluginName);
@@ -132,7 +132,7 @@ namespace NoSQL.GraphDB.Plugin
 		/// <param name='path'>
 		/// The path where the dll should be assimilated.
 		/// </param>
-		public static void Assimilate (Stream dllStream, String path = null)
+		public static String Assimilate (Stream dllStream, String path = null)
 		{
 			var assimilationPath = path ?? Environment.CurrentDirectory + Path.DirectorySeparatorChar + Path.GetRandomFileName() + ".dll";
 
@@ -140,7 +140,26 @@ namespace NoSQL.GraphDB.Plugin
 			{
                 dllStream.CopyTo(dllFileStream);
 			}
+
+		    return assimilationPath;
 		}
+
+        /// <summary>
+        /// Tries to find plugins
+        /// </summary>
+        /// <typeparam name="T">The interface of the plugins</typeparam>
+        /// <param name="newTypeObjects">The resulting types</param>
+        /// <param name="pathToNewAssembly">The path to the interesting assembly</param>
+        /// <param name="checkForIPlugin">Check for IPlugin</param>
+        /// <returns>True for success otherwise false</returns>
+        public static bool TryFindPlugins<T>(out IEnumerable<T> newTypeObjects, string pathToNewAssembly, bool checkForIPlugin = true) where T:class 
+        {
+            var newTypes = new List<Type>(ProcessAFile<T>(pathToNewAssembly, checkForIPlugin));
+
+            newTypeObjects = newTypes.Select(Activate<T>);
+
+            return newTypes.Count > 0;
+        }
 
         #region private helper
 
@@ -176,38 +195,7 @@ namespace NoSQL.GraphDB.Plugin
 
             foreach (var file in files)
             {
-                var assembly = Assembly.LoadFrom(file);
-                var types = assembly.GetTypes();
-
-                foreach (var aType in types)
-                {
-                    if (!aType.IsClass || aType.IsAbstract)
-                    {
-                        continue;
-                    }
-
-                    if (!aType.IsPublic)
-                    {
-                        continue;
-                    }
-
-                    if (checkForIPlugin && !IsInterfaceOf<IPlugin>(aType))
-                    {
-                        continue;
-                    }
-
-                    if (!IsInterfaceOf<T>(aType))
-                    {
-                        continue;
-                    }
-
-                    if (aType.GetConstructor(Type.EmptyTypes) == null)
-                    {
-                        continue;
-                    }
-
-                    result.Add(aType);
-                }
+                result.AddRange(ProcessAFile<T>(file, checkForIPlugin));
             }
 
             return result;
@@ -228,7 +216,7 @@ namespace NoSQL.GraphDB.Plugin
         ///   Activate the specified currentPluginType.
         /// </summary>
         /// <param name='currentPluginType'> Current plugin type. </param>
-        private static IPlugin Activate(Type currentPluginType)
+        private static T Activate<T>(Type currentPluginType) where T:class 
         {
             Object instance;
 
@@ -238,10 +226,53 @@ namespace NoSQL.GraphDB.Plugin
             }
             catch (TypeLoadException)
             {
-                return null;
+                return default(T);
             }
 
-            return instance as IPlugin;
+            return instance as T;
+        }
+
+        /// <summary>
+        /// Processes a file
+        /// </summary>
+        /// <typeparam name="T">The interface type</typeparam>
+        /// <param name="file">The interesting file</param>
+        /// <param name="checkForIPlugin">Should there be a check for IPlugin</param>
+        /// <returns>Enumerable of matching types</returns>
+        private static IEnumerable<Type> ProcessAFile<T>(string file, bool checkForIPlugin)
+        {
+            var assembly = Assembly.LoadFrom(file);
+            var types = assembly.GetTypes();
+
+            foreach (var aType in types)
+            {
+                if (!aType.IsClass || aType.IsAbstract)
+                {
+                    continue;
+                }
+
+                if (!aType.IsPublic)
+                {
+                    continue;
+                }
+
+                if (checkForIPlugin && !IsInterfaceOf<IPlugin>(aType))
+                {
+                    continue;
+                }
+
+                if (!IsInterfaceOf<T>(aType))
+                {
+                    continue;
+                }
+
+                if (aType.GetConstructor(Type.EmptyTypes) == null)
+                {
+                    continue;
+                }
+
+                yield return aType;
+            }
         }
 
         #endregion
