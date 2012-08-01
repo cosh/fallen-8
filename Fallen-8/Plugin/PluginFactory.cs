@@ -43,6 +43,13 @@ namespace NoSQL.GraphDB.Plugin
     public static class PluginFactory
     {
         /// <summary>
+        /// A TypeEvaluator delegate
+        /// </summary>
+        /// <param name="type">The to be evaluated type</param>
+        /// <returns>True = OK otherwise not</returns>
+        public delegate bool TypeEvaluator(Type type);
+
+        /// <summary>
         ///   Tries to find a plugin.
         /// </summary>
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
@@ -73,11 +80,11 @@ namespace NoSQL.GraphDB.Plugin
         /// </summary>
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> Result. </param>
-        /// <param name='name'> The unique name of the pluginN. </param>
+        /// <param name='evaluator'> A type evaluator delegate </param>
         /// <typeparam name='T'> The interface type of the plugin. </typeparam>
-        public static Boolean TryFind<T>(out T result, String name)
+        public static Boolean TryFind<T>(out T result, TypeEvaluator evaluator)
         {
-            foreach (var aPluginTypeOfT in GetAllTypes<T>(false))
+            foreach (var aPluginTypeOfT in GetAllTypes<T>(false).Where(_ => evaluator(_)))
             {
                 var aPluginInstance = Activator.CreateInstance(aPluginTypeOfT);
                 if (aPluginInstance != null)
