@@ -16,10 +16,7 @@ Fallen-8 is an in-memory [graph database](http://en.wikipedia.org/wiki/Graph_dat
 Fallen-8 makes use of git submodules, that's why they have to be cloned too.
 
 ```
-$ git clone git@github.com:cosh/fallen-8.git
-$ cd fallen-8
-$ git submodule init
-$ git submodule update
+$ git clone --recursive git@github.com:cosh/fallen-8.git
 ```
 
 ## HowTo Use
