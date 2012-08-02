@@ -284,7 +284,7 @@ namespace NoSQL.GraphDB
                 AGraphElement graphElement;
 
                 var success = _graphElements.TryGetElementOrDefault(out graphElement, graphElementId) && graphElement.TryRemoveProperty(propertyId);
-
+                
                 FinishWriteResource();
 
                 return success;
@@ -325,18 +325,21 @@ namespace NoSQL.GraphDB
                         #region out edges
 
                         var outgoingEdgeConatiner = vertex.GetOutgoingEdges();
-                        for (var i = 0; i < outgoingEdgeConatiner.Count; i++)
+                        if (outgoingEdgeConatiner != null)
                         {
-                            var aOutEdgeContainer = outgoingEdgeConatiner[i];
-                            for (var j = 0; j < aOutEdgeContainer.Edges.Count; j++)
+                            for (var i = 0; i < outgoingEdgeConatiner.Count; i++)
                             {
-                                var aOutEdge = aOutEdgeContainer.Edges[j];
+                                var aOutEdgeContainer = outgoingEdgeConatiner[i];
+                                for (var j = 0; j < aOutEdgeContainer.Edges.Count; j++)
+                                {
+                                    var aOutEdge = aOutEdgeContainer.Edges[j];
 
-                                //remove from incoming edges of target vertex
-                                aOutEdge.TargetVertex.RemoveIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
+                                    //remove from incoming edges of target vertex
+                                    aOutEdge.TargetVertex.RemoveIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
 
-                                //remove the edge itself
-                                _graphElements.SetDefault(aOutEdge.Id);
+                                    //remove the edge itself
+                                    _graphElements.SetDefault(aOutEdge.Id);
+                                }
                             }
                         }
 
@@ -345,19 +348,21 @@ namespace NoSQL.GraphDB
                         #region in edges
 
                         var incomingEdgeContainer = vertex.GetIncomingEdges();
-
-                        for (var i = 0; i < incomingEdgeContainer.Count; i++)
+                        if (incomingEdgeContainer != null)
                         {
-                            var aInEdgeContainer = incomingEdgeContainer[i];
-                            for (var j = 0; j < aInEdgeContainer.Edges.Count; j++)
+                            for (var i = 0; i < incomingEdgeContainer.Count; i++)
                             {
-                                var aInEdge = aInEdgeContainer.Edges[j];
+                                var aInEdgeContainer = incomingEdgeContainer[i];
+                                for (var j = 0; j < aInEdgeContainer.Edges.Count; j++)
+                                {
+                                    var aInEdge = aInEdgeContainer.Edges[j];
 
-                                //remove from outgoing edges of source vertex
-                                aInEdge.SourceVertex.RemoveOutGoingEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
+                                    //remove from outgoing edges of source vertex
+                                    aInEdge.SourceVertex.RemoveOutGoingEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
 
-                                //remove the edge itself
-                                _graphElements.SetDefault(aInEdge.Id);
+                                    //remove the edge itself
+                                    _graphElements.SetDefault(aInEdge.Id);
+                                }
                             }
                         }
 
@@ -403,18 +408,21 @@ namespace NoSQL.GraphDB
                         #region out edges
 
                         var outgoingEdgeConatiner = vertex.GetOutgoingEdges();
-                        for (var i = 0; i < outgoingEdgeConatiner.Count; i++)
+                        if (outgoingEdgeConatiner != null)
                         {
-                            var aOutEdgeContainer = outgoingEdgeConatiner[i];
-                            for (var j = 0; j < aOutEdgeContainer.Edges.Count; j++)
+                            for (var i = 0; i < outgoingEdgeConatiner.Count; i++)
                             {
-                                var aOutEdge = aOutEdgeContainer.Edges[j];
+                                var aOutEdgeContainer = outgoingEdgeConatiner[i];
+                                for (var j = 0; j < aOutEdgeContainer.Edges.Count; j++)
+                                {
+                                    var aOutEdge = aOutEdgeContainer.Edges[j];
 
-                                //remove from incoming edges of target vertex
-                                aOutEdge.TargetVertex.AddIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
+                                    //remove from incoming edges of target vertex
+                                    aOutEdge.TargetVertex.AddIncomingEdge(aOutEdgeContainer.EdgePropertyId, aOutEdge);
 
-                                //reset the edge
-                                _graphElements.SetValue(aOutEdge.Id, aOutEdge);
+                                    //reset the edge
+                                    _graphElements.SetValue(aOutEdge.Id, aOutEdge);
+                                }
                             }
                         }
 
@@ -423,19 +431,21 @@ namespace NoSQL.GraphDB
                         #region in edges
 
                         var incomingEdgeContainer = vertex.GetIncomingEdges();
-
-                        for (var i = 0; i < incomingEdgeContainer.Count; i++)
+                        if (incomingEdgeContainer != null)
                         {
-                            var aInEdgeContainer = incomingEdgeContainer[i];
-                            for (var j = 0; j < aInEdgeContainer.Edges.Count; j++)
+                            for (var i = 0; i < incomingEdgeContainer.Count; i++)
                             {
-                                var aInEdge = aInEdgeContainer.Edges[j];
+                                var aInEdgeContainer = incomingEdgeContainer[i];
+                                for (var j = 0; j < aInEdgeContainer.Edges.Count; j++)
+                                {
+                                    var aInEdge = aInEdgeContainer.Edges[j];
 
-                                //remove from outgoing edges of source vertex
-                                aInEdge.SourceVertex.AddOutEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
+                                    //remove from outgoing edges of source vertex
+                                    aInEdge.SourceVertex.AddOutEdge(aInEdgeContainer.EdgePropertyId, aInEdge);
 
-                                //reset the edge
-                                _graphElements.SetValue(aInEdge.Id, aInEdge);
+                                    //reset the edge
+                                    _graphElements.SetValue(aInEdge.Id, aInEdge);
+                                }
                             }
                         }
 
