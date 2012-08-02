@@ -111,7 +111,9 @@ namespace NoSQL.GraphDB.Service.REST
 
 		public static Object Transform(PropertySpecification definition)
 		{
-			return Convert.ChangeType(definition.Property, Type.GetType(definition.FullQualifiedTypeName, true, true));
+            return definition.FullQualifiedTypeName == null 
+                ? definition.Property
+                : Convert.ChangeType(definition.Property, Type.GetType(definition.FullQualifiedTypeName, true, true));
 		}
     }
 }
