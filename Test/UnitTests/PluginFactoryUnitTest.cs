@@ -88,15 +88,6 @@ namespace NoSQL.GraphDB.Test
         public void TryFindPluginUnitTestHelper<T>()
         {
             Assert.Inconclusive("TODO");
-
-            T result = default(T); // TODO: Initialize to an appropriate value
-            T resultExpected = default(T); // TODO: Initialize to an appropriate value
-            string name = string.Empty; // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-            actual = PluginFactory.TryFindPlugin<T>(out result, name);
-            Assert.AreEqual(resultExpected, result);
-            Assert.AreEqual(expected, actual);
         }
 
         [TestMethod()]

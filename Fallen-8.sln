@@ -11,13 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{D1417EBC-D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Test\UnitTests\UnitTests.csproj", "{B4D900A1-48CE-48C5-B38E-0301A9067267}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D53F9CF9-833C-4354-B710-8475E4167ADC}"
-	ProjectSection(SolutionItems) = preProject
-		Fallen-8.vsmdi = Fallen-8.vsmdi
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Test\IntegrationTests\IntegrationTests.csproj", "{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}"
 EndProject
 Global
@@ -52,7 +45,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7267AFEB-D3FC-4416-8792-C386A685C86F} = {5AD7BBF6-B9F9-497B-9E8A-9C9B5D396F49}
 		{B4D900A1-48CE-48C5-B38E-0301A9067267} = {D1417EBC-D957-41A6-8E39-4F6E9674B3D1}
-		{D53F9CF9-833C-4354-B710-8475E4167ADC} = {D1417EBC-D957-41A6-8E39-4F6E9674B3D1}
 		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF} = {D1417EBC-D957-41A6-8E39-4F6E9674B3D1}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
