@@ -1,5 +1,6 @@
 ﻿#region Usings
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NoSQL.GraphDB.Model;
@@ -71,7 +72,11 @@ namespace NoSQL.GraphDB.Test
         internal virtual AGraphElement CreateAGraphElement()
         {
             // TODO: Instantiate an appropriate concrete class.
-            AGraphElement target = null;
+            AGraphElement target = new VertexModel(0, 0, new PropertyContainer[2]
+                                                             {
+                                                                 new PropertyContainer {PropertyId = 0, Value = 23},
+                                                                 new PropertyContainer {PropertyId = 1, Value = "42"},
+                                                             });
             return target;
         }
 
@@ -81,13 +86,14 @@ namespace NoSQL.GraphDB.Test
         [TestMethod()]
         public void GetAllPropertiesUnitTest()
         {
-            Assert.Inconclusive("TODO");
-
-            AGraphElement target = CreateAGraphElement(); // TODO: Initialize to an appropriate value
-            ReadOnlyCollection<PropertyContainer> expected = null; // TODO: Initialize to an appropriate value
-            ReadOnlyCollection<PropertyContainer> actual;
-            actual = target.GetAllProperties();
-            Assert.AreEqual(expected, actual);
+            var target = CreateAGraphElement(); // TODO: Initialize to an appropriate value
+            var expected = new ReadOnlyCollection<PropertyContainer>(new List<PropertyContainer>(new PropertyContainer[2]
+                                                             {
+                                                                 new PropertyContainer {PropertyId = 0, Value = 23},
+                                                                 new PropertyContainer {PropertyId = 1, Value = "42"},
+                                                             }));
+            var actual = target.GetAllProperties();
+            CollectionAssert.AreEquivalent(expected, actual);
         }
 
         /// <summary>
@@ -96,39 +102,21 @@ namespace NoSQL.GraphDB.Test
         [TestMethod()]
         public void GetPropertyCountUnitTest()
         {
-            Assert.Inconclusive("TODO");
-
-            AGraphElement target = CreateAGraphElement(); // TODO: Initialize to an appropriate value
-            int expected = 0; // TODO: Initialize to an appropriate value
+            var target = CreateAGraphElement();
+            int expected = 2; 
             int actual;
             actual = target.GetPropertyCount();
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for TryGetProperty
-        ///</summary>
-        public void TryGetPropertyUnitTestHelper<TProperty>()
-        {
-            Assert.Inconclusive("TODO");
-
-            AGraphElement target = CreateAGraphElement(); // TODO: Initialize to an appropriate value
-            TProperty result = default(TProperty); // TODO: Initialize to an appropriate value
-            TProperty resultExpected = default(TProperty); // TODO: Initialize to an appropriate value
-            ushort propertyId = 0; // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-            actual = target.TryGetProperty<TProperty>(out result, propertyId);
-            Assert.AreEqual(resultExpected, result);
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod()]
         public void TryGetPropertyUnitTest()
         {
-            Assert.Inconclusive("TODO");
-
-            TryGetPropertyUnitTestHelper<GenericParameterHelper>();
+            var target = CreateAGraphElement();
+            int expected = 23;
+            int actual;
+            Assert.IsTrue(target.TryGetProperty(out actual, 0));
+            Assert.AreEqual(expected, actual);
         }
     }
 }
