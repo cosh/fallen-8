@@ -3,6 +3,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NoSQL.GraphDB.Helper;
+using System.Threading;
 
 #endregion
 
@@ -74,10 +75,8 @@ namespace NoSQL.GraphDB.Test
         [TestMethod()]
         public void ConvertDateTimeUnitTest()
         {
-            Assert.Inconclusive("TODO");
-
-            var date = new DateTime(); // TODO: Initialize to an appropriate value
-            uint expected = 0; // TODO: Initialize to an appropriate value
+            var date = new DateTime(1982, 3, 22, 6, 30, 23) ; 
+            uint expected = 385626623;
             uint actual;
             actual = DateHelper.ConvertDateTime(date);
             Assert.AreEqual(expected, actual);
@@ -89,10 +88,8 @@ namespace NoSQL.GraphDB.Test
         [TestMethod()]
         public void GetDateTimeFromUnixTimeStampUnitTest()
         {
-            Assert.Inconclusive("TODO");
-
-            uint secondsFromNineTeenSeventy = 0; // TODO: Initialize to an appropriate value
-            var expected = new DateTime(); // TODO: Initialize to an appropriate value
+            uint secondsFromNineTeenSeventy = 385626623;
+            var expected = new DateTime(1982, 3, 22, 6, 30, 23);
             DateTime actual;
             actual = DateHelper.GetDateTimeFromUnixTimeStamp(secondsFromNineTeenSeventy);
             Assert.AreEqual(expected, actual);
@@ -104,13 +101,13 @@ namespace NoSQL.GraphDB.Test
         [TestMethod()]
         public void GetModificationDateUnitTest()
         {
-            Assert.Inconclusive("TODO");
-
-            uint creationDate = 0; // TODO: Initialize to an appropriate value
-            uint expected = 0; // TODO: Initialize to an appropriate value
+            uint creationDate = DateHelper.ConvertDateTime(DateTime.Now);
             uint actual;
+
+            Thread.Sleep(3000);
+
             actual = DateHelper.GetModificationDate(creationDate);
-            Assert.AreEqual(expected, actual);
+            Assert.IsTrue(actual > 0 && actual < 5);
         }
     }
 }
