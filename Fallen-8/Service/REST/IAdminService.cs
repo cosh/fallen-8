@@ -42,7 +42,7 @@ namespace NoSQL.GraphDB.Service.REST
     ///   The Fallen-8 admin service.
     /// </summary>
     [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8 admin service")]
-    public interface IAdminService
+    public interface IAdminService : IDisposable
     {
 		#region services
 

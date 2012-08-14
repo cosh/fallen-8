@@ -46,7 +46,7 @@ namespace NoSQL.GraphDB.Service.REST
     ///   The Fallen-8 graph service.
     /// </summary>
     [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8 graph service")]
-    public interface IGraphService
+    public interface IGraphService : IDisposable
     {
         #region Create/Add/Delete GRAPHELEMENT
 

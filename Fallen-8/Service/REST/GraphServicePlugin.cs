@@ -64,7 +64,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <summary>
         ///   The actual service
         /// </summary>
-        private GraphService _service;
+        internal IGraphService Service;
 
         /// <summary>
         ///   The host that runs the service
@@ -226,7 +226,7 @@ namespace NoSQL.GraphDB.Service.REST
         public void Dispose()
         {
             TryStop();
-            _service.Dispose();
+            Service.Dispose();
         }
 
         #endregion
@@ -244,9 +244,9 @@ namespace NoSQL.GraphDB.Service.REST
             if (!_uri.IsWellFormedOriginalString())
                 throw new Exception("The URI Pattern is not well formed!");
 
-            _service = new GraphService(fallen8);
+            Service = new GraphService(fallen8);
 
-            _host = new ServiceHost(_service, _uri)
+            _host = new ServiceHost(Service, _uri)
                         {
                             CloseTimeout = new TimeSpan(0, 0, 0, 0, 50)
                         };
