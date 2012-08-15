@@ -44,6 +44,7 @@ using NoSQL.GraphDB.Model;
 using NoSQL.GraphDB.Persistency;
 using NoSQL.GraphDB.Plugin;
 using NoSQL.GraphDB.Service;
+using NoSQL.GraphDB.Log;
 
 #endregion
 

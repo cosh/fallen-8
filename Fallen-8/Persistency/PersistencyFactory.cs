@@ -145,8 +145,6 @@ namespace NoSQL.GraphDB.Persistency
                 const TaskCreationOptions options = TaskCreationOptions.LongRunning;
                 var f = new TaskFactory(CancellationToken.None, options, TaskContinuationOptions.None,
                                         TaskScheduler.Default);
-                var baseFilenName = Path.GetFileName(path);
-
                 #region graph elements
 
                 var graphElementCount = fallen8.VertexCount + fallen8.EdgeCount;
@@ -160,7 +158,7 @@ namespace NoSQL.GraphDB.Persistency
                     for (var i = 0; i < graphElementPartitions.Count; i++)
                     {
                         var partition = graphElementPartitions[i];
-                        graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, baseFilenName));
+                        graphElementSaver[i] = f.StartNew(() => SaveBunch(partition, graphElements, path));
                     }    
                 }
                 else
@@ -180,7 +178,7 @@ namespace NoSQL.GraphDB.Persistency
                     var indexName = aIndex.Key;
                     var index = aIndex.Value;
 
-                    indexSaver[counter] = f.StartNew(() => SaveIndex(indexName, index, baseFilenName));
+                    indexSaver[counter] = f.StartNew(() => SaveIndex(indexName, index, path));
                     counter++;
                 }
 
@@ -196,7 +194,7 @@ namespace NoSQL.GraphDB.Persistency
                     var serviceName = aService.Key;
                     var service = aService.Value;
 
-                    serviceSaver[counter] = f.StartNew(() => SaveService(serviceName, service, baseFilenName));
+                    serviceSaver[counter] = f.StartNew(() => SaveService(serviceName, service, path));
                     counter++;
                 }
 
@@ -269,7 +267,7 @@ namespace NoSQL.GraphDB.Persistency
                 indexFile.Flush();
             }
 
-            return indexFileName;
+            return Path.GetFileName(indexFileName);
         }
 
         /// <summary>
@@ -296,7 +294,7 @@ namespace NoSQL.GraphDB.Persistency
                 serviceFile.Flush();
             }
 
-            return serviceFileName;
+            return Path.GetFileName(serviceFileName);
         }
 
         /// <summary>
@@ -452,7 +450,7 @@ namespace NoSQL.GraphDB.Persistency
                 partitionFile.Flush();
             }
 
-            return partitionFileName;
+            return  Path.GetFileName(partitionFileName);
         }
 
         /// <summary>

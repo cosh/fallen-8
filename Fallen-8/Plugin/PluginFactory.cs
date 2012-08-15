@@ -197,8 +197,10 @@ namespace NoSQL.GraphDB.Plugin
         {
             var result = new List<Type>();
 
-            var files = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll")
-                .Union(Directory.EnumerateFiles(Environment.CurrentDirectory, "*.exe"));
+            string currentAssemblyDirectoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            var files = Directory.EnumerateFiles(currentAssemblyDirectoryName, "*.dll")
+                .Union(Directory.EnumerateFiles(currentAssemblyDirectoryName, "*.exe"));
 
             foreach (var file in files)
             {

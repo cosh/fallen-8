@@ -39,6 +39,7 @@ using NoSQL.GraphDB.Index;
 using NoSQL.GraphDB.Plugin;
 using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
+using System.Reflection;
 
 #endregion
 
@@ -85,7 +86,10 @@ namespace NoSQL.GraphDB.Service.REST
             _fallen8 = fallen8;
 
             _saveFile = "Temp.f8s";
-            _savePath = Environment.CurrentDirectory + System.IO.Path.DirectorySeparatorChar + _saveFile;
+
+            string currentAssemblyDirectoryName = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            _savePath = currentAssemblyDirectoryName + System.IO.Path.DirectorySeparatorChar + _saveFile;
 
             _optimalNumberOfPartitions = Convert.ToUInt32(Environment.ProcessorCount * 3 / 2);
         }
@@ -231,7 +235,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns></returns>
         private string FindLatestFallen8()
         {
-            var versions = Directory.EnumerateFiles(Environment.CurrentDirectory,
+            string currentAssemblyDirectoryName = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            var versions = Directory.EnumerateFiles(currentAssemblyDirectoryName,
                                                _saveFile + Constants.VersionSeparator + "*")
                                                .ToList();
 
@@ -254,7 +260,7 @@ namespace NoSQL.GraphDB.Service.REST
 
                 return fileToPathMapper.First(_ => _.Key.Contains(latestRevision)).Value;
             }
-            return _savePath;
+            return null;
         }
 
         #endregion
