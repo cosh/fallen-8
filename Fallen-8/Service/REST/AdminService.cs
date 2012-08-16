@@ -40,6 +40,7 @@ using NoSQL.GraphDB.Plugin;
 using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
 using System.Reflection;
+using NoSQL.GraphDB.Log;
 
 #endregion
 
@@ -143,6 +144,7 @@ namespace NoSQL.GraphDB.Service.REST
        
         public void Load(string startServices)
         {
+            Logger.LogInfo(String.Format("Loading Fallen-8. Start services: {0}", startServices));
             _fallen8.Load(FindLatestFallen8(), Convert.ToBoolean(startServices));
         }
 
@@ -235,7 +237,9 @@ namespace NoSQL.GraphDB.Service.REST
         /// <returns></returns>
         private string FindLatestFallen8()
         {
+            Logger.LogInfo("Trying to find the latest Fallen-8 savegame");
             string currentAssemblyDirectoryName = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Logger.LogInfo(String.Format("Save directory: {0}", currentAssemblyDirectoryName));
 
             var versions = Directory.EnumerateFiles(currentAssemblyDirectoryName,
                                                _saveFile + Constants.VersionSeparator + "*")
@@ -243,6 +247,8 @@ namespace NoSQL.GraphDB.Service.REST
 
             if (versions.Count > 0)
             {
+                Logger.LogInfo(String.Format("There are multiple Fallen-8 savegames."));
+
                 var fileToPathMapper = versions
                     .Select(path => path.Split(System.IO.Path.DirectorySeparatorChar))
                     .Where(_ => !_.Last().Contains(Constants.GraphElementsSaveString))
@@ -258,8 +264,22 @@ namespace NoSQL.GraphDB.Service.REST
                     .ToBinary()
                     .ToString(CultureInfo.InvariantCulture);
 
+                Logger.LogInfo(String.Format("The latest revivision is from {0}", DateTime.FromBinary(Convert.ToInt64(latestRevision))));
+
                 return fileToPathMapper.First(_ => _.Key.Contains(latestRevision)).Value;
             }
+
+            var lookupPath = System.IO.Path.Combine(currentAssemblyDirectoryName, _saveFile);
+            Logger.LogInfo(String.Format("Trying to find a savegame here: {0}", lookupPath));
+
+            if (File.Exists(lookupPath))
+            {
+                Logger.LogInfo(String.Format("There is a savegame here: {0}", lookupPath));
+                return lookupPath;   
+            }
+
+            Logger.LogInfo(String.Format("There were no Fallen-8 savegames.", versions.Count));
+
             return null;
         }
 

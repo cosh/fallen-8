@@ -68,6 +68,11 @@ namespace NoSQL.GraphDB.Persistency
                 return false;
             }
 
+            var pathName = Path.GetDirectoryName(pathToSavePoint);
+            var fileName = Path.GetFileName(pathToSavePoint);
+
+            Logger.LogInfo(String.Format("Now loading file \"{0}\" from path \"{1}\"", fileName, pathName));
+
             using (var file = File.Open(pathToSavePoint, FileMode.Open, FileAccess.Read))
             {
                 var reader = new SerializationReader(file);
@@ -80,7 +85,10 @@ namespace NoSQL.GraphDB.Persistency
                 var numberOfGraphElemementStreams = reader.ReadOptimizedInt32();
                 for (var i = 0; i < numberOfGraphElemementStreams; i++)
                 {
-                    graphElementStreams.Add(reader.ReadOptimizedString());
+                    var graphElementBunchFilename = Path.Combine(pathName, reader.ReadOptimizedString());
+                    Logger.LogInfo(String.Format("Found graph element bunch {0} here: \"{1}\"", i, graphElementBunchFilename));
+
+                    graphElementStreams.Add(graphElementBunchFilename);
                 }
 
                 LoadGraphElements(graphElements, graphElementStreams);
@@ -93,7 +101,10 @@ namespace NoSQL.GraphDB.Persistency
                 var numberOfIndexStreams = reader.ReadOptimizedInt32();
                 for (var i = 0; i < numberOfIndexStreams; i++)
                 {
-                    indexStreams.Add(reader.ReadOptimizedString());
+                    var indexFilename = Path.Combine(pathName, reader.ReadOptimizedString());
+                    Logger.LogInfo(String.Format("Found index number {0} here: \"{1}\"", i, indexFilename));
+
+                    indexStreams.Add(indexFilename);
                 }
                 var newIndexFactory = new IndexFactory();
                 LoadIndices(fallen8, newIndexFactory, indexStreams);
@@ -107,7 +118,10 @@ namespace NoSQL.GraphDB.Persistency
                 var numberOfServiceStreams = reader.ReadOptimizedInt32();
                 for (var i = 0; i < numberOfServiceStreams; i++)
                 {
-                    serviceStreams.Add(reader.ReadOptimizedString());
+                    var serviceFilename = Path.Combine(pathName, reader.ReadOptimizedString());
+                    Logger.LogInfo(String.Format("Found service number {0} here: \"{1}\"", i, serviceFilename));
+
+                    serviceStreams.Add(serviceFilename);
                 }
                 var newServiceFactory = new ServiceFactory(fallen8);
                 LoadServices(fallen8, newServiceFactory, serviceStreams, startServices);                    

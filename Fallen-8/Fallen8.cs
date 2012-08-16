@@ -123,6 +123,14 @@ namespace NoSQL.GraphDB
 
         public void Load(String path, Boolean startServices = false)
         {
+            if (String.IsNullOrWhiteSpace(path))
+            {
+                Logger.LogInfo(String.Format("There is no path given, so nothing will be loaded."));
+                return;
+            }
+
+            Logger.LogInfo(String.Format("Fallen-8 now loads a savegame from path \"{0}\"", path));
+
             if (ReadResource())
             {
                 var oldIndexFactory = IndexFactory;
