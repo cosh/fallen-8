@@ -117,6 +117,23 @@ namespace NoSQL.GraphDB.Service
         }
 
         /// <summary>
+        /// Get the admin service
+        /// </summary>
+        /// <returns></returns>
+        public IAdminService GetAdminService()
+        {
+            IService adminServicePlugin;
+
+            if (!Services.TryGetValue("Admin service", out adminServicePlugin))
+            {
+                Logger.LogError("Could not get admin service.");
+                return null;
+            }
+
+            return ((AdminServicePlugin)adminServicePlugin).Service;
+        }
+
+        /// <summary>
         ///   Gets the available service plugins.
         /// </summary>
         /// <returns> The available service plugins. </returns>
