@@ -124,8 +124,8 @@ namespace NoSQL.GraphDB.Persistency
                     serviceStreams.Add(serviceFilename);
                 }
                 var newServiceFactory = new ServiceFactory(fallen8);
-                LoadServices(fallen8, newServiceFactory, serviceStreams, startServices);                    
                 fallen8.ServiceFactory = newServiceFactory;
+                LoadServices(fallen8, newServiceFactory, serviceStreams, startServices);                    
 
                 #endregion
 
