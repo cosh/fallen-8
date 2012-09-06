@@ -83,7 +83,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
             {
                 try
                 {
-					var matchingGraphElements = new Dictionary<AGraphElement, List<string>>();
+                    var matchingGraphElements = new Dictionary<AGraphElement, NestedHighLightAndCounter>();
 					var currentScore = 0;
 					var maximumScore = 0;
                     const char whitespace = ' ';
@@ -100,7 +100,8 @@ namespace NoSQL.GraphDB.Index.Fulltext
                                 foundSth = true;
                             }
 
-                            var localHighlights = new List<String>(matches.Count);
+                            var localHighlights = new HashSet<String>();
+                            var countOfLocalHighlights = 0;
                             foreach (Match match in matches)
                             {
                                 var currentPosition = -1;
@@ -137,36 +138,45 @@ namespace NoSQL.GraphDB.Index.Fulltext
                                 if (firstWhitespacePrev == -1 && firstWhitespaceAfter == -1)
                                 {
                                     localHighlights.Add(aKV.Key);
+                                    countOfLocalHighlights++;
                                     continue;
                                 }
 
                                 if (firstWhitespacePrev == -1)
                                 {
                                     localHighlights.Add(aKV.Key.Substring(0, firstWhitespaceAfter));
+                                    countOfLocalHighlights++;
                                     continue;
                                 }
 
                                 if (firstWhitespaceAfter == -1)
                                 {
                                     localHighlights.Add(aKV.Key.Substring(firstWhitespacePrev + 1));
+                                    countOfLocalHighlights++;
                                     continue;
                                 }
 
                                 localHighlights.Add(aKV.Key.Substring(firstWhitespacePrev + 1, firstWhitespaceAfter - firstWhitespacePrev - 1));
+                                countOfLocalHighlights++;
                             }
 
                             for (var i = 0; i < aKV.Value.Count; i++)
                             {
-								List<string> globalHighlights;
+                                NestedHighLightAndCounter globalHighlights;
 								if (matchingGraphElements.TryGetValue(aKV.Value[i], out globalHighlights)) 
 								{
-									globalHighlights.AddRange(localHighlights);
-									currentScore = globalHighlights.Count;
+									globalHighlights.Highlights.UnionWith(localHighlights);
+									currentScore = globalHighlights.NumberOfHighlights + countOfLocalHighlights;
 								}
-								else 
+								else
 								{
-									matchingGraphElements.Add(aKV.Value[i], localHighlights);
-									currentScore = localHighlights.Count;
+								    matchingGraphElements.Add(aKV.Value[i],
+								                              new NestedHighLightAndCounter
+								                                  {
+								                                      Highlights = new HashSet<string>(localHighlights),
+								                                      NumberOfHighlights = countOfLocalHighlights
+								                                  });
+                                    currentScore = countOfLocalHighlights;
 								}
 
 								maximumScore = currentScore > maximumScore 
@@ -183,7 +193,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
 						{ 
 							MaximumScore = maximumScore,
 							Elements = matchingGraphElements
-								.Select(aKV => new FulltextSearchResultElement(aKV.Key, aKV.Value.Count, aKV.Value))
+								.Select(aKV => new FulltextSearchResultElement(aKV.Key, aKV.Value.NumberOfHighlights, aKV.Value.Highlights))
 								.ToList()
 						};
 					}
@@ -526,6 +536,26 @@ namespace NoSQL.GraphDB.Index.Fulltext
 		}
 
 		#endregion
+
+        #region helper class
+
+        /// <summary>
+        /// Private nested class used to carry some highlightning information
+        /// </summary>
+        class NestedHighLightAndCounter
+        {
+            /// <summary>
+            /// The highlights
+            /// </summary>
+            public HashSet<String> Highlights { get; set; }
+            
+            /// <summary>
+            /// The number of highlights
+            /// </summary>
+            public Int32 NumberOfHighlights { get; set; }
+        } 
+
+        #endregion
     }
 }
 
