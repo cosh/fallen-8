@@ -82,10 +82,10 @@ namespace NoSQL.GraphDB.Persistency
 
                 //initialize the list of graph elements
                 var graphElementStreams = new List<String>();
-                var numberOfGraphElemementStreams = reader.ReadOptimizedInt32();
+                var numberOfGraphElemementStreams = reader.ReadInt32();
                 for (var i = 0; i < numberOfGraphElemementStreams; i++)
                 {
-                    var graphElementBunchFilename = Path.Combine(pathName, reader.ReadOptimizedString());
+                    var graphElementBunchFilename = Path.Combine(pathName, reader.ReadString());
                     Logger.LogInfo(String.Format("Found graph element bunch {0} here: \"{1}\"", i, graphElementBunchFilename));
 
                     graphElementStreams.Add(graphElementBunchFilename);
@@ -98,10 +98,10 @@ namespace NoSQL.GraphDB.Persistency
                 #region indexe
 
                 var indexStreams = new List<String>();
-                var numberOfIndexStreams = reader.ReadOptimizedInt32();
+                var numberOfIndexStreams = reader.ReadInt32();
                 for (var i = 0; i < numberOfIndexStreams; i++)
                 {
-                    var indexFilename = Path.Combine(pathName, reader.ReadOptimizedString());
+                    var indexFilename = Path.Combine(pathName, reader.ReadString());
                     Logger.LogInfo(String.Format("Found index number {0} here: \"{1}\"", i, indexFilename));
 
                     indexStreams.Add(indexFilename);
@@ -115,10 +115,10 @@ namespace NoSQL.GraphDB.Persistency
                 #region services
 
                 var serviceStreams = new List<String>();
-                var numberOfServiceStreams = reader.ReadOptimizedInt32();
+                var numberOfServiceStreams = reader.ReadInt32();
                 for (var i = 0; i < numberOfServiceStreams; i++)
                 {
-                    var serviceFilename = Path.Combine(pathName, reader.ReadOptimizedString());
+                    var serviceFilename = Path.Combine(pathName, reader.ReadString());
                     Logger.LogInfo(String.Format("Found service number {0} here: \"{1}\"", i, serviceFilename));
 
                     serviceStreams.Add(serviceFilename);
@@ -214,22 +214,22 @@ namespace NoSQL.GraphDB.Persistency
 
                 #endregion
 
-                writer.WriteOptimized(graphElementSaver.Length);
+                writer.Write(graphElementSaver.Length);
                 foreach (var aFileStreamName in graphElementSaver)
                 {
-                    writer.WriteOptimized(aFileStreamName.Result);
+                    writer.Write(aFileStreamName.Result);
                 }
 
-                writer.WriteOptimized(indexSaver.Length);
+                writer.Write(indexSaver.Length);
                 foreach (var aIndexFileName in indexSaver)
                 {
-                    writer.WriteOptimized(aIndexFileName.Result);
+                    writer.Write(aIndexFileName.Result);
                 }
 
-                writer.WriteOptimized(serviceSaver.Length);
+                writer.Write(serviceSaver.Length);
                 foreach (var aServiceFileName in serviceSaver)
                 {
-                    writer.WriteOptimized(aServiceFileName.Result);
+                    writer.Write(aServiceFileName.Result);
                 }
 
                 writer.UpdateHeader();
@@ -340,7 +340,7 @@ namespace NoSQL.GraphDB.Persistency
 
                 for (var i = 0; i < countOfElements; i++)
                 {
-                    var kind = reader.ReadOptimizedInt32();
+                    var kind = reader.ReadInt32();
                     switch (kind)
                     {
                         case SerializedEdge:
@@ -444,7 +444,7 @@ namespace NoSQL.GraphDB.Persistency
                     //there can be nulls
                     if (!graphElements.TryGetElementOrDefault(out aGraphElement, i))
                     {
-                        partitionWriter.WriteOptimized(SerializedNull); // 2 for null
+                        partitionWriter.Write(SerializedNull); // 2 for null
                         continue;
                     }
 
@@ -589,10 +589,10 @@ namespace NoSQL.GraphDB.Persistency
             writer.Write(graphElement.ModificationDate);
 
             var properties = graphElement.GetAllProperties();
-            writer.WriteOptimized(properties.Count);
+            writer.Write(properties.Count);
             foreach (var aProperty in properties)
             {
-                writer.WriteOptimized(aProperty.PropertyId);
+                writer.Write(aProperty.PropertyId);
                 writer.WriteObject(aProperty.Value);
             }
         }
@@ -612,7 +612,7 @@ namespace NoSQL.GraphDB.Persistency
 
             #region properties
 
-            var propertyCount = reader.ReadOptimizedInt32();
+            var propertyCount = reader.ReadInt32();
             PropertyContainer[] properties = null;
 
             if (propertyCount > 0)
@@ -620,7 +620,7 @@ namespace NoSQL.GraphDB.Persistency
                 properties = new PropertyContainer[propertyCount];
                 for (var i = 0; i < propertyCount; i++)
                 {
-                    var propertyIdentifier = reader.ReadOptimizedUInt16();
+                    var propertyIdentifier = reader.ReadUInt16();
                     var propertyValue = reader.ReadObject();
 
                     properties[i] = new PropertyContainer {PropertyId = propertyIdentifier, Value = propertyValue};
@@ -634,7 +634,7 @@ namespace NoSQL.GraphDB.Persistency
             #region outgoing edges
 
             List<EdgeContainer> outEdgeProperties = null;
-            var outEdgeCount = reader.ReadOptimizedInt32();
+            var outEdgeCount = reader.ReadInt32();
 
             if (outEdgeCount > 0)
             {
@@ -642,7 +642,7 @@ namespace NoSQL.GraphDB.Persistency
                 for (var i = 0; i < outEdgeCount; i++)
                 {
                     var outEdgePropertyId = reader.ReadUInt16();
-                    var outEdgePropertyCount = reader.ReadOptimizedInt32();
+                    var outEdgePropertyCount = reader.ReadInt32();
                     var outEdges = new List<EdgeModel>(outEdgePropertyCount);
                     for (var j = 0; j < outEdgePropertyCount; j++)
                     {
@@ -682,7 +682,7 @@ namespace NoSQL.GraphDB.Persistency
             #region incoming edges
 
             List<EdgeContainer> incEdgeProperties = null;
-            var incEdgeCount = reader.ReadOptimizedInt32();
+            var incEdgeCount = reader.ReadInt32();
 
             if (incEdgeCount > 0)
             {
@@ -690,7 +690,7 @@ namespace NoSQL.GraphDB.Persistency
                 for (var i = 0; i < incEdgeCount; i++)
                 {
                     var incEdgePropertyId = reader.ReadUInt16();
-                    var incEdgePropertyCount = reader.ReadOptimizedInt32();
+                    var incEdgePropertyCount = reader.ReadInt32();
                     var incEdges = new List<EdgeModel>(incEdgePropertyCount);
                     for (var j = 0; j < incEdgePropertyCount; j++)
                     {
@@ -741,7 +741,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='writer'> Writer. </param>
         private static void WriteVertex(VertexModel vertex, SerializationWriter writer)
         {
-            writer.WriteOptimized(SerializedVertex);
+            writer.Write(SerializedVertex);
             WriteAGraphElement(vertex, writer);
 
             #region edges
@@ -749,15 +749,15 @@ namespace NoSQL.GraphDB.Persistency
             var outgoingEdges = vertex.GetOutgoingEdges();
             if (outgoingEdges == null)
             {
-                writer.WriteOptimized(0);
+                writer.Write(0);
             }
             else
             {
-                writer.WriteOptimized(outgoingEdges.Count);
+                writer.Write(outgoingEdges.Count);
                 foreach (var aOutEdgeProperty in outgoingEdges)
                 {
                     writer.Write(aOutEdgeProperty.EdgePropertyId);
-                    writer.WriteOptimized(aOutEdgeProperty.Edges.Count);
+                    writer.Write(aOutEdgeProperty.Edges.Count);
                     foreach (var aOutEdge in aOutEdgeProperty.Edges)
                     {
                         writer.Write(aOutEdge.Id);
@@ -768,15 +768,15 @@ namespace NoSQL.GraphDB.Persistency
             var incomingEdges = vertex.GetIncomingEdges();
             if (incomingEdges == null)
             {
-                writer.WriteOptimized(0);
+                writer.Write(0);
             }
             else
             {
-                writer.WriteOptimized(incomingEdges.Count);
+                writer.Write(incomingEdges.Count);
                 foreach (var aIncEdgeProperty in incomingEdges)
                 {
                     writer.Write(aIncEdgeProperty.EdgePropertyId);
-                    writer.WriteOptimized(aIncEdgeProperty.Edges.Count);
+                    writer.Write(aIncEdgeProperty.Edges.Count);
                     foreach (var aIncEdge in aIncEdgeProperty.Edges)
                     {
                         writer.Write(aIncEdge.Id);
@@ -803,14 +803,14 @@ namespace NoSQL.GraphDB.Persistency
             #region properties
 
             PropertyContainer[] properties = null;
-            var propertyCount = reader.ReadOptimizedInt32();
+            var propertyCount = reader.ReadInt32();
 
             if (propertyCount > 0)
             {
                 properties = new PropertyContainer[propertyCount];
                 for (var i = 0; i < propertyCount; i++)
                 {
-                    var propertyIdentifier = reader.ReadOptimizedUInt16();
+                    var propertyIdentifier = reader.ReadUInt16();
                     var propertyValue = reader.ReadObject();
 
                     properties[i] = new PropertyContainer {PropertyId = propertyIdentifier, Value = propertyValue};
@@ -850,7 +850,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='writer'> Writer. </param>
         private static void WriteEdge(EdgeModel edge, SerializationWriter writer)
         {
-            writer.WriteOptimized(SerializedEdge);
+            writer.Write(SerializedEdge);
             WriteAGraphElement(edge, writer);
             writer.Write(edge.SourceVertex.Id);
             writer.Write(edge.TargetVertex.Id);
