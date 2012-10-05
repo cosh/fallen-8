@@ -85,6 +85,42 @@ namespace NoSQL.GraphDB.Model
         #region public methods
 
         /// <summary>
+        ///  Gets the creation date
+        /// </summary>
+        /// <returns> Creation date </returns>
+        public DateTime GetCreationDate()
+        {
+            if (ReadResource())
+            {
+                var creationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate);
+
+                FinishReadResource();
+
+                return creationDate;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
+        ///  Gets the modification date
+        /// </summary>
+        /// <returns> Modification date </returns>
+        public DateTime GetModificationDate()
+        {
+            if (ReadResource())
+            {
+                var modificationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate + ModificationDate);
+
+                FinishReadResource();
+
+                return modificationDate;
+            }
+
+            throw new CollisionException();
+        }
+
+        /// <summary>
         ///   Returns the count of properties
         /// </summary>
         /// <returns> Count of Properties </returns>

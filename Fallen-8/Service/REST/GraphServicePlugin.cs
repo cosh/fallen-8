@@ -47,6 +47,16 @@ namespace NoSQL.GraphDB.Service.REST
         #region data
 
         /// <summary>
+        /// The rest service address
+        /// </summary>
+        private string _restServiceAddress;
+
+        /// <summary>
+        /// The uri
+        /// </summary>
+        private Uri _uri;
+
+        /// <summary>
         ///   The starting time of the service
         /// </summary>
         private DateTime _startTime;
@@ -55,11 +65,6 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Is running?
         /// </summary>
         private Boolean _isRunning;
-
-        /// <summary>
-        ///   MetaData for this service
-        /// </summary>
-        private readonly Dictionary<String, String> _metaData = new Dictionary<string, string>();
 
         /// <summary>
         ///   The actual service
@@ -75,31 +80,6 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Service description
         /// </summary>
         private const String _description = "The Fallen-8 plugin that starts the graph service";
-
-        /// <summary>
-        /// The URI-Pattern of the service
-        /// </summary>
-        private String _uriPattern;
-
-        /// <summary>
-        /// The IP-Address of the service
-        /// </summary>
-        private IPAddress _address;
-
-        /// <summary>
-        /// The port of the service
-        /// </summary>
-        private UInt16 _port;
-
-        /// <summary>
-        /// The URI of the service
-        /// </summary>
-        private Uri _uri;
-
-        /// <summary>
-        /// REST service address
-        /// </summary>
-        private String _restServiceAddress;
 
         #endregion
 
@@ -121,7 +101,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         public IDictionary<string, string> Metadata
         {
-            get { return _metaData; }
+            get { return null; }
         }
 
         public bool TryStop()
@@ -164,17 +144,10 @@ namespace NoSQL.GraphDB.Service.REST
 
         public void Save(SerializationWriter writer)
         {
-            writer.Write(_uriPattern);
-            writer.Write(_address.ToString());
-            writer.Write(_port);
         }
 
         public void Load(SerializationReader reader, Fallen8 fallen8)
         {
-            _uriPattern = reader.ReadString();
-            _address = IPAddress.Parse(reader.ReadString());
-            _port = reader.ReadUInt16();
-
             StartService(fallen8);
         }
 
@@ -184,18 +157,6 @@ namespace NoSQL.GraphDB.Service.REST
 
         public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
         {
-            _uriPattern = "Graph";
-            if (parameter != null && parameter.ContainsKey("URIPattern"))
-                _uriPattern = (String)Convert.ChangeType(parameter["URIPattern"], typeof(String));
-
-            _address = IPAddress.Any;
-            if (parameter != null && parameter.ContainsKey("IPAddress"))
-                _address = (IPAddress)Convert.ChangeType(parameter["IPAddress"], typeof(IPAddress));
-
-            _port = 2357;
-            if (parameter != null && parameter.ContainsKey("Port"))
-                _port = (ushort)Convert.ChangeType(parameter["Port"], typeof(ushort));
-
             StartService(fallen8);
         }
 
@@ -239,7 +200,11 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="fallen8"> Fallen-8. </param>
         private void StartService(Fallen8 fallen8)
         {
-            _uri = new Uri("http://" + _address + ":" + _port + "/" + _uriPattern);
+            var address = String.IsNullOrWhiteSpace(Config.Default.GraphIPAddress) ? IPAddress.Any.ToString() : Config.Default.GraphIPAddress;
+            var port = Config.Default.GraphPort;
+            var uriPattern = String.IsNullOrWhiteSpace(Config.Default.GraphUriPattern) ? "Graph" : Config.Default.GraphUriPattern;
+
+            _uri = new Uri("http://" + address + ":" + port + "/" + uriPattern);
 
             if (!_uri.IsWellFormedOriginalString())
                 throw new Exception("The URI Pattern is not well formed!");
@@ -251,7 +216,7 @@ namespace NoSQL.GraphDB.Service.REST
                             CloseTimeout = new TimeSpan(0, 0, 0, 0, 50)
                         };
 
-            _restServiceAddress = "REST";
+            _restServiceAddress = String.IsNullOrWhiteSpace(Config.Default.RESTServicePattern) ? "REST" : Config.Default.RESTServicePattern;
 
             try
             {

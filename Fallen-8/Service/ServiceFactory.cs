@@ -79,18 +79,11 @@ namespace NoSQL.GraphDB.Service
         /// <summary>
         /// Helper method to start the graph service
         /// </summary>
-        /// <param name="iPAddress">The IP address</param>
-        /// <param name="port">The port</param>
         /// <returns>The graph service</returns>
-        public IGraphService StartGraphService(IPAddress iPAddress, ushort port)
+        public IGraphService StartGraphService()
         {
-            var restServiceProperties = new Dictionary<string, object>
-                                     {
-                                         {"IPAddress", iPAddress},
-                                         {"Port", port}
-                                     };
             IService graphServicePlugin;
-            _fallen8.ServiceFactory.TryAddService(out graphServicePlugin, "Fallen-8_Graph_Service", "Graph service", restServiceProperties);
+            _fallen8.ServiceFactory.TryAddService(out graphServicePlugin, "Fallen-8_Graph_Service", "Graph service", null);
             graphServicePlugin.TryStart();
 
             return ((GraphServicePlugin)graphServicePlugin).Service;
@@ -99,18 +92,11 @@ namespace NoSQL.GraphDB.Service
         /// <summary>
         /// Helper method to start the admin service
         /// </summary>
-        /// <param name="iPAddress">The IP address</param>
-        /// <param name="port">The port</param>
         /// <returns>The admin service</returns>
-        public IAdminService StartAdminService(IPAddress iPAddress, ushort port)
+        public IAdminService StartAdminService()
         {
-            var restServiceProperties = new Dictionary<string, object>
-                                     {
-                                         {"IPAddress", iPAddress},
-                                         {"Port", port},
-                                     };
             IService adminServicePlugin;
-            _fallen8.ServiceFactory.TryAddService(out adminServicePlugin, "Fallen-8_Admin_Service", "Admin service", restServiceProperties);
+            _fallen8.ServiceFactory.TryAddService(out adminServicePlugin, "Fallen-8_Admin_Service", "Admin service", null);
             adminServicePlugin.TryStart();
 
             return ((AdminServicePlugin)adminServicePlugin).Service;

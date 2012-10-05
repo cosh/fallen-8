@@ -111,21 +111,6 @@ namespace NoSQL.GraphDB.Test
         }
 
         /// <summary>
-        ///A test for StartAdminService
-        ///</summary>
-        [TestMethod()]
-        public void StartAdminServiceIntegrationTest()
-        {
-            Assert.Inconclusive("TODO.");
-
-            Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
-            var target = new ServiceFactory(fallen8); // TODO: Initialize to an appropriate value
-            IPAddress iPAddress = null; // TODO: Initialize to an appropriate value
-            ushort port = 0; // TODO: Initialize to an appropriate value
-            target.StartAdminService(iPAddress, port);
-        }
-
-        /// <summary>
         ///A test for StartAllServices
         ///</summary>
         [TestMethod()]
@@ -136,21 +121,6 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new ServiceFactory(fallen8); // TODO: Initialize to an appropriate value
             target.StartAllServices();
-        }
-
-        /// <summary>
-        ///A test for StartGraphService
-        ///</summary>
-        [TestMethod()]
-        public void StartGraphServiceIntegrationTest()
-        {
-            Assert.Inconclusive("TODO.");
-
-            Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
-            var target = new ServiceFactory(fallen8); // TODO: Initialize to an appropriate value
-            IPAddress iPAddress = null; // TODO: Initialize to an appropriate value
-            ushort port = 0; // TODO: Initialize to an appropriate value
-            target.StartGraphService(iPAddress, port);
         }
 
         /// <summary>

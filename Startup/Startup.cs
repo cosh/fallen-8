@@ -53,9 +53,8 @@ namespace Startup
 
             #region Fallen-8 REST API
 
-            fallen8.ServiceFactory.StartGraphService(IPAddress.Parse(Config.Default.IPAddress), Config.Default.Port);
-
-            fallen8.ServiceFactory.StartAdminService(IPAddress.Parse(Config.Default.IPAddress), Config.Default.Port);
+            fallen8.ServiceFactory.StartGraphService();
+            fallen8.ServiceFactory.StartAdminService();
 
             #endregion
 
@@ -80,8 +79,6 @@ namespace Startup
             Console.WriteLine("Shutdown complete");
 
             #endregion
-
-
         }
     }
 }
