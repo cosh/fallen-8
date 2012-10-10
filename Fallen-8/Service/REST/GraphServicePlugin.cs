@@ -213,7 +213,7 @@ namespace NoSQL.GraphDB.Service.REST
             String graphIpAddress;
             configs.TryGetValue("GraphIPAddress", out graphIpAddress);
 
-            UInt16 graphPort = 0;
+            UInt16 graphPort = 2323;
             String graphPortString;
             if (configs.TryGetValue("GraphPort", out graphPortString))
             {

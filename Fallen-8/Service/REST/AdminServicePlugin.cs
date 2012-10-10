@@ -214,7 +214,7 @@ namespace NoSQL.GraphDB.Service.REST
             String adminIpAddress;
             configs.TryGetValue("AdminIPAddress", out adminIpAddress);
             
-            UInt16 adminPort = 0;
+            UInt16 adminPort = 2323;
             String adminPortString;
             if(configs.TryGetValue("AdminPort", out adminPortString))
             {
