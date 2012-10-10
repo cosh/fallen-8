@@ -26,6 +26,8 @@
 
 #region Usings
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,7 +36,9 @@ using System.ServiceModel.Web;
 using NoSQL.GraphDB.Service.REST.Result;
 using NoSQL.GraphDB.Service.REST.Specification;
 
-    #region Usings
+#endregion
+
+#region Usings
 
 #endregion
 

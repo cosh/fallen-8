@@ -27,6 +27,7 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.ServiceModel;
@@ -34,6 +35,7 @@ using System.ServiceModel.Description;
 using System.Xml;
 using Framework.Serialization;
 using NoSQL.GraphDB.Log;
+using System.Configuration;
 
 #endregion
 
@@ -200,9 +202,36 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="fallen8"> Fallen-8. </param>
         private void StartService(Fallen8 fallen8)
         {
-            var address = String.IsNullOrWhiteSpace(Config.Default.AdminIPAddress) ? IPAddress.Any.ToString() : Config.Default.AdminIPAddress;
-            var port = Config.Default.AdminPort;
-            var uriPattern = String.IsNullOrWhiteSpace(Config.Default.AdminUriPattern) ? "Admin" : Config.Default.AdminUriPattern;
+            #region configuration
+            var configs = new Dictionary<String, String>();
+            foreach (String key in ConfigurationManager.AppSettings)
+            {
+                var value = ConfigurationManager.AppSettings[key];
+
+                configs.Add(key, value);
+            }
+            
+            String adminIpAddress;
+            configs.TryGetValue("AdminIPAddress", out adminIpAddress);
+            
+            UInt16 adminPort = 0;
+            String adminPortString;
+            if(configs.TryGetValue("AdminPort", out adminPortString))
+            {
+                adminPort = Convert.ToUInt16(adminPortString);
+            }
+            
+            String adminUriPattern;
+            configs.TryGetValue("AdminUriPattern", out adminUriPattern);
+
+            String restServiceAddress;
+            configs.TryGetValue("RESTServicePattern", out restServiceAddress);
+
+            #endregion
+
+            var address = String.IsNullOrWhiteSpace(adminIpAddress) ? IPAddress.Any.ToString() : adminIpAddress;
+            var port = adminPort;
+            var uriPattern = String.IsNullOrWhiteSpace(adminUriPattern) ? "Admin" : adminUriPattern;
 
             _uri = new Uri("http://" + address + ":" + port + "/" + uriPattern);
 
@@ -216,7 +245,7 @@ namespace NoSQL.GraphDB.Service.REST
                             CloseTimeout = new TimeSpan(0, 0, 0, 0, 50)
                         };
 
-            _restServiceAddress = String.IsNullOrWhiteSpace(Config.Default.RESTServicePattern) ? "REST" : Config.Default.RESTServicePattern;            
+            _restServiceAddress = String.IsNullOrWhiteSpace(restServiceAddress) ? "REST" : restServiceAddress;            
 
             try
             {

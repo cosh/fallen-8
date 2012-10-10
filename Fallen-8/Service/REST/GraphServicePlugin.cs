@@ -34,6 +34,7 @@ using System.ServiceModel.Description;
 using System.Xml;
 using Framework.Serialization;
 using NoSQL.GraphDB.Log;
+using System.Configuration;
 
 #endregion
 
@@ -200,9 +201,36 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="fallen8"> Fallen-8. </param>
         private void StartService(Fallen8 fallen8)
         {
-            var address = String.IsNullOrWhiteSpace(Config.Default.GraphIPAddress) ? IPAddress.Any.ToString() : Config.Default.GraphIPAddress;
-            var port = Config.Default.GraphPort;
-            var uriPattern = String.IsNullOrWhiteSpace(Config.Default.GraphUriPattern) ? "Graph" : Config.Default.GraphUriPattern;
+            #region configuration
+            var configs = new Dictionary<String, String>();
+            foreach (String key in ConfigurationManager.AppSettings)
+            {
+                var value = ConfigurationManager.AppSettings[key];
+
+                configs.Add(key, value);
+            }
+
+            String graphIpAddress;
+            configs.TryGetValue("GraphIPAddress", out graphIpAddress);
+
+            UInt16 graphPort = 0;
+            String graphPortString;
+            if (configs.TryGetValue("GraphPort", out graphPortString))
+            {
+                graphPort = Convert.ToUInt16(graphPortString);
+            }
+
+            String graphUriPattern;
+            configs.TryGetValue("GraphUriPattern", out graphUriPattern);
+
+            String restServiceAddress;
+            configs.TryGetValue("RESTServicePattern", out restServiceAddress);
+
+            #endregion
+
+            var address = String.IsNullOrWhiteSpace(graphIpAddress) ? IPAddress.Any.ToString() : graphIpAddress;
+            var port = graphPort;
+            var uriPattern = String.IsNullOrWhiteSpace(graphUriPattern) ? "Graph" : graphUriPattern;
 
             _uri = new Uri("http://" + address + ":" + port + "/" + uriPattern);
 
@@ -216,7 +244,7 @@ namespace NoSQL.GraphDB.Service.REST
                             CloseTimeout = new TimeSpan(0, 0, 0, 0, 50)
                         };
 
-            _restServiceAddress = String.IsNullOrWhiteSpace(Config.Default.RESTServicePattern) ? "REST" : Config.Default.RESTServicePattern;
+            _restServiceAddress = String.IsNullOrWhiteSpace(restServiceAddress) ? "REST" : restServiceAddress;
 
             try
             {

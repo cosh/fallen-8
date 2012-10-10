@@ -40,11 +40,11 @@ using NoSQL.GraphDB.Index;
 using NoSQL.GraphDB.Index.Fulltext;
 using NoSQL.GraphDB.Index.Range;
 using NoSQL.GraphDB.Index.Spatial;
+using NoSQL.GraphDB.Log;
 using NoSQL.GraphDB.Model;
 using NoSQL.GraphDB.Persistency;
 using NoSQL.GraphDB.Plugin;
 using NoSQL.GraphDB.Service;
-using NoSQL.GraphDB.Log;
 
 #endregion
 

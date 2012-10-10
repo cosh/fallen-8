@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
@@ -115,12 +116,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CodeGeneration.resx</DependentUpon>
     </Compile>
-    <Compile Include="Service\REST\Config.cs" />
-    <Compile Include="Service\REST\Config.Designer.cs">
-      <DependentUpon>Config.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="Service\REST\GraphService.cs" />
     <Compile Include="Service\REST\GraphServicePlugin.cs" />
     <Compile Include="Service\REST\IGraphService.cs" />
@@ -174,13 +169,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CodeGeneration.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Service\REST\Config.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Config.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup />
 </Project>

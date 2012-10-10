@@ -26,10 +26,14 @@
 
 #region Usings
 
+#region Usings
+
 using System;
 using System.Collections;
 
-    #region Usings
+#endregion
+
+#region Usings
 
 #endregion
 

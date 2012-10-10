@@ -26,13 +26,18 @@
 
 #region Usings
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using NoSQL.GraphDB.Helper;
 using NoSQL.GraphDB.Model;
+using NoSQL.GraphDB.Log;
 
-    #region Usings
+#endregion
+
+#region Usings
 
 #endregion
 
@@ -100,97 +105,131 @@ namespace NoSQL.GraphDB.Algorithms.Path
 
             #endregion
 
-            #region maxdepth = 1
-
             if (maxDepth == 1)
             {
+                #region maxdepth == 1
+
                 var depthOneFrontier = GetGlobalFrontier(new List<VertexModel> { sourceVertex }, sourceVisitedVertices, edgePropertyFilter, edgeFilter, vertexFilter);
+
+                if (depthOneFrontier != null && depthOneFrontier.Count > 0 && depthOneFrontier.ContainsKey(targetVertex))
+                {
+                    //so there is something
+                    return new List<Path>(depthOneFrontier
+                        .Where(_ => ReferenceEquals(_.Key, targetVertex))
+                        .Select(__ => CreateAPath(__.Value))
+                        .SelectMany(___ => ___));
+                }
+
+                return null;
+
+                #endregion
+            }
+            else
+            {
+                #region maxdepth > 1
+
+                //find the middle element  s-->m-->t
+                Int32 sourceLevel = 0;
+                Int32 targetLevel = 0;
+
+                var sourceFrontiers = new List<Dictionary<VertexModel, VertexPredecessor>>();
+                var targetFrontiers = new List<Dictionary<VertexModel, VertexPredecessor>>();
+                Dictionary<VertexModel, VertexPredecessor> currentSourceFrontier = null;
+                Dictionary<VertexModel, VertexPredecessor> currentTargetFrontier = null;
+                IEnumerable<VertexModel> currentSourceVertices = new List<VertexModel> { sourceVertex };
+                IEnumerable<VertexModel> currentTargetVertices = new List<VertexModel> { targetVertex };
+
+                List<VertexModel> middleVertices = null;
+
+                do
+                {
+                    #region calculate frontier
+
+                    #region source --> target
+
+                    currentSourceFrontier = GetGlobalFrontier(currentSourceVertices, sourceVisitedVertices, edgePropertyFilter, edgeFilter, vertexFilter);
+                    sourceFrontiers.Add(currentSourceFrontier);
+                    currentSourceVertices = sourceFrontiers[sourceLevel].Keys;
+                    sourceLevel++;
+
+                    if (currentSourceFrontier.ContainsKey(targetVertex))
+                    {
+                        if (middleVertices == null)
+                        {
+                            middleVertices = new List<VertexModel> { targetVertex };
+                        }
+                        else
+                        {
+                            middleVertices.Add(targetVertex);
+                        }
+                        break;
+                    }
+                    if (FindMiddleVertices(out middleVertices, currentSourceFrontier, currentTargetFrontier)) break;
+                    if ((sourceLevel + targetLevel) == maxDepth) break;
+
+                    #endregion
+
+                    #region target --> source
+
+                    currentTargetFrontier = GetGlobalFrontier(currentTargetVertices, targetVisitedVertices, edgePropertyFilter, edgeFilter, vertexFilter);
+                    targetFrontiers.Add(currentTargetFrontier);
+                    currentTargetVertices = targetFrontiers[targetLevel].Keys;
+                    targetLevel++;
+
+
+                    if (currentTargetFrontier.ContainsKey(sourceVertex))
+                    {
+                        if (middleVertices == null)
+                        {
+                            middleVertices = new List<VertexModel> { sourceVertex };
+                        }
+                        else
+                        {
+                            middleVertices.Add(sourceVertex);
+                        }
+                        break;
+                    }
+                    if (FindMiddleVertices(out middleVertices, currentSourceFrontier, currentTargetFrontier)) break;
+                    if ((sourceLevel + targetLevel) == maxDepth) break;
+
+                    #endregion
+
+                    #endregion
+
+                } while (true);
+
+                return middleVertices != null
+                    ? CreatePaths(middleVertices, sourceFrontiers, targetFrontiers, maxResults, sourceLevel, targetLevel)
+                    : null;
+
+                #endregion    
             }
 
-            #endregion
-
-            #region maxdepth > 1
-
-            //find the middle element  s-->m-->t
-            Int32 sourceLevel = 0;
-            Int32 targetLevel = 0;
-
-            var sourceFrontiers = new List<Dictionary<VertexModel, VertexPredecessor>>();
-            var targetFrontiers = new List<Dictionary<VertexModel, VertexPredecessor>>();
-            Dictionary<VertexModel, VertexPredecessor> currentSourceFrontier = null;
-            Dictionary<VertexModel, VertexPredecessor> currentTargetFrontier = null;
-            IEnumerable<VertexModel> currentSourceVertices = new List<VertexModel> { sourceVertex };
-            IEnumerable<VertexModel> currentTargetVertices = new List<VertexModel> { targetVertex };
-
-            List<VertexModel> middleVertices = null;
-
-            do
-            {
-                #region calculate frontier
-                
-                #region source --> target
-
-                currentSourceFrontier = GetGlobalFrontier(currentSourceVertices, sourceVisitedVertices, edgePropertyFilter, edgeFilter, vertexFilter);
-                sourceFrontiers.Add(currentSourceFrontier);
-                currentSourceVertices = sourceFrontiers[sourceLevel].Keys;
-                sourceLevel++;
-
-                if (currentSourceFrontier.ContainsKey(targetVertex))
-                {
-                    if (middleVertices == null)
-                    {
-                        middleVertices = new List<VertexModel>{targetVertex};
-                    }
-                    else
-                    {
-                        middleVertices.Add(targetVertex);                        
-                    }
-                    break;
-                }
-                if (FindMiddleVertices(out middleVertices, currentSourceFrontier, currentTargetFrontier)) break;
-                if ((sourceLevel + targetLevel) == maxDepth) break;
-
-                #endregion
-
-                #region target --> source
-
-                currentTargetFrontier = GetGlobalFrontier(currentTargetVertices, targetVisitedVertices, edgePropertyFilter, edgeFilter, vertexFilter);
-                targetFrontiers.Add(currentTargetFrontier);
-                currentTargetVertices = targetFrontiers[targetLevel].Keys;
-                targetLevel++;
-
-
-                if (currentTargetFrontier.ContainsKey(sourceVertex))
-                {
-                    if (middleVertices == null)
-                    {
-                        middleVertices = new List<VertexModel> { sourceVertex };
-                    }
-                    else
-                    {
-                        middleVertices.Add(sourceVertex);
-                    }
-                    break;
-                }
-                if (FindMiddleVertices(out middleVertices, currentSourceFrontier, currentTargetFrontier)) break;
-                if ((sourceLevel + targetLevel) == maxDepth) break;
-
-                #endregion
-
-                #endregion
-
-            } while (true);
-
-            return middleVertices != null 
-                ? CreatePaths(middleVertices, sourceFrontiers, targetFrontiers, maxResults, sourceLevel, targetLevel) 
-                : null;
-
-            #endregion
+            Logger.LogError(String.Format("A maximum depth of {0} is not valid!", maxDepth));
+            return null;
         }
 
         #endregion
 
         #region private helper
+
+        /// <summary>
+        /// Creates paths
+        /// </summary>
+        /// <param name="vertexPredecessor">The vertex predecessors</param>
+        /// <returns>Enumeration of paths</returns>
+        private static IEnumerable<Path> CreateAPath(VertexPredecessor vertexPredecessor)
+        {
+            foreach (var aInPred in vertexPredecessor.Incoming)
+            {
+                yield return new Path(new PathElement(aInPred.Edge, aInPred.EdgePropertyId, Direction.IncomingEdge));
+            }
+
+            foreach (var aOutPred in vertexPredecessor.Outgoing)
+            {
+                yield return new Path(new PathElement(aOutPred.Edge, aOutPred.EdgePropertyId, Direction.OutgoingEdge));
+            }
+        }
 
         /// <summary>
         /// Finds the middle vertices of two given frontiers

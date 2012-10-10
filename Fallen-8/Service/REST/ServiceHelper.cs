@@ -26,13 +26,17 @@
 
 #region Usings
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using NoSQL.GraphDB.Model;
 using NoSQL.GraphDB.Service.REST.Specification;
 
-    #region Usings
+#endregion
+
+#region Usings
 
 #endregion
 
