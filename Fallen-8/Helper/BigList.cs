@@ -27,6 +27,7 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -163,7 +164,7 @@ namespace NoSQL.GraphDB.Helper
             var result = new List<TResult>();
 
             Parallel.ForEach(
-                _data,
+                _data.Where(_ => _ != null),
                 () => new List<TResult>(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, List<TResult> arg4)
                 {
@@ -196,7 +197,7 @@ namespace NoSQL.GraphDB.Helper
             var result = new List<T>();
 
             Parallel.ForEach(
-                _data,
+                _data.Where(_ => _ != null),
                 () => new List<T>(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, List<T> arg4)
                 {
@@ -227,7 +228,7 @@ namespace NoSQL.GraphDB.Helper
             UInt32 count = 0;
 
             Parallel.ForEach(
-                _data,
+                _data.Where(_ => _ != null),
                 () => new uint(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, uint arg4)
                     {
