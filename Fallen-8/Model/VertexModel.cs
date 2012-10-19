@@ -64,7 +64,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='id'> Identifier. </param>
         /// <param name='creationDate'> Creation date. </param>
         /// <param name='properties'> Properties. </param>
-        public VertexModel(Int32 id, UInt32 creationDate, PropertyContainer[] properties)
+        public VertexModel(Int64 id, UInt32 creationDate, PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {
         }
@@ -78,7 +78,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='properties'> Properties. </param>
         /// <param name='outEdges'> Out edges. </param>
         /// <param name='incEdges'> Inc edges. </param>
-        internal VertexModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, PropertyContainer[] properties,
+        internal VertexModel(Int64 id, UInt32 creationDate, UInt32 modificationDate, PropertyContainer[] properties,
                              List<EdgeContainer> outEdges, List<EdgeContainer> incEdges)
             : base(id, creationDate, properties)
         {
@@ -647,7 +647,7 @@ namespace NoSQL.GraphDB.Model
 
         public override int GetHashCode()
         {
-            return Id;
+            return Id.GetHashCode();
         }
 
         #endregion

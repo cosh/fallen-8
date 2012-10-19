@@ -38,7 +38,6 @@ namespace NoSQL.GraphDB.Helper
     /// A big list
     /// </summary>
     public sealed class BigList<T> 
-        where T: class 
     {
         #region data
 
@@ -46,32 +45,26 @@ namespace NoSQL.GraphDB.Helper
         /// The actual data structure
         /// </summary>
         private readonly T[][] _data;
-
+       
         /// <summary>
-        /// The extends per shard
+        /// The size of a single shard
         /// </summary>
-        private readonly int[] _extends;
+        private const Int32 ShardSize = 200000000;
 
         /// <summary>
         /// The size of a single shard
         /// </summary>
-        private const Int32 ShardSize = 134217728;
-        //private const Int32 ShardSize = 268435456;
+        private const Int32 NumberOfShards = 1337;
 
         /// <summary>
-        /// The size of a single shard
-        /// </summary>
-        private const Int32 NumberOfShards = 32;
-
-        /// <summary>
-        /// The size of a single shard
+        /// The initial size of a single shard
         /// </summary>
         private const Int32 ShardSizeInitial = 10000;
 
         /// <summary>
-        /// The size of a single shard
+        /// The extension size
         /// </summary>
-        private const Int32 ExtendSize = 1500000;
+        private const Int32 ExtendSize = 1000000;
        
         /// <summary>
         /// The delegate to find elements in the big list
@@ -89,137 +82,71 @@ namespace NoSQL.GraphDB.Helper
         /// </summary>
         public BigList()
         {
-            _extends = new int[NumberOfShards];
             _data = new T[NumberOfShards][];
-            for (var i = 0; i < NumberOfShards; i++)
-            {
-                _data[i] = new T[ShardSizeInitial];
-                _extends[i] = 1;
-            }
-            
-           SetValue(1, null);
         }
        
         #endregion
 
         #region public methods
-        
-        public void SetValue(int index, T item)
+
+        public void SetValue(Int64 index, T item)
         {
-            UInt16 shardIndex = 0;
-            for (var i = 0; i < NumberOfShards; i++)
+            if (index < 0)
             {
-                var lowerLimit = Int32.MinValue + i*ShardSize;
-                var upperLimit = lowerLimit + ShardSize;
-                if (lowerLimit <= index && index < upperLimit)
-                {
-                    break;
-                }
-                shardIndex++;
-            }
-            var shard = _data[shardIndex];
-            var positionInShard = index%ShardSize ;
-            if (positionInShard < 0)
-            {
-                //because we count backwards
-                positionInShard += ShardSize;
+                throw new ArgumentOutOfRangeException("index");
             }
 
-            if (positionInShard >= shard.Length)
-            {
-                var newSize = shard.Length + ExtendSize * _extends[shardIndex];
-                if (newSize>ShardSize)
-                {
-                    newSize = ShardSize;
-                }
-                else
-                {
-                    _extends[shardIndex] *= 3;
-                }
+            //find the right shard id
+            var shardId = FindShardId(index);
+            var shard = _data[shardId];
 
+            //find the localSlot
+            var localSlot = FindShardLocalSlot(shardId, index);
 
-                var newShard = new T[newSize];
-                Array.Copy(shard, newShard, shard.Length);
-                _data[shardIndex] = newShard;
-                shard = newShard;
-            }
+            shard = ExtendIfNeeded(shard, shardId, localSlot);
 
-            shard[positionInShard] = item;
+            shard[localSlot] = item;
         }
 
-        public void SetDefault(int index)
+        public void SetDefault(Int64 index)
         {
-            UInt16 shardIndex = 0;
-            for (var i = 0; i < NumberOfShards; i++)
+            if (index < 0)
             {
-                var lowerLimit = Int32.MinValue + i * ShardSize;
-                var upperLimit = lowerLimit + ShardSize;
-                if (lowerLimit <= index && index < upperLimit)
-                {
-                    break;
-                }
-                shardIndex++;
-            }
-            var shard = _data[shardIndex];
-            var positionInShard = index % ShardSize;
-            if (positionInShard < 0)
-            {
-                //because we count backwards
-                positionInShard += ShardSize;
+                throw new ArgumentOutOfRangeException("index");
             }
 
-            if (positionInShard >= shard.Length)
-            {
-                var newSize = shard.Length + ExtendSize * _extends[shardIndex];
-                if (newSize > ShardSize)
-                {
-                    newSize = ShardSize;
-                }
-                else
-                {
-                    _extends[shardIndex] *= 3;
-                }
+            //find the right shard id
+            var shardId = FindShardId(index);
+            var shard = _data[shardId];
 
+            //find the localSlot
+            var localSlot = FindShardLocalSlot(shardId, index);
 
-                var newShard = new T[newSize];
-                Array.Copy(shard, newShard, shard.Length);
-                _data[shardIndex] = newShard;
-                shard = newShard;
-            }
+            shard = ExtendIfNeeded(shard, shardId, localSlot);
 
-            shard[positionInShard] = null;
+            shard[localSlot] = default(T);
         }
 
-        public bool TryGetElementOrDefault<TResult>(out TResult result, int index)
-            where TResult : class 
+        public T GetElement(Int64 index)
         {
-            UInt16 shardIndex = 0;
-            for (var i = 0; i < NumberOfShards; i++)
+            if (index < 0)
             {
-                var lowerLimit = Int32.MinValue + i * ShardSize;
-                var upperLimit = lowerLimit + ShardSize;
-                if (lowerLimit <= index && index < upperLimit)
-                {
-                    break;
-                }
-                shardIndex++;
-            }
-            var shard = _data[shardIndex];
-            var positionInShard = index % ShardSize;
-            if (positionInShard < 0)
-            {
-                //because we count backwards
-                positionInShard += ShardSize;
-            }
-            
-            if (positionInShard < shard.Length)
-            {
-                result = shard[positionInShard] as TResult;
-                return result != null;
+                throw new ArgumentOutOfRangeException("index");
             }
 
-            result = null;
-            return false;
+            //find the right shard id
+            var shardId = FindShardId(index);
+            var shard = _data[shardId];
+
+            //find the localSlot
+            var localSlot = FindShardLocalSlot(shardId, index);
+
+            if (shard.Length > localSlot)
+            {
+                return shard[localSlot];
+            }
+
+            return default(T);
         }
 
         public void Clear()
@@ -230,7 +157,7 @@ namespace NoSQL.GraphDB.Helper
             }
         }
 
-        public List<TResult> GetAllOfType<TResult>() where TResult : class 
+        public List<TResult> GetAllOfType<TResult>() where TResult : class
         {
             var lockObject = new object();
             var result = new List<TResult>();
@@ -323,6 +250,60 @@ namespace NoSQL.GraphDB.Helper
                 });
 
             return count;
+        }
+
+        #endregion
+
+        #region private helper
+
+        private T[] ExtendIfNeeded(T[] shard, long shardId, long localSlot)
+        {
+            if (localSlot > ShardSize)
+            {
+                throw new ArgumentOutOfRangeException("localSlot", "The localslot index cannot be greater than the shard size");
+            }
+
+            if (shard == null)
+            {
+                _data[shardId] = new T[ShardSizeInitial];
+                shard = _data[shardId];
+            }
+
+            if (shard.Length > localSlot)
+            {
+                //no extension needed
+                return shard;
+            }
+
+            //extend
+
+            var currentLength = shard.Length;
+
+            do
+            {
+                currentLength += ExtendSize;
+            } while (localSlot > currentLength);
+
+            if (currentLength > ShardSize)
+            {
+                currentLength = ShardSize;
+            }
+
+            var newShard = new T[currentLength];
+            Array.Copy(shard, newShard, shard.Length);
+            _data[shardId] = newShard;
+
+            return newShard;
+        }
+
+        private static Int64 FindShardLocalSlot(long shardId, long index)
+        {
+            return index - (shardId * ShardSize);
+        }
+
+        private static Int64 FindShardId(long index)
+        {
+            return index / ShardSize;
         }
 
         #endregion

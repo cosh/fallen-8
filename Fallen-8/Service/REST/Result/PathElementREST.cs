@@ -46,19 +46,19 @@ namespace NoSQL.GraphDB.Service.REST.Result
         /// The source vertex identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-		public Int32 SourceVertexId;
+        public Int64 SourceVertexId;
 
         /// <summary>
         /// The target vertex identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public Int32 TargetVertexId;
+        public Int64 TargetVertexId;
 
         /// <summary>
         /// The edge identifier
         /// </summary>
         [DataMember(IsRequired = true)]
-        public Int32 EdgeId;
+        public Int64 EdgeId;
 
         /// <summary>
         /// The edge property identifier

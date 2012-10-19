@@ -267,7 +267,7 @@ namespace NoSQL.GraphDB.Index
                 for (var i = 0; i < keyCount; i++)
                 {
                     var key = reader.ReadObject();
-                    var graphElementId = reader.ReadInt32();
+                    var graphElementId = reader.ReadInt64();
                     AGraphElement graphElement;
                     if(fallen8.TryGetGraphElement(out graphElement, graphElementId))
                     {

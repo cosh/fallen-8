@@ -41,7 +41,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <summary>
         /// The identifier of the edge.
         /// </summary>
-        public Int32 Id;
+        public Int64 Id;
         
         /// <summary>
         /// The creation date.
@@ -61,12 +61,12 @@ namespace NoSQL.GraphDB.Persistency
         /// <summary>
         /// The source vertex identifier.
         /// </summary>
-        public Int32 SourceVertexId;
+        public Int64 SourceVertexId;
         
         /// <summary>
         /// The target vertex identifier.
         /// </summary>
-        public Int32 TargetVertexId;
+        public Int64 TargetVertexId;
     }
 }
 

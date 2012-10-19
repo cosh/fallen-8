@@ -56,13 +56,13 @@ namespace NoSQL.GraphDB.Service.REST.Result
         ///   Vertex count
         /// </summary>
         [DataMember]
-        public UInt32 VertexCount { get; set; }
+        public UInt64 VertexCount { get; set; }
 
         /// <summary>
         ///   Edge count
         /// </summary>
         [DataMember]
-        public UInt32 EdgeCount { get; set; }
+        public UInt64 EdgeCount { get; set; }
 
         /// <summary>
         ///   Available index plugins

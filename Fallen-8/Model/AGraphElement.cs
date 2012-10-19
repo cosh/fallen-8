@@ -45,7 +45,7 @@ namespace NoSQL.GraphDB.Model
         /// <summary>
         ///   The identifier of this graph element.
         /// </summary>
-        public readonly Int32 Id;
+        public readonly Int64 Id;
 
         /// <summary>
         ///   The creation date.
@@ -72,7 +72,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='id'> Identifier. </param>
         /// <param name='creationDate'> Creation date. </param>
         /// <param name='properties'> Properties. </param>
-        protected AGraphElement(Int32 id, UInt32 creationDate, PropertyContainer[] properties)
+        protected AGraphElement(Int64 id, UInt32 creationDate, PropertyContainer[] properties)
         {
             Id = id;
             CreationDate = creationDate;

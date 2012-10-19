@@ -52,7 +52,7 @@ namespace NoSQL.GraphDB
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> The graph element. </param>
         /// <param name='id'> System wide unique identifier. </param>
-        Boolean TryGetGraphElement(out AGraphElement result, Int32 id);
+        Boolean TryGetGraphElement(out AGraphElement result, Int64 id);
 
         /// <summary>
         ///   Gets the edges.
@@ -66,7 +66,7 @@ namespace NoSQL.GraphDB
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> The edge. </param>
         /// <param name='id'> System wide unique identifier. </param>
-        Boolean TryGetEdge(out EdgeModel result, Int32 id);
+        Boolean TryGetEdge(out EdgeModel result, Int64 id);
 
         /// <summary>
         ///   Gets the vertices.
@@ -80,7 +80,7 @@ namespace NoSQL.GraphDB
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> The vertex. </param>
         /// <param name='id'> System wide unique identifier. </param>
-        Boolean TryGetVertex(out VertexModel result, Int32 id);
+        Boolean TryGetVertex(out VertexModel result, Int64 id);
 
         #endregion
 

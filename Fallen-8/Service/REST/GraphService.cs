@@ -126,7 +126,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         #region IGraphService implementation
 
-        public int AddVertex(VertexSpecification definition)
+        public Int64 AddVertex(VertexSpecification definition)
         {
             #region initial checks
 
@@ -140,7 +140,7 @@ namespace NoSQL.GraphDB.Service.REST
             return _fallen8.CreateVertex(definition.CreationDate, ServiceHelper.GenerateProperties(definition.Properties)).Id;
         }
 
-        public int AddEdge(EdgeSpecification definition)
+        public Int64 AddEdge(EdgeSpecification definition)
         {
             #region initial checks
 
@@ -179,7 +179,7 @@ namespace NoSQL.GraphDB.Service.REST
             return null;
         }
 
-        public int GetSourceVertexForEdge(string edgeIdentifier)
+        public Int64 GetSourceVertexForEdge(string edgeIdentifier)
         {
             EdgeModel edge;
             if (_fallen8.TryGetEdge(out edge, Convert.ToInt32(edgeIdentifier)))
@@ -190,7 +190,7 @@ namespace NoSQL.GraphDB.Service.REST
             throw new WebException(String.Format("Could not find edge with id {0}.", edgeIdentifier));
         }
 
-        public int GetTargetVertexForEdge(string edgeIdentifier)
+        public Int64 GetTargetVertexForEdge(string edgeIdentifier)
         {
             EdgeModel edge;
             if (_fallen8.TryGetEdge(out edge, Convert.ToInt32(edgeIdentifier)))
@@ -217,7 +217,7 @@ namespace NoSQL.GraphDB.Service.REST
                        : null;
         }
 
-        public List<int> GetOutgoingEdges(string vertexIdentifier, string edgePropertyIdentifier)
+        public List<Int64> GetOutgoingEdges(string vertexIdentifier, string edgePropertyIdentifier)
         {
             VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
@@ -231,7 +231,7 @@ namespace NoSQL.GraphDB.Service.REST
             return null;
         }
 
-        public List<int> GetIncomingEdges(string vertexIdentifier, string edgePropertyIdentifier)
+        public List<Int64> GetIncomingEdges(string vertexIdentifier, string edgePropertyIdentifier)
         {
             VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
@@ -244,8 +244,8 @@ namespace NoSQL.GraphDB.Service.REST
             }
             return null;
         }
-        
-        public IEnumerable<int> GraphScan(String propertyIdString, ScanSpecification definition)
+
+        public IEnumerable<Int64> GraphScan(String propertyIdString, ScanSpecification definition)
         {
             #region initial checks
 
@@ -267,10 +267,10 @@ namespace NoSQL.GraphDB.Service.REST
             List<AGraphElement> graphElements;
             return _fallen8.GraphScan(out graphElements, propertyId, value, definition.Operator)
                        ? CreateResult(graphElements, definition.ResultType)
-                       : Enumerable.Empty<Int32>();
+                       : Enumerable.Empty<Int64>();
         }
 
-        public IEnumerable<int> IndexScan(IndexScanSpecification definition)
+        public IEnumerable<Int64> IndexScan(IndexScanSpecification definition)
         {
             #region initial checks
 
@@ -290,10 +290,10 @@ namespace NoSQL.GraphDB.Service.REST
             ReadOnlyCollection<AGraphElement> graphElements;
             return _fallen8.IndexScan(out graphElements, definition.IndexId, value, definition.Operator)
                        ? CreateResult(graphElements, definition.ResultType)
-                       : Enumerable.Empty<Int32>();
+                       : Enumerable.Empty<Int64>();
         }
 
-        public IEnumerable<int> RangeIndexScan(RangeIndexScanSpecification definition)
+        public IEnumerable<Int64> RangeIndexScan(RangeIndexScanSpecification definition)
         {
             #region initial checks
 
@@ -314,7 +314,7 @@ namespace NoSQL.GraphDB.Service.REST
             return _fallen8.RangeIndexScan(out graphElements, definition.IndexId, left, right, definition.IncludeLeft,
                                            definition.IncludeRight)
                        ? CreateResult(graphElements, definition.ResultType)
-                       : Enumerable.Empty<Int32>();
+                       : Enumerable.Empty<Int64>();
         }
 
 		public FulltextSearchResultREST FulltextIndexScan (FulltextIndexScanSpecification definition)
@@ -334,7 +334,7 @@ namespace NoSQL.GraphDB.Service.REST
                        : null;
 		}
 
-		public IEnumerable<int> SpatialIndexScanSearchDistance (SearchDistanceSpecification definition)
+        public IEnumerable<Int64> SpatialIndexScanSearchDistance(SearchDistanceSpecification definition)
 		{
 			#region initial checks
 
@@ -720,7 +720,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="graphElements"> The graph elements </param>
         /// <param name="resultTypeSpecification"> The result specification </param>
         /// <returns> </returns>
-        private static IEnumerable<int> CreateResult(IEnumerable<AGraphElement> graphElements,
+        private static IEnumerable<Int64> CreateResult(IEnumerable<AGraphElement> graphElements,
                                                      ResultTypeSpecification resultTypeSpecification)
         {
             switch (resultTypeSpecification)

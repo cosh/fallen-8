@@ -84,7 +84,7 @@ namespace NoSQL.GraphDB.Test
         ///A test for GetAllProperties
         ///</summary>
         [TestMethod()]
-        public void GetAllPropertiesUnitTest()
+        public void AGraphElement_GetAllProperties_UnitTest()
         {
             var target = CreateAGraphElement(); // TODO: Initialize to an appropriate value
             var expected = new ReadOnlyCollection<PropertyContainer>(new List<PropertyContainer>(new PropertyContainer[2]
@@ -100,7 +100,7 @@ namespace NoSQL.GraphDB.Test
         ///A test for GetPropertyCount
         ///</summary>
         [TestMethod()]
-        public void GetPropertyCountUnitTest()
+        public void AGraphElement_GetPropertyCount_UnitTest()
         {
             var target = CreateAGraphElement();
             int expected = 2; 
@@ -110,7 +110,7 @@ namespace NoSQL.GraphDB.Test
         }
 
         [TestMethod()]
-        public void TryGetPropertyUnitTest()
+        public void AGraphElement_TryGetProperty_UnitTest()
         {
             var target = CreateAGraphElement();
             int expected = 23;

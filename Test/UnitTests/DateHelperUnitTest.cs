@@ -73,7 +73,7 @@ namespace NoSQL.GraphDB.Test
         ///A test for ConvertDateTime
         ///</summary>
         [TestMethod()]
-        public void ConvertDateTimeUnitTest()
+        public void DateHelper_Convert_UnitTest()
         {
             var date = new DateTime(1982, 3, 22, 6, 30, 23) ; 
             uint expected = 385626623;
@@ -86,7 +86,7 @@ namespace NoSQL.GraphDB.Test
         ///A test for GetDateTimeFromUnixTimeStamp
         ///</summary>
         [TestMethod()]
-        public void GetDateTimeFromUnixTimeStampUnitTest()
+        public void DateHelper_GetDateTimeFromUnixTimeStamp_UnitTest()
         {
             uint secondsFromNineTeenSeventy = 385626623;
             var expected = new DateTime(1982, 3, 22, 6, 30, 23);
@@ -99,7 +99,7 @@ namespace NoSQL.GraphDB.Test
         ///A test for GetModificationDate
         ///</summary>
         [TestMethod()]
-        public void GetModificationDateUnitTest()
+        public void DateHelper_GetModificationDate_UnitTest()
         {
             uint creationDate = DateHelper.ConvertDateTime(DateTime.Now);
             uint actual;

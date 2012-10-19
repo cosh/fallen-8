@@ -50,7 +50,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
 		/// The graph element.
 		/// </value>
 		[DataMember(IsRequired = true)]
-		public readonly Int32 GraphElementId;
+        public readonly Int64 GraphElementId;
 		
 		/// <summary>
 		/// Gets or sets the highlights.

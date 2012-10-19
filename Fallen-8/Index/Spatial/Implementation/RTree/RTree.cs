@@ -69,7 +69,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         private List<Boolean> _levelForOverflowStrategy;
         private int _countOfR;
         private int _countOfReInsert;
-        private Dictionary<int, IRTreeDataContainer> _mapOfContainers;
+        private Dictionary<Int64, IRTreeDataContainer> _mapOfContainers;
         private ARTreeContainer _root;
 
         private delegate bool SpatialFilter(ISpatialContainer spatialContainer1, ISpatialContainer spatialContainer2);
@@ -1884,7 +1884,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 _countOfR += value.CountOfR;
             }
 
-            _mapOfContainers = new Dictionary<int, IRTreeDataContainer>();
+            _mapOfContainers = new Dictionary<Int64, IRTreeDataContainer>();
             
             
             if (MinCountOfNode*2 > MaxCountOfNode+1)

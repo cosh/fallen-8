@@ -63,7 +63,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Adds a vertex to the Fallen-8.")]
         [WebInvoke(UriTemplate = "/Vertex/Create", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Int32 AddVertex(VertexSpecification definition);
+        Int64 AddVertex(VertexSpecification definition);
 
         /// <summary>
         ///   Adds an edge to the Fallen-8
@@ -74,7 +74,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Adds an edge to the Fallen-8.")]
         [WebInvoke(UriTemplate = "/Edge/Create", Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Int32 AddEdge(EdgeSpecification definition);
+        Int64 AddEdge(EdgeSpecification definition);
 
         /// <summary>
         ///   Returns all graph element properties
@@ -202,7 +202,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "EdgeSourceVertex")]
         [Description("Returns the source vertex of the edge.")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Source", ResponseFormat = WebMessageFormat.Json)]
-        Int32 GetSourceVertexForEdge(String edgeIdentifier);
+        Int64 GetSourceVertexForEdge(String edgeIdentifier);
 
         /// <summary>
         ///  Returns the target vertex of the edge
@@ -212,7 +212,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "EdgeTargetVertex")]
         [Description("Returns the target vertex of the edge.")]
         [WebGet(UriTemplate = "/Edges/{edgeIdentifier}/Target", ResponseFormat = WebMessageFormat.Json)]
-        Int32 GetTargetVertexForEdge(String edgeIdentifier);
+        Int64 GetTargetVertexForEdge(String edgeIdentifier);
 
         /// <summary>
         ///   Returns all available outgoing edges for a given vertex
@@ -244,7 +244,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Returns all outgoing edges for a given edge property.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/OutEdges/{edgePropertyIdentifier}",
             ResponseFormat = WebMessageFormat.Json)]
-        List<Int32> GetOutgoingEdges(String vertexIdentifier, String edgePropertyIdentifier);
+        List<Int64> GetOutgoingEdges(String vertexIdentifier, String edgePropertyIdentifier);
 
         /// <summary>
         ///   Returns all incoming edges for a given edge property
@@ -256,7 +256,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Returns all incoming edges for a given edge property.")]
         [WebGet(UriTemplate = "/Vertices/{vertexIdentifier}/IncEdges/{edgePropertyIdentifier}",
             ResponseFormat = WebMessageFormat.Json)]
-        List<Int32> GetIncomingEdges(String vertexIdentifier, String edgePropertyIdentifier);
+        List<Int64> GetIncomingEdges(String vertexIdentifier, String edgePropertyIdentifier);
 
 		/// <summary>
         ///   Returns the in-degree of the vertex
@@ -318,7 +318,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Full graph scan for graph elements.")]
         [WebInvoke(UriTemplate = "/Scan/Graph?propertyId={propertyId}", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> GraphScan(String propertyId, ScanSpecification definition);
+        IEnumerable<Int64> GraphScan(String propertyId, ScanSpecification definition);
 
         /// <summary>
         ///   Index scan for graph elements
@@ -329,7 +329,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Index scan for graph elements.")]
         [WebInvoke(UriTemplate = "/Scan/Index", Method = "POST", 
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> IndexScan(IndexScanSpecification definition);
+        IEnumerable<Int64> IndexScan(IndexScanSpecification definition);
 
         /// <summary>
         ///   Scan for graph elements by a specified property range.
@@ -340,7 +340,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Scan for graph elements by a specified property range.")]
         [WebInvoke(UriTemplate = "/Scan/Index/Range", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> RangeIndexScan(RangeIndexScanSpecification definition);
+        IEnumerable<Int64> RangeIndexScan(RangeIndexScanSpecification definition);
 
 		/// <summary>
         ///   Fulltext scan for graph elements.
@@ -362,7 +362,7 @@ namespace NoSQL.GraphDB.Service.REST
 		[Description("Spatial index scan for graph elements. Finds all objects in a certain distance to a given graph element.")]
         [WebInvoke(UriTemplate = "/Scan/Index/Spatial/SearchDistance", Method = "POST",
 		           RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Int32> SpatialIndexScanSearchDistance(SearchDistanceSpecification definition);
+        IEnumerable<Int64> SpatialIndexScanSearchDistance(SearchDistanceSpecification definition);
 
         #endregion
 

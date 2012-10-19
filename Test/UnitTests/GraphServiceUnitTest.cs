@@ -1,5 +1,6 @@
 ﻿#region Usings
 
+using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NoSQL.GraphDB.Service.REST;
@@ -93,8 +94,8 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             EdgeSpecification definition = null; // TODO: Initialize to an appropriate value
-            int expected = 0; // TODO: Initialize to an appropriate value
-            int actual;
+            Int64 expected = 0; // TODO: Initialize to an appropriate value
+            Int64 actual;
             actual = target.AddEdge(definition);
             Assert.AreEqual(expected, actual);
         }
@@ -127,8 +128,8 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             VertexSpecification definition = null; // TODO: Initialize to an appropriate value
-            int expected = 0; // TODO: Initialize to an appropriate value
-            int actual;
+            Int64 expected = 0; // TODO: Initialize to an appropriate value
+            Int64 actual;
             actual = target.AddVertex(definition);
             Assert.AreEqual(expected, actual);
         }
@@ -282,8 +283,8 @@ namespace NoSQL.GraphDB.Test
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             string vertexIdentifier = string.Empty; // TODO: Initialize to an appropriate value
             string edgePropertyIdentifier = string.Empty; // TODO: Initialize to an appropriate value
-            List<int> expected = null; // TODO: Initialize to an appropriate value
-            List<int> actual;
+            List<Int64> expected = null; // TODO: Initialize to an appropriate value
+            List<Int64> actual;
             actual = target.GetIncomingEdges(vertexIdentifier, edgePropertyIdentifier);
             Assert.AreEqual(expected, actual);
         }
@@ -335,8 +336,8 @@ namespace NoSQL.GraphDB.Test
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             string vertexIdentifier = string.Empty; // TODO: Initialize to an appropriate value
             string edgePropertyIdentifier = string.Empty; // TODO: Initialize to an appropriate value
-            List<int> expected = null; // TODO: Initialize to an appropriate value
-            List<int> actual;
+            List<Int64> expected = null; // TODO: Initialize to an appropriate value
+            List<Int64> actual;
             actual = target.GetOutgoingEdges(vertexIdentifier, edgePropertyIdentifier);
             Assert.AreEqual(expected, actual);
         }
@@ -390,8 +391,8 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             string edgeIdentifier = string.Empty; // TODO: Initialize to an appropriate value
-            int expected = 0; // TODO: Initialize to an appropriate value
-            int actual;
+            Int64 expected = 0; // TODO: Initialize to an appropriate value
+            Int64 actual;
             actual = target.GetSourceVertexForEdge(edgeIdentifier);
             Assert.AreEqual(expected, actual);
         }
@@ -407,8 +408,8 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             string edgeIdentifier = string.Empty; // TODO: Initialize to an appropriate value
-            int expected = 0; // TODO: Initialize to an appropriate value
-            int actual;
+            Int64 expected = 0; // TODO: Initialize to an appropriate value
+            Int64 actual;
             actual = target.GetTargetVertexForEdge(edgeIdentifier);
             Assert.AreEqual(expected, actual);
         }
@@ -425,8 +426,8 @@ namespace NoSQL.GraphDB.Test
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             string propertyIdString = string.Empty; // TODO: Initialize to an appropriate value
             ScanSpecification definition = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> expected = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> actual;
+            IEnumerable<Int64> expected = null; // TODO: Initialize to an appropriate value
+            IEnumerable<Int64> actual;
             actual = target.GraphScan(propertyIdString, definition);
             Assert.AreEqual(expected, actual);
         }
@@ -442,8 +443,8 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             IndexScanSpecification definition = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> expected = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> actual;
+            IEnumerable<Int64> expected = null; // TODO: Initialize to an appropriate value
+            IEnumerable<Int64> actual;
             actual = target.IndexScan(definition);
             Assert.AreEqual(expected, actual);
         }
@@ -459,8 +460,8 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             RangeIndexScanSpecification definition = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> expected = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> actual;
+            IEnumerable<Int64> expected = null; // TODO: Initialize to an appropriate value
+            IEnumerable<Int64> actual;
             actual = target.RangeIndexScan(definition);
             Assert.AreEqual(expected, actual);
         }
@@ -510,8 +511,8 @@ namespace NoSQL.GraphDB.Test
             Fallen8 fallen8 = null; // TODO: Initialize to an appropriate value
             var target = new GraphService(fallen8); // TODO: Initialize to an appropriate value
             SearchDistanceSpecification definition = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> expected = null; // TODO: Initialize to an appropriate value
-            IEnumerable<int> actual;
+            IEnumerable<Int64> expected = null; // TODO: Initialize to an appropriate value
+            IEnumerable<Int64> actual;
             actual = target.SpatialIndexScanSearchDistance(definition);
             Assert.AreEqual(expected, actual);
         }

@@ -158,12 +158,12 @@ namespace NoSQL.GraphDB.Service.REST
 			_fallen8.TabulaRasa();
 		}
 
-		public uint VertexCount ()
+		public UInt64 VertexCount ()
 		{
 			return _fallen8.VertexCount;
 		}
 
-		public uint EdgeCount ()
+        public UInt64 EdgeCount()
 		{
 			return _fallen8.EdgeCount;
 		}

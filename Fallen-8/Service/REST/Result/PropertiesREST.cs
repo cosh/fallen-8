@@ -44,7 +44,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
         ///   The identifier
         /// </summary>
         [DataMember]
-        public Int32 Id { get; set; }
+        public Int64 Id { get; set; }
 
         /// <summary>
         ///   The creation date

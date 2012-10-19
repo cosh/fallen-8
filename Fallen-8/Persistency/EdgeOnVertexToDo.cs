@@ -40,7 +40,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <summary>
         /// The vertex identifier.
         /// </summary>
-        public Int32 VertexId;
+        public Int64 VertexId;
         
         /// <summary>
         /// The edge property identifier.

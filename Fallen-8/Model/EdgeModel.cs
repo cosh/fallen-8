@@ -48,7 +48,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='targetVertex'> Target vertex. </param>
         /// <param name='sourceVertex'> Source vertex. </param>
         /// <param name='properties'> Properties. </param>
-        public EdgeModel(Int32 id, UInt32 creationDate, VertexModel targetVertex, VertexModel sourceVertex,
+        public EdgeModel(Int64 id, UInt32 creationDate, VertexModel targetVertex, VertexModel sourceVertex,
                          PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {
@@ -65,7 +65,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='targetVertex'> Target vertex. </param>
         /// <param name='sourceVertex'> Source vertex. </param>
         /// <param name='properties'> Properties. </param>
-        internal EdgeModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, VertexModel targetVertex,
+        internal EdgeModel(Int64 id, UInt32 creationDate, UInt32 modificationDate, VertexModel targetVertex,
                            VertexModel sourceVertex, PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {

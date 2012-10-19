@@ -151,7 +151,7 @@ namespace NoSQL.GraphDB.Index.Range
                     var valueCount = reader.ReadInt32();
                     for (var j = 0; j < valueCount; j++)
                     {
-                        var graphElementId = reader.ReadInt32();
+                        var graphElementId = reader.ReadInt64();
                         AGraphElement graphElement;
                         if(fallen8.TryGetGraphElement(out graphElement, graphElementId))
                         {
