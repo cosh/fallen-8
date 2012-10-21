@@ -61,10 +61,7 @@
 
 <p>Fallen-8 makes use of git submodules, that's why they have to be cloned too.</p>
 
-<pre><code>$ git clone git@github.com:cosh/fallen-8.git
-$ cd fallen-8
-$ git submodule init
-$ git submodule update
+<pre><code>$ git clone --recursive git@github.com:cosh/fallen-8.git
 </code></pre>
 
 <h2>HowTo Use</h2>
@@ -72,21 +69,21 @@ $ git submodule update
 <pre><code>var fallen8 = new Fallen8();
 
 //start the built-in services
-fallen8.ServiceFactory.StartGraphService(IPAddress.Parse("127.0.0.1"), 2323);
-fallen8.ServiceFactory.StartAdminService(IPAddress.Parse("127.0.0.1"), 2323);
+fallen8.ServiceFactory.StartGraphService();
+fallen8.ServiceFactory.StartAdminService();
 </code></pre>
 
 <h2>Additional information</h2>
 
-<p><a href="https://github.com/cosh/fallen-8/wiki">Wiki on GitHub</a></p>
-
-<p><a href="https://github.com/cosh/fallen-8/issues">Issues on GitHub</a></p>
-
-<p><a href="https://groups.google.com/d/forum/fallen-8">Google Group</a></p>
-
 <p><a href="http://www.slideshare.net/HenningRauch/graphdatabases">Graph databases - Henning Rauch</a></p>
 
 <p><a href="http://www.slideshare.net/HenningRauch/vorlesung-graphendatenbanken-an-der-universitt-hof">Graphendatenbanken - Henning Rauch (visiting lecture)</a></p>
+
+<p><a href="https://github.com/cosh/fallen-8/issues">Issues on GitHub</a></p>
+
+<p><a href="https://github.com/cosh/fallen-8/wiki">Wiki on GitHub</a></p>
+
+<p><a href="https://groups.google.com/d/forum/fallen-8">Google Group</a></p>
 
 <h2>MIT-License</h2>
 
