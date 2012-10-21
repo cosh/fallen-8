@@ -78,6 +78,8 @@ namespace NoSQL.GraphDB.Persistency
                 var reader = new SerializationReader(file);
                 currentId = reader.ReadInt32();
 
+                graphElements.InitializeUntil(currentId);
+
                 #region graph elements
 
                 //initialize the list of graph elements

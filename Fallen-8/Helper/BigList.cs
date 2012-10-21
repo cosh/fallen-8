@@ -27,6 +27,7 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -163,7 +164,7 @@ namespace NoSQL.GraphDB.Helper
             var result = new List<TResult>();
 
             Parallel.ForEach(
-                _data,
+                _data.Where(_ => _ != null),
                 () => new List<TResult>(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, List<TResult> arg4)
                 {
@@ -196,7 +197,7 @@ namespace NoSQL.GraphDB.Helper
             var result = new List<T>();
 
             Parallel.ForEach(
-                _data,
+                _data.Where(_ => _ != null),
                 () => new List<T>(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, List<T> arg4)
                 {
@@ -227,7 +228,7 @@ namespace NoSQL.GraphDB.Helper
             UInt32 count = 0;
 
             Parallel.ForEach(
-                _data,
+                _data.Where(_ => _ != null),
                 () => new uint(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, uint arg4)
                 {
@@ -252,11 +253,34 @@ namespace NoSQL.GraphDB.Helper
             return count;
         }
 
+        public void InitializeUntil(int index)
+        {
+            for (int i = 0; i < _data.Length; i++)
+            {
+                //find the localSlot
+                var localSlot = FindShardLocalSlot(i, index);
+
+                if (localSlot >= 0)
+                {
+                    if (localSlot > ShardSize)
+                    {
+                        localSlot = ShardSize;
+                    }
+
+                    ExtendIfNeeded(_data[i], i, localSlot);
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
         #endregion
 
         #region private helper
 
-        private T[] ExtendIfNeeded(T[] shard, long shardId, long localSlot)
+        private T[] ExtendIfNeeded(T[] shard, Int32 shardId, Int32 localSlot)
         {
             if (localSlot > ShardSize)
             {
