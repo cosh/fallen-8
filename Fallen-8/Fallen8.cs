@@ -85,7 +85,7 @@ namespace NoSQL.GraphDB
         /// <summary>
         ///   The current identifier.
         /// </summary>
-        private Int32 _currentId = Constants.MinId;
+        private Int32 _currentId = 0;
 
         /// <summary>
         ///   Binary operator delegate.
@@ -189,7 +189,7 @@ namespace NoSQL.GraphDB
         {
             if (WriteResource())
             {
-                _currentId = Constants.MinId;
+                _currentId = 0;
                 _graphElements = new BigList<AGraphElement>();
                 IndexFactory.DeleteAllIndices();
                 VertexCount = 0;
@@ -234,12 +234,11 @@ namespace NoSQL.GraphDB
             {
                 EdgeModel outgoingEdge = null;
 
-                VertexModel sourceVertex;
-                VertexModel targetVertex;
-                
+                var sourceVertex = _graphElements.GetElement(sourceVertexId) as VertexModel;
+                var targetVertex = _graphElements.GetElement(targetVertexId) as VertexModel;
+
                 //get the related vertices
-                if (_graphElements.TryGetElementOrDefault(out sourceVertex, sourceVertexId) &&
-                    _graphElements.TryGetElementOrDefault(out targetVertex, targetVertexId))
+                if (sourceVertex != null && targetVertex != null)
                 {
                     outgoingEdge = new EdgeModel(_currentId, creationDate, targetVertex, sourceVertex, properties);
 
@@ -272,8 +271,8 @@ namespace NoSQL.GraphDB
             if (WriteResource())
             {
                 var success = false;
-                AGraphElement graphElement;
-                if (_graphElements.TryGetElementOrDefault(out graphElement, graphElementId))
+                AGraphElement graphElement = _graphElements.GetElement(graphElementId);
+                if (graphElement != null)
                 {
                     success = graphElement != null && graphElement.TryAddProperty(propertyId, property);
                 }
@@ -290,10 +289,10 @@ namespace NoSQL.GraphDB
         {
             if (WriteResource())
             {
-                AGraphElement graphElement;
+                var graphElement = _graphElements.GetElement(graphElementId);
 
-                var success = _graphElements.TryGetElementOrDefault(out graphElement, graphElementId) && graphElement.TryRemoveProperty(propertyId);
-                
+                var success = graphElement != null && graphElement.TryRemoveProperty(propertyId);
+
                 FinishWriteResource();
 
                 return success;
@@ -306,9 +305,9 @@ namespace NoSQL.GraphDB
         {
             if (WriteResource())
             {
-                AGraphElement graphElement;
+                AGraphElement graphElement = _graphElements.GetElement(graphElementId);
 
-                if (!_graphElements.TryGetElementOrDefault(out graphElement, graphElementId))
+                if (graphElement == null)
                 {
                     FinishWriteResource();
 
@@ -511,11 +510,11 @@ namespace NoSQL.GraphDB
         {
             if (ReadResource())
             {
-                var success = _graphElements.TryGetElementOrDefault(out result, id);
+                result = _graphElements.GetElement(id) as VertexModel;
 
                 FinishReadResource();
 
-                return success;
+                return result != null;
             }
 
             throw new CollisionException();
@@ -538,11 +537,11 @@ namespace NoSQL.GraphDB
         {
             if (ReadResource())
             {
-                var success = _graphElements.TryGetElementOrDefault(out result, id);
+                result = _graphElements.GetElement(id) as EdgeModel;
 
                 FinishReadResource();
 
-                return success;
+                return result != null;
             }
 
             throw new CollisionException();
@@ -565,7 +564,7 @@ namespace NoSQL.GraphDB
         {
             if (ReadResource())
             {
-                _graphElements.TryGetElementOrDefault(out result, id);
+                result = _graphElements.GetElement(id);
 
                 FinishReadResource();
 
@@ -908,18 +907,18 @@ namespace NoSQL.GraphDB
         /// </summary>
         private void TrimPrivate()
         {
-            for (var i = Constants.MinId; i <= _currentId; i++)
+            for (var i = 0; i <= _currentId; i++)
             {
-                AGraphElement graphElement;
-                if (_graphElements.TryGetElementOrDefault(out graphElement, i))
+                AGraphElement graphElement = _graphElements.GetElement(i);
+                if (graphElement != null)
                 {
-                    graphElement.Trim();   
+                    graphElement.Trim();
                 }
             }
 
 #if __MonoCS__
     //mono specific code
-			#else
+#else
             GC.Collect();
             GC.Collect();
             GC.WaitForFullGCComplete();
@@ -928,7 +927,7 @@ namespace NoSQL.GraphDB
 
 #if __MonoCS__
     //mono specific code
-			#else
+#else
             var errorCode = SaveNativeMethods.EmptyWorkingSet(Process.GetCurrentProcess().Handle);
 #endif
 

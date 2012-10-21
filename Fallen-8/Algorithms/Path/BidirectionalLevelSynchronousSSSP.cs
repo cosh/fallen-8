@@ -62,8 +62,8 @@ namespace NoSQL.GraphDB.Algorithms.Path
         #region IShortestPathAlgorithm Members
 
         public List<Path> Calculate(
-            int sourceVertexId,
-            int destinationVertexId,
+            Int32 sourceVertexId,
+            Int32 destinationVertexId,
             Int32 maxDepth = 1,
             Double maxPathWeight = Double.MaxValue,
             Int32 maxResults = 1,
@@ -97,11 +97,11 @@ namespace NoSQL.GraphDB.Algorithms.Path
 
             #region data
 
-            var sourceVisitedVertices = new BigBitArray();
-            sourceVisitedVertices.SetValue(sourceVertex.Id, true);
+            var sourceVisitedVertices = new HashSet<VertexModel>();
+            sourceVisitedVertices.Add(sourceVertex);
 
-            var targetVisitedVertices = new BigBitArray();
-            targetVisitedVertices.SetValue(targetVertex.Id, true);
+            var targetVisitedVertices = new HashSet<VertexModel>();
+            targetVisitedVertices.Add(targetVertex);
 
             #endregion
 
@@ -202,11 +202,8 @@ namespace NoSQL.GraphDB.Algorithms.Path
                     ? CreatePaths(middleVertices, sourceFrontiers, targetFrontiers, maxResults, sourceLevel, targetLevel)
                     : null;
 
-                #endregion    
+                #endregion
             }
-
-            Logger.LogError(String.Format("A maximum depth of {0} is not valid!", maxDepth));
-            return null;
         }
 
         #endregion
@@ -239,8 +236,8 @@ namespace NoSQL.GraphDB.Algorithms.Path
         /// <param name="currentTargetFrontier">The target frontier</param>
         /// <returns>True if there are middle vertices, otherwise false</returns>
         private static bool FindMiddleVertices(
-            out List<VertexModel> middleVertices, 
-            Dictionary<VertexModel, VertexPredecessor> currentSourceFrontier, 
+            out List<VertexModel> middleVertices,
+            Dictionary<VertexModel, VertexPredecessor> currentSourceFrontier,
             Dictionary<VertexModel, VertexPredecessor> currentTargetFrontier)
         {
             if (currentSourceFrontier == null || currentTargetFrontier == null)
@@ -465,7 +462,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
             return result;
         }
 
-        
+
         /// <summary>
         /// Gets the global frontier corresponding to a certain level
         /// </summary>
@@ -475,7 +472,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
         /// <param name="edgeFilter">The edge filter</param>
         /// <param name="vertexFilter">The vertex filter</param>
         /// <returns>The frontier vertices and their predecessors</returns>
-        private static Dictionary<VertexModel, VertexPredecessor> GetGlobalFrontier(IEnumerable<VertexModel> startingVertices, BigBitArray visitedVertices, 
+        private static Dictionary<VertexModel, VertexPredecessor> GetGlobalFrontier(IEnumerable<VertexModel> startingVertices, HashSet<VertexModel> visitedVertices,
             PathDelegates.EdgePropertyFilter edgepropertyFilter,
             PathDelegates.EdgeFilter edgeFilter,
             PathDelegates.VertexFilter vertexFilter)
@@ -541,7 +538,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
             PathDelegates.EdgePropertyFilter edgepropertyFilter,
             PathDelegates.EdgeFilter edgeFilter,
             PathDelegates.VertexFilter vertexFilter,
-            BigBitArray alreadyVisited)
+            HashSet<VertexModel> alreadyVisited)
         {
             var edgeProperties = vertex.GetIncomingEdges();
             var result = new List<FrontierElement>();
@@ -562,38 +559,38 @@ namespace NoSQL.GraphDB.Algorithms.Path
                             var aEdge = edgeContainer.Edges[i];
                             if (edgeFilter(aEdge, Direction.IncomingEdge))
                             {
-                                if (alreadyVisited.SetValue(aEdge.SourceVertex.Id, true))
+                                if (alreadyVisited.Add(aEdge.SourceVertex))
                                 {
                                     if (vertexFilter != null)
                                     {
                                         if (vertexFilter(aEdge.SourceVertex))
                                         {
                                             result.Add(new FrontierElement
-                                                           {
-                                                               EdgeDirection = Direction.IncomingEdge,
-                                                               EdgeLocation = new EdgeLocation
-                                                                                  {
-                                                                                      Edge = aEdge,
-                                                                                      EdgePropertyId =
-                                                                                          edgeContainer.EdgePropertyId
-                                                                                  },
-                                                               FrontierVertex = aEdge.SourceVertex
-                                                           });
+                                            {
+                                                EdgeDirection = Direction.IncomingEdge,
+                                                EdgeLocation = new EdgeLocation
+                                                {
+                                                    Edge = aEdge,
+                                                    EdgePropertyId =
+                                                        edgeContainer.EdgePropertyId
+                                                },
+                                                FrontierVertex = aEdge.SourceVertex
+                                            });
                                         }
                                     }
                                     else
                                     {
                                         result.Add(new FrontierElement
-                                                       {
-                                                           EdgeDirection = Direction.IncomingEdge,
-                                                           EdgeLocation = new EdgeLocation
-                                                                              {
-                                                                                  Edge = aEdge,
-                                                                                  EdgePropertyId =
-                                                                                      edgeContainer.EdgePropertyId
-                                                                              },
-                                                           FrontierVertex = aEdge.SourceVertex
-                                                       });
+                                        {
+                                            EdgeDirection = Direction.IncomingEdge,
+                                            EdgeLocation = new EdgeLocation
+                                            {
+                                                Edge = aEdge,
+                                                EdgePropertyId =
+                                                    edgeContainer.EdgePropertyId
+                                            },
+                                            FrontierVertex = aEdge.SourceVertex
+                                        });
                                     }
                                 }
                             }
@@ -607,21 +604,21 @@ namespace NoSQL.GraphDB.Algorithms.Path
                             {
                                 var aEdge = edgeContainer.Edges[i];
 
-                                if (alreadyVisited.SetValue(aEdge.SourceVertex.Id, true))
+                                if (alreadyVisited.Add(aEdge.SourceVertex))
                                 {
                                     if (vertexFilter(aEdge.SourceVertex))
                                     {
                                         result.Add(new FrontierElement
-                                                       {
-                                                           EdgeDirection = Direction.IncomingEdge,
-                                                           EdgeLocation = new EdgeLocation
-                                                                              {
-                                                                                  Edge = aEdge,
-                                                                                  EdgePropertyId =
-                                                                                      edgeContainer.EdgePropertyId
-                                                                              },
-                                                           FrontierVertex = aEdge.SourceVertex
-                                                       });
+                                        {
+                                            EdgeDirection = Direction.IncomingEdge,
+                                            EdgeLocation = new EdgeLocation
+                                            {
+                                                Edge = aEdge,
+                                                EdgePropertyId =
+                                                    edgeContainer.EdgePropertyId
+                                            },
+                                            FrontierVertex = aEdge.SourceVertex
+                                        });
                                     }
                                 }
                             }
@@ -631,19 +628,19 @@ namespace NoSQL.GraphDB.Algorithms.Path
                             for (var i = 0; i < edgeContainer.Edges.Count; i++)
                             {
                                 var aEdge = edgeContainer.Edges[i];
-                                if (alreadyVisited.SetValue(aEdge.SourceVertex.Id, true))
+                                if (alreadyVisited.Add(aEdge.SourceVertex))
                                 {
                                     result.Add(new FrontierElement
-                                                   {
-                                                       EdgeDirection = Direction.IncomingEdge,
-                                                       EdgeLocation = new EdgeLocation
-                                                                          {
-                                                                              Edge = aEdge,
-                                                                              EdgePropertyId =
-                                                                                  edgeContainer.EdgePropertyId
-                                                                          },
-                                                       FrontierVertex = aEdge.SourceVertex
-                                                   });
+                                    {
+                                        EdgeDirection = Direction.IncomingEdge,
+                                        EdgeLocation = new EdgeLocation
+                                        {
+                                            Edge = aEdge,
+                                            EdgePropertyId =
+                                                edgeContainer.EdgePropertyId
+                                        },
+                                        FrontierVertex = aEdge.SourceVertex
+                                    });
                                 }
                             }
                         }
@@ -668,7 +665,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
             PathDelegates.EdgePropertyFilter edgepropertyFilter,
             PathDelegates.EdgeFilter edgeFilter,
             PathDelegates.VertexFilter vertexFilter,
-            BigBitArray alreadyVisited)
+            HashSet<VertexModel> alreadyVisited)
         {
             var edgeProperties = vertex.GetOutgoingEdges();
             var result = new List<FrontierElement>();
@@ -689,7 +686,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
                             var aEdge = edgeContainer.Edges[i];
                             if (edgeFilter(aEdge, Direction.OutgoingEdge))
                             {
-                                if (alreadyVisited.SetValue(aEdge.TargetVertex.Id, true))
+                                if (alreadyVisited.Add(aEdge.TargetVertex))
                                 {
                                     if (vertexFilter != null)
                                     {
@@ -734,7 +731,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
                             {
                                 var aEdge = edgeContainer.Edges[i];
 
-                                if (alreadyVisited.SetValue(aEdge.TargetVertex.Id, true))
+                                if (alreadyVisited.Add(aEdge.TargetVertex))
                                 {
                                     if (vertexFilter(aEdge.TargetVertex))
                                     {
@@ -758,7 +755,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
                             for (var i = 0; i < edgeContainer.Edges.Count; i++)
                             {
                                 var aEdge = edgeContainer.Edges[i];
-                                if (alreadyVisited.SetValue(aEdge.TargetVertex.Id, true))
+                                if (alreadyVisited.Add(aEdge.TargetVertex))
                                 {
                                     result.Add(new FrontierElement
                                     {
@@ -790,7 +787,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
         /// <param name="edgeFilter">The edge filter</param>
         /// <param name="vertexFilter">The vertex filter</param>
         /// <returns>The local frontier</returns>
-        private static IEnumerable<FrontierElement> GetLocalFrontier(VertexModel vertex, BigBitArray alreadyVisitedVertices, 
+        private static IEnumerable<FrontierElement> GetLocalFrontier(VertexModel vertex, HashSet<VertexModel> alreadyVisitedVertices,
             PathDelegates.EdgePropertyFilter edgepropertyFilter,
             PathDelegates.EdgeFilter edgeFilter,
             PathDelegates.VertexFilter vertexFilter)
@@ -802,7 +799,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
 
             return result;
         }
-        
+
         #endregion
 
         #region IPlugin Members
@@ -814,7 +811,7 @@ namespace NoSQL.GraphDB.Algorithms.Path
 
         public Type PluginCategory
         {
-            get { return typeof (IShortestPathAlgorithm); }
+            get { return typeof(IShortestPathAlgorithm); }
         }
 
         public string Description

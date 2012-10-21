@@ -440,9 +440,9 @@ namespace NoSQL.GraphDB.Persistency
 
                 for (var i = range.Item1; i < range.Item2; i++)
                 {
-                    AGraphElement aGraphElement;
+                    AGraphElement aGraphElement = graphElements.GetElement(i);
                     //there can be nulls
-                    if (!graphElements.TryGetElementOrDefault(out aGraphElement, i))
+                    if (aGraphElement == null)
                     {
                         partitionWriter.Write(SerializedNull); // 2 for null
                         continue;
@@ -487,10 +487,9 @@ namespace NoSQL.GraphDB.Persistency
             {
                 foreach (var aSneakPeak in aEdgeSneakPeakList)
                 {
-                    VertexModel sourceVertex;
-                    VertexModel targetVertex;
-                    if (graphElements.TryGetElementOrDefault(out sourceVertex, aSneakPeak.SourceVertexId) &&
-                    graphElements.TryGetElementOrDefault(out targetVertex, aSneakPeak.TargetVertexId))
+                    VertexModel sourceVertex = graphElements.GetElement(aSneakPeak.SourceVertexId) as VertexModel;
+                    VertexModel targetVertex = graphElements.GetElement(aSneakPeak.TargetVertexId) as VertexModel;
+                    if (sourceVertex != null && targetVertex != null)
                     {
                         graphElements.SetValue(aSneakPeak.Id,
                             new EdgeModel(
@@ -510,13 +509,13 @@ namespace NoSQL.GraphDB.Persistency
 
             foreach (var aKV in edgeTodo)
             {
-                EdgeModel edge;
-                if (graphElements.TryGetElementOrDefault(out edge, aKV.Key))
+                EdgeModel edge = graphElements.GetElement(aKV.Key) as EdgeModel;
+                if (edge != null)
                 {
                     foreach (var aTodo in aKV.Value)
                     {
-                        VertexModel interestingVertex;
-                        if (graphElements.TryGetElementOrDefault(out interestingVertex, aTodo.VertexId))
+                        VertexModel interestingVertex = graphElements.GetElement(aTodo.VertexId) as VertexModel;
+                        if (interestingVertex != null)
                         {
                             if (aTodo.IsIncomingEdge)
                             {
@@ -552,7 +551,7 @@ namespace NoSQL.GraphDB.Persistency
 
             if (totalCount < savePartitions)
             {
-                for (var i = Constants.MinId; i < totalCount; i++)
+                for (var i = 0; i < totalCount; i++)
                 {
                     result.Add(new Tuple<Int32, Int32>(i, i + 1));
                 }
@@ -564,14 +563,14 @@ namespace NoSQL.GraphDB.Persistency
 
             for (var i = 0; i < savePartitions; i++)
             {
-                var lowerLimit = Constants.MinId + i * size;
-                var upperLimit = Constants.MinId + (i * size) + size;
+                var lowerLimit = 0 + i * size;
+                var upperLimit = 0 + (i * size) + size;
                 result.Add(new Tuple<Int32, Int32>(Convert.ToInt32(lowerLimit), Convert.ToInt32(upperLimit)));
             }
 
             //trim the last partition
             var lastPartition = Convert.ToInt32(savePartitions - 1);
-            var lastElement = Convert.ToInt32(Constants.MinId + totalCount);
+            var lastElement = Convert.ToInt32(0 + totalCount);
             result[lastPartition] = new Tuple<Int32, Int32>(result[lastPartition].Item1, lastElement);
 
             return result;
@@ -648,8 +647,8 @@ namespace NoSQL.GraphDB.Persistency
                     {
                         var edgeId = reader.ReadInt32();
 
-                        EdgeModel edge;
-                        if (graphElements.TryGetElementOrDefault(out edge, edgeId))
+                        EdgeModel edge = graphElements.GetElement(edgeId) as EdgeModel;
+                        if (edge != null)
                         {
                             outEdges.Add(edge);
                         }
@@ -696,9 +695,8 @@ namespace NoSQL.GraphDB.Persistency
                     {
                         var edgeId = reader.ReadInt32();
 
-                        EdgeModel edge;
-
-                        if (graphElements.TryGetElementOrDefault(out edge, edgeId))
+                        EdgeModel edge = graphElements.GetElement(edgeId) as EdgeModel;
+                        if (edge != null)
                         {
                             incEdges.Add(edge);
                         }
@@ -822,10 +820,10 @@ namespace NoSQL.GraphDB.Persistency
             var sourceVertexId = reader.ReadInt32();
             var targetVertexId = reader.ReadInt32();
 
-            VertexModel sourceVertex;
-            VertexModel targetVertex;
+            VertexModel sourceVertex = graphElements.GetElement(sourceVertexId) as VertexModel;
+            VertexModel targetVertex = graphElements.GetElement(targetVertexId) as VertexModel;
 
-            if (graphElements.TryGetElementOrDefault(out sourceVertex, sourceVertexId) && graphElements.TryGetElementOrDefault(out targetVertex, targetVertexId))
+            if (sourceVertex != null && targetVertex != null)
             {
                 graphElements.SetValue(id,new EdgeModel(id, creationDate, modificationDate, targetVertex,sourceVertex, properties));
             }

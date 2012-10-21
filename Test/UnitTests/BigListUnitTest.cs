@@ -1,19 +1,15 @@
 ﻿#region Usings
 
-using System.Collections.Generic;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NoSQL.GraphDB.Helper;
+using System.Threading;
 
 #endregion
 
 namespace NoSQL.GraphDB.Test
 {
-    
-    
-    /// <summary>
-    ///This is a test class for BigListUnitTest and is intended
-    ///to contain all BigListUnitTest Unit Tests
-    ///</summary>
+
     [TestClass()]
     public class BigListUnitTest
     {
@@ -68,169 +64,34 @@ namespace NoSQL.GraphDB.Test
         #endregion
 
 
-        /// <summary>
-        ///A test for BigList`1 Constructor
-        ///</summary>
-        public void BigListConstructorUnitTestHelper<T>()
-            where T : class
+        [TestMethod()]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void BigList_SetValue_BadIndex_UnitTest()
         {
-            var target = new BigList<T>();
+            var bigList = new BigList<Object>();
+
+            bigList.SetValue(-1, new object());
         }
 
         [TestMethod()]
-        public void BigListConstructorUnitTest()
+        public void BigList_SetValue_UnitTest()
         {
-            Assert.Inconclusive("TODO");
+            var bigList = new BigList<Object>();
 
-            BigListConstructorUnitTestHelper<GenericParameterHelper>();
-        }
+            var object0 = new object();
+            bigList.SetValue(0, object0);
+            var object0Actual = bigList.GetElement(0);
+            Assert.IsTrue(ReferenceEquals(object0, object0Actual));
 
-        /// <summary>
-        ///A test for Clear
-        ///</summary>
-        public void ClearUnitTestHelper<T>()
-            where T : class
-        {
-            var target = new BigList<T>(); // TODO: Initialize to an appropriate value
-            target.Clear();
-        }
+            var object10 = new object();
+            bigList.SetValue(10, object10);
+            var object10Actual = bigList.GetElement(10);
+            Assert.IsTrue(ReferenceEquals(object10, object10Actual));
 
-        [TestMethod()]
-        public void ClearUnitTest()
-        {
-            Assert.Inconclusive("TODO");
-
-            ClearUnitTestHelper<GenericParameterHelper>();
-        }
-
-        /// <summary>
-        ///A test for FindElements
-        ///</summary>
-        public void FindElementsUnitTestHelper<T>()
-            where T : class
-        {
-            var target = new BigList<T>(); // TODO: Initialize to an appropriate value
-            BigList<T>.ElementSeeker delgate = null; // TODO: Initialize to an appropriate value
-            List<T> expected = null; // TODO: Initialize to an appropriate value
-            List<T> actual;
-            actual = target.FindElements(delgate);
-            Assert.AreEqual(expected, actual);
-        }
-
-        [TestMethod()]
-        public void FindElementsUnitTest()
-        {
-            Assert.Inconclusive("TODO");
-
-            FindElementsUnitTestHelper<GenericParameterHelper>();
-        }
-
-        /// <summary>
-        ///A test for GetAllOfType
-        ///</summary>
-        public void GetAllOfTypeUnitTestHelper<T, TResult>()
-            where T : class
-            where TResult : class
-        {
-            var target = new BigList<T>(); // TODO: Initialize to an appropriate value
-            List<TResult> expected = null; // TODO: Initialize to an appropriate value
-            List<TResult> actual;
-            actual = target.GetAllOfType<TResult>();
-            Assert.AreEqual(expected, actual);
-        }
-
-        [TestMethod()]
-        public void GetAllOfTypeUnitTest()
-        {
-            Assert.Inconclusive("TODO");
-
-            GetAllOfTypeUnitTestHelper<GenericParameterHelper, GenericParameterHelper>();
-        }
-
-        /// <summary>
-        ///A test for GetCountOf
-        ///</summary>
-        public void GetCountOfUnitTestHelper<T, TInteresting>()
-            where T : class
-        {
-            var target = new BigList<T>(); // TODO: Initialize to an appropriate value
-            uint expected = 0; // TODO: Initialize to an appropriate value
-            uint actual;
-            actual = target.GetCountOf<TInteresting>();
-            Assert.AreEqual(expected, actual);
-        }
-
-        [TestMethod()]
-        public void GetCountOfUnitTest()
-        {
-            Assert.Inconclusive("TODO");
-
-            GetCountOfUnitTestHelper<GenericParameterHelper, GenericParameterHelper>();
-        }
-
-        /// <summary>
-        ///A test for SetDefault
-        ///</summary>
-        public void SetDefaultUnitTestHelper<T>()
-            where T : class
-        {
-            var target = new BigList<T>(); // TODO: Initialize to an appropriate value
-            int index = 0; // TODO: Initialize to an appropriate value
-            target.SetDefault(index);
-        }
-
-        [TestMethod()]
-        public void SetDefaultUnitTest()
-        {
-            Assert.Inconclusive("TODO");
-
-            SetDefaultUnitTestHelper<GenericParameterHelper>();
-        }
-
-        /// <summary>
-        ///A test for SetValue
-        ///</summary>
-        public void SetValueUnitTestHelper<T>()
-            where T : class
-        {
-            var target = new BigList<T>(); // TODO: Initialize to an appropriate value
-            int index = 0; // TODO: Initialize to an appropriate value
-            T item = null; // TODO: Initialize to an appropriate value
-            target.SetValue(index, item);
-        }
-
-        [TestMethod()]
-        public void SetValueUnitTest()
-        {
-            Assert.Inconclusive("TODO");
-
-            SetValueUnitTestHelper<GenericParameterHelper>();
-        }
-
-        /// <summary>
-        ///A test for TryGetElementOrDefault
-        ///</summary>
-        public void TryGetElementOrDefaultUnitTestHelper<T, TResult>()
-            where T : class
-            where TResult : class
-        {
-            var target = new BigList<T>(); // TODO: Initialize to an appropriate value
-            TResult result = null; // TODO: Initialize to an appropriate value
-            TResult resultExpected = null; // TODO: Initialize to an appropriate value
-            int index = 0; // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-            actual = target.TryGetElementOrDefault<TResult>(out result, index);
-            Assert.AreEqual(resultExpected, result);
-            Assert.AreEqual(expected, actual);
-        }
-
-        [TestMethod()]
-        public void TryGetElementOrDefaultUnitTest()
-        {
-            Assert.Inconclusive("TODO");
-
-            TryGetElementOrDefaultUnitTestHelper<GenericParameterHelper, GenericParameterHelper>();
+            var object250000000 = new object();
+            bigList.SetValue(250000000, object250000000);
+            var object250000000Actual = bigList.GetElement(250000000);
+            Assert.IsTrue(ReferenceEquals(object250000000, object250000000Actual));
         }
     }
 }

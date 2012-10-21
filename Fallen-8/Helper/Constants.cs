@@ -43,11 +43,6 @@ namespace NoSQL.GraphDB.Helper
         public const int BufferSize = 104857600;
         
         /// <summary>
-        /// The minimum id
-        /// </summary>
-        public const int MinId = Int32.MinValue;
-
-        /// <summary>
         /// The version separator in save files
         /// </summary>
         public const char VersionSeparator = '#';
