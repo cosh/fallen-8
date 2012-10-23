@@ -64,11 +64,8 @@ namespace NoSQL.GraphDB.Test
         #endregion
 
 
-        /// <summary>
-        ///A test for AddOrUpdate
-        ///</summary>
         [TestMethod()]
-        public void Persistence_UnitTest()
+        public void Persistence_Basic_UnitTest()
         {
             var saveGamePath = System.IO.Path.Combine(Environment.CurrentDirectory, "test.fs8");
 
@@ -87,6 +84,31 @@ namespace NoSQL.GraphDB.Test
                         reloadedF8.Load(saveGamePath);
                         return reloadedF8;
                     },
+                (reference, reloaded) => Assert.IsTrue(TestHelper.CheckIfFallen8IsEqual(reference, reloaded)),
+                saveGamePath);
+        }
+
+        [TestMethod()]
+        public void Persistence_RandomGraph_UnitTest()
+        {
+            var saveGamePath = System.IO.Path.Combine(Environment.CurrentDirectory, "randomGraph.fs8");
+
+            TestHelper.ExecuteTestWithPersistence(
+                () => TestHelper.CreateRandomGraph(10000, 10),
+                element =>
+                {
+                    Assert.IsTrue(element != null);
+                    Assert.IsTrue(element.EdgeCount == 0);
+                    Assert.IsTrue(element.VertexCount == 0);
+                },
+                element => element.Save(saveGamePath),
+                () =>
+                {
+                    var reloadedF8 = new Fallen8();
+                    reloadedF8.Load(saveGamePath);
+                    return reloadedF8;
+                },
+                (reference, reloaded) => Assert.IsTrue(TestHelper.CheckIfFallen8IsEqual(reference, reloaded)),
                 saveGamePath);
         }
     }

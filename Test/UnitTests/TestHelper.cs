@@ -23,7 +23,15 @@ namespace NoSQL.GraphDB.Test
         /// <typeparam name="T">The type of the to be tested element</typeparam>
         /// <param name="toBeTestedElement">The to be tested element</param>
         public delegate void Test<in T>(T toBeTestedElement);
-        
+
+        /// <summary>
+        /// The retest action
+        /// </summary>
+        /// <typeparam name="T">The type of the to be tested elements</typeparam>
+        /// <param name="reference">The reference element</param>
+        /// <param name="reloaded">The reloaded element</param>
+        public delegate void Retest<in T>(T reference, T reloaded);
+
         /// <summary>
         /// The persist action
         /// </summary>
@@ -51,34 +59,35 @@ namespace NoSQL.GraphDB.Test
         /// <param name="test">The test action</param>
         /// <param name="persist">The persist action</param>
         /// <param name="reload">The reload action</param>
+        /// <param name="reTest">The retest action</param>
         /// <param name="clean">The clean action</param>
-        public static void ExecuteTestWithPersistence<T>(Load<T> load, Test<T> test, Persist<T> persist, Reload<T> reload, Clean clean)
+        public static void ExecuteTestWithPersistence<T>(Load<T> load, Test<T> test, Persist<T> persist, Reload<T> reload, Retest<T> reTest, Clean clean)
         {
             try
             {
                 var sw = Stopwatch.StartNew();
 
-                var toBeTestedElement = load();
+                var reference = load();
                 sw.Stop();
                 Debug.WriteLine(String.Format("LOAD: {0}ms", sw.Elapsed.TotalMilliseconds));
 
                 sw.Restart();
-                test(toBeTestedElement);
+                test(reference);
                 sw.Stop();
                 Debug.WriteLine(String.Format("TEST: {0}ms", sw.Elapsed.TotalMilliseconds));
 
                 sw.Restart();
-                persist(toBeTestedElement);
+                persist(reference);
                 sw.Stop();
                 Debug.WriteLine(String.Format("PERSIST: {0}ms", sw.Elapsed.TotalMilliseconds));
 
                 sw.Restart();
-                toBeTestedElement = reload();
+                var reloadedElement = reload();
                 sw.Stop();
                 Debug.WriteLine(String.Format("RELOAD: {0}ms", sw.Elapsed.TotalMilliseconds));
 
                 sw.Restart();
-                test(toBeTestedElement);
+                reTest(reference, reloadedElement);
                 sw.Stop();
                 Debug.WriteLine(String.Format("RETEST: {0}ms", sw.Elapsed.TotalMilliseconds));
             }
@@ -100,11 +109,11 @@ namespace NoSQL.GraphDB.Test
         /// <param name="persist">The persist action</param>
         /// <param name="reload">The reload action</param>
         /// <param name="saveGameName">The savegame filename</param>
-        public static void ExecuteTestWithPersistence<T>(Load<T> load, Test<T> test, Persist<T> persist, Reload<T> reload, String saveGameName)
+        public static void ExecuteTestWithPersistence<T>(Load<T> load, Test<T> test, Persist<T> persist, Reload<T> reload, Retest<T> reTest, String saveGameName)
         {
             try
             {
-                ExecuteTestWithPersistence(load, test, persist, reload, () => { });
+                ExecuteTestWithPersistence(load, test, persist, reload, reTest, () => { });
             }
             finally
             {
@@ -127,6 +136,28 @@ namespace NoSQL.GraphDB.Test
             {
                 File.Delete(aFile);
             }
+        }
+
+        /// <summary>
+        /// Creates a random graph
+        /// </summary>
+        /// <param name="vertexCount">The vertex count</param>
+        /// <param name="edgesPerVertex">The max number of edges per vertex</param>
+        /// <returns>The F8 graph</returns>
+        public static Fallen8 CreateRandomGraph(int vertexCount, int edgesPerVertex)
+        {
+            return new Fallen8();
+        }
+
+        /// <summary>
+        /// Checks if two F8 instances are equal
+        /// </summary>
+        /// <param name="a">The Fallen-8 a</param>
+        /// <param name="b">The Fallen-8 b</param>
+        /// <returns></returns>
+        public static bool CheckIfFallen8IsEqual(Fallen8 a, Fallen8 b)
+        {
+            return true;
         }
     }
 }
