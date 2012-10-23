@@ -78,6 +78,7 @@
     <Compile Include="IShortestPathAlgorithmUnitTest.cs" />
     <Compile Include="ISpatialContainerUnitTest.cs" />
     <Compile Include="ISpatialIndexUnitTest.cs" />
+    <Compile Include="PersistenceUnitTest.cs" />
     <Compile Include="LoggerUnitTest.cs" />
     <Compile Include="ParallelHelperUnitTest.cs" />
     <Compile Include="PathElementUnitTest.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="ServiceHelperUnitTest.cs" />
     <Compile Include="SingleValueIndexUnitTest.cs" />
     <Compile Include="StatisticsUnitTest.cs" />
+    <Compile Include="TestHelper.cs" />
     <Compile Include="VertexModelUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>

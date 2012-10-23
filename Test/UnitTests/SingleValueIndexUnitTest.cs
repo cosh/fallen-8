@@ -77,8 +77,6 @@ namespace NoSQL.GraphDB.Test
         [TestMethod()]
         public void AddOrUpdateUnitTest()
         {
-            Assert.Inconclusive("TODO");
-
             var target = new SingleValueIndex(); // TODO: Initialize to an appropriate value
             object keyObject = null; // TODO: Initialize to an appropriate value
             AGraphElement graphElement = null; // TODO: Initialize to an appropriate value
