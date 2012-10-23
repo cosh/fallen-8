@@ -47,12 +47,12 @@ namespace NoSQL.GraphDB.Model
         /// <summary>
         ///   The out edges.
         /// </summary>
-        private List<EdgeContainer> _outEdges;
+        internal List<EdgeContainer> _outEdges;
 
         /// <summary>
         ///   The in edges.
         /// </summary>
-        private List<EdgeContainer> _inEdges;
+        internal List<EdgeContainer> _inEdges;
 
         #endregion
 
