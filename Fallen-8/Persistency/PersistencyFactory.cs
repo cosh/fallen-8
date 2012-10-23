@@ -530,13 +530,13 @@ namespace NoSQL.GraphDB.Persistency
                         }
                         else
                         {
-                            throw new Exception(String.Format("Corrupt savegame... could not get the vertex {0}", aTodo.VertexId));
+                            Logger.LogError(String.Format("Corrupt savegame... could not get the vertex {0}", aTodo.VertexId));
                         }
                     }
                 }
                 else
                 {
-                    throw new Exception(String.Format("Corrupt savegame... could not get the edge {0}", aKV.Key));
+                    Logger.LogError(String.Format("Corrupt savegame... could not get the edge {0}", aKV.Key));
                 }
             }
         }
@@ -746,7 +746,7 @@ namespace NoSQL.GraphDB.Persistency
 
             #region edges
 
-            var outgoingEdges = vertex.GetOutgoingEdges();
+            var outgoingEdges = vertex._outEdges;
             if (outgoingEdges == null)
             {
                 writer.Write(0);
@@ -765,7 +765,7 @@ namespace NoSQL.GraphDB.Persistency
                 }
             }
 
-            var incomingEdges = vertex.GetIncomingEdges();
+            var incomingEdges = vertex._inEdges;
             if (incomingEdges == null)
             {
                 writer.Write(0);
