@@ -93,30 +93,23 @@ namespace NoSQL.GraphDB.Test
         public void Persistence_RandomGraph_UnitTest()
         {
             var saveGamePath = System.IO.Path.Combine(Environment.CurrentDirectory, "randomGraph.fs8");
-
-            for (int i = 0; i < 100; i++)
-            {
-
-                TestHelper.ExecuteTestWithPersistence(
-                    () => TestHelper.CreateRandomGraph(5000, 10),
-                    element =>
+            TestHelper.ExecuteTestWithPersistence(
+                () => TestHelper.CreateRandomGraph(100000, 20),
+                element =>
                     {
                         Assert.IsTrue(element != null);
                         Assert.IsTrue(element.EdgeCount > 0);
                         Assert.IsTrue(element.VertexCount > 0);
                     },
-                    element => element.Save(saveGamePath),
-                    () =>
+                element => element.Save(saveGamePath),
+                () =>
                     {
                         var reloadedF8 = new Fallen8();
                         reloadedF8.Load(saveGamePath);
                         return reloadedF8;
                     },
-                    (reference, reloaded) => Assert.IsTrue(TestHelper.CheckIfFallen8IsEqual(reference, reloaded)),
-                    saveGamePath);
-            }
-
-            Thread.Sleep(2000);
+                (reference, reloaded) => Assert.IsTrue(TestHelper.CheckIfFallen8IsEqual(reference, reloaded)),
+                saveGamePath);
         }
     }
 }
