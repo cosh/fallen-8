@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NoSQL.GraphDB.Index;
 using NoSQL.GraphDB.Model;
+using System.Threading;
 
 #endregion
 
@@ -93,23 +94,29 @@ namespace NoSQL.GraphDB.Test
         {
             var saveGamePath = System.IO.Path.Combine(Environment.CurrentDirectory, "randomGraph.fs8");
 
-            TestHelper.ExecuteTestWithPersistence(
-                () => TestHelper.CreateRandomGraph(10000, 10),
-                element =>
-                {
-                    Assert.IsTrue(element != null);
-                    Assert.IsTrue(element.EdgeCount == 0);
-                    Assert.IsTrue(element.VertexCount == 0);
-                },
-                element => element.Save(saveGamePath),
-                () =>
-                {
-                    var reloadedF8 = new Fallen8();
-                    reloadedF8.Load(saveGamePath);
-                    return reloadedF8;
-                },
-                (reference, reloaded) => Assert.IsTrue(TestHelper.CheckIfFallen8IsEqual(reference, reloaded)),
-                saveGamePath);
+            for (int i = 0; i < 100; i++)
+            {
+
+                TestHelper.ExecuteTestWithPersistence(
+                    () => TestHelper.CreateRandomGraph(5000, 10),
+                    element =>
+                    {
+                        Assert.IsTrue(element != null);
+                        Assert.IsTrue(element.EdgeCount > 0);
+                        Assert.IsTrue(element.VertexCount > 0);
+                    },
+                    element => element.Save(saveGamePath),
+                    () =>
+                    {
+                        var reloadedF8 = new Fallen8();
+                        reloadedF8.Load(saveGamePath);
+                        return reloadedF8;
+                    },
+                    (reference, reloaded) => Assert.IsTrue(TestHelper.CheckIfFallen8IsEqual(reference, reloaded)),
+                    saveGamePath);
+            }
+
+            Thread.Sleep(2000);
         }
     }
 }
