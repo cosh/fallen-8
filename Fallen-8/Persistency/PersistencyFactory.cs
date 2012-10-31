@@ -163,11 +163,13 @@ namespace NoSQL.GraphDB.Persistency
                                         TaskScheduler.Default);
                 #region graph elements
 
-                var graphElementCount = fallen8.VertexCount + fallen8.EdgeCount;
+                var graphElementCount = Convert.ToUInt32(currentId);
                 Task<string>[] graphElementSaver;
 
                 if (graphElementCount > 0)
                 {
+                    graphElementCount++; //Hack
+
                     var graphElementPartitions = CreatePartitions(graphElementCount, savePartitions);
                     graphElementSaver = new Task<string>[graphElementPartitions.Count];
 
