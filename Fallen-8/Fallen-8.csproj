@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NoSQL.GraphDB</RootNamespace>
     <AssemblyName>Fallen-8</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
