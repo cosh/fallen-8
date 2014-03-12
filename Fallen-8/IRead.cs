@@ -55,24 +55,12 @@ namespace NoSQL.GraphDB
         Boolean TryGetGraphElement(out AGraphElement result, Int32 id);
 
         /// <summary>
-        ///   Gets the edges.
-        /// </summary>
-        /// <returns> The edges. </returns>
-        List<EdgeModel> GetEdges();
-
-        /// <summary>
         ///   Gets an edge by its identifier.
         /// </summary>
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> The edge. </param>
         /// <param name='id'> System wide unique identifier. </param>
         Boolean TryGetEdge(out EdgeModel result, Int32 id);
-
-        /// <summary>
-        ///   Gets the vertices.
-        /// </summary>
-        /// <returns> The vertices. </returns>
-        List<VertexModel> GetVertices();
 
         /// <summary>
         ///   Gets a vertex by its identifier.

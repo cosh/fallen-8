@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Startup</RootNamespace>
     <AssemblyName>Startup</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -55,16 +55,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer.csproj">
-      <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
-      <Name>FastSerializer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Fallen-8\Fallen-8.csproj">
-      <Project>{40759EF1-EBF9-41A3-BFEB-1314ABE36489}</Project>
-      <Name>Fallen-8</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -73,4 +63,14 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Fallen-8\Fallen-8.csproj">
+      <Project>{40759EF1-EBF9-41A3-BFEB-1314ABE36489}</Project>
+      <Name>Fallen-8</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer.csproj">
+      <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
+      <Name>FastSerializer</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

@@ -520,19 +520,6 @@ namespace NoSQL.GraphDB
             throw new CollisionException();
         }
 
-        public List<VertexModel> GetVertices()
-        {
-            if (ReadResource())
-            {
-                var vertices = _graphElements.GetAllOfType<VertexModel>();
-                FinishReadResource();
-
-                return vertices;
-            }
-
-            throw new CollisionException();
-        }
-
         public Boolean TryGetEdge(out EdgeModel result, Int32 id)
         {
             if (ReadResource())
@@ -542,19 +529,6 @@ namespace NoSQL.GraphDB
                 FinishReadResource();
 
                 return result != null;
-            }
-
-            throw new CollisionException();
-        }
-
-        public List<EdgeModel> GetEdges()
-        {
-            if (ReadResource())
-            {
-                var edges = _graphElements.GetAllOfType<EdgeModel>();
-                FinishReadResource();
-
-                return edges;
             }
 
             throw new CollisionException();
