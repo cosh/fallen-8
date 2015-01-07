@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NoSQL.GraphDB</RootNamespace>
     <AssemblyName>Fallen-8</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -54,11 +54,12 @@
     <Compile Include="Algorithms\Path\Direction.cs" />
     <Compile Include="Algorithms\Path\PathElement.cs" />
     <Compile Include="Algorithms\Path\Path.cs" />
+    <Compile Include="Helper\ConfigHelper.cs" />
+    <Compile Include="Plugin\ARESTServicePlugin.cs" />
     <Compile Include="Error\CollisionException.cs" />
     <Compile Include="Expression\BinaryOperator.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper\AThreadSafeElement.cs" />
-    <Compile Include="Helper\BigList.cs" />
     <Compile Include="Helper\IndexHelper.cs" />
     <Compile Include="Helper\DateHelper.cs" />
     <Compile Include="Helper\SaveNativeMethods.cs" />
@@ -120,9 +121,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CodeGeneration.resx</DependentUpon>
     </Compile>
+    <Compile Include="Service\REST\FaultTolerantServiceBehavior.cs" />
     <Compile Include="Service\REST\GraphService.cs" />
     <Compile Include="Service\REST\GraphServicePlugin.cs" />
     <Compile Include="Service\REST\IGraphService.cs" />
+    <Compile Include="Service\REST\IRESTService.cs" />
     <Compile Include="Service\REST\ServiceHelper.cs" />
     <Compile Include="Service\REST\AdminService.cs" />
     <Compile Include="Service\REST\IAdminService.cs" />
@@ -132,6 +135,7 @@
     <Compile Include="Service\REST\Result\FulltextSearchResultREST.cs" />
     <Compile Include="Service\REST\Result\PropertiesREST.cs" />
     <Compile Include="Service\REST\Result\StatusREST.cs" />
+    <Compile Include="Service\REST\ServiceSecurity.cs" />
     <Compile Include="Service\REST\Specification\FulltextIndexScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\IndexScanSpecification.cs" />
     <Compile Include="Service\REST\Specification\PathFilterSpecification.cs" />
@@ -162,16 +166,15 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer.csproj">
-      <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
-      <Name>FastSerializer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Service\REST\CodeGeneration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CodeGeneration.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer.csproj">
+      <Project>{7267afeb-d3fc-4416-8792-c386a685c86f}</Project>
+      <Name>FastSerializer</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

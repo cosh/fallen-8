@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2011-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ namespace NoSQL.GraphDB
         /// <param name='targetVertexId'> Target vertex identifier. </param>
         /// <param name='creationDate'> The creation date as Unix timestamp (seconds from 01/01/1971) </param>
         /// <param name='properties'> Properties. </param>
-        EdgeModel CreateEdge(Int64 sourceVertexId, UInt16 edgePropertyId, Int64 targetVertexId, UInt32 creationDate,
+        EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId, UInt32 creationDate,
                              PropertyContainer[] properties = null);
 
         #endregion
@@ -71,7 +71,7 @@ namespace NoSQL.GraphDB
         /// <param name='graphElementId'> Graph element identifier. </param>
         /// <param name='propertyId'> Property identifier. </param>
         /// <param name='property'> The to be added property. </param>
-        Boolean TryAddProperty(Int64 graphElementId, UInt16 propertyId, Object property);
+        Boolean TryAddProperty(Int32 graphElementId, UInt16 propertyId, Object property);
 
         /// <summary>
         ///   Tries to remove a property.
@@ -79,7 +79,7 @@ namespace NoSQL.GraphDB
         /// <returns> <c>true</c> if the property was removed; otherwise, <c>false</c> . </returns>
         /// <param name='graphElementId'> Graph element identifier. </param>
         /// <param name='propertyId'> Property identifier. </param>
-        Boolean TryRemoveProperty(Int64 graphElementId, UInt16 propertyId);
+        Boolean TryRemoveProperty(Int32 graphElementId, UInt16 propertyId);
 
         #endregion
 
@@ -90,7 +90,7 @@ namespace NoSQL.GraphDB
         /// </summary>
         /// <returns> <c>true</c> if the graph element was removed; otherwise, <c>false</c> . </returns>
         /// <param name='graphElementId'> Graph element identifier. </param>
-        Boolean TryRemoveGraphElement(Int64 graphElementId);
+        Boolean TryRemoveGraphElement(Int32 graphElementId);
 
         #endregion
 

@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2011-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ namespace NoSQL.GraphDB
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> The graph element. </param>
         /// <param name='id'> System wide unique identifier. </param>
-        Boolean TryGetGraphElement(out AGraphElement result, Int64 id);
+        Boolean TryGetGraphElement(out AGraphElement result, Int32 id);
 
         /// <summary>
         ///   Gets an edge by its identifier.
@@ -60,7 +60,7 @@ namespace NoSQL.GraphDB
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> The edge. </param>
         /// <param name='id'> System wide unique identifier. </param>
-        Boolean TryGetEdge(out EdgeModel result, Int64 id);
+        Boolean TryGetEdge(out EdgeModel result, Int32 id);
 
         /// <summary>
         ///   Gets a vertex by its identifier.
@@ -68,7 +68,7 @@ namespace NoSQL.GraphDB
         /// <returns> <c>true</c> if something was found; otherwise, <c>false</c> . </returns>
         /// <param name='result'> The vertex. </param>
         /// <param name='id'> System wide unique identifier. </param>
-        Boolean TryGetVertex(out VertexModel result, Int64 id);
+        Boolean TryGetVertex(out VertexModel result, Int32 id);
 
         #endregion
 

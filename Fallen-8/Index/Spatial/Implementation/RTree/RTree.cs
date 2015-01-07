@@ -4,7 +4,7 @@
 // Author:
 //       Andriy Kupershmidt <kuper133@googlemail.com>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2011-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
         private List<Boolean> _levelForOverflowStrategy;
         private int _countOfR;
         private int _countOfReInsert;
-        private Dictionary<Int64, IRTreeDataContainer> _mapOfContainers;
+        private Dictionary<int, IRTreeDataContainer> _mapOfContainers;
         private ARTreeContainer _root;
 
         private delegate bool SpatialFilter(ISpatialContainer spatialContainer1, ISpatialContainer spatialContainer2);
@@ -1884,7 +1884,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 _countOfR += value.CountOfR;
             }
 
-            _mapOfContainers = new Dictionary<Int64, IRTreeDataContainer>();
+            _mapOfContainers = new Dictionary<int, IRTreeDataContainer>();
             
             
             if (MinCountOfNode*2 > MaxCountOfNode+1)

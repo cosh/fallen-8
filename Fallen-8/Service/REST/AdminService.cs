@@ -4,7 +4,7 @@
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 //  
-//  Copyright (c) 2012 Henning Rauch
+//  Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
+using Framework.Serialization;
 using NoSQL.GraphDB.Algorithms.Path;
 using NoSQL.GraphDB.Helper;
 using NoSQL.GraphDB.Index;
@@ -50,7 +51,7 @@ namespace NoSQL.GraphDB.Service.REST
     ///   Fallen-8 AdminService REST service.
     /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
-    public sealed class AdminService : IAdminService, IDisposable
+    public sealed class AdminService : IAdminService
     {
         #region Data
 
@@ -107,7 +108,9 @@ namespace NoSQL.GraphDB.Service.REST
         #endregion
 
         #region IAdminService implementation
-        
+
+        public void Shutdown() { }  // do nothing
+
         public void Trim()
         {
             _fallen8.Trim();
@@ -158,12 +161,12 @@ namespace NoSQL.GraphDB.Service.REST
 			_fallen8.TabulaRasa();
 		}
 
-		public UInt64 VertexCount ()
+		public int VertexCount ()
 		{
 			return _fallen8.VertexCount;
 		}
 
-        public UInt64 EdgeCount()
+		public int EdgeCount ()
 		{
 			return _fallen8.EdgeCount;
 		}
@@ -190,6 +193,14 @@ namespace NoSQL.GraphDB.Service.REST
 		}
 
 		#endregion
+
+        #region IFallen8Serializable // do nothing
+
+        public void Save(SerializationWriter writer) { }
+
+        public void Load(SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8) { }
+
+        #endregion
 
         #region private helper
 

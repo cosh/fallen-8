@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2012 Henning Rauch
+// Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <summary>
         /// The identifier of the edge.
         /// </summary>
-        public Int64 Id;
+        public Int32 Id;
         
         /// <summary>
         /// The creation date.
@@ -61,12 +61,12 @@ namespace NoSQL.GraphDB.Persistency
         /// <summary>
         /// The source vertex identifier.
         /// </summary>
-        public Int64 SourceVertexId;
+        public Int32 SourceVertexId;
         
         /// <summary>
         /// The target vertex identifier.
         /// </summary>
-        public Int64 TargetVertexId;
+        public Int32 TargetVertexId;
     }
 }
 

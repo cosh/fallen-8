@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2011-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,15 +26,15 @@
 
 #region Usings
 
+using NoSQL.GraphDB.Error;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Plugin;
+using NoSQL.GraphDB.Service.REST;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Framework.Serialization;
-using NoSQL.GraphDB.Error;
-using NoSQL.GraphDB.Helper;
 using NoSQL.GraphDB.Log;
-using NoSQL.GraphDB.Plugin;
-using NoSQL.GraphDB.Service.REST;
+using Framework.Serialization;
 
 #endregion
 
@@ -85,20 +85,24 @@ namespace NoSQL.GraphDB.Service
             _fallen8.ServiceFactory.TryAddService(out graphServicePlugin, "Fallen-8_Graph_Service", "Graph service", null);
             graphServicePlugin.TryStart();
 
-            return ((GraphServicePlugin)graphServicePlugin).Service;
+            return ((GraphServicePlugin)graphServicePlugin)._service as IGraphService;
         }
 
         /// <summary>
         /// Helper method to start the admin service
         /// </summary>
         /// <returns>The admin service</returns>
-        public IAdminService StartAdminService()
+        public IAdminService StartAdminService(Dictionary<string, string> parameters = null)
         {
             IService adminServicePlugin;
-            _fallen8.ServiceFactory.TryAddService(out adminServicePlugin, "Fallen-8_Admin_Service", "Admin service", null);
+            _fallen8.ServiceFactory.TryAddService(
+                out adminServicePlugin, 
+                "Fallen-8_Admin_Service", 
+                "Admin service",
+                parameters == null ? null : parameters.ToDictionary(e => e.Key, e => (object)e.Value));
             adminServicePlugin.TryStart();
 
-            return ((AdminServicePlugin)adminServicePlugin).Service;
+            return ((AdminServicePlugin)adminServicePlugin)._service as IAdminService;
         }
 
         /// <summary>
@@ -115,7 +119,7 @@ namespace NoSQL.GraphDB.Service
                 return null;
             }
 
-            return ((AdminServicePlugin)adminServicePlugin).Service;
+            return ((AdminServicePlugin)adminServicePlugin)._service as IAdminService;
         }
 
         /// <summary>
@@ -150,8 +154,7 @@ namespace NoSQL.GraphDB.Service
                     {
                         if (Services.ContainsKey(serviceName))
                         {
-                            Logger.LogError(String.Format("There already exists a service with the name {0}",
-                                                          serviceName));
+                            Logger.LogError(String.Format("There already exists a service with the name {0}", serviceName));
                             service = null;
 
                             FinishWriteResource();
@@ -164,14 +167,13 @@ namespace NoSQL.GraphDB.Service
                         FinishWriteResource();
                         return true;
                     }
-                    
+
                     throw new CollisionException();
                 }
             }
             catch (Exception e)
             {
-                Logger.LogError(
-                    String.Format("Fallen-8 was not able to add the {0} service plugin. Message: {1}",
+                Logger.LogError(String.Format("Fallen-8 was not able to add the {0} service plugin. Message: {1}",
                                   servicePluginName, e.Message));
 
                 FinishWriteResource();
@@ -252,7 +254,7 @@ namespace NoSQL.GraphDB.Service
             IService service;
             if (PluginFactory.TryFindPlugin(out service, servicePluginName))
             {
-                if(WriteResource())
+                if (WriteResource())
                 {
                     try
                     {

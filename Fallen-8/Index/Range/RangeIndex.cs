@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2011-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -151,7 +151,7 @@ namespace NoSQL.GraphDB.Index.Range
                     var valueCount = reader.ReadInt32();
                     for (var j = 0; j < valueCount; j++)
                     {
-                        var graphElementId = reader.ReadInt64();
+                        var graphElementId = reader.ReadInt32();
                         AGraphElement graphElement;
                         if(fallen8.TryGetGraphElement(out graphElement, graphElementId))
                         {

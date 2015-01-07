@@ -1,5 +1,5 @@
 ﻿// 
-// Startup.cs
+// IRestService.cs
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,61 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#region Usings
 
+using NoSQL.GraphDB.Persistency;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using NoSQL.GraphDB;
-
-#endregion
-
-namespace Startup
+namespace NoSQL.GraphDB.Service.REST
 {
-    class Startup
+    public interface IRESTService : IDisposable, IFallen8Serializable
     {
-        static void Main(string[] args)
-        {
-            var shutdown = false;
-
-            #region Fallen-8 startup
-
-            var fallen8 = new Fallen8();
-
-            #endregion
-
-            #region services
-
-            #region Fallen-8 REST API
-
-            fallen8.ServiceFactory.StartGraphService();
-            fallen8.ServiceFactory.StartAdminService();
-
-            #endregion
-
-            #endregion
-
-            #region shutdown
-
-            Console.WriteLine("Enter 'shutdown' to initiate the shutdown of this instance.");
-
-            while (!shutdown)
-            {
-                var command = Console.ReadLine();
-
-                if (command == null) continue;
-
-                if (command.ToUpper() == "SHUTDOWN")
-                    shutdown = true;
-            }
-
-            Console.WriteLine("Shutting down Fallen-8 startup");
-            fallen8.Shutdown();
-            Console.WriteLine("Shutdown complete");
-
-            #endregion
-        }
+        void Shutdown();
     }
 }

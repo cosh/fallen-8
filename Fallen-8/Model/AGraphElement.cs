@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2012 Henning Rauch
+// Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ namespace NoSQL.GraphDB.Model
         /// <summary>
         ///   The identifier of this graph element.
         /// </summary>
-        public readonly Int64 Id;
+        public Int32 Id;
 
         /// <summary>
         ///   The creation date.
@@ -72,7 +72,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='id'> Identifier. </param>
         /// <param name='creationDate'> Creation date. </param>
         /// <param name='properties'> Properties. </param>
-        protected AGraphElement(Int64 id, UInt32 creationDate, PropertyContainer[] properties)
+        protected AGraphElement(Int32 id, UInt32 creationDate, PropertyContainer[] properties)
         {
             Id = id;
             CreationDate = creationDate;
@@ -90,16 +90,7 @@ namespace NoSQL.GraphDB.Model
         /// <returns> Creation date </returns>
         public DateTime GetCreationDate()
         {
-            if (ReadResource())
-            {
-                var creationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate);
-
-                FinishReadResource();
-
-                return creationDate;
-            }
-
-            throw new CollisionException();
+            return DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate);
         }
 
         /// <summary>
@@ -108,16 +99,7 @@ namespace NoSQL.GraphDB.Model
         /// <returns> Modification date </returns>
         public DateTime GetModificationDate()
         {
-            if (ReadResource())
-            {
-                var modificationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate + ModificationDate);
-
-                FinishReadResource();
-
-                return modificationDate;
-            }
-
-            throw new CollisionException();
+            return DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate + ModificationDate);
         }
 
         /// <summary>
@@ -126,16 +108,7 @@ namespace NoSQL.GraphDB.Model
         /// <returns> Count of Properties </returns>
         public Int32 GetPropertyCount()
         {
-            if (ReadResource())
-            {
-                var count = _properties.Length;
-
-                FinishReadResource();
-
-                return count;
-            }
-
-            throw new CollisionException();
+            return _properties.Length;
         }
 
         /// <summary>
@@ -322,6 +295,22 @@ namespace NoSQL.GraphDB.Model
             throw new CollisionException();
         }
 
+        /// <summary>
+        /// Sets the id of the element
+        /// </summary>
+        /// <param name="newId">The new id</param>
+        internal void SetId(int newId)
+        {
+            if (WriteResource())
+            {
+                Id = newId;
+                FinishWriteResource();
+
+                return;
+            }
+
+            throw new CollisionException();
+        }
         #endregion
     }
 }

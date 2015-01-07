@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2012 Henning Rauch
+// Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Henning Rauch")]
 [assembly: AssemblyProduct("Startup")]
-[assembly: AssemblyCopyright("Copyright © Henning Rauch 2012")]
+[assembly: AssemblyCopyright("Copyright © Henning Rauch 2012-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

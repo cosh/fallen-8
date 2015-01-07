@@ -4,7 +4,7 @@
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 //  
-//  Copyright (c) 2012 Henning Rauch
+//  Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,13 +56,13 @@ namespace NoSQL.GraphDB.Service.REST.Result
         ///   Vertex count
         /// </summary>
         [DataMember]
-        public UInt64 VertexCount { get; set; }
+        public Int32 VertexCount { get; set; }
 
         /// <summary>
         ///   Edge count
         /// </summary>
         [DataMember]
-        public UInt64 EdgeCount { get; set; }
+        public Int32 EdgeCount { get; set; }
 
         /// <summary>
         ///   Available index plugins

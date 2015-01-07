@@ -4,7 +4,7 @@
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 //  
-//  Copyright (c) 2012 Henning Rauch
+//  Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ namespace NoSQL.GraphDB.Service.REST.Result
 		/// The graph element.
 		/// </value>
 		[DataMember(IsRequired = true)]
-        public readonly Int64 GraphElementId;
+		public readonly Int32 GraphElementId;
 		
 		/// <summary>
 		/// Gets or sets the highlights.

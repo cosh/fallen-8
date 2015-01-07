@@ -4,7 +4,7 @@
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 //  
-//  Copyright (c) 2012 Henning Rauch
+//  Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ namespace NoSQL.GraphDB.Service.REST
     ///   The Fallen-8 admin service.
     /// </summary>
     [ServiceContract(Namespace = "Fallen-8", Name = "Fallen-8 admin service")]
-    public interface IAdminService : IDisposable
+    public interface IAdminService : IRESTService
     {
 		#region services
 
@@ -100,7 +100,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "VertexCount")]
 		[Description("Gets the number of vertices.")]
         [WebGet(UriTemplate = "/Status/VertexCount", ResponseFormat = WebMessageFormat.Json)]
-        UInt64 VertexCount();
+        Int32 VertexCount();
 
 		/// <summary>
         /// Gets the number of edges
@@ -109,7 +109,7 @@ namespace NoSQL.GraphDB.Service.REST
         [OperationContract(Name = "EdgeCount")]
 		[Description("Gets the number of edges")]
         [WebGet(UriTemplate = "/Status/EdgeCount", ResponseFormat = WebMessageFormat.Json)]
-        UInt64 EdgeCount();
+        Int32 EdgeCount();
 
 		/// <summary>
         /// Gets the number of free bytes in RAM

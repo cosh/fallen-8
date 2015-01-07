@@ -4,7 +4,7 @@
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 //  
-//  Copyright (c) 2012 Henning Rauch
+//  Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,15 +26,10 @@
 
 #region Usings
 
+using Framework.Serialization;
+using NoSQL.GraphDB.Plugin;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.ServiceModel;
-using System.ServiceModel.Description;
-using System.Xml;
-using Framework.Serialization;
-using NoSQL.GraphDB.Log;
-using System.Configuration;
 
 #endregion
 
@@ -43,245 +38,56 @@ namespace NoSQL.GraphDB.Service.REST
     /// <summary>
     ///   Fallen-8 REST service.
     /// </summary>
-    public sealed class GraphServicePlugin : IService
+    public sealed class GraphServicePlugin : ARESTServicePlugin
     {
-        #region data
-
-        /// <summary>
-        /// The rest service address
-        /// </summary>
-        private string _restServiceAddress;
-
-        /// <summary>
-        /// The uri
-        /// </summary>
-        private Uri _uri;
-
-        /// <summary>
-        ///   The starting time of the service
-        /// </summary>
-        private DateTime _startTime;
-
-        /// <summary>
-        ///   Is running?
-        /// </summary>
-        private Boolean _isRunning;
-
-        /// <summary>
-        ///   The actual service
-        /// </summary>
-        internal IGraphService Service;
-
-        /// <summary>
-        ///   The host that runs the service
-        /// </summary>
-        private ServiceHost _host;
-
-        /// <summary>
-        ///   Service description
-        /// </summary>
-        private const String _description = "The Fallen-8 plugin that starts the graph service";
-
-        #endregion
-
-        #region Constructor
-
-        #endregion
-
-        #region IService implementation
-
-        public DateTime StartTime
-        {
-            get { return _startTime; }
-        }
-
-        public bool IsRunning
-        {
-            get { return _isRunning; }
-        }
-
-        public IDictionary<string, string> Metadata
-        {
-            get { return null; }
-        }
-
-        public bool TryStop()
-        {
-            _host.Close();
-
-            return true;
-        }
-
-        public bool TryStart()
-        {
-            try
-            {
-                if (!_isRunning)
-                {
-                    _host.Open();
-
-                    _isRunning = true;
-                    _startTime = DateTime.Now;
-                    Logger.LogInfo(_description + Environment.NewLine + "   -> Service is started at " + _uri + "/" + _restServiceAddress);
-                }
-                else
-                {
-                    Logger.LogInfo(_description + Environment.NewLine + "   -> Service is already started at " + _uri + "/" + _restServiceAddress);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(String.Format("Could not start service \"{0}\".{1}{2}", PluginName, Environment.NewLine, e.Message));
-
-                return false;
-            }
-
-            return true;
-        }
-
-        #endregion
+        public const string PLUGIN_NAME = "Fallen-8_Graph_Service";
+        public const string MANUFACTURER = "Henning Rauch";
+        public const string PLUGIN_DESCRIPTION = "Fallen-8 Graph Service Plugin";
 
         #region IFallen8Serializable implementation
 
-        public void Save(SerializationWriter writer)
+        public override IRESTService LoadServiceFromSerialization(SerializationReader reader, Fallen8 fallen8)
         {
-        }
-
-        public void Load(SerializationReader reader, Fallen8 fallen8)
-        {
-            StartService(fallen8);
+            return new GraphService(fallen8);
         }
 
         #endregion
 
         #region IPlugin implementation
 
-        public void Initialize(Fallen8 fallen8, IDictionary<string, object> parameter)
+        public override IRESTService CreateService(Fallen8 fallen8, IDictionary<string, object> parameter)
         {
-            StartService(fallen8);
+            return new GraphService(fallen8);
         }
 
-        public string PluginName
+        public override string Version
         {
-            get { return "Fallen-8_Graph_Service"; }
+            get { return "1.0.0"; }
         }
 
-        public Type PluginCategory
+        public override double RESTInterfaceVersion
         {
-            get { return typeof (IService); }
+            get { return 1.0; }
         }
 
-        public string Description
+        public override string PluginName
         {
-            get { return _description; }
+            get { return PLUGIN_NAME; }
         }
 
-        public string Manufacturer
+        public override string Description
         {
-            get { return "Henning Rauch"; }
+            get { return PLUGIN_DESCRIPTION; }
         }
 
-        #endregion
-
-        #region IDisposable implementation
-
-        public void Dispose()
+        public override string Manufacturer
         {
-            TryStop();
-            Service.Dispose();
+            get { return MANUFACTURER; }
         }
 
-        #endregion
-
-        #region private helper
-
-        /// <summary>
-        ///   Starts the actual service
-        /// </summary>
-        /// <param name="fallen8"> Fallen-8. </param>
-        private void StartService(Fallen8 fallen8)
+        public override Type RESTServiceInterfaceType
         {
-            #region configuration
-            var configs = new Dictionary<String, String>();
-            foreach (String key in ConfigurationManager.AppSettings)
-            {
-                var value = ConfigurationManager.AppSettings[key];
-
-                configs.Add(key, value);
-            }
-
-            String graphIpAddress;
-            configs.TryGetValue("GraphIPAddress", out graphIpAddress);
-
-            UInt16 graphPort = 2323;
-            String graphPortString;
-            if (configs.TryGetValue("GraphPort", out graphPortString))
-            {
-                graphPort = Convert.ToUInt16(graphPortString);
-            }
-
-            String graphUriPattern;
-            configs.TryGetValue("GraphUriPattern", out graphUriPattern);
-
-            String restServiceAddress;
-            configs.TryGetValue("RESTServicePattern", out restServiceAddress);
-
-            #endregion
-
-            var address = String.IsNullOrWhiteSpace(graphIpAddress) ? IPAddress.Any.ToString() : graphIpAddress;
-            var port = graphPort;
-            var uriPattern = String.IsNullOrWhiteSpace(graphUriPattern) ? "Graph" : graphUriPattern;
-
-            _uri = new Uri("http://" + address + ":" + port + "/" + uriPattern);
-
-            if (!_uri.IsWellFormedOriginalString())
-                throw new Exception("The URI Pattern is not well formed!");
-
-            Service = new GraphService(fallen8);
-
-            _host = new ServiceHost(Service, _uri)
-                        {
-                            CloseTimeout = new TimeSpan(0, 0, 0, 0, 50)
-                        };
-
-            _restServiceAddress = String.IsNullOrWhiteSpace(restServiceAddress) ? "REST" : restServiceAddress;
-
-            try
-            {
-                var binding = new WebHttpBinding
-                                  {
-                                      MaxBufferSize = 268435456,
-                                      MaxReceivedMessageSize = 268435456,
-                                      SendTimeout = new TimeSpan(1, 0, 0),
-                                      ReceiveTimeout = new TimeSpan(1, 0, 0)
-                                  };
-
-                var readerQuotas = new XmlDictionaryReaderQuotas
-                                       {
-                                           MaxDepth = 2147483647,
-                                           MaxStringContentLength = 2147483647,
-                                           MaxBytesPerRead = 2147483647,
-                                           MaxNameTableCharCount = 2147483647,
-                                           MaxArrayLength = 2147483647
-                                       };
-
-                binding.ReaderQuotas = readerQuotas;
-
-                var se = _host.AddServiceEndpoint(typeof (IGraphService), binding, _restServiceAddress);
-                var webBehav = new WebHttpBehavior
-                                   {
-                                       HelpEnabled = true
-                                   };
-                se.Behaviors.Add(webBehav);
-
-                ((ServiceBehaviorAttribute) _host.Description.Behaviors[typeof (ServiceBehaviorAttribute)]).
-                    InstanceContextMode = InstanceContextMode.Single;
-            }
-            catch (Exception)
-            {
-                _host.Abort();
-                throw;
-            }
+            get { return typeof(IGraphService); }
         }
 
         #endregion

@@ -4,7 +4,7 @@
 //  Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 //  
-//  Copyright (c) 2012 Henning Rauch
+//  Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,16 @@
 
 #region Usings
 
+using Framework.Serialization;
+using Microsoft.CSharp;
+using NoSQL.GraphDB.Algorithms.Path;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Index;
+using NoSQL.GraphDB.Index.Fulltext;
+using NoSQL.GraphDB.Index.Spatial;
+using NoSQL.GraphDB.Model;
+using NoSQL.GraphDB.Service.REST.Result;
+using NoSQL.GraphDB.Service.REST.Specification;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -35,16 +45,7 @@ using System.Net;
 using System.Reflection;
 using System.ServiceModel;
 using System.Text;
-using Microsoft.CSharp;
-using NoSQL.GraphDB.Algorithms.Path;
-using NoSQL.GraphDB.Helper;
-using NoSQL.GraphDB.Index;
-using NoSQL.GraphDB.Index.Fulltext;
-using NoSQL.GraphDB.Index.Spatial;
 using NoSQL.GraphDB.Log;
-using NoSQL.GraphDB.Model;
-using NoSQL.GraphDB.Service.REST.Result;
-using NoSQL.GraphDB.Service.REST.Specification;
 
 #endregion
 
@@ -126,7 +127,7 @@ namespace NoSQL.GraphDB.Service.REST
 
         #region IGraphService implementation
 
-        public Int64 AddVertex(VertexSpecification definition)
+        public int AddVertex(VertexSpecification definition)
         {
             #region initial checks
 
@@ -140,7 +141,7 @@ namespace NoSQL.GraphDB.Service.REST
             return _fallen8.CreateVertex(definition.CreationDate, ServiceHelper.GenerateProperties(definition.Properties)).Id;
         }
 
-        public Int64 AddEdge(EdgeSpecification definition)
+        public int AddEdge(EdgeSpecification definition)
         {
             #region initial checks
 
@@ -179,7 +180,7 @@ namespace NoSQL.GraphDB.Service.REST
             return null;
         }
 
-        public Int64 GetSourceVertexForEdge(string edgeIdentifier)
+        public int GetSourceVertexForEdge(string edgeIdentifier)
         {
             EdgeModel edge;
             if (_fallen8.TryGetEdge(out edge, Convert.ToInt32(edgeIdentifier)))
@@ -190,7 +191,7 @@ namespace NoSQL.GraphDB.Service.REST
             throw new WebException(String.Format("Could not find edge with id {0}.", edgeIdentifier));
         }
 
-        public Int64 GetTargetVertexForEdge(string edgeIdentifier)
+        public int GetTargetVertexForEdge(string edgeIdentifier)
         {
             EdgeModel edge;
             if (_fallen8.TryGetEdge(out edge, Convert.ToInt32(edgeIdentifier)))
@@ -217,7 +218,7 @@ namespace NoSQL.GraphDB.Service.REST
                        : null;
         }
 
-        public List<Int64> GetOutgoingEdges(string vertexIdentifier, string edgePropertyIdentifier)
+        public List<int> GetOutgoingEdges(string vertexIdentifier, string edgePropertyIdentifier)
         {
             VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
@@ -231,7 +232,7 @@ namespace NoSQL.GraphDB.Service.REST
             return null;
         }
 
-        public List<Int64> GetIncomingEdges(string vertexIdentifier, string edgePropertyIdentifier)
+        public List<int> GetIncomingEdges(string vertexIdentifier, string edgePropertyIdentifier)
         {
             VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
@@ -245,7 +246,7 @@ namespace NoSQL.GraphDB.Service.REST
             return null;
         }
 
-        public IEnumerable<Int64> GraphScan(String propertyIdString, ScanSpecification definition)
+        public IEnumerable<int> GraphScan(String propertyIdString, ScanSpecification definition)
         {
             #region initial checks
 
@@ -258,19 +259,19 @@ namespace NoSQL.GraphDB.Service.REST
 
             var propertyId = Convert.ToUInt16(propertyIdString);
 
-            IComparable value = definition.Literal.FullQualifiedTypeName == null 
-				? definition.Literal.Value
-				: (IComparable) Convert.ChangeType(definition.Literal.Value,
+            IComparable value = definition.Literal.FullQualifiedTypeName == null
+                ? definition.Literal.Value
+                : (IComparable)Convert.ChangeType(definition.Literal.Value,
                                                          Type.GetType(definition.Literal.FullQualifiedTypeName, true,
                                                                       true));
 
             List<AGraphElement> graphElements;
             return _fallen8.GraphScan(out graphElements, propertyId, value, definition.Operator)
                        ? CreateResult(graphElements, definition.ResultType)
-                       : Enumerable.Empty<Int64>();
+                       : Enumerable.Empty<Int32>();
         }
 
-        public IEnumerable<Int64> IndexScan(IndexScanSpecification definition)
+        public IEnumerable<int> IndexScan(IndexScanSpecification definition)
         {
             #region initial checks
 
@@ -281,19 +282,19 @@ namespace NoSQL.GraphDB.Service.REST
 
             #endregion
 
-            IComparable value = definition.Literal.FullQualifiedTypeName == null 
-				? definition.Literal.Value
-				: (IComparable) Convert.ChangeType(definition.Literal.Value,
+            IComparable value = definition.Literal.FullQualifiedTypeName == null
+                ? definition.Literal.Value
+                : (IComparable)Convert.ChangeType(definition.Literal.Value,
                                                          Type.GetType(definition.Literal.FullQualifiedTypeName, true,
                                                                       true));
 
             ReadOnlyCollection<AGraphElement> graphElements;
             return _fallen8.IndexScan(out graphElements, definition.IndexId, value, definition.Operator)
                        ? CreateResult(graphElements, definition.ResultType)
-                       : Enumerable.Empty<Int64>();
+                       : Enumerable.Empty<Int32>();
         }
 
-        public IEnumerable<Int64> RangeIndexScan(RangeIndexScanSpecification definition)
+        public IEnumerable<int> RangeIndexScan(RangeIndexScanSpecification definition)
         {
             #region initial checks
 
@@ -304,22 +305,22 @@ namespace NoSQL.GraphDB.Service.REST
 
             #endregion
 
-            var left = (IComparable) Convert.ChangeType(definition.LeftLimit,
+            var left = (IComparable)Convert.ChangeType(definition.LeftLimit,
                                                         Type.GetType(definition.FullQualifiedTypeName, true, true));
 
-            var right = (IComparable) Convert.ChangeType(definition.RightLimit,
+            var right = (IComparable)Convert.ChangeType(definition.RightLimit,
                                                          Type.GetType(definition.FullQualifiedTypeName, true, true));
 
             ReadOnlyCollection<AGraphElement> graphElements;
             return _fallen8.RangeIndexScan(out graphElements, definition.IndexId, left, right, definition.IncludeLeft,
                                            definition.IncludeRight)
                        ? CreateResult(graphElements, definition.ResultType)
-                       : Enumerable.Empty<Int64>();
+                       : Enumerable.Empty<Int32>();
         }
 
-		public FulltextSearchResultREST FulltextIndexScan (FulltextIndexScanSpecification definition)
-		{
-			#region initial checks
+        public FulltextSearchResultREST FulltextIndexScan(FulltextIndexScanSpecification definition)
+        {
+            #region initial checks
 
             if (definition == null)
             {
@@ -328,15 +329,15 @@ namespace NoSQL.GraphDB.Service.REST
 
             #endregion
 
-			FulltextSearchResult result;
+            FulltextSearchResult result;
             return _fallen8.FulltextIndexScan(out result, definition.IndexId, definition.RequestString)
                        ? new FulltextSearchResultREST(result)
                        : null;
-		}
+        }
 
-        public IEnumerable<Int64> SpatialIndexScanSearchDistance(SearchDistanceSpecification definition)
-		{
-			#region initial checks
+        public IEnumerable<int> SpatialIndexScanSearchDistance(SearchDistanceSpecification definition)
+        {
+            #region initial checks
 
             if (definition == null)
             {
@@ -345,80 +346,80 @@ namespace NoSQL.GraphDB.Service.REST
 
             #endregion
 
-			AGraphElement graphElement;
-			if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
-			{
-				IIndex idx;
-				if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
-				{
-					var spatialIndex = idx as ISpatialIndex;
-					if (spatialIndex != null) 
-					{
-						ReadOnlyCollection<AGraphElement> result;
-						return spatialIndex.SearchDistance(out result, definition.Distance, graphElement)
-							? result.Select(_ => _.Id)
-							: null;
-					}
-                    Logger.LogError(string.Format("The index with id {0} is no spatial index.", definition.IndexId));
-					return null;
-				}
-                Logger.LogError(string.Format("Could not find index {0}.", definition.IndexId));
-				return null;
-			}
-			Logger.LogError(string.Format("Could not find graph element {0}.", definition.GraphElementId));
-			return null;
-		}
+            AGraphElement graphElement;
+            if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId))
+            {
+                IIndex idx;
+                if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId))
+                {
+                    var spatialIndex = idx as ISpatialIndex;
+                    if (spatialIndex != null)
+                    {
+                        ReadOnlyCollection<AGraphElement> result;
+                        return spatialIndex.SearchDistance(out result, definition.Distance, graphElement)
+                            ? result.Select(_ => _.Id)
+                            : null;
+                    }
+                    Logger.LogError(String.Format("The index with id {0} is no spatial index.", definition.IndexId));
+                    return null;
+                }
+                Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
+                return null;
+            }
+            Logger.LogError(String.Format("Could not find graph element {0}.", definition.GraphElementId));
+            return null;
+        }
 
-		public bool TryAddProperty (string graphElementIdString, string propertyIdString, PropertySpecification definition)
-		{
-			var graphElementId = Convert.ToInt32(graphElementIdString);
-			var propertyId = Convert.ToUInt16(propertyIdString);
+        public bool TryAddProperty(string graphElementIdString, string propertyIdString, PropertySpecification definition)
+        {
+            var graphElementId = Convert.ToInt32(graphElementIdString);
+            var propertyId = Convert.ToUInt16(propertyIdString);
 
-			var property = Convert.ChangeType(
-				definition.Property, 
-				Type.GetType(definition.FullQualifiedTypeName, true, true));
+            var property = Convert.ChangeType(
+                definition.Property,
+                Type.GetType(definition.FullQualifiedTypeName, true, true));
 
-			return _fallen8.TryAddProperty(graphElementId, propertyId, property);
-		}
+            return _fallen8.TryAddProperty(graphElementId, propertyId, property);
+        }
 
-		public bool TryRemoveProperty (string graphElementIdString, string propertyIdString)
-		{
-			var graphElementId = Convert.ToInt32(graphElementIdString);
-			var propertyId = Convert.ToUInt16(propertyIdString);
+        public bool TryRemoveProperty(string graphElementIdString, string propertyIdString)
+        {
+            var graphElementId = Convert.ToInt32(graphElementIdString);
+            var propertyId = Convert.ToUInt16(propertyIdString);
 
-			return _fallen8.TryRemoveProperty(graphElementId, propertyId);
-		}
+            return _fallen8.TryRemoveProperty(graphElementId, propertyId);
+        }
 
-		public bool TryRemoveGraphElement (string graphElementIdString)
-		{
-			var graphElementId = Convert.ToInt32(graphElementIdString);
+        public bool TryRemoveGraphElement(string graphElementIdString)
+        {
+            var graphElementId = Convert.ToInt32(graphElementIdString);
 
-			return _fallen8.TryRemoveGraphElement(graphElementId);
-		}
-		
-		public uint GetInDegree (string vertexIdentifier)
-		{
-			VertexModel vertex;
+            return _fallen8.TryRemoveGraphElement(graphElementId);
+        }
+
+        public uint GetInDegree(string vertexIdentifier)
+        {
+            VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
-				return vertex.GetInDegree();
+                return vertex.GetInDegree();
             }
             return 0;
-		}
+        }
 
-		public uint GetOutDegree (string vertexIdentifier)
-		{
-			VertexModel vertex;
+        public uint GetOutDegree(string vertexIdentifier)
+        {
+            VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
-				return vertex.GetOutDegree();
+                return vertex.GetOutDegree();
             }
             return 0;
-		}
+        }
 
-		public uint GetInEdgeDegree (string vertexIdentifier, string edgePropertyIdentifier)
-		{
-			VertexModel vertex;
+        public uint GetInEdgeDegree(string vertexIdentifier, string edgePropertyIdentifier)
+        {
+            VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
@@ -428,11 +429,11 @@ namespace NoSQL.GraphDB.Service.REST
                 }
             }
             return 0;
-		}
+        }
 
-		public uint GetOutEdgeDegree (string vertexIdentifier, string edgePropertyIdentifier)
-		{
-			VertexModel vertex;
+        public uint GetOutEdgeDegree(string vertexIdentifier, string edgePropertyIdentifier)
+        {
+            VertexModel vertex;
             if (_fallen8.TryGetVertex(out vertex, Convert.ToInt32(vertexIdentifier)))
             {
                 ReadOnlyCollection<EdgeModel> edges;
@@ -442,7 +443,7 @@ namespace NoSQL.GraphDB.Service.REST
                 }
             }
             return 0;
-		}
+        }
 
         public List<PathREST> GetPaths(string from, string to, PathSpecification definition)
         {
@@ -466,7 +467,7 @@ namespace NoSQL.GraphDB.Service.REST
                 var edgePropertyFilterDelegate = CreateEdgePropertyFilterDelegate(definition.Filter, type);
                 var vertexFilterDelegate = CreateVertexFilterDelegate(definition.Filter, type);
                 var edgeFilterDelegate = CreateEdgeFilterDelegate(definition.Filter, type);
-                
+
 
                 List<Path> paths;
                 if (_fallen8.CalculateShortestPath(
@@ -492,72 +493,72 @@ namespace NoSQL.GraphDB.Service.REST
             return null;
         }
 
-		public List<PathREST> GetPathsByVertex (string from, string to, PathSpecification definition)
-		{
-			return GetPaths(from, to, definition);
-		}
+        public List<PathREST> GetPathsByVertex(string from, string to, PathSpecification definition)
+        {
+            return GetPaths(from, to, definition);
+        }
 
-		public bool CreateIndex (PluginSpecification definition)
-		{
-			IIndex result;
-			return _fallen8.IndexFactory.TryCreateIndex(out result, definition.UniqueId, definition.PluginType, ServiceHelper.CreatePluginOptions(definition.PluginOptions));
-		}
+        public bool CreateIndex(PluginSpecification definition)
+        {
+            IIndex result;
+            return _fallen8.IndexFactory.TryCreateIndex(out result, definition.UniqueId, definition.PluginType, ServiceHelper.CreatePluginOptions(definition.PluginOptions));
+        }
 
-		public bool AddToIndex (IndexAddToSpecification definition)
-		{
-			IIndex idx;
-			if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
-			{
-				AGraphElement graphElement;
-				if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
-				{
+        public bool AddToIndex(IndexAddToSpecification definition)
+        {
+            IIndex idx;
+            if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId))
+            {
+                AGraphElement graphElement;
+                if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId))
+                {
                     idx.AddOrUpdate(ServiceHelper.CreateObject(definition.Key), graphElement);
-					return true; 
-				}
+                    return true;
+                }
 
-				Logger.LogError(String.Format("Could not find graph element {0}.", definition.GraphElementId));
-				return false;
-			}
-			Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
-			return false;
-		}
+                Logger.LogError(String.Format("Could not find graph element {0}.", definition.GraphElementId));
+                return false;
+            }
+            Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
+            return false;
+        }
 
-		public bool RemoveKeyFromIndex (IndexRemoveKeyFromIndexSpecification definition)
-		{
-			IIndex idx;
-			if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
-			{
+        public bool RemoveKeyFromIndex(IndexRemoveKeyFromIndexSpecification definition)
+        {
+            IIndex idx;
+            if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId))
+            {
                 return idx.TryRemoveKey(ServiceHelper.CreateObject(definition.Key));
-			}
-			Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
-			return false;
-		}
+            }
+            Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
+            return false;
+        }
 
-		public bool RemoveGraphElementFromIndex (IndexRemoveGraphelementFromIndexSpecification definition)
-		{
-			IIndex idx;
-			if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId)) 
-			{
-				AGraphElement graphElement;
-				if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId)) 
-				{
-					idx.RemoveValue(graphElement);
-					return true; 
-				}
+        public bool RemoveGraphElementFromIndex(IndexRemoveGraphelementFromIndexSpecification definition)
+        {
+            IIndex idx;
+            if (_fallen8.IndexFactory.TryGetIndex(out idx, definition.IndexId))
+            {
+                AGraphElement graphElement;
+                if (_fallen8.TryGetGraphElement(out graphElement, definition.GraphElementId))
+                {
+                    idx.RemoveValue(graphElement);
+                    return true;
+                }
 
-				Logger.LogError(String.Format("Could not find graph element {0}.", definition.GraphElementId));
-				return false;
-			}
-			Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
-			return false;
-		}
+                Logger.LogError(String.Format("Could not find graph element {0}.", definition.GraphElementId));
+                return false;
+            }
+            Logger.LogError(String.Format("Could not find index {0}.", definition.IndexId));
+            return false;
+        }
 
-		public bool DeleteIndex (IndexDeleteSpecificaton definition)
-		{
-			return _fallen8.IndexFactory.TryDeleteIndex(definition.IndexId);
-		}
+        public bool DeleteIndex(IndexDeleteSpecificaton definition)
+        {
+            return _fallen8.IndexFactory.TryDeleteIndex(definition.IndexId);
+        }
 
-		#endregion
+        #endregion
 
         #region private helper
 
@@ -617,7 +618,7 @@ namespace NoSQL.GraphDB.Service.REST
         private static string CreateErrorMessage(CompilerErrorCollection compilerErrorCollection)
         {
             if (compilerErrorCollection == null) throw new ArgumentNullException("compilerErrorCollection");
-            
+
             var sb = new StringBuilder();
 
             sb.AppendLine("Error building request");
@@ -720,7 +721,7 @@ namespace NoSQL.GraphDB.Service.REST
         /// <param name="graphElements"> The graph elements </param>
         /// <param name="resultTypeSpecification"> The result specification </param>
         /// <returns> </returns>
-        private static IEnumerable<Int64> CreateResult(IEnumerable<AGraphElement> graphElements,
+        private static IEnumerable<int> CreateResult(IEnumerable<AGraphElement> graphElements,
                                                      ResultTypeSpecification resultTypeSpecification)
         {
             switch (resultTypeSpecification)
@@ -738,7 +739,23 @@ namespace NoSQL.GraphDB.Service.REST
                     throw new ArgumentOutOfRangeException("resultTypeSpecification");
             }
         }
-       
+
+        #endregion
+
+        #region not implemented
+
+        public void Save(SerializationWriter writer)
+        {
+        }
+
+        public void Load(SerializationReader reader, Fallen8 fallen8)
+        {
+        }
+
+        public void Shutdown()
+        {
+        }
+
         #endregion
     }
 }

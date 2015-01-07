@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2012 Henning Rauch
+// Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name="pathToSavePoint">The path to the save point.</param>
         /// <param name="currentId">The maximum graph element id</param>
         /// <param name="startServices">Start the services</param>
-        internal static Boolean Load(Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
+        internal static Boolean Load(Fallen8 fallen8, ref List<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
@@ -78,7 +78,7 @@ namespace NoSQL.GraphDB.Persistency
                 var reader = new SerializationReader(file);
                 currentId = reader.ReadInt32();
 
-                graphElements.InitializeUntil(currentId);
+                AGraphElement[] graphElementArray = new AGraphElement[currentId];
 
                 #region graph elements
 
@@ -93,7 +93,9 @@ namespace NoSQL.GraphDB.Persistency
                     graphElementStreams.Add(graphElementBunchFilename);
                 }
 
-                LoadGraphElements(graphElements, graphElementStreams);
+                LoadGraphElements(graphElementArray, graphElementStreams);
+
+                graphElements = new List<AGraphElement>(graphElementArray);
 
                 #endregion
 
@@ -143,7 +145,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
         /// <param name="currentId">The current graph elemement identifier.</param>
-        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
+        internal static void Save(Fallen8 fallen8, List<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
@@ -168,8 +170,6 @@ namespace NoSQL.GraphDB.Persistency
 
                 if (graphElementCount > 0)
                 {
-                    graphElementCount++; //Hack
-
                     var graphElementPartitions = CreatePartitions(graphElementCount, savePartitions);
                     graphElementSaver = new Task<string>[graphElementPartitions.Count];
 
@@ -324,7 +324,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name="edgeTodoOnVertex"> The edges that have to be added to this vertex </param>
         private static List<EdgeSneakPeak> LoadAGraphElementBunch(
             string graphElementBunchPath,
-            BigList<AGraphElement> graphElementsOfFallen8,
+            AGraphElement[] graphElementsOfFallen8,
             Dictionary<Int32, List<EdgeOnVertexToDo>> edgeTodoOnVertex)
         {
             //if there is no savepoint file... do nothing
@@ -430,7 +430,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='range'> Range. </param>
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='pathToSavePoint'> Path to save point basis. </param>
-        private static String SaveBunch(Tuple<Int32, Int32> range, BigList<AGraphElement> graphElements,
+        private static String SaveBunch(Tuple<Int32, Int32> range, List<AGraphElement> graphElements,
                                         String pathToSavePoint)
         {
             var partitionFileName = pathToSavePoint + Constants.GraphElementsSaveString + range.Item1 + "_to_" + range.Item2;
@@ -444,7 +444,7 @@ namespace NoSQL.GraphDB.Persistency
 
                 for (var i = range.Item1; i < range.Item2; i++)
                 {
-                    AGraphElement aGraphElement = graphElements.GetElement(i);
+                    AGraphElement aGraphElement = graphElements[i];
                     //there can be nulls
                     if (aGraphElement == null)
                     {
@@ -476,7 +476,7 @@ namespace NoSQL.GraphDB.Persistency
         /// </summary>
         /// <param name='graphElements'> Graph elements of Fallen-8. </param>
         /// <param name='graphElementStreams'> Graph element streams. </param>
-        private static void LoadGraphElements(BigList<AGraphElement> graphElements, List<String> graphElementStreams)
+        private static void LoadGraphElements(AGraphElement[] graphElements, List<String> graphElementStreams)
         {
             var edgeTodo = new Dictionary<Int32, List<EdgeOnVertexToDo>>();
             var result = new List<List<EdgeSneakPeak>>(graphElementStreams.Count);
@@ -491,18 +491,18 @@ namespace NoSQL.GraphDB.Persistency
             {
                 foreach (var aSneakPeak in aEdgeSneakPeakList)
                 {
-                    VertexModel sourceVertex = graphElements.GetElement(aSneakPeak.SourceVertexId) as VertexModel;
-                    VertexModel targetVertex = graphElements.GetElement(aSneakPeak.TargetVertexId) as VertexModel;
+                    VertexModel sourceVertex = graphElements[aSneakPeak.SourceVertexId] as VertexModel;
+                    VertexModel targetVertex = graphElements[aSneakPeak.TargetVertexId] as VertexModel;
                     if (sourceVertex != null && targetVertex != null)
                     {
-                        graphElements.SetValue(aSneakPeak.Id,
+                        graphElements[aSneakPeak.Id] = 
                             new EdgeModel(
                                 aSneakPeak.Id,
                                 aSneakPeak.CreationDate,
                                 aSneakPeak.ModificationDate,
                                 targetVertex,
                                 sourceVertex,
-                                aSneakPeak.Properties));                        
+                                aSneakPeak.Properties);                        
                     }
                     else
                     {
@@ -513,12 +513,12 @@ namespace NoSQL.GraphDB.Persistency
 
             foreach (var aKV in edgeTodo)
             {
-                EdgeModel edge = graphElements.GetElement(aKV.Key) as EdgeModel;
+                EdgeModel edge = graphElements[aKV.Key] as EdgeModel;
                 if (edge != null)
                 {
                     foreach (var aTodo in aKV.Value)
                     {
-                        VertexModel interestingVertex = graphElements.GetElement(aTodo.VertexId) as VertexModel;
+                        VertexModel interestingVertex = graphElements[aTodo.VertexId] as VertexModel;
                         if (interestingVertex != null)
                         {
                             if (aTodo.IsIncomingEdge)
@@ -606,7 +606,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='reader'> Reader. </param>
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='edgeTodo'> Edge todo. </param>
-        private static void LoadVertex(SerializationReader reader, BigList<AGraphElement> graphElements,
+        private static void LoadVertex(SerializationReader reader, AGraphElement[] graphElements,
                                        Dictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
             var id = reader.ReadInt32();
@@ -651,30 +651,31 @@ namespace NoSQL.GraphDB.Persistency
                     {
                         var edgeId = reader.ReadInt32();
 
-                        EdgeModel edge = graphElements.GetElement(edgeId) as EdgeModel;
-                        if (edge != null)
-                        {
-                            outEdges.Add(edge);
-                        }
-                        else
-                        {
-                            var aEdgeTodo = new EdgeOnVertexToDo
-                                                {
-                                                    VertexId = id,
-                                                    EdgePropertyId = outEdgePropertyId,
-                                                    IsIncomingEdge = false
-                                                };
-
-                            List<EdgeOnVertexToDo> todo;
-                            if (edgeTodo.TryGetValue(edgeId, out todo))
+                       
+                            EdgeModel edge = graphElements[edgeId] as EdgeModel;
+                            if (edge != null)
                             {
-                                todo.Add(aEdgeTodo);
+                                outEdges.Add(edge);
                             }
                             else
                             {
-                                edgeTodo.Add(edgeId, new List<EdgeOnVertexToDo> {aEdgeTodo});
+                                var aEdgeTodo = new EdgeOnVertexToDo
+                                {
+                                    VertexId = id,
+                                    EdgePropertyId = outEdgePropertyId,
+                                    IsIncomingEdge = false
+                                };
+
+                                List<EdgeOnVertexToDo> todo;
+                                if (edgeTodo.TryGetValue(edgeId, out todo))
+                                {
+                                    todo.Add(aEdgeTodo);
+                                }
+                                else
+                                {
+                                    edgeTodo.Add(edgeId, new List<EdgeOnVertexToDo> { aEdgeTodo });
+                                }
                             }
-                        }
                     }
                     outEdgeProperties.Add(new EdgeContainer(outEdgePropertyId, outEdges));
                 }
@@ -699,30 +700,31 @@ namespace NoSQL.GraphDB.Persistency
                     {
                         var edgeId = reader.ReadInt32();
 
-                        EdgeModel edge = graphElements.GetElement(edgeId) as EdgeModel;
-                        if (edge != null)
-                        {
-                            incEdges.Add(edge);
-                        }
-                        else
-                        {
-                            var aEdgeTodo = new EdgeOnVertexToDo
-                                                {
-                                                    VertexId = id,
-                                                    EdgePropertyId = incEdgePropertyId,
-                                                    IsIncomingEdge = true
-                                                };
-
-                            List<EdgeOnVertexToDo> todo;
-                            if (edgeTodo.TryGetValue(edgeId, out todo))
+                       
+                            EdgeModel edge = graphElements[edgeId] as EdgeModel;
+                            if (edge != null)
                             {
-                                todo.Add(aEdgeTodo);
+                                incEdges.Add(edge);
                             }
                             else
                             {
-                                edgeTodo.Add(edgeId, new List<EdgeOnVertexToDo> { aEdgeTodo });
+                                var aEdgeTodo = new EdgeOnVertexToDo
+                                {
+                                    VertexId = id,
+                                    EdgePropertyId = incEdgePropertyId,
+                                    IsIncomingEdge = true
+                                };
+
+                                List<EdgeOnVertexToDo> todo;
+                                if (edgeTodo.TryGetValue(edgeId, out todo))
+                                {
+                                    todo.Add(aEdgeTodo);
+                                }
+                                else
+                                {
+                                    edgeTodo.Add(edgeId, new List<EdgeOnVertexToDo> { aEdgeTodo });
+                                }
                             }
-                        }
                     }
                     incEdgeProperties.Add(new EdgeContainer(incEdgePropertyId, incEdges));
                 }
@@ -732,8 +734,8 @@ namespace NoSQL.GraphDB.Persistency
 
             #endregion
 
-            graphElements.SetValue(id, new VertexModel(id, creationDate, modificationDate, properties, outEdgeProperties,
-                                                     incEdgeProperties));
+            graphElements[id] = new VertexModel(id, creationDate, modificationDate, properties, outEdgeProperties,
+                                                     incEdgeProperties);
         }
 
         /// <summary>
@@ -795,7 +797,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='reader'> Reader. </param>
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='sneakPeaks'> Sneak peaks. </param>
-        private static void LoadEdge(SerializationReader reader, BigList<AGraphElement> graphElements,
+        private static void LoadEdge(SerializationReader reader, AGraphElement[] graphElements,
                                      ref List<EdgeSneakPeak> sneakPeaks)
         {
             var id = reader.ReadInt32();
@@ -824,12 +826,12 @@ namespace NoSQL.GraphDB.Persistency
             var sourceVertexId = reader.ReadInt32();
             var targetVertexId = reader.ReadInt32();
 
-            VertexModel sourceVertex = graphElements.GetElement(sourceVertexId) as VertexModel;
-            VertexModel targetVertex = graphElements.GetElement(targetVertexId) as VertexModel;
+            VertexModel sourceVertex = graphElements[sourceVertexId] as VertexModel;
+            VertexModel targetVertex = graphElements[targetVertexId] as VertexModel;
 
             if (sourceVertex != null && targetVertex != null)
             {
-                graphElements.SetValue(id,new EdgeModel(id, creationDate, modificationDate, targetVertex,sourceVertex, properties));
+                graphElements[id] = new EdgeModel(id, creationDate, modificationDate, targetVertex,sourceVertex, properties);
             }
             else
             {

@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2011 Henning Rauch
+// Copyright (c) 2011-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='targetVertex'> Target vertex. </param>
         /// <param name='sourceVertex'> Source vertex. </param>
         /// <param name='properties'> Properties. </param>
-        public EdgeModel(Int64 id, UInt32 creationDate, VertexModel targetVertex, VertexModel sourceVertex,
+        public EdgeModel(Int32 id, UInt32 creationDate, VertexModel targetVertex, VertexModel sourceVertex,
                          PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {
@@ -65,7 +65,7 @@ namespace NoSQL.GraphDB.Model
         /// <param name='targetVertex'> Target vertex. </param>
         /// <param name='sourceVertex'> Source vertex. </param>
         /// <param name='properties'> Properties. </param>
-        internal EdgeModel(Int64 id, UInt32 creationDate, UInt32 modificationDate, VertexModel targetVertex,
+        internal EdgeModel(Int32 id, UInt32 creationDate, UInt32 modificationDate, VertexModel targetVertex,
                            VertexModel sourceVertex, PropertyContainer[] properties)
             : base(id, creationDate, properties)
         {

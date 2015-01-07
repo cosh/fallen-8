@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2012 Henning Rauch
+// Copyright (c) 2012-2015 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,11 +38,9 @@ namespace NoSQL.GraphDB.Helper
     /// </summary>
     public abstract class AThreadSafeElement
     {
-        /// <summary>
-        /// The using resource.
-        /// 0 for false, 1 for true.
-        /// </summary>
-        private Int32 _usingResource;
+        private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+
+        private static TimeSpan _timeout = new TimeSpan(0, 0, 60); 
 
         /// <summary>
         /// Reads the resource.
@@ -53,32 +51,12 @@ namespace NoSQL.GraphDB.Helper
         /// </returns>
         protected bool ReadResource()
         {
-            //>=0 indicates that the method is not in use.
-            if (Interlocked.Increment(ref _usingResource) > 0)
+            if (!_lock.TryEnterReadLock(_timeout))
             {
-                //Code to access a resource that is not thread safe would go here.
-                return true;
+                return false;
             }
 
-            //another thread writes something, so lets wait
-			
-			for (var i = 0; i < int.MaxValue; i++)
-            {
-                //usingResource was incremented in the if clause, so lets decrement it again
-                Interlocked.Decrement(ref _usingResource);
-
-                if (i%10000 == 9999)
-                {
-                    Thread.Sleep(1);                    
-                }
-
-                if (Interlocked.Increment(ref _usingResource) > 0)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return true;
         }
         
         /// <summary>
@@ -86,8 +64,7 @@ namespace NoSQL.GraphDB.Helper
         /// </summary>
         protected void FinishReadResource ()
         {
-            //Release the lock
-            Interlocked.Decrement (ref _usingResource);
+            if (_lock.IsReadLockHeld) _lock.ExitReadLock();
         }
         
         /// <summary>
@@ -99,25 +76,11 @@ namespace NoSQL.GraphDB.Helper
         /// </returns>
         protected bool WriteResource()
         {
-            if (0 == Interlocked.CompareExchange(ref _usingResource, -200000000, 0))
+            if (!_lock.TryEnterWriteLock(_timeout))
             {
-                return true;
+                return false;
             }
-
-            for (var i = 0; i < int.MaxValue; i++)
-            {
-                if (i%10000 == 9999)
-                {
-                    Thread.Sleep(1);                    
-                }
-
-                if (0 == Interlocked.CompareExchange(ref _usingResource, -200000000, 0))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return true;
         }
   
         /// <summary>
@@ -125,8 +88,7 @@ namespace NoSQL.GraphDB.Helper
         /// </summary>
         protected void FinishWriteResource ()
         {
-            //Release the lock
-            Interlocked.Exchange(ref _usingResource, 0);
+            if (_lock.IsWriteLockHeld) _lock.ExitWriteLock();
         }
     }
 }
