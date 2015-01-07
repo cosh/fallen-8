@@ -35,11 +35,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Fallen-8")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("An in-memory graph database")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Henning Rauch")]
 [assembly: AssemblyProduct("Fallen-8")]
-[assembly: AssemblyCopyright("Copyright © Henning Rauch 2011")]
+[assembly: AssemblyCopyright("Copyright © Henning Rauch 2011-2013")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

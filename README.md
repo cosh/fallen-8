@@ -25,19 +25,21 @@ $ git clone --recursive git@github.com:cosh/fallen-8.git
 var fallen8 = new Fallen8();
 
 //start the built-in services
-fallen8.ServiceFactory.StartGraphService(IPAddress.Parse("127.0.0.1"), 2323);
-fallen8.ServiceFactory.StartAdminService(IPAddress.Parse("127.0.0.1"), 2323);
+fallen8.ServiceFactory.StartGraphService();
+fallen8.ServiceFactory.StartAdminService();
 ```
 
 ## Additional information
 
-[Wiki on GitHub](https://github.com/cosh/fallen-8/wiki)
-
-[Google Group](https://groups.google.com/d/forum/fallen-8)
-
 [Graph databases - Henning Rauch](http://www.slideshare.net/HenningRauch/graphdatabases)
 
 [Graphendatenbanken - Henning Rauch (visiting lecture)](http://www.slideshare.net/HenningRauch/vorlesung-graphendatenbanken-an-der-universitt-hof)
+
+[Issues on GitHub](https://github.com/cosh/fallen-8/issues)
+
+[Wiki on GitHub](https://github.com/cosh/fallen-8/wiki)
+
+[Google Group](https://groups.google.com/d/forum/fallen-8)
 
 ## MIT-License
 Copyright (c) 2012 Henning Rauch

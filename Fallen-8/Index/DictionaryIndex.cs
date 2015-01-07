@@ -299,7 +299,7 @@ namespace NoSQL.GraphDB.Index
                         }
                         else
                         {
-                            Logger.LogError(String.Format("Error while deserializing the index. Could not find the graph element \"{0}\"", graphElementId));
+                            Logger.LogError(String.Format("[DictionaryIndex] Error while deserializing the index. Could not find the graph element \"{0}\"", graphElementId));
                         }
                     }
                     _idx.Add((IComparable)key, value);

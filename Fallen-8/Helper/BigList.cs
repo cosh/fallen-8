@@ -38,7 +38,7 @@ namespace NoSQL.GraphDB.Helper
     /// <summary>
     /// A big list
     /// </summary>
-    public sealed class BigList<T> 
+    public sealed class BigList<T>
     {
         #region data
 
@@ -46,7 +46,7 @@ namespace NoSQL.GraphDB.Helper
         /// The actual data structure
         /// </summary>
         private readonly T[][] _data;
-       
+
         /// <summary>
         /// The size of a single shard
         /// </summary>
@@ -66,7 +66,7 @@ namespace NoSQL.GraphDB.Helper
         /// The extension size
         /// </summary>
         private const Int32 ExtendSize = 1000000;
-       
+
         /// <summary>
         /// The delegate to find elements in the big list
         /// </summary>
@@ -85,12 +85,12 @@ namespace NoSQL.GraphDB.Helper
         {
             _data = new T[NumberOfShards][];
         }
-       
+
         #endregion
 
         #region public methods
 
-        public void SetValue(Int64 index, T item)
+        public void SetValue(Int32 index, T item)
         {
             if (index < 0)
             {
@@ -109,7 +109,7 @@ namespace NoSQL.GraphDB.Helper
             shard[localSlot] = item;
         }
 
-        public void SetDefault(Int64 index)
+        public void SetDefault(Int32 index)
         {
             if (index < 0)
             {
@@ -128,7 +128,7 @@ namespace NoSQL.GraphDB.Helper
             shard[localSlot] = default(T);
         }
 
-        public T GetElement(Int64 index)
+        public T GetElement(Int32 index)
         {
             if (index < 0)
             {
@@ -231,17 +231,17 @@ namespace NoSQL.GraphDB.Helper
                 _data.Where(_ => _ != null),
                 () => new uint(),
                 delegate(T[] shard, ParallelLoopState state, long arg3, uint arg4)
+                {
+                    for (var i = 0; i < shard.Length; i++)
                     {
-                        for (var i = 0; i < shard.Length; i++)
+                        if (shard[i] != null && shard[i] is TInteresting)
                         {
-                            if (shard[i] != null && shard[i] is TInteresting)
-                            {
-                                arg4++;
-                            }
+                            arg4++;
                         }
+                    }
 
-                        return arg4;
-                    }, 
+                    return arg4;
+                },
                 delegate(UInt32 localSum)
                 {
                     lock (lockObject)
@@ -253,11 +253,34 @@ namespace NoSQL.GraphDB.Helper
             return count;
         }
 
+        public void InitializeUntil(int index)
+        {
+            for (int i = 0; i < _data.Length; i++)
+            {
+                //find the localSlot
+                var localSlot = FindShardLocalSlot(i, index);
+
+                if (localSlot >= 0)
+                {
+                    if (localSlot > ShardSize)
+                    {
+                        localSlot = ShardSize;
+                    }
+
+                    ExtendIfNeeded(_data[i], i, localSlot);
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
         #endregion
 
         #region private helper
 
-        private T[] ExtendIfNeeded(T[] shard, long shardId, long localSlot)
+        private T[] ExtendIfNeeded(T[] shard, Int32 shardId, Int32 localSlot)
         {
             if (localSlot > ShardSize)
             {
@@ -297,12 +320,12 @@ namespace NoSQL.GraphDB.Helper
             return newShard;
         }
 
-        private static Int64 FindShardLocalSlot(long shardId, long index)
+        private static Int32 FindShardLocalSlot(Int32 shardId, Int32 index)
         {
             return index - (shardId * ShardSize);
         }
 
-        private static Int64 FindShardId(long index)
+        private static Int32 FindShardId(Int32 index)
         {
             return index / ShardSize;
         }

@@ -75,17 +75,17 @@ namespace NoSQL.GraphDB
         /// <summary>
         /// The count of edges
         /// </summary>
-        public UInt64 EdgeCount { get; private set; }
+        public UInt32 EdgeCount { get; private set; }
 
         /// <summary>
         /// The count of vertices
         /// </summary>
-        public UInt64 VertexCount { get; private set; }
+        public UInt32 VertexCount { get; private set; }
 
         /// <summary>
         ///   The current identifier.
         /// </summary>
-        private Int64 _currentId = 0;
+        private Int32 _currentId = 0;
 
         /// <summary>
         ///   Binary operator delegate.
@@ -227,7 +227,7 @@ namespace NoSQL.GraphDB
             throw new CollisionException();
         }
 
-        public EdgeModel CreateEdge(Int64 sourceVertexId, UInt16 edgePropertyId, Int64 targetVertexId,
+        public EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId,
                                     UInt32 creationDate, PropertyContainer[] properties = null)
         {
             if (WriteResource())
@@ -236,7 +236,7 @@ namespace NoSQL.GraphDB
 
                 var sourceVertex = _graphElements.GetElement(sourceVertexId) as VertexModel;
                 var targetVertex = _graphElements.GetElement(targetVertexId) as VertexModel;
-                
+
                 //get the related vertices
                 if (sourceVertex != null && targetVertex != null)
                 {
@@ -257,10 +257,6 @@ namespace NoSQL.GraphDB
                     //increase the edgeCount
                     EdgeCount++;
                 }
-                else
-                {
-                    Logger.LogInfo("Could not create the edge because either the source or target vertex was not available.");
-                }
 
                 FinishWriteResource();
 
@@ -270,7 +266,7 @@ namespace NoSQL.GraphDB
             throw new CollisionException();
         }
 
-        public bool TryAddProperty(Int64 graphElementId, UInt16 propertyId, Object property)
+        public bool TryAddProperty(Int32 graphElementId, UInt16 propertyId, Object property)
         {
             if (WriteResource())
             {
@@ -289,14 +285,14 @@ namespace NoSQL.GraphDB
             throw new CollisionException();
         }
 
-        public bool TryRemoveProperty(Int64 graphElementId, UInt16 propertyId)
+        public bool TryRemoveProperty(Int32 graphElementId, UInt16 propertyId)
         {
             if (WriteResource())
             {
                 var graphElement = _graphElements.GetElement(graphElementId);
 
                 var success = graphElement != null && graphElement.TryRemoveProperty(propertyId);
-                
+
                 FinishWriteResource();
 
                 return success;
@@ -305,7 +301,7 @@ namespace NoSQL.GraphDB
             throw new CollisionException();
         }
 
-        public bool TryRemoveGraphElement(Int64 graphElementId)
+        public bool TryRemoveGraphElement(Int32 graphElementId)
         {
             if (WriteResource())
             {
@@ -510,7 +506,7 @@ namespace NoSQL.GraphDB
 
         #region IRead implementation
 
-        public Boolean TryGetVertex(out VertexModel result, Int64 id)
+        public Boolean TryGetVertex(out VertexModel result, Int32 id)
         {
             if (ReadResource())
             {
@@ -524,20 +520,7 @@ namespace NoSQL.GraphDB
             throw new CollisionException();
         }
 
-        public List<VertexModel> GetVertices()
-        {
-            if (ReadResource())
-            {
-                var vertices = _graphElements.GetAllOfType<VertexModel>();
-                FinishReadResource();
-
-                return vertices;
-            }
-
-            throw new CollisionException();
-        }
-
-        public Boolean TryGetEdge(out EdgeModel result, Int64 id)
+        public Boolean TryGetEdge(out EdgeModel result, Int32 id)
         {
             if (ReadResource())
             {
@@ -551,20 +534,7 @@ namespace NoSQL.GraphDB
             throw new CollisionException();
         }
 
-        public List<EdgeModel> GetEdges()
-        {
-            if (ReadResource())
-            {
-                var edges = _graphElements.GetAllOfType<EdgeModel>();
-                FinishReadResource();
-
-                return edges;
-            }
-
-            throw new CollisionException();
-        }
-
-        public Boolean TryGetGraphElement(out AGraphElement result, Int64 id)
+        public Boolean TryGetGraphElement(out AGraphElement result, Int32 id)
         {
             if (ReadResource())
             {
@@ -916,13 +886,13 @@ namespace NoSQL.GraphDB
                 AGraphElement graphElement = _graphElements.GetElement(i);
                 if (graphElement != null)
                 {
-                    graphElement.Trim();   
+                    graphElement.Trim();
                 }
             }
 
 #if __MonoCS__
     //mono specific code
-			#else
+#else
             GC.Collect();
             GC.Collect();
             GC.WaitForFullGCComplete();
@@ -931,7 +901,7 @@ namespace NoSQL.GraphDB
 
 #if __MonoCS__
     //mono specific code
-			#else
+#else
             var errorCode = SaveNativeMethods.EmptyWorkingSet(Process.GetCurrentProcess().Handle);
 #endif
 

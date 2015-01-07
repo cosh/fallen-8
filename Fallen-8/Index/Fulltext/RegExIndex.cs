@@ -211,6 +211,48 @@ namespace NoSQL.GraphDB.Index.Fulltext
 
 	    #endregion
 
+        #region public methods
+
+        /// <summary>
+        /// A method to query the regex index
+        /// </summary>
+        /// <param name="result">The number of matching graph elements (distinct)</param>
+        /// <param name="query">The query</param>
+        /// <param name="filter">The filter that should be applied</param>
+        /// <returns>True if something has been found, otherwise false</returns>
+        public bool TryQuery(out IEnumerable<AGraphElement> result, string query, Func<Regex, String, Boolean> filter)
+        {
+            var regexpression = new Regex(query, RegexOptions.IgnoreCase);
+            result = null;
+
+            if (ReadResource())
+            {
+                try
+                {
+                    var matchingGraphElements = new HashSet<AGraphElement>();
+
+                    foreach (var aKV in _idx)
+                    {
+                        if (filter(regexpression, aKV.Key))
+                        {
+                            matchingGraphElements.UnionWith(aKV.Value);
+                        }
+                    }
+
+
+                    return matchingGraphElements.Count > 0;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
+            }
+
+            throw new CollisionException();
+        }
+
+        #endregion
+
         #region IIndex Members
 
         public int CountOfKeys()

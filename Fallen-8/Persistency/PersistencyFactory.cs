@@ -58,7 +58,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name="pathToSavePoint">The path to the save point.</param>
         /// <param name="currentId">The maximum graph element id</param>
         /// <param name="startServices">Start the services</param>
-        internal static Boolean Load(Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int64 currentId, Boolean startServices)
+        internal static Boolean Load(Fallen8 fallen8, ref BigList<AGraphElement> graphElements, string pathToSavePoint, ref Int32 currentId, Boolean startServices)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(pathToSavePoint))
@@ -76,7 +76,9 @@ namespace NoSQL.GraphDB.Persistency
             using (var file = File.Open(pathToSavePoint, FileMode.Open, FileAccess.Read))
             {
                 var reader = new SerializationReader(file);
-                currentId = reader.ReadInt64();
+                currentId = reader.ReadInt32();
+
+                graphElements.InitializeUntil(currentId);
 
                 #region graph elements
 
@@ -141,7 +143,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='path'> Path. </param>
         /// <param name='savePartitions'> The number of save partitions for the graph elements. </param>
         /// <param name="currentId">The current graph elemement identifier.</param>
-        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int64 currentId)
+        internal static void Save(Fallen8 fallen8, BigList<AGraphElement> graphElements, String path, UInt32 savePartitions, Int32 currentId)
         {
             // Create the new, empty data file.
             if (File.Exists(path))
@@ -161,11 +163,13 @@ namespace NoSQL.GraphDB.Persistency
                                         TaskScheduler.Default);
                 #region graph elements
 
-                var graphElementCount = fallen8.VertexCount + fallen8.EdgeCount;
+                var graphElementCount = Convert.ToUInt32(currentId);
                 Task<string>[] graphElementSaver;
 
                 if (graphElementCount > 0)
                 {
+                    graphElementCount++; //Hack
+
                     var graphElementPartitions = CreatePartitions(graphElementCount, savePartitions);
                     graphElementSaver = new Task<string>[graphElementPartitions.Count];
 
@@ -321,7 +325,7 @@ namespace NoSQL.GraphDB.Persistency
         private static List<EdgeSneakPeak> LoadAGraphElementBunch(
             string graphElementBunchPath,
             BigList<AGraphElement> graphElementsOfFallen8,
-            Dictionary<Int64, List<EdgeOnVertexToDo>> edgeTodoOnVertex)
+            Dictionary<Int32, List<EdgeOnVertexToDo>> edgeTodoOnVertex)
         {
             //if there is no savepoint file... do nothing
             if (!File.Exists(graphElementBunchPath))
@@ -334,8 +338,8 @@ namespace NoSQL.GraphDB.Persistency
             using (var file = File.Open(graphElementBunchPath, FileMode.Open, FileAccess.Read))
             {
                 var reader = new SerializationReader(file);
-                var minimumId = reader.ReadInt64();
-                var maximumId = reader.ReadInt64();
+                var minimumId = reader.ReadInt32();
+                var maximumId = reader.ReadInt32();
                 var countOfElements = maximumId - minimumId;
 
                 for (var i = 0; i < countOfElements; i++)
@@ -426,7 +430,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='range'> Range. </param>
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='pathToSavePoint'> Path to save point basis. </param>
-        private static String SaveBunch(Tuple<UInt64, UInt64> range, BigList<AGraphElement> graphElements,
+        private static String SaveBunch(Tuple<Int32, Int32> range, BigList<AGraphElement> graphElements,
                                         String pathToSavePoint)
         {
             var partitionFileName = pathToSavePoint + Constants.GraphElementsSaveString + range.Item1 + "_to_" + range.Item2;
@@ -440,7 +444,7 @@ namespace NoSQL.GraphDB.Persistency
 
                 for (var i = range.Item1; i < range.Item2; i++)
                 {
-                    AGraphElement aGraphElement = graphElements.GetElement(Convert.ToInt64 (i));
+                    AGraphElement aGraphElement = graphElements.GetElement(i);
                     //there can be nulls
                     if (aGraphElement == null)
                     {
@@ -474,7 +478,7 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='graphElementStreams'> Graph element streams. </param>
         private static void LoadGraphElements(BigList<AGraphElement> graphElements, List<String> graphElementStreams)
         {
-            var edgeTodo = new Dictionary<Int64, List<EdgeOnVertexToDo>>();
+            var edgeTodo = new Dictionary<Int32, List<EdgeOnVertexToDo>>();
             var result = new List<List<EdgeSneakPeak>>(graphElementStreams.Count);
 
             //create the major part of the graph elements
@@ -528,13 +532,13 @@ namespace NoSQL.GraphDB.Persistency
                         }
                         else
                         {
-                            throw new Exception(String.Format("Corrupt savegame... could not get the vertex {0}", aTodo.VertexId));
+                            Logger.LogError(String.Format("Corrupt savegame... could not get the vertex {0}", aTodo.VertexId));
                         }
                     }
                 }
                 else
                 {
-                    throw new Exception(String.Format("Corrupt savegame... could not get the edge {0}", aKV.Key));
+                    Logger.LogError(String.Format("Corrupt savegame... could not get the edge {0}", aKV.Key));
                 }
             }
         }
@@ -545,33 +549,33 @@ namespace NoSQL.GraphDB.Persistency
         /// <returns> The partitions. </returns>
         /// <param name='totalCount'> Total count. </param>
         /// <param name='savePartitions'> Save partitions. </param>
-        private static List<Tuple<UInt64, UInt64>> CreatePartitions(UInt64 totalCount, UInt64 savePartitions)
+        private static List<Tuple<Int32, Int32>> CreatePartitions(UInt32 totalCount, UInt32 savePartitions)
         {
-            var result = new List<Tuple<UInt64, UInt64>>();
+            var result = new List<Tuple<Int32, Int32>>();
 
             if (totalCount < savePartitions)
             {
-                for (UInt64 i = 0; i < totalCount; i++)
+                for (var i = 0; i < totalCount; i++)
                 {
-                    result.Add(new Tuple<UInt64, UInt64>(i, i + 1));
+                    result.Add(new Tuple<Int32, Int32>(i, i + 1));
                 }
 
                 return result;
             }
 
-            UInt64 size = totalCount/savePartitions;
+            UInt32 size = totalCount/savePartitions;
 
-            for (UInt64 i = 0; i < savePartitions; i++)
+            for (var i = 0; i < savePartitions; i++)
             {
                 var lowerLimit = 0 + i * size;
                 var upperLimit = 0 + (i * size) + size;
-                result.Add(new Tuple<UInt64, UInt64>(lowerLimit, upperLimit));
+                result.Add(new Tuple<Int32, Int32>(Convert.ToInt32(lowerLimit), Convert.ToInt32(upperLimit)));
             }
 
             //trim the last partition
             var lastPartition = Convert.ToInt32(savePartitions - 1);
-            var lastElement = 0 + totalCount;
-            result[lastPartition] = new Tuple<UInt64, UInt64>(result[lastPartition].Item1, lastElement);
+            var lastElement = Convert.ToInt32(0 + totalCount);
+            result[lastPartition] = new Tuple<Int32, Int32>(result[lastPartition].Item1, lastElement);
 
             return result;
         }
@@ -603,9 +607,9 @@ namespace NoSQL.GraphDB.Persistency
         /// <param name='graphElements'> Graph elements. </param>
         /// <param name='edgeTodo'> Edge todo. </param>
         private static void LoadVertex(SerializationReader reader, BigList<AGraphElement> graphElements,
-                                       Dictionary<Int64, List<EdgeOnVertexToDo>> edgeTodo)
+                                       Dictionary<Int32, List<EdgeOnVertexToDo>> edgeTodo)
         {
-            var id = reader.ReadInt64();
+            var id = reader.ReadInt32();
             var creationDate = reader.ReadUInt32();
             var modificationDate = reader.ReadUInt32();
 
@@ -645,7 +649,7 @@ namespace NoSQL.GraphDB.Persistency
                     var outEdges = new List<EdgeModel>(outEdgePropertyCount);
                     for (var j = 0; j < outEdgePropertyCount; j++)
                     {
-                        var edgeId = reader.ReadInt64();
+                        var edgeId = reader.ReadInt32();
 
                         EdgeModel edge = graphElements.GetElement(edgeId) as EdgeModel;
                         if (edge != null)
@@ -693,7 +697,7 @@ namespace NoSQL.GraphDB.Persistency
                     var incEdges = new List<EdgeModel>(incEdgePropertyCount);
                     for (var j = 0; j < incEdgePropertyCount; j++)
                     {
-                        var edgeId = reader.ReadInt64();
+                        var edgeId = reader.ReadInt32();
 
                         EdgeModel edge = graphElements.GetElement(edgeId) as EdgeModel;
                         if (edge != null)
@@ -744,7 +748,7 @@ namespace NoSQL.GraphDB.Persistency
 
             #region edges
 
-            var outgoingEdges = vertex.GetOutgoingEdges();
+            var outgoingEdges = vertex._outEdges;
             if (outgoingEdges == null)
             {
                 writer.Write(0);
@@ -763,7 +767,7 @@ namespace NoSQL.GraphDB.Persistency
                 }
             }
 
-            var incomingEdges = vertex.GetIncomingEdges();
+            var incomingEdges = vertex._inEdges;
             if (incomingEdges == null)
             {
                 writer.Write(0);
@@ -794,7 +798,7 @@ namespace NoSQL.GraphDB.Persistency
         private static void LoadEdge(SerializationReader reader, BigList<AGraphElement> graphElements,
                                      ref List<EdgeSneakPeak> sneakPeaks)
         {
-            var id = reader.ReadInt64();
+            var id = reader.ReadInt32();
             var creationDate = reader.ReadUInt32();
             var modificationDate = reader.ReadUInt32();
 
@@ -817,8 +821,8 @@ namespace NoSQL.GraphDB.Persistency
 
             #endregion
 
-            var sourceVertexId = reader.ReadInt64();
-            var targetVertexId = reader.ReadInt64();
+            var sourceVertexId = reader.ReadInt32();
+            var targetVertexId = reader.ReadInt32();
 
             VertexModel sourceVertex = graphElements.GetElement(sourceVertexId) as VertexModel;
             VertexModel targetVertex = graphElements.GetElement(targetVertexId) as VertexModel;

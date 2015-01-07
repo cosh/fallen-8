@@ -7,18 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastSerializer", "Dependencies\FastSerializer\FastSerializer.csproj", "{7267AFEB-D3FC-4416-8792-C386A685C86F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{D1417EBC-D957-41A6-8E39-4F6E9674B3D1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Test\UnitTests\UnitTests.csproj", "{B4D900A1-48CE-48C5-B38E-0301A9067267}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Test\IntegrationTests\IntegrationTests.csproj", "{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup", "Startup\Startup.csproj", "{AFC27D0F-B411-4C3D-96DE-BBBA4AA4A6D4}"
 EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Fallen-8.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -48,26 +39,6 @@ Global
 		{7267AFEB-D3FC-4416-8792-C386A685C86F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7267AFEB-D3FC-4416-8792-C386A685C86F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7267AFEB-D3FC-4416-8792-C386A685C86F}.Release|x86.ActiveCfg = Release|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{B4D900A1-48CE-48C5-B38E-0301A9067267}.Release|x86.ActiveCfg = Release|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF}.Release|x86.ActiveCfg = Release|Any CPU
 		{AFC27D0F-B411-4C3D-96DE-BBBA4AA4A6D4}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{AFC27D0F-B411-4C3D-96DE-BBBA4AA4A6D4}.Debug|Any CPU.Build.0 = Debug|x86
 		{AFC27D0F-B411-4C3D-96DE-BBBA4AA4A6D4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -81,16 +52,11 @@ Global
 		{AFC27D0F-B411-4C3D-96DE-BBBA4AA4A6D4}.Release|x86.ActiveCfg = Release|x86
 		{AFC27D0F-B411-4C3D-96DE-BBBA4AA4A6D4}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7267AFEB-D3FC-4416-8792-C386A685C86F} = {5AD7BBF6-B9F9-497B-9E8A-9C9B5D396F49}
-		{B4D900A1-48CE-48C5-B38E-0301A9067267} = {D1417EBC-D957-41A6-8E39-4F6E9674B3D1}
-		{9B50F38E-70A3-4C21-A2B7-2F00ADF8B1BF} = {D1417EBC-D957-41A6-8E39-4F6E9674B3D1}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Fallen-8\Fallen-8.csproj
+		StartupItem = Startup\Startup.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = Hierarchical
@@ -116,5 +82,11 @@ Global
 		$8.inheritsSet = VisualStudio
 		$8.inheritsScope = text/plain
 		$8.scope = text/plain
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Fallen-8.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
