@@ -99,7 +99,7 @@ namespace NoSQL.GraphDB.Model
                 return creationDate;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace NoSQL.GraphDB.Model
                 return modificationDate;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace NoSQL.GraphDB.Model
                 return count;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace NoSQL.GraphDB.Model
                 return result;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace NoSQL.GraphDB.Model
                 return false;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -262,7 +262,7 @@ namespace NoSQL.GraphDB.Model
                 return foundProperty;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace NoSQL.GraphDB.Model
                 return removedSomething;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion

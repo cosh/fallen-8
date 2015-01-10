@@ -1156,7 +1156,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 
                 return count;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void RemoveValue(AGraphElement graphElement)
@@ -1180,7 +1180,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 
                 return;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void Wipe()
@@ -1241,7 +1241,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 }
                 return false;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #region TryGetValue
@@ -1271,7 +1271,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -1305,7 +1305,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
         
         /// <summary>
@@ -1337,7 +1337,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
 
@@ -1384,7 +1384,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishWriteResource();
                 return;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
 
@@ -1407,7 +1407,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return Metric.Distance(points.Item1, points.Item2);
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public float Distance(AGraphElement graphElement1, AGraphElement graphElement2)
@@ -1426,7 +1426,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return float.NaN;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
 
         }
 
@@ -1443,7 +1443,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool Overlap(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
@@ -1464,7 +1464,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool Overlap(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
@@ -1481,7 +1481,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
@@ -1497,7 +1497,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool Enclosure(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
@@ -1519,7 +1519,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool Containment(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
@@ -1541,7 +1541,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool Containment(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
@@ -1557,7 +1557,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement)
@@ -1573,7 +1573,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool GetAllNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry)
@@ -1595,7 +1595,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, AGraphElement graphElement, int countOfNextNeighbors)
@@ -1727,7 +1727,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 return result.Count > 0;
 
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool GetNextNeighbors(out ReadOnlyCollection<AGraphElement> result, IGeometry geometry, int countOfNextNeighbors)
@@ -1819,7 +1819,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
 
 
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
         
 
@@ -1836,7 +1836,7 @@ namespace NoSQL.GraphDB.Index.Spatial.Implementation.RTree
                 FinishReadResource();
                 return result.Count > 0;
             }
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
         #endregion
 

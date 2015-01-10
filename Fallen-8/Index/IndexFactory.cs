@@ -143,7 +143,7 @@ namespace NoSQL.GraphDB.Index
                 }
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace NoSQL.GraphDB.Index
                 }
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace NoSQL.GraphDB.Index
                 }
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -223,7 +223,7 @@ namespace NoSQL.GraphDB.Index
                     }
                 }
 
-                throw new CollisionException();
+                throw new CollisionException(this);
             }
                 
             Logger.LogError(String.Format("Could not find index plugin with name \"{0}\".", indexPluginName));
