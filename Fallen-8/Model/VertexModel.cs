@@ -132,7 +132,7 @@ namespace NoSQL.GraphDB.Model
             }
 
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace NoSQL.GraphDB.Model
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace NoSQL.GraphDB.Model
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace NoSQL.GraphDB.Model
                 return result;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace NoSQL.GraphDB.Model
                 return result;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace NoSQL.GraphDB.Model
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace NoSQL.GraphDB.Model
                 return result;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -339,7 +339,7 @@ namespace NoSQL.GraphDB.Model
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace NoSQL.GraphDB.Model
                 return result;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -398,7 +398,7 @@ namespace NoSQL.GraphDB.Model
                 return degree;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
 		}
 
 		public uint GetOutDegree ()
@@ -419,7 +419,7 @@ namespace NoSQL.GraphDB.Model
                 return degree;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
 		}
 
         /// <summary>
@@ -452,7 +452,7 @@ namespace NoSQL.GraphDB.Model
                 return neighbors;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -474,7 +474,7 @@ namespace NoSQL.GraphDB.Model
                 return inEdges;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -496,7 +496,7 @@ namespace NoSQL.GraphDB.Model
                 return outEdges;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -531,7 +531,7 @@ namespace NoSQL.GraphDB.Model
                 return foundSth;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -566,7 +566,7 @@ namespace NoSQL.GraphDB.Model
                 return foundSth;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -595,7 +595,7 @@ namespace NoSQL.GraphDB.Model
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
