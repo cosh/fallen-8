@@ -176,7 +176,7 @@ namespace NoSQL.GraphDB
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void Trim()
@@ -190,7 +190,7 @@ namespace NoSQL.GraphDB
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void TabulaRasa()
@@ -208,7 +208,7 @@ namespace NoSQL.GraphDB
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public VertexModel CreateVertex(UInt32 creationDate, PropertyContainer[] properties = null)
@@ -232,7 +232,7 @@ namespace NoSQL.GraphDB
                 return newVertex;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public EdgeModel CreateEdge(Int32 sourceVertexId, UInt16 edgePropertyId, Int32 targetVertexId,
@@ -271,7 +271,7 @@ namespace NoSQL.GraphDB
                 return outgoingEdge;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool TryAddProperty(Int32 graphElementId, UInt16 propertyId, Object property)
@@ -290,7 +290,7 @@ namespace NoSQL.GraphDB
                 return success;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool TryRemoveProperty(Int32 graphElementId, UInt16 propertyId)
@@ -306,7 +306,7 @@ namespace NoSQL.GraphDB
                 return success;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool TryRemoveGraphElement(Int32 graphElementId)
@@ -507,7 +507,7 @@ namespace NoSQL.GraphDB
                 return true;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -525,7 +525,7 @@ namespace NoSQL.GraphDB
                 return result != null;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public Boolean TryGetEdge(out EdgeModel result, Int32 id)
@@ -539,7 +539,7 @@ namespace NoSQL.GraphDB
                 return result != null;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public Boolean TryGetGraphElement(out AGraphElement result, Int32 id)
@@ -553,7 +553,7 @@ namespace NoSQL.GraphDB
                 return result != null;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool CalculateShortestPath(
@@ -586,7 +586,7 @@ namespace NoSQL.GraphDB
                     return result != null && result.Count > 0;
                 }
 
-                throw new CollisionException();
+                throw new CollisionException(this);
             }
 
             result = null;
@@ -753,7 +753,7 @@ namespace NoSQL.GraphDB
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -795,7 +795,7 @@ namespace NoSQL.GraphDB
                 return result;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>

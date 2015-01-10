@@ -83,7 +83,7 @@ namespace NoSQL.GraphDB.Index
 				return keyCount;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         public Int32 CountOfValues()
@@ -97,7 +97,7 @@ namespace NoSQL.GraphDB.Index
 				return valueCount;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         public void AddOrUpdate(Object keyObject, AGraphElement graphElement)
@@ -126,7 +126,7 @@ namespace NoSQL.GraphDB.Index
 				return;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         public bool TryRemoveKey (Object keyObject)
@@ -146,7 +146,7 @@ namespace NoSQL.GraphDB.Index
 				return foundSth;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         public void RemoveValue(AGraphElement graphElement)
@@ -171,7 +171,7 @@ namespace NoSQL.GraphDB.Index
 				return;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
         
         public void Wipe ()
@@ -185,7 +185,7 @@ namespace NoSQL.GraphDB.Index
 				return;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         public IEnumerable<Object> GetKeys ()
@@ -199,7 +199,7 @@ namespace NoSQL.GraphDB.Index
 				return keys;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
 
@@ -220,7 +220,7 @@ namespace NoSQL.GraphDB.Index
 				yield break;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, Object keyObject)
@@ -244,7 +244,7 @@ namespace NoSQL.GraphDB.Index
 				return foundSth;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
         #endregion
 
@@ -271,7 +271,7 @@ namespace NoSQL.GraphDB.Index
 				return;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         public void Load(SerializationReader reader, Fallen8 fallen8)
@@ -310,7 +310,7 @@ namespace NoSQL.GraphDB.Index
 				return;
 			}
 			
-			throw new CollisionException();
+			throw new CollisionException(this);
         }
 
         #endregion

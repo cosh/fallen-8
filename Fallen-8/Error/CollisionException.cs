@@ -3,6 +3,7 @@
 //  
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
+//       Ilya Loginov <isloginov@gmail.com>
 // 
 // Copyright (c) 2012-2015 Henning Rauch
 // 
@@ -27,6 +28,8 @@
 #region Usings
 
 using System;
+using NoSQL.GraphDB.Helper;
+using NoSQL.GraphDB.Log;
 
 #endregion
 
@@ -41,9 +44,16 @@ namespace NoSQL.GraphDB.Error
         /// <summary>
         /// Initializes a new instance of the CollisionException class.
         /// </summary>
-        public CollisionException ()
+#if DEBUG
+        public CollisionException (AThreadSafeElement el) : base(el.lockerStack)
+        {
+            Logger.LogError(this.Message);
+        }
+#else
+        public CollisionException (AThreadSafeElement el)
         {
         }
+#endif
     }
 }
 

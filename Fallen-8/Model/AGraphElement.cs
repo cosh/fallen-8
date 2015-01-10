@@ -4,7 +4,7 @@
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 // 
-// Copyright (c) 2012-2015 Henning Rauch
+// Copyright (c) 2012 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -90,7 +90,16 @@ namespace NoSQL.GraphDB.Model
         /// <returns> Creation date </returns>
         public DateTime GetCreationDate()
         {
-            return DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate);
+            if (ReadResource())
+            {
+                var creationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate);
+
+                FinishReadResource();
+
+                return creationDate;
+            }
+
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -99,7 +108,16 @@ namespace NoSQL.GraphDB.Model
         /// <returns> Modification date </returns>
         public DateTime GetModificationDate()
         {
-            return DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate + ModificationDate);
+            if (ReadResource())
+            {
+                var modificationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate + ModificationDate);
+
+                FinishReadResource();
+
+                return modificationDate;
+            }
+
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -108,7 +126,16 @@ namespace NoSQL.GraphDB.Model
         /// <returns> Count of Properties </returns>
         public Int32 GetPropertyCount()
         {
-            return _properties.Length;
+            if (ReadResource())
+            {
+                var count = _properties.Length;
+
+                FinishReadResource();
+
+                return count;
+            }
+
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -128,7 +155,7 @@ namespace NoSQL.GraphDB.Model
                 return result;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -165,7 +192,7 @@ namespace NoSQL.GraphDB.Model
                 return false;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -235,7 +262,7 @@ namespace NoSQL.GraphDB.Model
                 return foundProperty;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -292,14 +319,14 @@ namespace NoSQL.GraphDB.Model
                 return removedSomething;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
         /// Sets the id of the element
         /// </summary>
         /// <param name="newId">The new id</param>
-        internal void SetId(int newId)
+        internal void SetId(Int32 newId)
         {
             if (WriteResource())
             {
@@ -309,8 +336,9 @@ namespace NoSQL.GraphDB.Model
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
+
         #endregion
     }
 }

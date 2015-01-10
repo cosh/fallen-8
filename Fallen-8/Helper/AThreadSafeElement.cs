@@ -5,7 +5,7 @@
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
 //       Ilya Loginov <isloginov@gmail.com>
 // 
-// Copyright (c) 2012-2015 Henning Rauch
+// Copyright (c) 2012 Henning Rauch
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,9 +45,9 @@ namespace NoSQL.GraphDB.Helper
         /// </summary>
         private volatile Int32 _usingResource;
 
-        #if DEBUG
+#if DEBUG
         public string lockerStack;
-        #endif
+#endif
 
         /// <summary>
         /// Reads the resource.
@@ -95,9 +95,9 @@ namespace NoSQL.GraphDB.Helper
                     Thread.Yield();
 
                 if ((Interlocked.Add(ref _usingResource, 0x100000) & 0xfff00000) == 0x100000) {
-                    #if DEBUG
+#if DEBUG
                     lockerStack = Environment.StackTrace;
-                    #endif
+#endif
                     while ((_usingResource & 0x000fffff) != 0)
                         Thread.Yield();
 
@@ -116,10 +116,11 @@ namespace NoSQL.GraphDB.Helper
         protected void FinishWriteResource ()
         {
             //Release the lock
-            #if DEBUG
+#if DEBUG
             lockerStack = String.Empty;
-            #endif
+#endif
             Interlocked.Add(ref _usingResource, - 0x100000);
         }
     }
 }
+

@@ -206,7 +206,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 }
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
 	    #endregion
@@ -248,7 +248,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 }
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -266,7 +266,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return keyCount;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public int CountOfValues()
@@ -280,7 +280,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return valueCount;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void AddOrUpdate(object keyObject, AGraphElement graphElement)
@@ -309,7 +309,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool TryRemoveKey(object keyObject)
@@ -329,7 +329,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return foundSth;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void RemoveValue(AGraphElement graphElement)
@@ -354,7 +354,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void Wipe()
@@ -368,7 +368,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public IEnumerable<object> GetKeys()
@@ -382,7 +382,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return keys;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public IEnumerable<KeyValuePair<Object, ReadOnlyCollection<AGraphElement>>> GetKeyValues()
@@ -402,7 +402,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 yield break;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public bool TryGetValue(out ReadOnlyCollection<AGraphElement> result, object keyObject)
@@ -426,7 +426,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return foundSth;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -496,7 +496,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         public void Load(SerializationReader reader, Fallen8 fallen8)
@@ -535,7 +535,7 @@ namespace NoSQL.GraphDB.Index.Fulltext
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion

@@ -168,7 +168,7 @@ namespace NoSQL.GraphDB.Service
                         return true;
                     }
 
-                    throw new CollisionException();
+                    throw new CollisionException(this);
                 }
             }
             catch (Exception e)
@@ -209,7 +209,7 @@ namespace NoSQL.GraphDB.Service
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace NoSQL.GraphDB.Service
                 return;
             }
 
-            throw new CollisionException();
+            throw new CollisionException(this);
         }
 
         #endregion
@@ -278,7 +278,7 @@ namespace NoSQL.GraphDB.Service
                     return;
                 }
 
-                throw new CollisionException();
+                throw new CollisionException(this);
             }
 
             Logger.LogError(String.Format("Could not find service plugin with name \"{0}\".", servicePluginName));
