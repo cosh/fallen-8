@@ -650,8 +650,11 @@ namespace NoSQL.GraphDB
             switch (binOp)
             {
                 case BinaryOperator.Equals:
-
-                    index.TryGetValue(out result, literal);
+                    if( ! index.TryGetValue(out result, literal))
+                    {
+                        result = null;
+                        return false;
+                    }
                     break;
 
                 case BinaryOperator.Greater:
