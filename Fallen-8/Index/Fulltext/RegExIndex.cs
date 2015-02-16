@@ -259,11 +259,16 @@ namespace NoSQL.GraphDB.Index.Fulltext
         {
             if (ReadResource())
             {
-                var keyCount = _idx.Keys.Count;
+				try
+				{
+                    var keyCount = _idx.Keys.Count;
+                    return keyCount;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                FinishReadResource();
-
-                return keyCount;
             }
 
             throw new CollisionException(this);
@@ -273,11 +278,16 @@ namespace NoSQL.GraphDB.Index.Fulltext
         {
             if (ReadResource())
             {
-                var valueCount = _idx.Values.SelectMany(_ => _).Count();
+                try
+                {
+                    var valueCount = _idx.Values.SelectMany(_ => _).Count();
+                    return valueCount;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                FinishReadResource();
-
-                return valueCount;
             }
 
             throw new CollisionException(this);
@@ -293,18 +303,23 @@ namespace NoSQL.GraphDB.Index.Fulltext
 
             if (WriteResource())
             {
-                List<AGraphElement> values;
-                if (_idx.TryGetValue(key, out values))
+                try
                 {
-                    values.Add(graphElement);
+                    List<AGraphElement> values;
+                    if (_idx.TryGetValue(key, out values))
+                    {
+                        values.Add(graphElement);
+                    }
+                    else
+                    {
+                        values = new List<AGraphElement> { graphElement };
+                        _idx.Add(key, values);
+                    }
                 }
-                else
+                finally
                 {
-                    values = new List<AGraphElement> { graphElement };
-                    _idx.Add(key, values);
+                    FinishWriteResource();
                 }
-
-                FinishWriteResource();
 
                 return;
             }
@@ -322,11 +337,16 @@ namespace NoSQL.GraphDB.Index.Fulltext
 
             if (WriteResource())
             {
-                var foundSth = _idx.Remove(key);
+                try
+                {
+                    var foundSth = _idx.Remove(key);
+                    return foundSth;
+                }
+                finally
+                {
+                    FinishWriteResource();
+                }
 
-                FinishWriteResource();
-
-                return foundSth;
             }
 
             throw new CollisionException(this);
@@ -336,20 +356,25 @@ namespace NoSQL.GraphDB.Index.Fulltext
         {
             if (WriteResource())
             {
-                var toBeRemovedKeys = new List<String>();
-
-                foreach (var aKv in _idx)
+                try
                 {
-                    aKv.Value.Remove(graphElement);
-                    if (aKv.Value.Count == 0)
+                    var toBeRemovedKeys = new List<String>();
+
+                    foreach (var aKv in _idx)
                     {
-                        toBeRemovedKeys.Add(aKv.Key);
+                        aKv.Value.Remove(graphElement);
+                        if (aKv.Value.Count == 0)
+                        {
+                            toBeRemovedKeys.Add(aKv.Key);
+                        }
                     }
+
+                    toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
                 }
-
-                toBeRemovedKeys.ForEach(_ => _idx.Remove(_));
-
-                FinishWriteResource();
+                finally
+                {
+                    FinishWriteResource();
+                }
 
                 return;
             }
@@ -361,9 +386,14 @@ namespace NoSQL.GraphDB.Index.Fulltext
         {
             if (WriteResource())
             {
-                _idx.Clear();
-
-                FinishWriteResource();
+                try
+                {
+                    _idx.Clear();
+                }
+                finally
+                {
+                    FinishWriteResource();
+                }
 
                 return;
             }
@@ -375,11 +405,16 @@ namespace NoSQL.GraphDB.Index.Fulltext
         {
             if (ReadResource())
             {
-                var keys = new List<IComparable>(_idx.Keys);
+                try
+                {
+                    var keys = new List<IComparable>(_idx.Keys);
+                    return keys;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                FinishReadResource();
-
-                return keys;
             }
 
             throw new CollisionException(this);
@@ -416,14 +451,19 @@ namespace NoSQL.GraphDB.Index.Fulltext
 
             if (ReadResource())
             {
-                List<AGraphElement> graphElements;
-                var foundSth = _idx.TryGetValue(key, out graphElements);
+                try
+                {
+                    List<AGraphElement> graphElements;
+                    var foundSth = _idx.TryGetValue(key, out graphElements);
 
-                result = foundSth ? new ReadOnlyCollection<AGraphElement>(graphElements) : null;
+                    result = foundSth ? new ReadOnlyCollection<AGraphElement>(graphElements) : null;
+                    return foundSth;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                FinishReadResource();
-
-                return foundSth;
             }
 
             throw new CollisionException(this);
@@ -479,19 +519,24 @@ namespace NoSQL.GraphDB.Index.Fulltext
         {
             if (ReadResource())
             {
-                writer.Write(0);//parameter
-                writer.Write(_idx.Count);
-                foreach (var aKV in _idx)
+                try
                 {
-                    writer.Write(aKV.Key);
-                    writer.Write(aKV.Value.Count);
-                    foreach (var aItem in aKV.Value)
+                    writer.Write(0);//parameter
+                    writer.Write(_idx.Count);
+                    foreach (var aKV in _idx)
                     {
-                        writer.Write(aItem.Id);
+                        writer.Write(aKV.Key);
+                        writer.Write(aKV.Value.Count);
+                        foreach (var aItem in aKV.Value)
+                        {
+                            writer.Write(aItem.Id);
+                        }
                     }
                 }
-
-                FinishReadResource();
+                finally
+                {
+                    FinishReadResource();
+                }
 
                 return;
             }
@@ -503,34 +548,39 @@ namespace NoSQL.GraphDB.Index.Fulltext
         {
             if (WriteResource())
             {
-                reader.ReadInt32();//parameter
-
-                var keyCount = reader.ReadInt32();
-
-                _idx = new Dictionary<String, List<AGraphElement>>(keyCount);
-
-                for (var i = 0; i < keyCount; i++)
+                try
                 {
-                    var key = reader.ReadString();
-                    var value = new List<AGraphElement>();
-                    var valueCount = reader.ReadInt32();
-                    for (var j = 0; j < valueCount; j++)
-                    {
-                        var graphElementId = reader.ReadInt32();
-                        AGraphElement graphElement;
-                        if (fallen8.TryGetGraphElement(out graphElement, graphElementId))
-                        {
-                            value.Add(graphElement);
-                        }
-                        else
-                        {
-                            Logger.LogError(String.Format("Error while deserializing the index. Could not find the graph element \"{0}\"", graphElementId));
-                        }
-                    }
-                    _idx.Add(key, value);
-                }
+                    reader.ReadInt32();//parameter
 
-                FinishWriteResource();
+                    var keyCount = reader.ReadInt32();
+
+                    _idx = new Dictionary<String, List<AGraphElement>>(keyCount);
+
+                    for (var i = 0; i < keyCount; i++)
+                    {
+                        var key = reader.ReadString();
+                        var value = new List<AGraphElement>();
+                        var valueCount = reader.ReadInt32();
+                        for (var j = 0; j < valueCount; j++)
+                        {
+                            var graphElementId = reader.ReadInt32();
+                            AGraphElement graphElement;
+                            if (fallen8.TryGetGraphElement(out graphElement, graphElementId))
+                            {
+                                value.Add(graphElement);
+                            }
+                            else
+                            {
+                                Logger.LogError(String.Format("Error while deserializing the index. Could not find the graph element \"{0}\"", graphElementId));
+                            }
+                        }
+                        _idx.Add(key, value);
+                    }
+                }
+                finally
+                {
+                    FinishWriteResource();
+                }
 
                 return;
             }

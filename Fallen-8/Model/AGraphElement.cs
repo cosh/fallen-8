@@ -92,11 +92,16 @@ namespace NoSQL.GraphDB.Model
         {
             if (ReadResource())
             {
-                var creationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate);
+                try
+                {
+                    var creationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate);
+                    return creationDate;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                FinishReadResource();
-
-                return creationDate;
             }
 
             throw new CollisionException(this);
@@ -110,11 +115,16 @@ namespace NoSQL.GraphDB.Model
         {
             if (ReadResource())
             {
-                var modificationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate + ModificationDate);
+                try
+                {
+                    var modificationDate = DateHelper.GetDateTimeFromUnixTimeStamp(CreationDate + ModificationDate);
+                    return modificationDate;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                FinishReadResource();
-
-                return modificationDate;
             }
 
             throw new CollisionException(this);
@@ -128,11 +138,16 @@ namespace NoSQL.GraphDB.Model
         {
             if (ReadResource())
             {
-                var count = _properties.Length;
+                try
+                {
+                    var count = _properties.Length;
+                    return count;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                FinishReadResource();
-
-                return count;
             }
 
             throw new CollisionException(this);
@@ -146,13 +161,19 @@ namespace NoSQL.GraphDB.Model
         {
             if (ReadResource())
             {
-                var result = _properties != null 
-                    ? new ReadOnlyCollection<PropertyContainer>(_properties) 
-                    : new ReadOnlyCollection<PropertyContainer>(new PropertyContainer[0]);
+                try
+                {
+                    var result = _properties != null
+                        ? new ReadOnlyCollection<PropertyContainer>(_properties)
+                        : new ReadOnlyCollection<PropertyContainer>(new PropertyContainer[0]);
 
-                FinishReadResource();
+                    return result;
+                }
+                finally
+                {
+                    FinishReadResource();
+                }
 
-                return result;
             }
 
             throw new CollisionException(this);
@@ -169,27 +190,30 @@ namespace NoSQL.GraphDB.Model
         {
             if (ReadResource())
             {
-                if (_properties != null)
+                try
                 {
-                    for (var i = 0; i < _properties.Length; i++)
+                    if (_properties != null)
                     {
-                        var aPropContainer = _properties[i];
-                        if (aPropContainer.Value != null && aPropContainer.PropertyId == propertyId)
+                        for (var i = 0; i < _properties.Length; i++)
                         {
-                            result = (TProperty) aPropContainer.Value;
-
-                            FinishReadResource();
-
-                            return true;
+                            var aPropContainer = _properties[i];
+                            if (aPropContainer.Value != null && aPropContainer.PropertyId == propertyId)
+                            {
+                                result = (TProperty)aPropContainer.Value;
+                                return true;
+                            }
                         }
                     }
+
+                    result = default(TProperty);
+
+                    return false;
+                }
+                finally
+                {
+                    FinishReadResource();
                 }
 
-                result = default(TProperty);
-
-                FinishReadResource();
-
-                return false;
             }
 
             throw new CollisionException(this);
@@ -218,48 +242,53 @@ namespace NoSQL.GraphDB.Model
         {
             if (WriteResource())
             {
-                var foundProperty = false;
-                var idx = 0;
-
-                if (_properties != null)
+                try
                 {
-                    for (var i = 0; i < _properties.Length; i++)
+                    var foundProperty = false;
+                    var idx = 0;
+
+                    if (_properties != null)
                     {
-                        if (_properties[i].PropertyId == propertyId)
+                        for (var i = 0; i < _properties.Length; i++)
                         {
-                            foundProperty = true;
-                            idx = i;
-                            break;
+                            if (_properties[i].PropertyId == propertyId)
+                            {
+                                foundProperty = true;
+                                idx = i;
+                                break;
+                            }
                         }
-                    }
 
-                    if (!foundProperty)
-                    {
-                        //resize
-                        var newProperties = new PropertyContainer[_properties.Length + 1];
-                        Array.Copy(_properties, newProperties, _properties.Length);
-                        newProperties[_properties.Length] = new PropertyContainer
-                                                                {PropertyId = propertyId, Value = property};
+                        if (!foundProperty)
+                        {
+                            //resize
+                            var newProperties = new PropertyContainer[_properties.Length + 1];
+                            Array.Copy(_properties, newProperties, _properties.Length);
+                            newProperties[_properties.Length] = new PropertyContainer { PropertyId = propertyId, Value = property };
 
-                        _properties = newProperties;
+                            _properties = newProperties;
+                        }
+                        else
+                        {
+                            _properties[idx] = new PropertyContainer { PropertyId = propertyId, Value = property };
+                        }
                     }
                     else
                     {
-                        _properties[idx] = new PropertyContainer {PropertyId = propertyId, Value = property};
+                        _properties = new PropertyContainer[0];
+                        _properties[0] = new PropertyContainer { PropertyId = propertyId, Value = property };
                     }
+
+                    //set the modificationdate
+                    ModificationDate = DateHelper.GetModificationDate(CreationDate);
+
+                    return foundProperty;
                 }
-                else
+                finally
                 {
-                    _properties = new PropertyContainer[0];
-                    _properties[0] = new PropertyContainer {PropertyId = propertyId, Value = property};
+                    FinishWriteResource();
                 }
 
-                //set the modificationdate
-                ModificationDate = DateHelper.GetModificationDate(CreationDate);
-
-                FinishWriteResource();
-
-                return foundProperty;
             }
 
             throw new CollisionException(this);
@@ -275,48 +304,54 @@ namespace NoSQL.GraphDB.Model
         {
             if (WriteResource())
             {
-                var removedSomething = false;
-
-                if (_properties != null)
+                try
                 {
-                    var toBeRemovedIdx = 0;
+                    var removedSomething = false;
 
-                    for (var i = 0; i < _properties.Length; i++)
+                    if (_properties != null)
                     {
-                        if (_properties[i].PropertyId == propertyId)
-                        {
-                            toBeRemovedIdx = i;
-                            removedSomething = true;
-                            break;
-                        }
-                    }
+                        var toBeRemovedIdx = 0;
 
-                    if (removedSomething)
-                    {
-                        //resize
-                        var newProperties = new PropertyContainer[_properties.Length - 1];
-                        if (newProperties.Length != 0)
+                        for (var i = 0; i < _properties.Length; i++)
                         {
-                            //everything until the to be removed item
-                            Array.Copy(_properties, newProperties, toBeRemovedIdx);
-
-                            if (toBeRemovedIdx > newProperties.Length)
+                            if (_properties[i].PropertyId == propertyId)
                             {
-                                //everything after the removed item
-                                Array.Copy(_properties, toBeRemovedIdx + 1, newProperties, toBeRemovedIdx,
-                                           _properties.Length - toBeRemovedIdx);
+                                toBeRemovedIdx = i;
+                                removedSomething = true;
+                                break;
+                            }
+                        }
+
+                        if (removedSomething)
+                        {
+                            //resize
+                            var newProperties = new PropertyContainer[_properties.Length - 1];
+                            if (newProperties.Length != 0)
+                            {
+                                //everything until the to be removed item
+                                Array.Copy(_properties, newProperties, toBeRemovedIdx);
+
+                                if (toBeRemovedIdx > newProperties.Length)
+                                {
+                                    //everything after the removed item
+                                    Array.Copy(_properties, toBeRemovedIdx + 1, newProperties, toBeRemovedIdx,
+                                               _properties.Length - toBeRemovedIdx);
+                                }
+
+                                _properties = newProperties;
                             }
 
-                            _properties = newProperties;
+                            //set the modificationdate
+                            ModificationDate = DateHelper.GetModificationDate(CreationDate);
                         }
-
-                        //set the modificationdate
-                        ModificationDate = DateHelper.GetModificationDate(CreationDate);
                     }
+                    return removedSomething;
                 }
-                FinishWriteResource();
+                finally
+                {
+                    FinishWriteResource();
+                }
 
-                return removedSomething;
             }
 
             throw new CollisionException(this);
