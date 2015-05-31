@@ -1,5 +1,5 @@
 ﻿//
-// BenchmarkService.cs
+// HelloService.cs
 //
 // Author:
 //       Henning Rauch <Henning@RauchEntwicklung.biz>
@@ -24,61 +24,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using NoSQL.GraphDB;
-using System.Diagnostics;
 
 namespace Service
 {
-    public class BenchmarkService  : IBenchmarkService
+    public class HelloService : IHelloService
     {
-        #region Data
-
-        /// <summary>
-        ///   The internal Fallen-8 instance
-        /// </summary>
-        private readonly Fallen8 _fallen8;
-
-        /// <summary>
-        /// The intro provider.
-        /// </summary>
-        private readonly BenchmarkProvider _benchmarkProvider;
-
-        #endregion
-
-        #region Contrcutor
-
-        public BenchmarkService (Fallen8 fallen8)
+        public HelloService ()
         {
-            this._fallen8 = fallen8;
-            this._benchmarkProvider = new BenchmarkProvider (this._fallen8);
         }
 
-        #endregion
+        #region IHelloService implementation
 
-        #region IBenchmarkService implementation
-
-        public string CreateGraph (string nodeCount, string edgeCount)
+        public string Hello (string who)
         {
-            var sw = Stopwatch.StartNew ();
-
-            _benchmarkProvider.CreateGraph (Convert.ToInt32 (nodeCount), Convert.ToInt32 (edgeCount));
-
-            sw.Stop ();
-
-            #if __MonoCS__
-            //mono specific code
-            #else 
-            GC.Collect();
-            GC.Collect();
-            GC.WaitForFullGCApproach();
-            #endif
-
-            return String.Format ("It took {0}ms to create a Fallen-8 graph with {1} nodes and {2} edges per node.", sw.Elapsed.TotalMilliseconds, nodeCount, edgeCount);
-        }
-
-        public string Benchmark (string iterations)
-        {
-            return _benchmarkProvider.Benchmark (Convert.ToInt32 (iterations));
+            return "hello " + who;
         }
 
         #endregion
@@ -87,7 +46,7 @@ namespace Service
 
         public void Shutdown ()
         {
-            //nothing to do
+            //do nothing here
         }
 
         #endregion
@@ -96,12 +55,12 @@ namespace Service
 
         public void Save (Framework.Serialization.SerializationWriter writer)
         {
-            //nothing to do
+            //do nothing here
         }
 
         public void Load (Framework.Serialization.SerializationReader reader, NoSQL.GraphDB.Fallen8 fallen8)
         {
-            //nothing to do
+            //do nothing here
         }
 
         #endregion
@@ -110,7 +69,7 @@ namespace Service
 
         public void Dispose ()
         {
-            //nothing to do
+            //do nothing here
         }
 
         #endregion

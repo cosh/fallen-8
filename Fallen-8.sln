@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{71
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmark", "Examples\Benchmark\Benchmark.csproj", "{8DF501D3-04CE-4C73-81EA-C425C5634C2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePlugin", "Examples\ServicePlugin\ServicePlugin.csproj", "{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA}.Release|x86.Build.0 = Release|Any CPU
 		{40759EF1-EBF9-41A3-BFEB-1314ABE36489}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{40759EF1-EBF9-41A3-BFEB-1314ABE36489}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40759EF1-EBF9-41A3-BFEB-1314ABE36489}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -71,6 +85,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7267AFEB-D3FC-4416-8792-C386A685C86F} = {5AD7BBF6-B9F9-497B-9E8A-9C9B5D396F49}
 		{8DF501D3-04CE-4C73-81EA-C425C5634C2A} = {71F537B3-5D1B-43FF-A0BA-A2CE216C6154}
+		{216864F0-1BFC-4594-B2E3-ACFAEC7B44FA} = {71F537B3-5D1B-43FF-A0BA-A2CE216C6154}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

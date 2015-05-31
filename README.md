@@ -54,7 +54,7 @@ The lovely .Net is able to help you using the REST services. Just take a look at
 * Admin service: http://127.0.0.1:9923/Fallen-8_Admin_Service/1.0/REST/help
 * Graph service: http://127.0.0.1:9923/Fallen-8_Graph_Service/1.0/REST/help
 
-In order to create your own Service plugin four steps need to be taken. The following example code can be found in Examples/Benchmark. There is a slightly bigger "benchmark" service which could act as some kind of bluprint service for you located in Examples/Benchmark.
+In order to create your own Service plugin four steps need to be taken. The following example code can be found in Examples/ServicePlugin. There is a slightly bigger "benchmark" service which could act as some kind of bluprint service for you located in Examples/Benchmark.
 ### Webservice contract
 
 The webservice contract defines the functions which you would like to add on top of Fallen-8. It's a plain old service contract with one extension: you have to implement the **IRESTService** interface.
@@ -75,6 +75,91 @@ The webservice contract defines the functions which you would like to add on top
 ```
 
 ### Webservice contract implementation
+Create a new IHelloService implementation and implement the methods. In this first example don't do anything in the "IRESTService", "IFallen8Serializable" and "IDisposable" implementations.
+
+```
+	public class HelloService : IHelloService
+    {
+   		...
+        #region IHelloService implementation
+
+        public string Hello (string who)
+        {
+            return "hello " + who;
+        }
+
+        #endregion
+		...
+    }
+```
+
+### The Fallen-8 plugin
+The actual Fallen-8 plugin needs to extend the ARESTServicePlugin abstract class. The most important field is the "PLUGIN_NAME". This is the unique name of your plugin. You'll need it later in order to start the plugin.
+Interesting regions:
+* **IFallen8Serializable**: in case the plugin needed to persist sth during the "save"-phase of the checkpoint persistency you are able to deserialize the necessary parameters
+* **IPlugin**: All methods which are responsible for the plugin mechanics like creation/versioning/nameing etc.
+
+```
+public sealed class HelloServicePlugin : ARESTServicePlugin
+    {
+        public const string PLUGIN_NAME = "Fallen-8_Hello_Service";
+        public const string MANUFACTURER = "Henning Rauch";
+        public const string PLUGIN_DESCRIPTION = "Fallen-8 Hello Service Plugin";
+        public const string VERSION = "1.0.0";
+        public const double RESTVERSION = 1.0;
+
+        #region IFallen8Serializable implementation
+
+        public override IRESTService LoadServiceFromSerialization (SerializationReader reader, Fallen8 fallen8)
+        {
+            return new HelloService ();
+        }
+
+        #endregion
+
+        #region IPlugin implementation
+
+        public override IRESTService CreateService (Fallen8 fallen8, IDictionary<string, object> parameter)
+        {
+            return new HelloService ();
+        }
+
+        ...
+        #endregion
+    }
+```
+
+### Start the plugin
+This is pretty simple now. Just tell Fallen-8 what you like to have and you'll get it.
+
+```
+IService helloService;
+            if (fallen8.ServiceFactory.TryAddService (out helloService, "Fallen-8_Hello_Service", "Hello API", null)) {
+                if (helloService.TryStart ()) {
+                    Console.WriteLine ("Wohooo.");
+                }
+            }
+```
+After you started the project you'll see this:
+```
+[Fallen-8_Hello_Service:config] URIPattern (n/a, using default): Fallen-8_Hello_Service
+[Fallen-8_Hello_Service:config] IPAddress (n/a, using default): 127.0.0.1
+[Fallen-8_Hello_Service:config] Port (n/a, using default): 9923
+Fallen-8 Hello Service Plugin v1.0.0
+   -> Service is started at http://127.0.0.1:9923/Fallen-8_Hello_Service/1.0/REST
+Wohooo.
+Enter 'shutdown' to initiate the shutdown of this instance.
+```
+
+just try it: http://127.0.0.1:9923/Fallen-8_Hello_Service/1.0/REST/hello/world
+
+## Benchmarks
+There are plenty of benchmarks in the world. This is a puristic one that focusses on the raw traversal speed of Fallen-8. It creates an equally distributed graph with a defined number of vertices and edges. Afterwards you are able to measure the traversals per second for your graph in Fallen-8.
+In order to start the benchmark, compile the Examples/Benchmark project and start it with Admin-Rights. It uses the service plugin pattern described in the last point and provides two web-services
+* CreateGraph: http://127.0.0.1:9923/Fallen-8_Benchmark_Service/1.0/REST/CreateGraph?nodes=1000&edgesPerNode=500  (creates a graph with 1000 nodes and 500 edges per node)
+* algorithm/tps: http://127.0.0.1:9923/Fallen-8_Benchmark_Service/1.0/REST/algorithm/tps?iterations=10000 (takes every node of the graph and iterates over all it's edges in order to "touch" the neighbor vertex)
+
+As always there is a .Net help available: http://127.0.0.1:9923/Fallen-8_Benchmark_Service/1.0/REST/help
 
 ## Additional information
 
