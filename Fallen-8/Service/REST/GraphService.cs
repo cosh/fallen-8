@@ -54,7 +54,7 @@ namespace NoSQL.GraphDB.Service.REST
     /// <summary>
     ///   Fallen-8 REST service.
     /// </summary>
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
+    [ServiceBehavior (ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
     public sealed class GraphService : IGraphService, IDisposable
     {
         #region Data
@@ -88,12 +88,11 @@ namespace NoSQL.GraphDB.Service.REST
         ///   Initializes a new instance of the GraphService class.
         /// </summary>
         /// <param name='fallen8'> Fallen-8. </param>
-        public GraphService(Fallen8 fallen8)
+        public GraphService (Fallen8 fallen8)
         {
             _fallen8 = fallen8;
 
-            _compilerParameters = new CompilerParameters
-            {
+            _compilerParameters = new CompilerParameters {
                 GenerateExecutable = false,
                 GenerateInMemory = true,
                 TreatWarningsAsErrors = false,
@@ -101,16 +100,14 @@ namespace NoSQL.GraphDB.Service.REST
                 CompilerOptions = "/optimize /target:library",
             };
 
-            var curAss = Assembly.GetAssembly(fallen8.GetType());
-            _compilerParameters.ReferencedAssemblies.Add("System.dll");
-            _compilerParameters.ReferencedAssemblies.Add("mscorlib.dll");
-            _compilerParameters.ReferencedAssemblies.Add("System.dll");
-            _compilerParameters.ReferencedAssemblies.Add("System.Data.dll");
-            _compilerParameters.ReferencedAssemblies.Add(curAss.Location);
+            var curAss = Assembly.GetAssembly (fallen8.GetType ());
+            _compilerParameters.ReferencedAssemblies.Add ("System.dll");
+            _compilerParameters.ReferencedAssemblies.Add ("mscorlib.dll");
+            _compilerParameters.ReferencedAssemblies.Add ("System.dll");
+            _compilerParameters.ReferencedAssemblies.Add ("System.Data.dll");
+            _compilerParameters.ReferencedAssemblies.Add (curAss.Location);
 
-            _codeProvider = new CSharpCodeProvider(new Dictionary<string, string>
-                                                      {
-                                                          { "CompilerVersion", "v4.0" }
+            _codeProvider = new CSharpCodeProvider (new Dictionary<string, string> { { "CompilerVersion", "v4.5" }
                                                       });
         }
 

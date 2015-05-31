@@ -29,6 +29,53 @@ fallen8.ServiceFactory.StartGraphService();
 fallen8.ServiceFactory.StartAdminService();
 ```
 
+## Service plugins
+
+Service plugins are the easiest way to add use-case specific functionality on top of Fallen-8. There are two standard plugins available:
+* **Admin** REST service
+* **Graph** REST service
+
+They are started by default using the StartUp project.
+```
+[Fallen-8_Graph_Service:config] URIPattern (n/a, using default): Fallen-8_Graph_Service
+[Fallen-8_Graph_Service:config] IPAddress (n/a, using default): 127.0.0.1
+[Fallen-8_Graph_Service:config] Port (n/a, using default): 9923
+Fallen-8 Graph Service Plugin v1.0.0
+   -> Service is started at http://127.0.0.1:9923/Fallen-8_Graph_Service/1.0/REST
+[Fallen-8_Admin_Service:config] URIPattern (n/a, using default): Fallen-8_Admin_Service
+[Fallen-8_Admin_Service:config] IPAddress (n/a, using default): 127.0.0.1
+[Fallen-8_Admin_Service:config] Port (n/a, using default): 9923
+Fallen-8 Admin Service Plugin v2.3.0
+   -> Service is started at http://127.0.0.1:9923/Fallen-8_Admin_Service/1.0/REST
+Enter 'shutdown' to initiate the shutdown of this instance.
+
+```
+The lovely .Net is able to help you using the REST services. Just take a look at the webservice help:
+* Admin service: http://127.0.0.1:9923/Fallen-8_Admin_Service/1.0/REST/help
+* Graph service: http://127.0.0.1:9923/Fallen-8_Graph_Service/1.0/REST/help
+
+In order to create your own Service plugin four steps need to be taken. The following example code can be found in Examples/Benchmark. There is a slightly bigger "benchmark" service which could act as some kind of bluprint service for you located in Examples/Benchmark.
+### Webservice contract
+
+The webservice contract defines the functions which you would like to add on top of Fallen-8. It's a plain old service contract with one extension: you have to implement the **IRESTService** interface.
+```
+	[ServiceContract (Namespace = "Fallen-8-Training", Name = "Fallen-8 training service")]
+    public interface IHelloService : IRESTService
+    {
+        /// <summary>
+        /// Say hello to someone
+        /// </summary>
+        /// <param name="who">The one you like to say hello to</param>
+        /// <returns>Hello to someone</returns>
+        [OperationContract (Name = "Hello")]
+        [Description ("[F8Training] Hello: Says hello to someone.")]
+        [WebGet (UriTemplate = "/hello/{who}", ResponseFormat = WebMessageFormat.Json)]
+        String Hello (String who);
+    }
+```
+
+### Webservice contract implementation
+
 ## Additional information
 
 [Graph databases - Henning Rauch](http://www.slideshare.net/HenningRauch/graphdatabases)
@@ -42,7 +89,7 @@ fallen8.ServiceFactory.StartAdminService();
 [Google Group](https://groups.google.com/d/forum/fallen-8)
 
 ## MIT-License
-Copyright (c) 2012 Henning Rauch
+Copyright (c) 2012-2015 Henning Rauch
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
