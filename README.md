@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cosh/fallen-8.png?branch=master)](https://travis-ci.org/cosh/fallen-8)
+
 ## Welcome to Fallen-8.
 Fallen-8 is an in-memory [graph database](http://en.wikipedia.org/wiki/Graph_database) implemented in C#. Its focus is to provide raw speed for heavy graph algorithms.
 
