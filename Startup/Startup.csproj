@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Startup</RootNamespace>
     <AssemblyName>Startup</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -77,8 +77,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer.csproj">
-      <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
+    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer\FastSerializer.csproj">
+      <Project>{7267afeb-d3fc-4416-8792-c386a685c86f}</Project>
       <Name>FastSerializer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fallen-8\Fallen-8.csproj">

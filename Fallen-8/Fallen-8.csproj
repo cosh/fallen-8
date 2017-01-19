@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NoSQL.GraphDB</RootNamespace>
     <AssemblyName>Fallen-8</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <ReleaseVersion>0.2</ReleaseVersion>
   </PropertyGroup>
@@ -173,8 +173,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer.csproj">
-      <Project>{7267AFEB-D3FC-4416-8792-C386A685C86F}</Project>
+    <ProjectReference Include="..\Dependencies\FastSerializer\FastSerializer\FastSerializer.csproj">
+      <Project>{7267afeb-d3fc-4416-8792-c386a685c86f}</Project>
       <Name>FastSerializer</Name>
     </ProjectReference>
   </ItemGroup>
