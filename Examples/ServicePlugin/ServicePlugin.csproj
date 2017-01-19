@@ -44,16 +44,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Dependencies\FastSerializer\FastSerializer\FastSerializer.csproj">
       <Project>{7267afeb-d3fc-4416-8792-c386a685c86f}</Project>
       <Name>FastSerializer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Fallen-8\Fallen-8.csproj">
-      <Project>{40759EF1-EBF9-41A3-BFEB-1314ABE36489}</Project>
+      <Project>{40759ef1-ebf9-41a3-bfeb-1314abe36489}</Project>
       <Name>Fallen-8</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
 </Project>
