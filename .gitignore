@@ -18,3 +18,4 @@ CoreDeveloper.userprefs
 *.resources
 TestResults/
 packages/
+.vs/
